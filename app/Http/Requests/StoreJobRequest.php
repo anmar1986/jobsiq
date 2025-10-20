@@ -1,0 +1,71 @@
+<?php
+
+namespace App\Http\Requests;
+
+use Illuminate\Foundation\Http\FormRequest;
+
+class StoreJobRequest extends FormRequest
+{
+    /**
+     * Determine if the user is authorized to make this request.
+     */
+    public function authorize(): bool
+    {
+        // Check if user owns the company
+        $companyId = $this->input('company_id');
+        if (!$companyId) {
+            return false;
+        }
+
+        $company = \App\Models\Company::find($companyId);
+        return $company && $this->user()->ownsCompany($company);
+    }
+
+    /**
+     * Get the validation rules that apply to the request.
+     *
+     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     */
+    public function rules(): array
+    {
+        return [
+            'company_id' => ['required', 'exists:companies,id'],
+            'title' => ['required', 'string', 'max:255'],
+            'description' => ['required', 'string', 'max:10000'],
+            'requirements' => ['nullable', 'string', 'max:10000'],
+            'location' => ['required', 'string', 'max:255'],
+            'city' => ['nullable', 'string', 'max:255'],
+            'country' => ['nullable', 'string', 'max:255'],
+            'employment_type' => ['required', 'in:full-time,part-time,contract,freelance,internship'],
+            'experience_level' => ['nullable', 'in:entry,junior,mid,senior,lead'],
+            'category' => ['nullable', 'string', 'max:255'],
+            'salary_min' => ['nullable', 'numeric', 'min:0'],
+            'salary_max' => ['nullable', 'numeric', 'min:0', 'gte:salary_min'],
+            'salary_currency' => ['nullable', 'string', 'size:3'],
+            'salary_period' => ['nullable', 'in:hourly,monthly,yearly'],
+            'is_remote' => ['boolean'],
+            'is_featured' => ['boolean'],
+            'skills' => ['nullable', 'array'],
+            'skills.*' => ['string', 'max:100'],
+            'expires_at' => ['nullable', 'date', 'after:today'],
+        ];
+    }
+
+    /**
+     * Get custom messages for validator errors.
+     */
+    public function messages(): array
+    {
+        return [
+            'company_id.required' => 'Please select a company',
+            'company_id.exists' => 'The selected company does not exist',
+            'title.required' => 'Job title is required',
+            'description.required' => 'Job description is required',
+            'location.required' => 'Job location is required',
+            'employment_type.required' => 'Employment type is required',
+            'employment_type.in' => 'Invalid employment type',
+            'salary_max.gte' => 'Maximum salary must be greater than or equal to minimum salary',
+            'expires_at.after' => 'Expiration date must be in the future',
+        ];
+    }
+}

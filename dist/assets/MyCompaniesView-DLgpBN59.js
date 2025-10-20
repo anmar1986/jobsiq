@@ -1,0 +1,1 @@
+import{d as s,c as t,a as o,o as a}from"./index-GVITuUF_.js";const n={class:"container-custom py-8"},r=s({__name:"MyCompaniesView",setup(c){return(p,e)=>(a(),t("div",n,[...e[0]||(e[0]=[o("h1",{class:"text-3xl font-bold mb-6"},"My Companies",-1),o("p",{class:"text-gray-600"},"My companies page - Coming soon!",-1)])]))}});export{r as default};
