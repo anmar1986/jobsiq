@@ -26,12 +26,12 @@ class JobController extends Controller
                 $q->select('id', 'name', 'slug');
             }, 'company.logo'])
                 ->select([
-                'id', 'company_id', 'title', 'slug', 'description', 'requirements',
-                'location', 'city', 'country', 'employment_type', 'experience_level',
-                'category', 'skills', 'salary_min', 'salary_max', 'salary_currency',
-                'salary_period', 'is_remote', 'is_featured', 'published_at',
-                'expires_at', 'created_at',
-            ])
+                    'id', 'company_id', 'title', 'slug', 'description', 'requirements',
+                    'location', 'city', 'country', 'employment_type', 'experience_level',
+                    'category', 'skills', 'salary_min', 'salary_max', 'salary_currency',
+                    'salary_period', 'is_remote', 'is_featured', 'published_at',
+                    'expires_at', 'created_at',
+                ])
                 ->active()
                 ->published()
                 ->latest('published_at');
@@ -191,10 +191,10 @@ class JobController extends Controller
                 $q->select('id', 'name', 'slug');
             }, 'company.logo'])
                 ->select([
-            'id', 'company_id', 'title', 'slug', 'location', 'city', 'country',
-            'employment_type', 'experience_level', 'category', 'salary_min', 'salary_max',
-            'salary_currency', 'salary_period', 'is_remote', 'is_featured',
-            'published_at', 'created_at',
+                    'id', 'company_id', 'title', 'slug', 'location', 'city', 'country',
+                    'employment_type', 'experience_level', 'category', 'salary_min', 'salary_max',
+                    'salary_currency', 'salary_period', 'is_remote', 'is_featured',
+                    'published_at', 'created_at',
                 ])
                 ->active()
                 ->published()
