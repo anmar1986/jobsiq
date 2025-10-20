@@ -1,4 +1,4 @@
-name: tests
+name: Tests
 
 on:
   push:
@@ -11,31 +11,53 @@ on:
       - main
 
 jobs:
-  ci:
+  tests:
     runs-on: ubuntu-latest
+    
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: password
+          MYSQL_DATABASE: testing
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
     steps:
-      - name: Checkout
+      - name: Checkout code
         uses: actions/checkout@v4
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: 8.4
+          php-version: 8.3
+          extensions: mbstring, dom, fileinfo, mysql, pdo_mysql
           tools: composer:v2
           coverage: xdebug
 
-      - name: Setup Node
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          node-version: '20'
           cache: 'npm'
+
+      - name: Get Composer Cache Directory
+        id: composer-cache
+        run: echo "dir=$(composer config cache-files-dir)" >> $GITHUB_OUTPUT
+
+      - name: Cache Composer dependencies
+        uses: actions/cache@v3
+        with:
+          path: ${{ steps.composer-cache.outputs.dir }}
+          key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
+          restore-keys: ${{ runner.os }}-composer-
+
+      - name: Install PHP Dependencies
+        run: composer install --no-interaction --prefer-dist --optimize-autoloader --no-progress
 
       - name: Install Node Dependencies
         run: npm ci
-
-      - name: Install Dependencies
-        run: composer install --no-interaction --prefer-dist --optimize-autoloader
 
       - name: Copy Environment File
         run: cp .env.example .env
@@ -43,8 +65,23 @@ jobs:
       - name: Generate Application Key
         run: php artisan key:generate
 
-      - name: Build Assets
+      - name: Set Testing Environment
+        run: |
+          echo "DB_CONNECTION=mysql" >> .env
+          echo "DB_HOST=127.0.0.1" >> .env
+          echo "DB_PORT=3306" >> .env
+          echo "DB_DATABASE=testing" >> .env
+          echo "DB_USERNAME=root" >> .env
+          echo "DB_PASSWORD=password" >> .env
+
+      - name: Run Migrations
+        run: php artisan migrate --force
+
+      - name: Build Frontend Assets
         run: npm run build
 
-      - name: Tests
-        run: ./vendor/bin/phpunit
+      - name: Run PHP Tests
+        run: ./vendor/bin/phpunit --coverage-text
+
+      - name: Type Check Frontend
+        run: npm run type-check
