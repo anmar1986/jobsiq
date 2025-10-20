@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Str;
 
 class UserCv extends Model
@@ -71,7 +70,7 @@ class UserCv extends Model
         static::creating(function ($cv) {
             if (empty($cv->slug)) {
                 $baseSlug = $cv->title ?: $cv->full_name;
-                $cv->slug = Str::slug($baseSlug) . '-' . Str::random(8);
+                $cv->slug = Str::slug($baseSlug).'-'.Str::random(8);
             }
         });
 
@@ -125,8 +124,6 @@ class UserCv extends Model
         return $this->hasMany(CvLanguage::class)->orderBy('order');
     }
 
-
-
     /**
      * Scope to only include public CVs.
      */
@@ -151,9 +148,10 @@ class UserCv extends Model
         if ($this->profile_image_path) {
             return (object) [
                 'path' => $this->profile_image_path,
-                'url' => asset('storage/' . $this->profile_image_path)
+                'url' => asset('storage/'.$this->profile_image_path),
             ];
         }
+
         return null;
     }
 
@@ -162,7 +160,7 @@ class UserCv extends Model
      */
     public function getTotalExperienceAttribute(): float
     {
-        if (!$this->work_experience) {
+        if (! $this->work_experience) {
             return 0;
         }
 

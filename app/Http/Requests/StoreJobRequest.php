@@ -13,11 +13,12 @@ class StoreJobRequest extends FormRequest
     {
         // Check if user owns the company
         $companyId = $this->input('company_id');
-        if (!$companyId) {
+        if (! $companyId) {
             return false;
         }
 
         $company = \App\Models\Company::find($companyId);
+
         return $company && $this->user()->ownsCompany($company);
     }
 

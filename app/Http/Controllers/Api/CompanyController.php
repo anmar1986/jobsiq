@@ -7,8 +7,8 @@ use App\Http\Requests\StoreCompanyRequest;
 use App\Http\Requests\UpdateCompanyRequest;
 use App\Models\Company;
 use App\Models\CompanyImage;
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
 class CompanyController extends Controller
@@ -103,7 +103,7 @@ class CompanyController extends Controller
                 Storage::delete($company->logo->path);
                 $company->logo->delete();
             }
-            
+
             $this->uploadLogo($company, $request->file('logo'));
         }
 
@@ -122,7 +122,7 @@ class CompanyController extends Controller
     public function destroy(Request $request, Company $company): JsonResponse
     {
         // Check if user is primary owner
-        if (!$company->isPrimaryOwner($request->user())) {
+        if (! $company->isPrimaryOwner($request->user())) {
             return response()->json([
                 'success' => false,
                 'message' => 'Only the primary owner can delete the company',
@@ -148,7 +148,7 @@ class CompanyController extends Controller
     public function addOwner(Request $request, Company $company): JsonResponse
     {
         // Check if user is owner
-        if (!$request->user()->ownsCompany($company)) {
+        if (! $request->user()->ownsCompany($company)) {
             return response()->json([
                 'success' => false,
                 'message' => 'Only company owners can add new owners',
@@ -183,7 +183,7 @@ class CompanyController extends Controller
     public function removeOwner(Request $request, Company $company, int $userId): JsonResponse
     {
         // Check if user is primary owner
-        if (!$company->isPrimaryOwner($request->user())) {
+        if (! $company->isPrimaryOwner($request->user())) {
             return response()->json([
                 'success' => false,
                 'message' => 'Only the primary owner can remove owners',

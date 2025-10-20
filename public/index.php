@@ -7,7 +7,7 @@ define('LARAVEL_START', microtime(true));
 
 // Set PHP upload temp directory (workaround for .htaccess not being applied)
 $tempDir = __DIR__.'/../storage/tmp';
-if (!is_dir($tempDir)) {
+if (! is_dir($tempDir)) {
     mkdir($tempDir, 0777, true);
 }
 ini_set('upload_tmp_dir', $tempDir);

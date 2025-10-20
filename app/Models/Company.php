@@ -20,13 +20,13 @@ class Company extends Model
         'legal_name',
         'description',
         'tagline',
-        
+
         // Contact Information
         'email',
         'phone',
         'fax',
         'website',
-        
+
         // Address
         'street',
         'street_2',
@@ -36,7 +36,7 @@ class Company extends Model
         'postal_code',
         'latitude',
         'longitude',
-        
+
         // Business Information
         'industry',
         'company_size',
@@ -44,7 +44,7 @@ class Company extends Model
         'founded_date',
         'registration_number',
         'tax_id',
-        
+
         // Social Media
         'linkedin',
         'twitter',
@@ -52,30 +52,30 @@ class Company extends Model
         'instagram',
         'youtube',
         'github',
-        
+
         // Company Culture
         'benefits',
         'values',
         'perks',
         'culture_description',
-        
+
         // Status
         'is_verified',
         'is_featured',
         'is_active',
         'is_hiring',
-        
+
         // SEO
         'meta_title',
         'meta_description',
         'keywords',
-        
+
         // Statistics
         'total_employees',
         'active_jobs_count',
         'total_jobs_posted',
         'profile_views',
-        
+
         // Additional
         'timezone',
         'languages',
@@ -254,7 +254,7 @@ class Company extends Model
      */
     public function getFormattedFundingAttribute(): ?string
     {
-        if (!$this->funding_amount) {
+        if (! $this->funding_amount) {
             return null;
         }
 
@@ -265,14 +265,14 @@ class Company extends Model
         ];
 
         $symbol = $symbols[$this->funding_currency] ?? $this->funding_currency;
-        
+
         if ($this->funding_amount >= 1000000) {
-            return $symbol . number_format($this->funding_amount / 1000000, 1) . 'M';
+            return $symbol.number_format($this->funding_amount / 1000000, 1).'M';
         } elseif ($this->funding_amount >= 1000) {
-            return $symbol . number_format($this->funding_amount / 1000, 1) . 'K';
+            return $symbol.number_format($this->funding_amount / 1000, 1).'K';
         }
 
-        return $symbol . number_format($this->funding_amount, 2);
+        return $symbol.number_format($this->funding_amount, 2);
     }
 
     /**

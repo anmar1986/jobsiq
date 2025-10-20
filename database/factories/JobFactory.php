@@ -24,18 +24,18 @@ class JobFactory extends Factory
         $experienceLevels = ['entry', 'junior', 'mid', 'senior', 'lead'];
         $categories = ['Engineering', 'Design', 'Marketing', 'Sales', 'Finance', 'HR', 'Customer Service', 'Operations'];
         $skills = ['JavaScript', 'Python', 'React', 'Vue.js', 'Laravel', 'Node.js', 'TypeScript', 'PHP', 'Java', 'C#', 'AWS', 'Docker', 'Kubernetes'];
-        
+
         $salaryMin = fake()->numberBetween(40000, 100000);
         $salaryMax = $salaryMin + fake()->numberBetween(20000, 80000);
-        
+
         return [
             'company_id' => Company::factory(),
             'user_id' => User::factory(),
             'title' => $title,
-            'slug' => Str::slug($title . '-' . Str::random(6)),
+            'slug' => Str::slug($title.'-'.Str::random(6)),
             'description' => fake()->paragraphs(5, true),
             'requirements' => fake()->paragraphs(3, true),
-            'location' => fake()->city() . ', ' . fake()->country(),
+            'location' => fake()->city().', '.fake()->country(),
             'city' => fake()->city(),
             'country' => fake()->country(),
             'employment_type' => fake()->randomElement($employmentTypes),

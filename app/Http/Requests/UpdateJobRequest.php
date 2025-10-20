@@ -12,6 +12,7 @@ class UpdateJobRequest extends FormRequest
     public function authorize(): bool
     {
         $job = $this->route('job');
+
         return $this->user()->ownsCompany($job->company);
     }
 

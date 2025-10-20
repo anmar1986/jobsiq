@@ -53,7 +53,7 @@ class Job extends Model
 
         static::creating(function ($job) {
             if (empty($job->slug)) {
-                $job->slug = Str::slug($job->title . '-' . Str::random(6));
+                $job->slug = Str::slug($job->title.'-'.Str::random(6));
             }
             if (empty($job->published_at)) {
                 $job->published_at = now();
@@ -103,7 +103,7 @@ class Job extends Model
      */
     public function scopeSearch($query, ?string $term)
     {
-        if (!$term) {
+        if (! $term) {
             return $query;
         }
 
@@ -121,7 +121,7 @@ class Job extends Model
      */
     public function scopeLocation($query, ?string $location)
     {
-        if (!$location) {
+        if (! $location) {
             return $query;
         }
 
@@ -173,7 +173,7 @@ class Job extends Model
      */
     public function getSalaryRangeAttribute(): ?string
     {
-        if (!$this->salary_min && !$this->salary_max) {
+        if (! $this->salary_min && ! $this->salary_max) {
             return null;
         }
 

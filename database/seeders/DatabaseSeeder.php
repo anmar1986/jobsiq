@@ -37,26 +37,26 @@ class DatabaseSeeder extends Seeder
 
         // Create companies with owners
         $companies = collect();
-        
+
         foreach ($allUsers->take(8) as $user) {
             $company = Company::factory()->create();
-            
+
             // Attach user as primary owner
             $company->owners()->attach($user->id, ['is_primary' => true]);
-            
+
             // Randomly add secondary owners
             if (fake()->boolean(30)) {
                 $secondaryOwner = $allUsers->where('id', '!=', $user->id)->random();
                 $company->owners()->attach($secondaryOwner->id, ['is_primary' => false]);
             }
-            
+
             $companies->push($company);
         }
 
         // Create jobs for each company
         foreach ($companies as $company) {
             $owner = $company->owners()->wherePivot('is_primary', true)->first();
-            
+
             // Create 3-8 jobs per company
             Job::factory()
                 ->count(fake()->numberBetween(3, 8))
@@ -96,7 +96,7 @@ class DatabaseSeeder extends Seeder
                 $cvs = UserCv::factory()
                     ->count($cvCount)
                     ->create(['user_id' => $user->id]);
-                
+
                 // Set first CV as primary
                 if ($cvs->count() > 0) {
                     $cvs->first()->update(['is_primary' => true]);

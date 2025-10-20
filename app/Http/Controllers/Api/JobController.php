@@ -7,8 +7,8 @@ use App\Http\Requests\StoreJobRequest;
 use App\Http\Requests\UpdateJobRequest;
 use App\Models\Job;
 use App\Models\SearchHistory;
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 
@@ -21,17 +21,17 @@ class JobController extends Controller
     {
         try {
             $perPage = min((int) $request->get('per_page', 15), 100); // Max 100 items per page
-            
+
             $query = Job::with(['company' => function ($q) {
-                    $q->select('id', 'name', 'slug');
-                }, 'company.logo'])
+                $q->select('id', 'name', 'slug');
+            }, 'company.logo'])
                 ->select([
-                    'id', 'company_id', 'title', 'slug', 'description', 'requirements', 
-                    'location', 'city', 'country', 'employment_type', 'experience_level', 
-                    'category', 'skills', 'salary_min', 'salary_max', 'salary_currency', 
-                    'salary_period', 'is_remote', 'is_featured', 'published_at', 
-                    'expires_at', 'created_at'
-                ])
+                'id', 'company_id', 'title', 'slug', 'description', 'requirements',
+                'location', 'city', 'country', 'employment_type', 'experience_level',
+                'category', 'skills', 'salary_min', 'salary_max', 'salary_currency',
+                'salary_period', 'is_remote', 'is_featured', 'published_at',
+                'expires_at', 'created_at',
+            ])
                 ->active()
                 ->published()
                 ->latest('published_at');
@@ -55,11 +55,11 @@ class JobController extends Controller
             return response()->json([
                 'success' => true,
                 'data' => $jobs,
-                'message' => "Found {$total} job" . ($total !== 1 ? 's' : ''),
+                'message' => "Found {$total} job".($total !== 1 ? 's' : ''),
             ]);
         } catch (\Exception $e) {
-            Log::error('Job index error: ' . $e->getMessage());
-            
+            Log::error('Job index error: '.$e->getMessage());
+
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to fetch jobs',
@@ -163,7 +163,7 @@ class JobController extends Controller
     public function destroy(Request $request, Job $job): JsonResponse
     {
         // Check authorization
-        if (!$request->user()->ownsCompany($job->company)) {
+        if (! $request->user()->ownsCompany($job->company)) {
             return response()->json([
                 'success' => false,
                 'message' => 'Unauthorized to delete this job',
@@ -188,13 +188,13 @@ class JobController extends Controller
         // Cache featured jobs for 1 hour
         $jobs = Cache::remember("featured_jobs_{$limit}", 3600, function () use ($limit) {
             return Job::with(['company' => function ($q) {
-                        $q->select('id', 'name', 'slug');
-                    }, 'company.logo'])
+                $q->select('id', 'name', 'slug');
+            }, 'company.logo'])
                 ->select([
-                    'id', 'company_id', 'title', 'slug', 'location', 'city', 'country',
-                    'employment_type', 'experience_level', 'category', 'salary_min', 'salary_max',
-                    'salary_currency', 'salary_period', 'is_remote', 'is_featured',
-                    'published_at', 'created_at'
+            'id', 'company_id', 'title', 'slug', 'location', 'city', 'country',
+            'employment_type', 'experience_level', 'category', 'salary_min', 'salary_max',
+            'salary_currency', 'salary_period', 'is_remote', 'is_featured',
+            'published_at', 'created_at',
                 ])
                 ->active()
                 ->published()
@@ -217,7 +217,7 @@ class JobController extends Controller
     {
         try {
             $filters = [];
-            
+
             if ($request->filled('employment_type')) {
                 $filters['employment_type'] = $request->employment_type;
             }
@@ -238,14 +238,14 @@ class JobController extends Controller
                 'user_id' => $request->user()?->id,
                 'search_query' => $request->get('search'),
                 'location' => $request->get('location'),
-                'filters' => !empty($filters) ? $filters : null,
+                'filters' => ! empty($filters) ? $filters : null,
                 'results_count' => $resultsCount,
                 'ip_address' => $request->ip(),
                 'user_agent' => $request->userAgent(),
                 'session_id' => null, // API routes don't have sessions
             ]);
         } catch (\Exception $e) {
-            Log::warning('Failed to log search history: ' . $e->getMessage());
+            Log::warning('Failed to log search history: '.$e->getMessage());
         }
     }
 }

@@ -3,8 +3,8 @@
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CompanyController;
 use App\Http\Controllers\Api\FreeCvController;
-use App\Http\Controllers\Api\UserCvController;
 use App\Http\Controllers\Api\JobController;
+use App\Http\Controllers\Api\UserCvController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -47,7 +47,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/companies', [CompanyController::class, 'store']);
     Route::put('/companies/{company}', [CompanyController::class, 'update']);
     Route::delete('/companies/{company}', [CompanyController::class, 'destroy']);
-    
+
     // Company ownership
     Route::get('/my-companies', [CompanyController::class, 'myCompanies']);
     Route::post('/companies/{company}/owners', [CompanyController::class, 'addOwner']);

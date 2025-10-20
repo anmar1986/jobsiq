@@ -21,7 +21,7 @@ class UserCvFactory extends Factory
             'PHP', 'Laravel', 'JavaScript', 'Vue.js', 'React', 'Node.js',
             'Python', 'Django', 'Java', 'Spring Boot', 'SQL', 'MongoDB',
             'Docker', 'AWS', 'Git', 'REST APIs', 'GraphQL', 'TypeScript',
-            'HTML', 'CSS', 'Tailwind CSS', 'Bootstrap', 'Redux', 'Jest'
+            'HTML', 'CSS', 'Tailwind CSS', 'Bootstrap', 'Redux', 'Jest',
         ];
 
         $languages = [
@@ -32,7 +32,7 @@ class UserCvFactory extends Factory
 
         $categories = [
             'Frontend', 'Backend', 'Full Stack', 'DevOps', 'Mobile',
-            'Data Science', 'Machine Learning', 'UI/UX Design'
+            'Data Science', 'Machine Learning', 'UI/UX Design',
         ];
 
         // Generate 2-5 work experiences
@@ -46,7 +46,7 @@ class UserCvFactory extends Factory
             $workExperiences[] = [
                 'company' => fake()->company(),
                 'position' => fake()->jobTitle(),
-                'location' => fake()->city() . ', ' . fake()->country(),
+                'location' => fake()->city().', '.fake()->country(),
                 'start_date' => $startDate->format('Y-m-d'),
                 'end_date' => $endDate ? $endDate->format('Y-m-d') : null,
                 'current' => $isCurrent,
@@ -67,10 +67,10 @@ class UserCvFactory extends Factory
             $endDate = fake()->dateTimeBetween($startDate, '-1 year');
 
             $education[] = [
-                'institution' => fake()->company() . ' University',
+                'institution' => fake()->company().' University',
                 'degree' => fake()->randomElement(['Bachelor', 'Master', 'PhD']),
                 'field' => fake()->randomElement(['Computer Science', 'Software Engineering', 'Information Technology', 'Web Development']),
-                'location' => fake()->city() . ', ' . fake()->country(),
+                'location' => fake()->city().', '.fake()->country(),
                 'start_date' => $startDate->format('Y-m-d'),
                 'end_date' => $endDate->format('Y-m-d'),
                 'gpa' => fake()->randomFloat(2, 3.0, 4.0),
@@ -80,7 +80,7 @@ class UserCvFactory extends Factory
 
         // Generate skills with levels
         $selectedSkills = fake()->randomElements($skills, fake()->numberBetween(5, 12));
-        $skillsArray = array_map(function($skill) use ($categories) {
+        $skillsArray = array_map(function ($skill) use ($categories) {
             return [
                 'name' => $skill,
                 'level' => fake()->randomElement(['Beginner', 'Intermediate', 'Advanced', 'Expert']),
@@ -109,8 +109,8 @@ class UserCvFactory extends Factory
             'email' => fake()->safeEmail(),
             'phone' => fake()->phoneNumber(),
             'website' => fake()->boolean(60) ? fake()->url() : null,
-            'linkedin' => fake()->boolean(70) ? 'https://linkedin.com/in/' . fake()->userName() : null,
-            'github' => fake()->boolean(70) ? 'https://github.com/' . fake()->userName() : null,
+            'linkedin' => fake()->boolean(70) ? 'https://linkedin.com/in/'.fake()->userName() : null,
+            'github' => fake()->boolean(70) ? 'https://github.com/'.fake()->userName() : null,
             'address' => fake()->streetAddress(),
             'city' => fake()->city(),
             'country' => fake()->country(),

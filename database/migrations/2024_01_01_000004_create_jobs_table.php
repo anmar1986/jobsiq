@@ -36,7 +36,7 @@ return new class extends Migration
             $table->date('expires_at')->nullable();
             $table->timestamp('published_at')->nullable();
             $table->timestamps();
-            
+
             $table->index('slug');
             $table->index('company_id');
             $table->index('employment_type');
@@ -44,7 +44,7 @@ return new class extends Migration
             $table->index('is_active');
             $table->index('published_at');
             $table->index(['city', 'country']);
-            
+
             // Only add fulltext index for MySQL
             if (config('database.default') === 'mysql') {
                 $table->fullText(['title', 'description']);

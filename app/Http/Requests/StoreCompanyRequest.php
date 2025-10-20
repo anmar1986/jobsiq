@@ -27,13 +27,13 @@ class StoreCompanyRequest extends FormRequest
             'legal_name' => ['nullable', 'string', 'max:255'],
             'description' => ['nullable', 'string', 'max:5000'],
             'tagline' => ['nullable', 'string', 'max:255'],
-            
+
             // Contact Information
             'email' => ['nullable', 'email', 'max:255'],
             'phone' => ['nullable', 'string', 'max:50'],
             'fax' => ['nullable', 'string', 'max:50'],
             'website' => ['nullable', 'url', 'max:255'],
-            
+
             // Address
             'street' => ['nullable', 'string', 'max:255'],
             'street_2' => ['nullable', 'string', 'max:255'],
@@ -43,7 +43,7 @@ class StoreCompanyRequest extends FormRequest
             'postal_code' => ['nullable', 'string', 'max:20'],
             'latitude' => ['nullable', 'numeric', 'between:-90,90'],
             'longitude' => ['nullable', 'numeric', 'between:-180,180'],
-            
+
             // Business Information
             'industry' => ['nullable', 'string', 'max:100'],
             'company_size' => ['nullable', 'string', 'max:50'],
@@ -51,7 +51,7 @@ class StoreCompanyRequest extends FormRequest
             'founded_date' => ['nullable', 'date', 'before:today'],
             'registration_number' => ['nullable', 'string', 'max:100'],
             'tax_id' => ['nullable', 'string', 'max:100'],
-            
+
             // Social Media
             'linkedin' => ['nullable', 'url', 'max:255'],
             'twitter' => ['nullable', 'url', 'max:255'],
@@ -59,7 +59,7 @@ class StoreCompanyRequest extends FormRequest
             'instagram' => ['nullable', 'url', 'max:255'],
             'youtube' => ['nullable', 'url', 'max:255'],
             'github' => ['nullable', 'url', 'max:255'],
-            
+
             // Company Culture
             'benefits' => ['nullable', 'array'],
             'benefits.*' => ['string', 'max:255'],
@@ -68,13 +68,13 @@ class StoreCompanyRequest extends FormRequest
             'perks' => ['nullable', 'array'],
             'perks.*' => ['string', 'max:255'],
             'culture_description' => ['nullable', 'string', 'max:5000'],
-            
+
             // SEO
             'meta_title' => ['nullable', 'string', 'max:60'],
             'meta_description' => ['nullable', 'string', 'max:160'],
             'keywords' => ['nullable', 'array'],
             'keywords.*' => ['string', 'max:50'],
-            
+
             // Additional
             'timezone' => ['nullable', 'string', 'max:50'],
             'languages' => ['nullable', 'array'],
@@ -84,10 +84,10 @@ class StoreCompanyRequest extends FormRequest
             'funding_amount' => ['nullable', 'numeric', 'min:0'],
             'funding_currency' => ['nullable', 'string', 'size:3'],
             'total_employees' => ['nullable', 'integer', 'min:0'],
-            
+
             // Status
             'is_hiring' => ['nullable', 'boolean'],
-            
+
             // Image Upload
             'logo' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
         ];

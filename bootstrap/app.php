@@ -18,6 +18,7 @@ return Application::configure(basePath: dirname(__DIR__))
             if ($request->expectsJson() || $request->is('api/*')) {
                 abort(Response::HTTP_UNAUTHORIZED, 'Unauthenticated.');
             }
+
             return route('login');
         });
     })
