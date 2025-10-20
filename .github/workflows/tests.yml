@@ -13,6 +13,13 @@ on:
 jobs:
   tests:
     runs-on: ubuntu-latest
+    env:
+      DB_CONNECTION: mysql
+      DB_HOST: 127.0.0.1
+      DB_PORT: 3306
+      DB_DATABASE: testing
+      DB_USERNAME: root
+      DB_PASSWORD: password
     
     services:
       mysql:
@@ -32,7 +39,8 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: 8.3
-          extensions: mbstring, dom, fileinfo, mysql, pdo_mysql
+          # pdo_mysql is required for Laravel MySQL connection. 'mysql' is not a PHP extension name.
+          extensions: mbstring, dom, fileinfo, pdo_mysql
           tools: composer:v2
           coverage: xdebug
 
@@ -59,20 +67,35 @@ jobs:
       - name: Install Node Dependencies
         run: npm ci
 
-      - name: Copy Environment File
-        run: cp .env.example .env
+      - name: Copy environment file
+        run: php -r "if (!file_exists('.env')) copy('.env.example', '.env');"
 
       - name: Generate Application Key
-        run: php artisan key:generate
+        run: php artisan key:generate --ansi
 
       - name: Set Testing Environment
         run: |
-          echo "DB_CONNECTION=mysql" >> .env
-          echo "DB_HOST=127.0.0.1" >> .env
-          echo "DB_PORT=3306" >> .env
-          echo "DB_DATABASE=testing" >> .env
-          echo "DB_USERNAME=root" >> .env
-          echo "DB_PASSWORD=password" >> .env
+          # Ensure the .env has the correct DB config for migrations
+          php -r "file_put_contents('.env', str_replace([PHP_EOL.'DB_CONNECTION='.getenv('DB_CONNECTION'), PHP_EOL.'DB_HOST='.getenv('DB_HOST'), PHP_EOL.'DB_PORT='.getenv('DB_PORT'), PHP_EOL.'DB_DATABASE='.getenv('DB_DATABASE'), PHP_EOL.'DB_USERNAME='.getenv('DB_USERNAME'), PHP_EOL.'DB_PASSWORD='.getenv('DB_PASSWORD')], '', file_get_contents('.env')));
+          echo "DB_CONNECTION=${DB_CONNECTION}" >> .env
+          echo "DB_HOST=${DB_HOST}" >> .env
+          echo "DB_PORT=${DB_PORT}" >> .env
+          echo "DB_DATABASE=${DB_DATABASE}" >> .env
+          echo "DB_USERNAME=${DB_USERNAME}" >> .env
+          echo "DB_PASSWORD=${DB_PASSWORD}" >> .env
+
+      - name: Wait for MySQL
+        run: |
+          echo 'Waiting for MySQL to be ready...'
+          for i in {1..30}; do
+            if mysqladmin ping -h "$DB_HOST" -P "$DB_PORT" --silent; then
+              echo 'MySQL is ready.'
+              exit 0
+            fi
+            sleep 1
+          done
+          echo 'MySQL did not become ready in time.'
+          exit 1
 
       - name: Run Migrations
         run: php artisan migrate --force
