@@ -187,14 +187,14 @@ class StoreCvRequest extends FormRequest
         // Convert empty strings to null for URL fields to allow clearing them
         $urlFields = ['website', 'linkedin', 'github'];
         $urlData = [];
-        
+
         foreach ($urlFields as $field) {
             if ($this->has($field) && $this->input($field) === '') {
                 $urlData[$field] = null;
             }
         }
-        
-        if (!empty($urlData)) {
+
+        if (! empty($urlData)) {
             $this->merge($urlData);
         }
 
