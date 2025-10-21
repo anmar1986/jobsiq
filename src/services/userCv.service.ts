@@ -18,7 +18,9 @@ export const userCvService = {
   },
 
   async getCv(id: number | string): Promise<ApiResponse<UserCv>> {
-    const response = await apiClient.get<ApiResponse<UserCv>>(`/my-cvs/${id}`)
+    // If id is a string (slug), use public endpoint, otherwise use authenticated endpoint
+    const endpoint = typeof id === 'string' ? `/cvs/${id}` : `/my-cvs/${id}`
+    const response = await apiClient.get<ApiResponse<UserCv>>(endpoint)
     return response.data
   },
 

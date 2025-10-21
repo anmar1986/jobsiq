@@ -29,14 +29,6 @@
           @update:personal-info="updatePersonalInfo"
         />
 
-        <!-- Professional Summary -->
-        <ProfessionalSummarySection 
-          :summary="cvForm.summary"
-          :objective="cvForm.objective"
-          @update:summary="cvForm.summary = $event"
-          @update:objective="cvForm.objective = $event"
-        />
-
         <!-- Skills -->
         <SkillsSection 
           :skills="cvForm.skills"
@@ -139,7 +131,6 @@ import BaseCard from '@/components/base/BaseCard.vue'
 import BaseButton from '@/components/base/BaseButton.vue'
 import ProfileImageUpload from '@/components/features/cv/ProfileImageUpload.vue'
 import PersonalInfoSection from '@/components/features/cv/PersonalInfoSection.vue'
-import ProfessionalSummarySection from '@/components/features/cv/ProfessionalSummarySection.vue'
 import SkillsSection from '@/components/features/cv/SkillsSection.vue'
 import WorkExperienceSection from '@/components/features/cv/WorkExperienceSection.vue'
 import EducationSection from '@/components/features/cv/EducationSection.vue'
@@ -171,8 +162,6 @@ const cvForm = ref({
   email: '',
   phone: '',
   title: '',
-  summary: '',
-  objective: '',
   postal_code: '',
   skills: [] as string[],
   website: '',
@@ -279,8 +268,6 @@ const saveCv = async () => {
     if (cvForm.value.country) formData.append('country', cvForm.value.country)
     if (cvForm.value.postal_code) formData.append('postal_code', cvForm.value.postal_code)
     if (cvForm.value.title) formData.append('title', cvForm.value.title)
-    if (cvForm.value.summary) formData.append('summary', cvForm.value.summary)
-    if (cvForm.value.objective) formData.append('objective', cvForm.value.objective)
     
     // Add skills as JSON
     formData.append('skills', JSON.stringify(skillObjects))
@@ -397,8 +384,6 @@ const loadCvForEditing = async () => {
           email: cv.email,
           phone: cv.phone || '',
           title: cv.title || '',
-          summary: cv.summary || '',
-          objective: cv.objective || '',
           postal_code: cv.postal_code || '',
           skills: skillStrings,
           website: cv.website || '',

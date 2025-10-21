@@ -114,8 +114,6 @@ export interface UserCv {
   postal_code: string | null
   title: string | null
   slug: string
-  summary: string | null
-  objective: string | null
   work_experience: WorkExperience[] | null // For sending data
   work_experiences?: WorkExperience[] | null // For receiving data from API
   education: Education[] | null // For sending data

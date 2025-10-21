@@ -27,8 +27,6 @@ class UserCv extends Model
         'city',
         'country',
         'postal_code',
-        'summary',
-        'objective',
         'work_experience',
         'education',
         'skills',
