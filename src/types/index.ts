@@ -1,5 +1,5 @@
 // API Types
-export interface ApiResponse<T = any> {
+export interface ApiResponse<T = unknown> {
   success: boolean
   data?: T
   message?: string
@@ -130,7 +130,7 @@ export interface UserCv {
   is_public: boolean
   is_primary: boolean
   template: string | null
-  settings: Record<string, any> | null
+  settings: Record<string, unknown> | null
   profile_image?: { path: string; url: string } | null
   profileImage?: { path: string; url: string } | null // Laravel returns this (camelCase)
   profile_image_path?: string | null

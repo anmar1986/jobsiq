@@ -157,7 +157,7 @@ const removeExperience = (index: number) => {
   emit('update:work-experience', [...localExperiences.value])
 }
 
-const updateExperience = (index: number) => {
+const updateExperience = (_index: number) => {
   emit('update:work-experience', [...localExperiences.value])
 }
 

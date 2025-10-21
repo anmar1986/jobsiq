@@ -165,8 +165,11 @@ const handleSubmit = async () => {
   try {
     await authStore.login(formData)
     router.push('/dashboard')
-  } catch (err: any) {
-    error.value = err.response?.data?.message || 'Invalid email or password. Please try again.'
+  } catch (err: unknown) {
+    const errorMessage = err && typeof err === 'object' && 'response' in err
+      ? (err as { response?: { data?: { message?: string } } }).response?.data?.message
+      : undefined
+    error.value = errorMessage || 'Invalid email or password. Please try again.'
     showError.value = true
   } finally {
     loading.value = false

@@ -127,8 +127,8 @@ const router = createRouter({
 // Navigation guards
 router.beforeEach((to: RouteLocationNormalized, _from: RouteLocationNormalized, next: NavigationGuardNext) => {
   const authStore = useAuthStore()
-  const requiresAuth = to.matched.some((record: any) => record.meta.requiresAuth)
-  const isGuestRoute = to.matched.some((record: any) => record.meta.guest)
+  const requiresAuth = to.matched.some((record) => record.meta.requiresAuth)
+  const isGuestRoute = to.matched.some((record) => record.meta.guest)
 
   // Set page title
   document.title = to.meta.title ? `${to.meta.title} | JobsIQ` : 'JobsIQ'

@@ -26,8 +26,8 @@ apiClient.interceptors.request.use(
     if (config.data instanceof FormData) {
       if (config.headers) {
         // Some axios typings use lowercase keys, so delete both forms
-        delete (config.headers as any)['Content-Type']
-        delete (config.headers as any)['content-type']
+        delete (config.headers as Record<string, unknown>)['Content-Type']
+        delete (config.headers as Record<string, unknown>)['content-type']
       }
     }
     return config

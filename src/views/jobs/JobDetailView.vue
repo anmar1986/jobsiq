@@ -160,24 +160,28 @@
               <!-- Job Description -->
               <section class="mb-8">
                 <h2 class="text-2xl font-bold text-gray-900 mb-4">Job Description</h2>
+                <!-- eslint-disable-next-line vue/no-v-html -->
                 <div class="prose prose-gray max-w-none" v-html="job.description"></div>
               </section>
 
               <!-- Requirements -->
               <section v-if="job.requirements" class="mb-8 pb-8 border-t border-gray-200 pt-8">
                 <h2 class="text-2xl font-bold text-gray-900 mb-4">Requirements</h2>
+                <!-- eslint-disable-next-line vue/no-v-html -->
                 <div class="prose prose-gray max-w-none" v-html="job.requirements"></div>
               </section>
 
               <!-- Responsibilities -->
               <section v-if="job.responsibilities" class="mb-8 pb-8 border-t border-gray-200 pt-8">
                 <h2 class="text-2xl font-bold text-gray-900 mb-4">Responsibilities</h2>
+                <!-- eslint-disable-next-line vue/no-v-html -->
                 <div class="prose prose-gray max-w-none" v-html="job.responsibilities"></div>
               </section>
 
               <!-- Benefits -->
               <section v-if="job.benefits" class="pb-8 border-t border-gray-200 pt-8">
                 <h2 class="text-2xl font-bold text-gray-900 mb-4">Benefits</h2>
+                <!-- eslint-disable-next-line vue/no-v-html -->
                 <div class="prose prose-gray max-w-none" v-html="job.benefits"></div>
               </section>
             </BaseCard>

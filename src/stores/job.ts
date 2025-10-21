@@ -35,8 +35,11 @@ export const useJobStore = defineStore('job', () => {
         jobs.value = data
         pagination.value = paginationData
       }
-    } catch (err: any) {
-      error.value = err.response?.data?.message || 'Failed to fetch jobs'
+    } catch (err: unknown) {
+      const errorMessage = err && typeof err === 'object' && 'response' in err
+        ? (err as { response?: { data?: { message?: string } } }).response?.data?.message
+        : undefined
+      error.value = errorMessage || 'Failed to fetch jobs'
       throw err
     } finally {
       loading.value = false
@@ -49,7 +52,7 @@ export const useJobStore = defineStore('job', () => {
       if (response.success && response.data) {
         featuredJobs.value = response.data
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Failed to fetch featured jobs:', err)
     }
   }
@@ -63,8 +66,11 @@ export const useJobStore = defineStore('job', () => {
       if (response.success && response.data) {
         currentJob.value = response.data
       }
-    } catch (err: any) {
-      error.value = err.response?.data?.message || 'Failed to fetch job'
+    } catch (err: unknown) {
+      const errorMessage = err && typeof err === 'object' && 'response' in err
+        ? (err as { response?: { data?: { message?: string } } }).response?.data?.message
+        : undefined
+      error.value = errorMessage || 'Failed to fetch job'
       throw err
     } finally {
       loading.value = false

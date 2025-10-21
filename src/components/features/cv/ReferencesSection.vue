@@ -23,7 +23,7 @@
     <!-- References List -->
     <div v-if="localReferences.length > 0" class="space-y-4">
       <BaseCard
-        v-for="(ref, index) in localReferences"
+        v-for="(reference, index) in localReferences"
         :key="index"
         class="p-6 border-l-4 border-primary-500"
       >
@@ -42,7 +42,7 @@
         
         <div class="grid md:grid-cols-2 gap-4">
           <BaseInput
-            v-model="ref.name"
+            v-model="reference.name"
             label="Full Name"
             placeholder="e.g., John Smith"
             required
@@ -50,7 +50,7 @@
           />
           
           <BaseInput
-            v-model="ref.position"
+            v-model="reference.position"
             label="Position"
             placeholder="e.g., Senior Manager"
             required
@@ -58,7 +58,7 @@
           />
           
           <BaseInput
-            v-model="ref.company"
+            v-model="reference.company"
             label="Company"
             placeholder="e.g., Tech Corp"
             required
@@ -66,7 +66,7 @@
           />
           
           <BaseInput
-            v-model="ref.relationship"
+            v-model="reference.relationship"
             label="Relationship"
             placeholder="e.g., Former Supervisor"
             required
@@ -74,19 +74,19 @@
           />
           
           <BaseInput
-            :model-value="ref.email || ''"
+            :model-value="reference.email || ''"
             type="email"
             label="Email"
             placeholder="john.smith@example.com"
-            @update:model-value="ref.email = $event as string; updateReference(index)"
+            @update:model-value="reference.email = $event as string; updateReference(index)"
           />
           
           <BaseInput
-            :model-value="ref.phone || ''"
+            :model-value="reference.phone || ''"
             type="tel"
             label="Phone"
             placeholder="+1 (555) 123-4567"
-            @update:model-value="ref.phone = $event as string; updateReference(index)"
+            @update:model-value="reference.phone = $event as string; updateReference(index)"
           />
         </div>
       </BaseCard>
@@ -139,7 +139,7 @@ const removeReference = (index: number) => {
   emit('update:references', [...localReferences.value])
 }
 
-const updateReference = (index: number) => {
+const updateReference = (_index: number) => {
   emit('update:references', [...localReferences.value])
 }
 </script>

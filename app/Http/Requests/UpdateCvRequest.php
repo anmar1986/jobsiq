@@ -173,6 +173,20 @@ class UpdateCvRequest extends FormRequest
      */
     protected function prepareForValidation(): void
     {
+        // Convert empty strings to null for URL fields to allow clearing them
+        $urlFields = ['website', 'linkedin', 'github'];
+        $urlData = [];
+
+        foreach ($urlFields as $field) {
+            if ($this->has($field) && $this->input($field) === '') {
+                $urlData[$field] = null;
+            }
+        }
+
+        if (! empty($urlData)) {
+            $this->merge($urlData);
+        }
+
         // Convert string 'true'/'false' to boolean for is_public and is_primary
         if ($this->has('is_public') && is_string($this->is_public)) {
             $this->merge([

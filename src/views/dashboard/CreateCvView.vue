@@ -127,6 +127,17 @@ import { useRouter, useRoute } from 'vue-router'
 import { useCvStore } from '@/stores/cv'
 import { useAuthStore } from '@/stores/auth'
 import { useToast } from '@/composables/useToast'
+import type {
+  WorkExperience,
+  Education,
+  Certification,
+  Language,
+  Project,
+  Reference,
+  Award,
+  Publication,
+  VolunteerWork
+} from '@/types'
 import BaseCard from '@/components/base/BaseCard.vue'
 import BaseButton from '@/components/base/BaseButton.vue'
 import ProfileImageUpload from '@/components/features/cv/ProfileImageUpload.vue'
@@ -172,15 +183,15 @@ const cvForm = ref({
   country: '',
   is_public: true,
   is_primary: false,
-  work_experience: [] as any[],
-  education: [] as any[],
-  certifications: [] as any[],
-  languages: [] as any[],
-  projects: [] as any[],
-  references: [] as any[],
-  awards: [] as any[],
-  publications: [] as any[],
-  volunteer_work: [] as any[],
+  work_experience: [] as WorkExperience[],
+  education: [] as Education[],
+  certifications: [] as Certification[],
+  languages: [] as Language[],
+  projects: [] as Project[],
+  references: [] as Reference[],
+  awards: [] as Award[],
+  publications: [] as Publication[],
+  volunteer_work: [] as VolunteerWork[],
   hobbies: [] as string[],
 })
 
@@ -248,7 +259,7 @@ const saveCv = async () => {
     console.log('DEBUG: JSON.stringify(skillObjects):', JSON.stringify(skillObjects))
     
     // Sanitize education data - trim GPA to max 10 characters
-    const sanitizedEducation = cvForm.value.education.map(edu => ({
+    const sanitizedEducation = cvForm.value.education.map((edu: Education) => ({
       ...edu,
       gpa: edu.gpa ? edu.gpa.substring(0, 10) : edu.gpa,
     }))
@@ -259,15 +270,16 @@ const saveCv = async () => {
     // Add basic fields
     formData.append('full_name', cvForm.value.full_name)
     formData.append('email', cvForm.value.email)
-    if (cvForm.value.phone) formData.append('phone', cvForm.value.phone)
-    if (cvForm.value.website) formData.append('website', cvForm.value.website)
-    if (cvForm.value.linkedin) formData.append('linkedin', cvForm.value.linkedin)
-    if (cvForm.value.github) formData.append('github', cvForm.value.github)
-    if (cvForm.value.address) formData.append('address', cvForm.value.address)
-    if (cvForm.value.city) formData.append('city', cvForm.value.city)
-    if (cvForm.value.country) formData.append('country', cvForm.value.country)
-    if (cvForm.value.postal_code) formData.append('postal_code', cvForm.value.postal_code)
-    if (cvForm.value.title) formData.append('title', cvForm.value.title)
+    // Always send these fields, even if empty, to allow clearing them
+    formData.append('phone', cvForm.value.phone || '')
+    formData.append('website', cvForm.value.website || '')
+    formData.append('linkedin', cvForm.value.linkedin || '')
+    formData.append('github', cvForm.value.github || '')
+    formData.append('address', cvForm.value.address || '')
+    formData.append('city', cvForm.value.city || '')
+    formData.append('country', cvForm.value.country || '')
+    formData.append('postal_code', cvForm.value.postal_code || '')
+    formData.append('title', cvForm.value.title || '')
     
     // Add skills as JSON
     formData.append('skills', JSON.stringify(skillObjects))
@@ -341,21 +353,23 @@ const saveCv = async () => {
     
     // Navigate back to My CVs page
     await router.push('/my-cvs')
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Failed to save CV:', error)
-    console.error('Error response:', error.response)
-    console.error('Error data:', error.response?.data)
-    console.error('Validation errors:', error.response?.data?.errors)
+    
+    const err = error as { response?: { data?: { errors?: Record<string, string[]>; message?: string } }; message?: string }
+    console.error('Error response:', err.response)
+    console.error('Error data:', err.response?.data)
+    console.error('Validation errors:', err.response?.data?.errors)
     
     // Show validation errors if available
-    if (error.response?.data?.errors) {
-      const errors = error.response.data.errors
+    if (err.response?.data?.errors) {
+      const errors = err.response.data.errors
       const errorMessages = Object.entries(errors)
-        .map(([field, messages]: [string, any]) => `${field}: ${Array.isArray(messages) ? messages.join(', ') : messages}`)
+        .map(([field, messages]) => `${field}: ${Array.isArray(messages) ? messages.join(', ') : messages}`)
         .join('\n')
       toast.error(`Validation failed:\n${errorMessages}`)
     } else {
-      toast.error(error.response?.data?.message || error.message || 'Failed to save CV. Please try again.')
+      toast.error(err.response?.data?.message || err.message || 'Failed to save CV. Please try again.')
     }
   } finally {
     saving.value = false

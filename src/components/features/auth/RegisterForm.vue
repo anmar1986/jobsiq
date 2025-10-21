@@ -161,7 +161,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed, watch } from 'vue'
+import { ref, reactive, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import BaseCard from '@/components/base/BaseCard.vue'
@@ -275,11 +275,14 @@ const handleSubmit = async () => {
   error.value = ''
   
   try {
-    const { agreeToTerms, ...registerData } = formData
+    const { agreeToTerms: _agreeToTerms, ...registerData } = formData
     await authStore.register(registerData)
     router.push('/dashboard')
-  } catch (err: any) {
-    error.value = err.response?.data?.message || 'Registration failed. Please try again.'
+  } catch (err: unknown) {
+    const errorMessage = err && typeof err === 'object' && 'response' in err
+      ? (err as { response?: { data?: { message?: string } } }).response?.data?.message
+      : undefined
+    error.value = errorMessage || 'Registration failed. Please try again.'
     showError.value = true
   } finally {
     loading.value = false

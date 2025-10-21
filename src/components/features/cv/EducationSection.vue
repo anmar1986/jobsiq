@@ -160,7 +160,7 @@ const removeEducation = (index: number) => {
   emit('update:education', [...localEducation.value])
 }
 
-const updateEducation = (index: number) => {
+const updateEducation = (_index: number) => {
   emit('update:education', [...localEducation.value])
 }
 </script>

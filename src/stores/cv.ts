@@ -40,8 +40,11 @@ export const useCvStore = defineStore('cv', () => {
         cvs.value = data
         pagination.value = paginationData
       }
-    } catch (err: any) {
-      error.value = err.response?.data?.message || 'Failed to fetch CVs'
+    } catch (err: unknown) {
+      const errorMessage = err && typeof err === 'object' && 'response' in err
+        ? (err as { response?: { data?: { message?: string } } }).response?.data?.message
+        : undefined
+      error.value = errorMessage || 'Failed to fetch CVs'
       throw err
     } finally {
       loading.value = false
@@ -57,8 +60,11 @@ export const useCvStore = defineStore('cv', () => {
       if (response.success && response.data) {
         currentCv.value = response.data
       }
-    } catch (err: any) {
-      error.value = err.response?.data?.message || 'Failed to fetch CV'
+    } catch (err: unknown) {
+      const errorMessage = err && typeof err === 'object' && 'response' in err
+        ? (err as { response?: { data?: { message?: string } } }).response?.data?.message
+        : undefined
+      error.value = errorMessage || 'Failed to fetch CV'
       throw err
     } finally {
       loading.value = false
@@ -74,8 +80,11 @@ export const useCvStore = defineStore('cv', () => {
       if (response.success && response.data) {
         currentCv.value = response.data
       }
-    } catch (err: any) {
-      error.value = err.response?.data?.message || 'Failed to fetch CV'
+    } catch (err: unknown) {
+      const errorMessage = err && typeof err === 'object' && 'response' in err
+        ? (err as { response?: { data?: { message?: string } } }).response?.data?.message
+        : undefined
+      error.value = errorMessage || 'Failed to fetch CV'
       throw err
     } finally {
       loading.value = false
@@ -92,20 +101,23 @@ export const useCvStore = defineStore('cv', () => {
       
       if (response.success && response.data) {
         console.log('My CVs data:', response.data)
-        response.data.forEach((cv: any, index: number) => {
+        response.data.forEach((cv, index: number) => {
           console.log(`CV ${index} - ID: ${cv.id}, Slug: ${cv.slug}, Title: ${cv.title}`)
         })
         myCvs.value = response.data
       }
-    } catch (err: any) {
-      error.value = err.response?.data?.message || 'Failed to fetch CVs'
+    } catch (err: unknown) {
+      const errorMessage = err && typeof err === 'object' && 'response' in err
+        ? (err as { response?: { data?: { message?: string } } }).response?.data?.message
+        : undefined
+      error.value = errorMessage || 'Failed to fetch CVs'
       throw err
     } finally {
       loading.value = false
     }
   }
 
-  async function createCv(data: any) {
+  async function createCv(data: Partial<UserCv>) {
     try {
       loading.value = true
       error.value = null
@@ -119,8 +131,11 @@ export const useCvStore = defineStore('cv', () => {
         myCvs.value.unshift(response.data)
         return response.data
       }
-    } catch (err: any) {
-      error.value = err.response?.data?.message || 'Failed to create CV'
+    } catch (err: unknown) {
+      const errorMessage = err && typeof err === 'object' && 'response' in err
+        ? (err as { response?: { data?: { message?: string } } }).response?.data?.message
+        : undefined
+      error.value = errorMessage || 'Failed to create CV'
       throw err
     } finally {
       loading.value = false
@@ -141,15 +156,18 @@ export const useCvStore = defineStore('cv', () => {
         myCvs.value.unshift(response.data)
         return response.data
       }
-    } catch (err: any) {
-      error.value = err.response?.data?.message || 'Failed to create CV'
+    } catch (err: unknown) {
+      const errorMessage = err && typeof err === 'object' && 'response' in err
+        ? (err as { response?: { data?: { message?: string } } }).response?.data?.message
+        : undefined
+      error.value = errorMessage || 'Failed to create CV'
       throw err
     } finally {
       loading.value = false
     }
   }
 
-  async function updateCv(id: number, data: any) {
+  async function updateCv(id: number, data: Partial<UserCv>) {
     try {
       loading.value = true
       error.value = null
@@ -162,8 +180,11 @@ export const useCvStore = defineStore('cv', () => {
         }
         return response.data
       }
-    } catch (err: any) {
-      error.value = err.response?.data?.message || 'Failed to update CV'
+    } catch (err: unknown) {
+      const errorMessage = err && typeof err === 'object' && 'response' in err
+        ? (err as { response?: { data?: { message?: string } } }).response?.data?.message
+        : undefined
+      error.value = errorMessage || 'Failed to update CV'
       throw err
     } finally {
       loading.value = false
@@ -183,8 +204,11 @@ export const useCvStore = defineStore('cv', () => {
         }
         return response.data
       }
-    } catch (err: any) {
-      error.value = err.response?.data?.message || 'Failed to update CV'
+    } catch (err: unknown) {
+      const errorMessage = err && typeof err === 'object' && 'response' in err
+        ? (err as { response?: { data?: { message?: string } } }).response?.data?.message
+        : undefined
+      error.value = errorMessage || 'Failed to update CV'
       throw err
     } finally {
       loading.value = false
@@ -200,8 +224,11 @@ export const useCvStore = defineStore('cv', () => {
       if (response.success) {
         myCvs.value = myCvs.value.filter(cv => cv.id !== id)
       }
-    } catch (err: any) {
-      error.value = err.response?.data?.message || 'Failed to delete CV'
+    } catch (err: unknown) {
+      const errorMessage = err && typeof err === 'object' && 'response' in err
+        ? (err as { response?: { data?: { message?: string } } }).response?.data?.message
+        : undefined
+      error.value = errorMessage || 'Failed to delete CV'
       throw err
     } finally {
       loading.value = false

@@ -126,7 +126,7 @@ const removeAward = (index: number) => {
   emit('update:awards', [...localAwards.value])
 }
 
-const updateAward = (index: number) => {
+const updateAward = (_index: number) => {
   emit('update:awards', [...localAwards.value])
 }
 </script>
