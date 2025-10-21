@@ -147,7 +147,7 @@ const removeProject = (index: number) => {
   emit('update:projects', [...localProjects.value])
 }
 
-const updateProject = (index: number) => {
+const updateProject = (_index: number) => {
   emit('update:projects', [...localProjects.value])
 }
 

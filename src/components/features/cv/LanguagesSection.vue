@@ -114,7 +114,7 @@ const removeLanguage = (index: number) => {
   emit('update:languages', [...localLanguages.value])
 }
 
-const updateLanguage = (index: number) => {
+const updateLanguage = (_index: number) => {
   emit('update:languages', [...localLanguages.value])
 }
 </script>

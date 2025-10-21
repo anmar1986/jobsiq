@@ -101,7 +101,6 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
 import api from '@/services/api'
 import BaseInput from '@/components/base/BaseInput.vue'
 import BaseButton from '@/components/base/BaseButton.vue'
@@ -119,7 +118,6 @@ interface CvListItem {
   experience: string
 }
 
-const router = useRouter()
 const searchQuery = ref('')
 const cvs = ref<CvListItem[]>([])
 const loading = ref(false)
@@ -131,7 +129,7 @@ const fetchCvs = async () => {
   error.value = ''
   
   try {
-    const params: any = {}
+    const params: Record<string, string> = {}
     
     if (searchQuery.value) {
       params.search = searchQuery.value
@@ -140,7 +138,16 @@ const fetchCvs = async () => {
     const response = await api.get('/cvs', { params })
     
     if (response.data.success) {
-      cvs.value = response.data.data.data.map((cv: any) => ({
+      cvs.value = response.data.data.data.map((cv: {
+        id: number
+        slug: string
+        full_name: string
+        title: string | null
+        city: string | null
+        country: string | null
+        skills: unknown
+        work_experiences: Array<{ start_date: string; end_date?: string; current?: boolean }>
+      }) => ({
         id: cv.id,
         slug: cv.slug,
         full_name: cv.full_name,
@@ -150,8 +157,9 @@ const fetchCvs = async () => {
         experience: calculateExperience(cv.work_experiences || []),
       }))
     }
-  } catch (err: any) {
-    error.value = err.response?.data?.message || 'Failed to load CVs'
+  } catch (err: unknown) {
+    const errorObj = err as { response?: { data?: { message?: string } } }
+    error.value = errorObj.response?.data?.message || 'Failed to load CVs'
     console.error('Error fetching CVs:', err)
   } finally {
     loading.value = false
@@ -159,7 +167,7 @@ const fetchCvs = async () => {
 }
 
 // Calculate total years of experience
-const calculateExperience = (workExperiences: any[]) => {
+const calculateExperience = (workExperiences: Array<{ start_date: string; end_date?: string; current?: boolean }>) => {
   if (!workExperiences.length) return 'No experience listed'
   
   let totalMonths = 0

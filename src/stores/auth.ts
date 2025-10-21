@@ -31,8 +31,11 @@ export const useAuthStore = defineStore('auth', () => {
       }
       
       return response
-    } catch (err: any) {
-      error.value = err.response?.data?.message || 'Login failed'
+    } catch (err: unknown) {
+      const errorMessage = err && typeof err === 'object' && 'response' in err
+        ? (err as { response?: { data?: { message?: string } } }).response?.data?.message
+        : undefined
+      error.value = errorMessage || 'Login failed'
       throw err
     } finally {
       loading.value = false
@@ -53,8 +56,11 @@ export const useAuthStore = defineStore('auth', () => {
       }
       
       return response
-    } catch (err: any) {
-      error.value = err.response?.data?.message || 'Registration failed'
+    } catch (err: unknown) {
+      const errorMessage = err && typeof err === 'object' && 'response' in err
+        ? (err as { response?: { data?: { message?: string } } }).response?.data?.message
+        : undefined
+      error.value = errorMessage || 'Registration failed'
       throw err
     } finally {
       loading.value = false

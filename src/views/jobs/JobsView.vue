@@ -310,12 +310,14 @@
             <!-- Job Description -->
             <div class="prose prose-sm max-w-none mb-8">
               <h2 class="text-xl font-bold text-gray-900 mb-4">Job Description</h2>
+              <!-- eslint-disable-next-line vue/no-v-html -->
               <div v-html="selectedJob.description" class="text-gray-600"></div>
             </div>
 
             <!-- Requirements -->
             <div v-if="selectedJob.requirements" class="prose prose-sm max-w-none mb-8">
               <h2 class="text-xl font-bold text-gray-900 mb-4">Requirements</h2>
+              <!-- eslint-disable-next-line vue/no-v-html -->
               <div v-html="selectedJob.requirements" class="text-gray-600"></div>
             </div>
 

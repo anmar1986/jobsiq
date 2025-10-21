@@ -134,7 +134,7 @@ const removeVolunteerWork = (index: number) => {
   emit('update:volunteer-work', [...localVolunteerWork.value])
 }
 
-const updateVolunteerWork = (index: number) => {
+const updateVolunteerWork = (_index: number) => {
   emit('update:volunteer-work', [...localVolunteerWork.value])
 }
 </script>

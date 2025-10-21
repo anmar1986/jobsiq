@@ -32,8 +32,11 @@ export const useCompanyStore = defineStore('company', () => {
         companies.value = data
         pagination.value = paginationData
       }
-    } catch (err: any) {
-      error.value = err.response?.data?.message || 'Failed to fetch companies'
+    } catch (err: unknown) {
+      const errorMessage = err && typeof err === 'object' && 'response' in err
+        ? (err as { response?: { data?: { message?: string } } }).response?.data?.message
+        : undefined
+      error.value = errorMessage || 'Failed to fetch companies'
       throw err
     } finally {
       loading.value = false
@@ -49,8 +52,11 @@ export const useCompanyStore = defineStore('company', () => {
       if (response.success && response.data) {
         currentCompany.value = response.data
       }
-    } catch (err: any) {
-      error.value = err.response?.data?.message || 'Failed to fetch company'
+    } catch (err: unknown) {
+      const errorMessage = err && typeof err === 'object' && 'response' in err
+        ? (err as { response?: { data?: { message?: string } } }).response?.data?.message
+        : undefined
+      error.value = errorMessage || 'Failed to fetch company'
       throw err
     } finally {
       loading.value = false
@@ -66,8 +72,11 @@ export const useCompanyStore = defineStore('company', () => {
       if (response.success && response.data) {
         myCompanies.value = response.data
       }
-    } catch (err: any) {
-      error.value = err.response?.data?.message || 'Failed to fetch companies'
+    } catch (err: unknown) {
+      const errorMessage = err && typeof err === 'object' && 'response' in err
+        ? (err as { response?: { data?: { message?: string } } }).response?.data?.message
+        : undefined
+      error.value = errorMessage || 'Failed to fetch companies'
       throw err
     } finally {
       loading.value = false

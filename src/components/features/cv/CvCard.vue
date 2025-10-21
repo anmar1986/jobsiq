@@ -17,7 +17,6 @@
     </div>
 
     <div class="p-6 flex flex-col h-full">
-
       <!-- Profile Image & Name Section -->
       <div class="mb-4 flex-shrink-0">
         <div class="flex items-start gap-4 mb-3">

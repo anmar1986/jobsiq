@@ -154,7 +154,6 @@ import { useCvStore } from '@/stores/cv'
 import { useToast } from '@/composables/useToast'
 import BaseButton from '@/components/base/BaseButton.vue'
 import BaseCard from '@/components/base/BaseCard.vue'
-import BaseBadge from '@/components/base/BaseBadge.vue'
 import BaseModal from '@/components/base/BaseModal.vue'
 import CvCard from '@/components/features/cv/CvCard.vue'
 import type { UserCv } from '@/types'
@@ -171,20 +170,6 @@ const selectedCv = ref<UserCv | null>(null)
 const selectedCvIds = ref<number[]>([])
 
 const cvs = ref<UserCv[]>([])
-
-const formatDate = (date: string): string => {
-  const now = new Date()
-  const past = new Date(date)
-  const diffTime = Math.abs(now.getTime() - past.getTime())
-  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
-  
-  if (diffDays === 0) return 'today'
-  if (diffDays === 1) return 'yesterday'
-  if (diffDays < 7) return `${diffDays} days ago`
-  if (diffDays < 30) return `${Math.floor(diffDays / 7)} weeks ago`
-  if (diffDays < 365) return `${Math.floor(diffDays / 30)} months ago`
-  return `${Math.floor(diffDays / 365)} years ago`
-}
 
 const loadCvs = async () => {
   loading.value = true
@@ -252,9 +237,10 @@ const setPrimary = async () => {
     
     toast.success('Primary CV updated successfully!')
     showMenuModal.value = false
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Failed to set primary CV:', error)
-    toast.error(error.response?.data?.message || 'Failed to set primary CV. Please try again.')
+    const err = error as { response?: { data?: { message?: string } } }
+    toast.error(err.response?.data?.message || 'Failed to set primary CV. Please try again.')
   }
 }
 
@@ -277,9 +263,10 @@ const togglePublic = async () => {
       toast.success(`CV is now ${newPublicStatus ? 'public' : 'private'}`)
     }
     showMenuModal.value = false
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Failed to toggle public status:', error)
-    toast.error(error.response?.data?.message || 'Failed to update CV visibility. Please try again.')
+    const err = error as { response?: { data?: { message?: string } } }
+    toast.error(err.response?.data?.message || 'Failed to update CV visibility. Please try again.')
   }
 }
 
@@ -328,9 +315,10 @@ const deleteCv = async () => {
     }
     showDeleteModal.value = false
     selectedCv.value = null
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Failed to delete CV:', error)
-    toast.error(error.response?.data?.message || 'Failed to delete CV. Please try again.')
+    const err = error as { response?: { data?: { message?: string } } }
+    toast.error(err.response?.data?.message || 'Failed to delete CV. Please try again.')
   } finally {
     deleting.value = false
   }

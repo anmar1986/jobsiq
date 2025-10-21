@@ -137,7 +137,7 @@ const removeCertification = (index: number) => {
   emit('update:certifications', [...localCertifications.value])
 }
 
-const updateCertification = (index: number) => {
+const updateCertification = (_index: number) => {
   emit('update:certifications', [...localCertifications.value])
 }
 </script>

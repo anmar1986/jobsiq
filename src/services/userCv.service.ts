@@ -29,7 +29,7 @@ export const userCvService = {
     return response.data
   },
 
-  async createCv(data: any): Promise<ApiResponse<UserCv>> {
+  async createCv(data: Partial<UserCv>): Promise<ApiResponse<UserCv>> {
     const response = await apiClient.post<ApiResponse<UserCv>>('/my-cvs', data)
     return response.data
   },
@@ -42,14 +42,14 @@ export const userCvService = {
     return response.data
   },
 
-  async updateCv(id: number, data: any): Promise<ApiResponse<UserCv>> {
+  async updateCv(id: number, data: Partial<UserCv>): Promise<ApiResponse<UserCv>> {
     // Route is POST, so build a FormData payload and let the browser
     // set the Content-Type (including multipart boundary).
     const formData = new FormData()
 
     // Convert data object to FormData
     Object.keys(data).forEach((key) => {
-      const value = data[key]
+      const value = data[key as keyof typeof data]
       if (value === null || value === undefined) return
 
       // If value is a File (e.g., profile_image), append directly

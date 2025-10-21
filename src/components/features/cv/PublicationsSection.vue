@@ -134,7 +134,7 @@ const removePublication = (index: number) => {
   emit('update:publications', [...localPublications.value])
 }
 
-const updatePublication = (index: number) => {
+const updatePublication = (_index: number) => {
   emit('update:publications', [...localPublications.value])
 }
 </script>
