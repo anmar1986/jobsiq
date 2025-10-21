@@ -35,13 +35,13 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/cvs',
     name: 'cvs',
-    component: () => import('@/views/cvs/CvsView.vue'),
+    component: () => import('@/views/free-cvs/FreeCvsView.vue'),
     meta: { title: 'Browse CVs' },
   },
   {
     path: '/cvs/:slug',
     name: 'cv-detail',
-    component: () => import('@/views/cvs/CvDetailView.vue'),
+    component: () => import('@/views/free-cvs/FreeCvDetailView.vue'),
     meta: { title: 'CV Details' },
   },
   {
