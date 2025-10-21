@@ -162,18 +162,19 @@ class UserCvController extends Controller
             // Log validated data to debug
             Log::info('CV Store - Validated Data', [
                 'has_skills' => isset($data['skills']),
-                'skills' => $data['skills'] ?? 'not set',
-                'skills_type' => isset($data['skills']) ? gettype($data['skills']) : 'N/A',
                 'skills_count' => isset($data['skills']) ? count($data['skills']) : 0,
-                'work_experience' => $data['work_experience'] ?? 'not set',
-                'work_experience_type' => gettype($data['work_experience'] ?? null),
                 'work_experience_count' => isset($data['work_experience']) ? count($data['work_experience']) : 0,
-                'education' => $data['education'] ?? 'not set',
                 'education_count' => isset($data['education']) ? count($data['education']) : 0,
-                'certifications' => $data['certifications'] ?? 'not set',
                 'certifications_count' => isset($data['certifications']) ? count($data['certifications']) : 0,
-                'languages' => $data['languages'] ?? 'not set',
                 'languages_count' => isset($data['languages']) ? count($data['languages']) : 0,
+                'projects_count' => isset($data['projects']) ? count($data['projects']) : 0,
+                'references_count' => isset($data['references']) ? count($data['references']) : 0,
+                'awards_count' => isset($data['awards']) ? count($data['awards']) : 0,
+                'publications_count' => isset($data['publications']) ? count($data['publications']) : 0,
+                'volunteer_work_count' => isset($data['volunteer_work']) ? count($data['volunteer_work']) : 0,
+                'hobbies_count' => isset($data['hobbies']) ? count($data['hobbies']) : 0,
+                'has_objective' => isset($data['objective']),
+                'has_postal_code' => isset($data['postal_code']),
                 'all_data_keys' => array_keys($data),
             ]);
 
@@ -214,6 +215,12 @@ class UserCvController extends Controller
                 'certifications_count' => count($cv->certifications ?? []),
                 'languages_count' => count($cv->languages ?? []),
                 'skills_count' => count($cv->skills ?? []),
+                'projects_count' => count($cv->projects ?? []),
+                'references_count' => count($cv->references ?? []),
+                'awards_count' => count($cv->awards ?? []),
+                'publications_count' => count($cv->publications ?? []),
+                'volunteer_work_count' => count($cv->volunteer_work ?? []),
+                'hobbies_count' => count($cv->hobbies ?? []),
             ]);
 
             // Handle profile image upload
@@ -289,19 +296,17 @@ class UserCvController extends Controller
         // Add detailed debugging
         Log::info('CV Update Debug', [
             'cv_id' => $cv->id,
-            'before_update' => $cv->toArray(),
-            'validated_data' => $data,
             'validated_data_keys' => array_keys($data),
-            'work_experience_in_validated' => isset($data['work_experience']),
-            'work_experience_value' => $data['work_experience'] ?? 'not set',
             'work_experience_count' => isset($data['work_experience']) ? count($data['work_experience']) : 0,
-            'education_in_validated' => isset($data['education']),
             'education_count' => isset($data['education']) ? count($data['education']) : 0,
-            'certifications_in_validated' => isset($data['certifications']),
             'certifications_count' => isset($data['certifications']) ? count($data['certifications']) : 0,
-            'languages_in_validated' => isset($data['languages']),
             'languages_count' => isset($data['languages']) ? count($data['languages']) : 0,
-            'request_all' => $request->all(),
+            'projects_count' => isset($data['projects']) ? count($data['projects']) : 0,
+            'references_count' => isset($data['references']) ? count($data['references']) : 0,
+            'awards_count' => isset($data['awards']) ? count($data['awards']) : 0,
+            'publications_count' => isset($data['publications']) ? count($data['publications']) : 0,
+            'volunteer_work_count' => isset($data['volunteer_work']) ? count($data['volunteer_work']) : 0,
+            'hobbies_count' => isset($data['hobbies']) ? count($data['hobbies']) : 0,
         ]);
 
         // If is_primary is true, unset other primary CVs

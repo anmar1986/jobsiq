@@ -63,6 +63,13 @@
         placeholder="United States"
         @update:model-value="updateField('country', $event)"
       />
+      
+      <BaseInput
+        v-model="localInfo.postal_code"
+        label="Postal Code"
+        placeholder="10001"
+        @update:model-value="updateField('postal_code', $event)"
+      />
     </div>
   </div>
 </template>
@@ -79,6 +86,7 @@ interface PersonalInfo {
   address: string
   city: string
   country: string
+  postal_code: string
 }
 
 interface Props {

@@ -30,6 +30,7 @@ class UpdateCvRequest extends FormRequest
             'address' => ['nullable', 'string', 'max:500'],
             'city' => ['nullable', 'string', 'max:255'],
             'country' => ['nullable', 'string', 'max:255'],
+            'postal_code' => ['nullable', 'string', 'max:20'],
 
             // Profile Image - explicitly define MIME types
             'profile_image' => [
@@ -41,6 +42,7 @@ class UpdateCvRequest extends FormRequest
 
             // Professional Summary
             'summary' => ['nullable', 'string', 'max:5000'],
+            'objective' => ['nullable', 'string', 'max:2000'],
 
             // Skills
             'skills' => ['nullable', 'array'],
@@ -59,7 +61,7 @@ class UpdateCvRequest extends FormRequest
             // Education
             'education' => ['nullable', 'array'],
             'education.*.degree' => ['required', 'string', 'max:255'],
-            'education.*.field_of_study' => ['required', 'string', 'max:255'],
+            'education.*.field' => ['required', 'string', 'max:255'],
             'education.*.institution' => ['required', 'string', 'max:255'],
             'education.*.location' => ['nullable', 'string', 'max:255'],
             'education.*.start_date' => ['required', 'date'],
@@ -71,20 +73,66 @@ class UpdateCvRequest extends FormRequest
             'certifications' => ['nullable', 'array'],
             'certifications.*.name' => ['required', 'string', 'max:255'],
             'certifications.*.issuer' => ['required', 'string', 'max:255'],
-            'certifications.*.issue_date' => ['required', 'date'],
-            'certifications.*.expiry_date' => ['nullable', 'date', 'after_or_equal:certifications.*.issue_date'],
+            'certifications.*.date' => ['required', 'date'],
+            'certifications.*.expiry_date' => ['nullable', 'date', 'after_or_equal:certifications.*.date'],
             'certifications.*.credential_id' => ['nullable', 'string', 'max:255'],
-            'certifications.*.credential_url' => ['nullable', 'url', 'max:500'],
+            'certifications.*.url' => ['nullable', 'url', 'max:500'],
 
             // Languages
             'languages' => ['nullable', 'array'],
             'languages.*.language' => ['required', 'string', 'max:100'],
             'languages.*.proficiency' => ['required', 'string', 'in:basic,conversational,fluent,native'],
 
+            // Projects
+            'projects' => ['nullable', 'array'],
+            'projects.*.title' => ['required', 'string', 'max:255'],
+            'projects.*.description' => ['required', 'string', 'max:2000'],
+            'projects.*.technologies' => ['nullable', 'array'],
+            'projects.*.technologies.*' => ['string', 'max:100'],
+            'projects.*.url' => ['nullable', 'url', 'max:500'],
+            'projects.*.start_date' => ['nullable', 'date'],
+            'projects.*.end_date' => ['nullable', 'date', 'after_or_equal:projects.*.start_date'],
+
+            // References
+            'references' => ['nullable', 'array'],
+            'references.*.name' => ['required', 'string', 'max:255'],
+            'references.*.position' => ['required', 'string', 'max:255'],
+            'references.*.company' => ['required', 'string', 'max:255'],
+            'references.*.email' => ['nullable', 'email', 'max:255'],
+            'references.*.phone' => ['nullable', 'string', 'max:50'],
+            'references.*.relationship' => ['required', 'string', 'max:255'],
+
+            // Awards
+            'awards' => ['nullable', 'array'],
+            'awards.*.title' => ['required', 'string', 'max:255'],
+            'awards.*.issuer' => ['required', 'string', 'max:255'],
+            'awards.*.date' => ['required', 'date'],
+            'awards.*.description' => ['nullable', 'string', 'max:1000'],
+
+            // Publications
+            'publications' => ['nullable', 'array'],
+            'publications.*.title' => ['required', 'string', 'max:255'],
+            'publications.*.publisher' => ['required', 'string', 'max:255'],
+            'publications.*.date' => ['required', 'date'],
+            'publications.*.url' => ['nullable', 'url', 'max:500'],
+            'publications.*.description' => ['nullable', 'string', 'max:1000'],
+
+            // Volunteer Work
+            'volunteer_work' => ['nullable', 'array'],
+            'volunteer_work.*.organization' => ['required', 'string', 'max:255'],
+            'volunteer_work.*.role' => ['required', 'string', 'max:255'],
+            'volunteer_work.*.start_date' => ['required', 'date'],
+            'volunteer_work.*.end_date' => ['nullable', 'date', 'after_or_equal:volunteer_work.*.start_date'],
+            'volunteer_work.*.description' => ['nullable', 'string', 'max:2000'],
+
+            // Hobbies
+            'hobbies' => ['nullable', 'array'],
+            'hobbies.*' => ['string', 'max:100'],
+
             // Social Links
             'website' => ['nullable', 'url', 'max:500'],
-            'linkedin_url' => ['nullable', 'url', 'max:500'],
-            'github_url' => ['nullable', 'url', 'max:500'],
+            'linkedin' => ['nullable', 'url', 'max:500'],
+            'github' => ['nullable', 'url', 'max:500'],
 
             // Settings
             'is_public' => ['boolean'],
@@ -108,14 +156,14 @@ class UpdateCvRequest extends FormRequest
             'work_experience.*.end_date.after_or_equal' => 'End date must be after or equal to start date',
 
             'education.*.degree.required' => 'Degree is required for education',
-            'education.*.field_of_study.required' => 'Field of study is required for education',
+            'education.*.field.required' => 'Field of study is required for education',
             'education.*.institution.required' => 'Institution is required for education',
             'education.*.start_date.required' => 'Start date is required for education',
             'education.*.end_date.after_or_equal' => 'End date must be after or equal to start date',
 
             'certifications.*.name.required' => 'Certification name is required',
             'certifications.*.issuer.required' => 'Issuer is required for certification',
-            'certifications.*.issue_date.required' => 'Issue date is required for certification',
+            'certifications.*.date.required' => 'Issue date is required for certification',
             'certifications.*.expiry_date.after_or_equal' => 'Expiry date must be after or equal to issue date',
 
             'languages.*.language.required' => 'Language name is required',
@@ -143,7 +191,7 @@ class UpdateCvRequest extends FormRequest
         }
 
         // Parse JSON strings if they come as strings (from FormData)
-        $jsonFields = ['skills', 'work_experience', 'education', 'certifications', 'languages'];
+        $jsonFields = ['skills', 'work_experience', 'education', 'certifications', 'languages', 'projects', 'references', 'awards', 'publications', 'volunteer_work', 'hobbies'];
 
         foreach ($jsonFields as $field) {
             if ($this->has($field)) {
@@ -189,16 +237,17 @@ class UpdateCvRequest extends FormRequest
         }
 
         // Clean up arrays - remove empty arrays and filter out incomplete entries
-        // Skip 'skills' since it's already been processed above
-        $fieldsToClean = array_diff($jsonFields, ['skills']);
+        // Skip 'skills' and 'hobbies' since they're simple arrays, not arrays of objects
+        $fieldsToClean = array_diff($jsonFields, ['skills', 'hobbies']);
 
         foreach ($fieldsToClean as $field) {
             if ($this->has($field) && is_array($this->input($field))) {
                 $fieldValue = $this->input($field);
 
-                // If array is empty, remove it
+                // If array is empty, set it to empty array (don't remove it)
+                // This ensures the database field gets updated even if empty
                 if (empty($fieldValue)) {
-                    $this->offsetUnset($field);
+                    $this->merge([$field => []]);
 
                     continue;
                 }
@@ -214,19 +263,30 @@ class UpdateCvRequest extends FormRequest
                         case 'work_experience':
                             return ! empty($item['position']) && ! empty($item['company']) && ! empty($item['start_date']);
                         case 'education':
-                            return ! empty($item['degree']) && ! empty($item['field_of_study']) && ! empty($item['institution']) && ! empty($item['start_date']);
+                            return ! empty($item['degree']) && ! empty($item['field']) && ! empty($item['institution']) && ! empty($item['start_date']);
                         case 'certifications':
-                            return ! empty($item['name']) && ! empty($item['issuer']) && ! empty($item['issue_date']);
+                            return ! empty($item['name']) && ! empty($item['issuer']) && ! empty($item['date']);
                         case 'languages':
                             return ! empty($item['language']) && ! empty($item['proficiency']);
+                        case 'projects':
+                            return ! empty($item['title']) && ! empty($item['description']);
+                        case 'references':
+                            return ! empty($item['name']) && ! empty($item['position']) && ! empty($item['company']) && ! empty($item['relationship']);
+                        case 'awards':
+                            return ! empty($item['title']) && ! empty($item['issuer']) && ! empty($item['date']);
+                        case 'publications':
+                            return ! empty($item['title']) && ! empty($item['publisher']) && ! empty($item['date']);
+                        case 'volunteer_work':
+                            return ! empty($item['organization']) && ! empty($item['role']) && ! empty($item['start_date']);
                         default:
                             return true;
                     }
                 }));
 
-                // If after filtering the array is empty, remove the field
+                // If after filtering the array is empty, set it to empty array
+                // Don't remove it so the database field gets updated
                 if (empty($cleaned)) {
-                    $this->offsetUnset($field);
+                    $this->merge([$field => []]);
                 } else {
                     $this->merge([$field => $cleaned]);
                 }

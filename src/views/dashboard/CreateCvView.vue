@@ -32,7 +32,9 @@
         <!-- Professional Summary -->
         <ProfessionalSummarySection 
           :summary="cvForm.summary"
+          :objective="cvForm.objective"
           @update:summary="cvForm.summary = $event"
+          @update:objective="cvForm.objective = $event"
         />
 
         <!-- Skills -->
@@ -63,6 +65,42 @@
         <LanguagesSection 
           :languages="cvForm.languages"
           @update:languages="cvForm.languages = $event"
+        />
+
+        <!-- Projects -->
+        <ProjectsSection 
+          :projects="cvForm.projects"
+          @update:projects="cvForm.projects = $event"
+        />
+
+        <!-- Volunteer Work -->
+        <VolunteerWorkSection 
+          :volunteer-work="cvForm.volunteer_work"
+          @update:volunteer-work="cvForm.volunteer_work = $event"
+        />
+
+        <!-- Awards -->
+        <AwardsSection 
+          :awards="cvForm.awards"
+          @update:awards="cvForm.awards = $event"
+        />
+
+        <!-- Publications -->
+        <PublicationsSection 
+          :publications="cvForm.publications"
+          @update:publications="cvForm.publications = $event"
+        />
+
+        <!-- References -->
+        <ReferencesSection 
+          :references="cvForm.references"
+          @update:references="cvForm.references = $event"
+        />
+
+        <!-- Hobbies -->
+        <HobbiesSection 
+          :hobbies="cvForm.hobbies"
+          @update:hobbies="cvForm.hobbies = $event"
         />
 
         <!-- Social Links -->
@@ -109,6 +147,12 @@ import CertificationsSection from '@/components/features/cv/CertificationsSectio
 import LanguagesSection from '@/components/features/cv/LanguagesSection.vue'
 import SocialLinksSection from '@/components/features/cv/SocialLinksSection.vue'
 import CvSettingsSection from '@/components/features/cv/CvSettingsSection.vue'
+import ProjectsSection from '@/components/features/cv/ProjectsSection.vue'
+import ReferencesSection from '@/components/features/cv/ReferencesSection.vue'
+import AwardsSection from '@/components/features/cv/AwardsSection.vue'
+import PublicationsSection from '@/components/features/cv/PublicationsSection.vue'
+import VolunteerWorkSection from '@/components/features/cv/VolunteerWorkSection.vue'
+import HobbiesSection from '@/components/features/cv/HobbiesSection.vue'
 
 const router = useRouter()
 const route = useRoute()
@@ -128,6 +172,8 @@ const cvForm = ref({
   phone: '',
   title: '',
   summary: '',
+  objective: '',
+  postal_code: '',
   skills: [] as string[],
   website: '',
   linkedin: '',
@@ -141,6 +187,12 @@ const cvForm = ref({
   education: [] as any[],
   certifications: [] as any[],
   languages: [] as any[],
+  projects: [] as any[],
+  references: [] as any[],
+  awards: [] as any[],
+  publications: [] as any[],
+  volunteer_work: [] as any[],
+  hobbies: [] as string[],
 })
 
 // Computed properties for component props
@@ -152,6 +204,7 @@ const personalInfo = computed(() => ({
   address: cvForm.value.address,
   city: cvForm.value.city,
   country: cvForm.value.country,
+  postal_code: cvForm.value.postal_code,
 }))
 
 const socialLinks = computed(() => ({
@@ -174,6 +227,7 @@ const updatePersonalInfo = (info: typeof personalInfo.value) => {
   cvForm.value.address = info.address
   cvForm.value.city = info.city
   cvForm.value.country = info.country
+  cvForm.value.postal_code = info.postal_code
 }
 
 const updateSocialLinks = (links: typeof socialLinks.value) => {
@@ -223,8 +277,10 @@ const saveCv = async () => {
     if (cvForm.value.address) formData.append('address', cvForm.value.address)
     if (cvForm.value.city) formData.append('city', cvForm.value.city)
     if (cvForm.value.country) formData.append('country', cvForm.value.country)
+    if (cvForm.value.postal_code) formData.append('postal_code', cvForm.value.postal_code)
     if (cvForm.value.title) formData.append('title', cvForm.value.title)
     if (cvForm.value.summary) formData.append('summary', cvForm.value.summary)
+    if (cvForm.value.objective) formData.append('objective', cvForm.value.objective)
     
     // Add skills as JSON
     formData.append('skills', JSON.stringify(skillObjects))
@@ -240,6 +296,24 @@ const saveCv = async () => {
     
     // Add languages as JSON
     formData.append('languages', JSON.stringify(cvForm.value.languages))
+    
+    // Add projects as JSON (always send, even if empty)
+    formData.append('projects', JSON.stringify(cvForm.value.projects))
+    
+    // Add references as JSON (always send, even if empty)
+    formData.append('references', JSON.stringify(cvForm.value.references))
+    
+    // Add awards as JSON (always send, even if empty)
+    formData.append('awards', JSON.stringify(cvForm.value.awards))
+    
+    // Add publications as JSON (always send, even if empty)
+    formData.append('publications', JSON.stringify(cvForm.value.publications))
+    
+    // Add volunteer work as JSON (always send, even if empty)
+    formData.append('volunteer_work', JSON.stringify(cvForm.value.volunteer_work))
+    
+    // Add hobbies as JSON (always send, even if empty)
+    formData.append('hobbies', JSON.stringify(cvForm.value.hobbies))
     
     // Add boolean fields
     formData.append('is_public', cvForm.value.is_public ? '1' : '0')
@@ -315,6 +389,8 @@ const loadCvForEditing = async () => {
       if (cv) {
         // Convert Skill objects to strings for the simple form
         const skillStrings = cv.skills?.map(s => typeof s === 'string' ? s : s.name) || []
+        // Convert hobbies if they exist
+        const hobbiesArray = Array.isArray(cv.hobbies) ? cv.hobbies : []
         
         cvForm.value = {
           full_name: cv.full_name,
@@ -322,6 +398,8 @@ const loadCvForEditing = async () => {
           phone: cv.phone || '',
           title: cv.title || '',
           summary: cv.summary || '',
+          objective: cv.objective || '',
+          postal_code: cv.postal_code || '',
           skills: skillStrings,
           website: cv.website || '',
           linkedin: cv.linkedin || '',
@@ -335,6 +413,12 @@ const loadCvForEditing = async () => {
           education: cv.education || [],
           certifications: cv.certifications || [],
           languages: cv.languages || [],
+          projects: cv.projects || [],
+          references: cv.references || [],
+          awards: cv.awards || [],
+          publications: cv.publications || [],
+          volunteer_work: cv.volunteer_work || [],
+          hobbies: hobbiesArray,
         }
         
         // Load profile image if exists
