@@ -75,8 +75,6 @@
               </div>
             </div>
             
-            <p class="text-gray-600 text-sm mb-4 line-clamp-3">{{ cv.summary }}</p>
-            
             <div class="flex flex-wrap gap-2 mb-4">
               <BaseBadge
                 v-for="skill in cv.top_skills.slice(0, 4)"
@@ -117,7 +115,6 @@ interface CvListItem {
   full_name: string
   title: string
   location: string
-  summary: string
   top_skills: string[]
   experience: string
 }
@@ -149,7 +146,6 @@ const fetchCvs = async () => {
         full_name: cv.full_name,
         title: cv.title,
         location: [cv.city, cv.country].filter(Boolean).join(', ') || 'Not specified',
-        summary: cv.summary || cv.objective || 'No summary available',
         top_skills: Array.isArray(cv.skills) ? cv.skills : [],
         experience: calculateExperience(cv.work_experiences || []),
       }))

@@ -69,13 +69,6 @@
         </div>
       </div>
 
-      <!-- Summary Preview -->
-      <div class="flex-1 min-h-0 mb-4">
-        <p v-if="cv.summary" class="text-sm text-gray-600 line-clamp-3">
-          {{ cv.summary }}
-        </p>
-      </div>
-
       <!-- Skills Preview -->
       <div class="flex-shrink-0 mb-4 h-14 overflow-hidden">
         <div v-if="displaySkills.length > 0" class="flex flex-wrap gap-2">

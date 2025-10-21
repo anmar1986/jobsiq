@@ -26,8 +26,7 @@ class UserCvController extends Controller
             $search = $request->search;
             $query->where(function ($q) use ($search) {
                 $q->where('full_name', 'like', "%{$search}%")
-                    ->orWhere('title', 'like', "%{$search}%")
-                    ->orWhere('summary', 'like', "%{$search}%");
+                    ->orWhere('title', 'like', "%{$search}%");
             });
         }
 
@@ -173,7 +172,6 @@ class UserCvController extends Controller
                 'publications_count' => isset($data['publications']) ? count($data['publications']) : 0,
                 'volunteer_work_count' => isset($data['volunteer_work']) ? count($data['volunteer_work']) : 0,
                 'hobbies_count' => isset($data['hobbies']) ? count($data['hobbies']) : 0,
-                'has_objective' => isset($data['objective']),
                 'has_postal_code' => isset($data['postal_code']),
                 'all_data_keys' => array_keys($data),
             ]);

@@ -40,10 +40,6 @@ class UpdateCvRequest extends FormRequest
                 'max:2048', // 2MB in kilobytes
             ],
 
-            // Professional Summary
-            'summary' => ['nullable', 'string', 'max:5000'],
-            'objective' => ['nullable', 'string', 'max:2000'],
-
             // Skills
             'skills' => ['nullable', 'array'],
             'skills.*' => ['string', 'max:100'],

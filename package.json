@@ -10,7 +10,9 @@
     "preview": "vite preview",
     "type-check": "vue-tsc --noEmit",
     "lint": "eslint .",
-    "lint:fix": "eslint . --fix"
+    "lint:fix": "eslint . --fix",
+    "test": "npm run type-check && npm run lint",
+    "test:quick": "vue-tsc --noEmit --skipLibCheck"
   },
   "dependencies": {
     "@headlessui/vue": "^1.7.22",

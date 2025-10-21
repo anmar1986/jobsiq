@@ -18,7 +18,7 @@
       
       <BaseInput
         v-model="localInfo.title"
-        label="Professional Title"
+        label="Job Title"
         placeholder="e.g., Senior Software Engineer"
         required
         @update:model-value="updateField('title', $event)"
