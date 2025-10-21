@@ -237,25 +237,49 @@ const showCvMenu = (cv: UserCv) => {
 }
 
 const setPrimary = async () => {
+  if (!selectedCv.value) return
+  
   try {
+    // Update the selected CV to be primary
+    await cvStore.updateCv(selectedCv.value.id, {
+      is_primary: true
+    })
+    
+    // Update local state
     cvs.value.forEach(cv => {
       cv.is_primary = cv.id === selectedCv.value?.id
     })
+    
+    toast.success('Primary CV updated successfully!')
     showMenuModal.value = false
-  } catch (error) {
+  } catch (error: any) {
     console.error('Failed to set primary CV:', error)
+    toast.error(error.response?.data?.message || 'Failed to set primary CV. Please try again.')
   }
 }
 
 const togglePublic = async () => {
+  if (!selectedCv.value) return
+  
   try {
     const cv = cvs.value.find(c => c.id === selectedCv.value?.id)
     if (cv) {
-      cv.is_public = !cv.is_public
+      const newPublicStatus = !cv.is_public
+      
+      // Update in database
+      await cvStore.updateCv(cv.id, {
+        is_public: newPublicStatus
+      })
+      
+      // Update local state
+      cv.is_public = newPublicStatus
+      
+      toast.success(`CV is now ${newPublicStatus ? 'public' : 'private'}`)
     }
     showMenuModal.value = false
-  } catch (error) {
+  } catch (error: any) {
     console.error('Failed to toggle public status:', error)
+    toast.error(error.response?.data?.message || 'Failed to update CV visibility. Please try again.')
   }
 }
 
