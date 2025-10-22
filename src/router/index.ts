@@ -27,8 +27,14 @@ const routes: RouteRecordRaw[] = [
     meta: { title: 'Browse Companies' },
   },
   {
-    path: '/companies/:slug',
+    path: '/companies/view/:id',
     name: 'company-detail',
+    component: () => import('@/views/companies/CompanyDetailView.vue'),
+    meta: { title: 'Company Details' },
+  },
+  {
+    path: '/companies/:slug',
+    name: 'company-detail-slug',
     component: () => import('@/views/companies/CompanyDetailView.vue'),
     meta: { title: 'Company Details' },
   },
@@ -71,8 +77,50 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/my-companies',
     name: 'my-companies',
-    component: () => import('@/views/dashboard/MyCompaniesView.vue'),
+    component: () => import('@/views/companies/MyCompaniesView.vue'),
     meta: { title: 'My Companies', requiresAuth: true },
+  },
+  {
+    path: '/my-companies/:id',
+    name: 'view-my-company',
+    component: () => import('@/views/companies/ViewMyCompanyView.vue'),
+    meta: { title: 'View Company', requiresAuth: true },
+  },
+  {
+    path: '/my-companies/:companyId/jobs/:jobId/view',
+    name: 'view-company-job',
+    component: () => import('@/views/companies/ViewCompanyJobView.vue'),
+    meta: { title: 'View Job', requiresAuth: true },
+  },
+  {
+    path: '/my-companies/:companyId/jobs/:jobId/edit',
+    name: 'edit-company-job',
+    component: () => import('@/views/companies/EditCompanyJobView.vue'),
+    meta: { title: 'Edit Job', requiresAuth: true },
+  },
+  {
+    path: '/companies/create',
+    name: 'create-company',
+    component: () => import('@/views/companies/CreateCompanyView.vue'),
+    meta: { title: 'Create Company', requiresAuth: true },
+  },
+  {
+    path: '/companies/:id/edit',
+    name: 'edit-company',
+    component: () => import('@/views/companies/EditCompanyView.vue'),
+    meta: { title: 'Edit Company', requiresAuth: true },
+  },
+  {
+    path: '/post-job',
+    name: 'post-job',
+    component: () => import('@/views/jobs/PostJobView.vue'),
+    meta: { title: 'Post a Job', requiresAuth: true },
+  },
+  {
+    path: '/jobs/:id/edit',
+    name: 'edit-job',
+    component: () => import('@/views/jobs/EditJobView.vue'),
+    meta: { title: 'Edit Job', requiresAuth: true },
   },
   {
     path: '/my-cvs',

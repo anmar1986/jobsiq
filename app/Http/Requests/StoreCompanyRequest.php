@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Log;
 
 class StoreCompanyRequest extends FormRequest
 {
@@ -21,6 +22,25 @@ class StoreCompanyRequest extends FormRequest
      */
     public function rules(): array
     {
+        // Log file info for debugging
+        if ($this->hasFile('logo')) {
+            $file = $this->file('logo');
+            Log::info('Logo file received', [
+                'name' => $file->getClientOriginalName(),
+                'size' => $file->getSize(),
+                'mime' => $file->getMimeType(),
+                'extension' => $file->getClientOriginalExtension(),
+                'is_valid' => $file->isValid(),
+                'error' => $file->getError(),
+                'error_message' => $file->getErrorMessage(),
+            ]);
+        } else {
+            Log::info('No logo file in request', [
+                'has_file' => $this->hasFile('logo'),
+                'all_files' => array_keys($this->allFiles()),
+            ]);
+        }
+
         return [
             // Basic Information
             'name' => ['required', 'string', 'max:255', 'unique:companies,name'],
@@ -107,5 +127,18 @@ class StoreCompanyRequest extends FormRequest
             'logo.image' => 'Logo must be an image file',
             'logo.max' => 'Logo size must not exceed 2MB',
         ];
+    }
+
+    /**
+     * Handle a failed validation attempt.
+     */
+    protected function failedValidation(\Illuminate\Contracts\Validation\Validator $validator)
+    {
+        Log::error('Company validation failed', [
+            'errors' => $validator->errors()->toArray(),
+            'input' => $this->except(['logo']),
+        ]);
+
+        parent::failedValidation($validator);
     }
 }

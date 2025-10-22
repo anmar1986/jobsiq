@@ -403,8 +403,9 @@ const copyCompanyLink = async () => {
 const fetchCompanyDetail = async () => {
   loading.value = true
   try {
-    const slug = route.params.slug as string
-    await companyStore.fetchCompany(slug)
+    // Handle both ID and slug
+    const identifier = (route.params.id || route.params.slug) as string
+    await companyStore.fetchCompany(identifier)
     company.value = companyStore.currentCompany
   } catch (error) {
     console.error('Failed to fetch company:', error)
