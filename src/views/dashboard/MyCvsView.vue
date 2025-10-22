@@ -14,9 +14,11 @@
           :disabled="cvs.length >= 6"
           :class="{ 'opacity-50 cursor-not-allowed': cvs.length >= 6 }"
         >
-          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-          </svg>
+          <template #icon-left>
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+            </svg>
+          </template>
           Create New CV
         </BaseButton>
         <p v-if="cvs.length >= 6" class="text-sm text-red-600 mt-2">Maximum CV limit reached (6/6)</p>
