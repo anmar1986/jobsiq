@@ -45,11 +45,14 @@ export interface Job {
   responsibilities: string | null
   benefits: string | null
   location: string
+  city?: string | null
+  country?: string | null
   employment_type: 'full-time' | 'part-time' | 'contract' | 'freelance' | 'internship'
-  experience_level: 'entry' | 'mid' | 'senior' | 'lead' | 'executive'
+  experience_level: 'entry' | 'junior' | 'mid' | 'senior' | 'lead' | 'executive'
   salary_min: number | null
   salary_max: number | null
   salary_currency: string
+  salary_period?: 'hourly' | 'monthly' | 'yearly' | null
   is_remote: boolean
   is_featured: boolean
   is_active: boolean
@@ -69,20 +72,59 @@ export interface Company {
   id: number
   name: string
   slug: string
+  legal_name?: string | null
   description: string | null
+  tagline?: string | null
   website: string | null
   email: string | null
   phone: string | null
+  fax?: string | null
   address: string | null
+  street?: string | null
+  street_2?: string | null
   city: string | null
   state: string | null
   country: string | null
   postal_code: string | null
+  latitude?: number | null
+  longitude?: number | null
+  industry?: string | null
+  company_size?: string | null
+  company_type?: string | null
+  founded_date?: string | null
+  registration_number?: string | null
+  tax_id?: string | null
+  linkedin?: string | null
+  twitter?: string | null
+  facebook?: string | null
+  instagram?: string | null
+  youtube?: string | null
+  github?: string | null
+  benefits?: string[] | null
+  values?: string[] | null
+  perks?: string[] | null
+  culture_description?: string | null
+  is_verified?: boolean
+  is_featured?: boolean
+  is_active: boolean
+  is_hiring?: boolean
+  meta_title?: string | null
+  meta_description?: string | null
+  keywords?: string[] | null
+  total_employees?: number | null
+  active_jobs_count?: number | null
+  total_jobs_posted?: number | null
+  profile_views?: number | null
+  timezone?: string | null
+  languages?: string[] | null
+  locations?: string[] | null
+  why_work_here?: string | null
+  funding_amount?: number | null
+  funding_currency?: string | null
   logo?: CompanyImage | null
   images?: CompanyImage[]
   jobs?: Job[]
   jobs_count?: number
-  is_active: boolean
   created_at: string
   updated_at: string
 }

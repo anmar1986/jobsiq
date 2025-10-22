@@ -9,6 +9,7 @@ use App\Models\Company;
 use App\Models\CompanyImage;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 class CompanyController extends Controller
@@ -50,28 +51,60 @@ class CompanyController extends Controller
      */
     public function store(StoreCompanyRequest $request): JsonResponse
     {
-        $validated = $request->validated();
+        try {
+            Log::info('Company creation started', [
+                'user_id' => $request->user()->id,
+                'has_logo' => $request->hasFile('logo'),
+                'all_data' => $request->except(['logo']),
+            ]);
 
-        // Create company
-        $company = Company::create($validated);
+            $validated = $request->validated();
 
-        // Attach user as primary owner
-        $company->owners()->attach($request->user()->id, [
-            'is_primary' => true,
-        ]);
+            Log::info('Validation passed', ['validated_keys' => array_keys($validated)]);
 
-        // Handle logo upload
-        if ($request->hasFile('logo')) {
-            $this->uploadLogo($company, $request->file('logo'));
+            // Ensure is_active is set to true for new companies
+            $validated['is_active'] = true;
+
+            // Create company
+            $company = Company::create($validated);
+
+            Log::info('Company created', ['company_id' => $company->id]);
+
+            // Attach user as primary owner
+            $company->owners()->attach($request->user()->id, [
+                'is_primary' => true,
+            ]);
+
+            Log::info('Owner attached');
+
+            // Handle logo upload
+            if ($request->hasFile('logo')) {
+                Log::info('Processing logo upload');
+                $this->uploadLogo($company, $request->file('logo'));
+                Log::info('Logo uploaded successfully');
+            }
+
+            $company->load(['logo', 'owners']);
+
+            Log::info('Company creation completed successfully');
+
+            return response()->json([
+                'success' => true,
+                'data' => $company,
+                'message' => 'Company created successfully',
+            ], 201);
+        } catch (\Exception $e) {
+            Log::error('Company creation failed: '.$e->getMessage(), [
+                'trace' => $e->getTraceAsString(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to create company: '.$e->getMessage(),
+            ], 500);
         }
-
-        $company->load(['logo', 'owners']);
-
-        return response()->json([
-            'success' => true,
-            'data' => $company,
-            'message' => 'Company created successfully',
-        ], 201);
     }
 
     /**
@@ -229,12 +262,23 @@ class CompanyController extends Controller
      */
     protected function uploadLogo(Company $company, $file): CompanyImage
     {
-        $path = $file->store('companies/logos', 'public');
+        try {
+            // Store the file
+            $path = $file->store('companies/logos', 'public');
 
-        return $company->images()->create([
-            'path' => $path,
-            'type' => 'logo',
-            'is_primary' => true,
-        ]);
+            if (! $path) {
+                throw new \Exception('Failed to store logo file');
+            }
+
+            // Create the image record
+            return $company->images()->create([
+                'path' => $path,
+                'type' => 'logo',
+                'is_primary' => true,
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Logo upload failed: '.$e->getMessage());
+            throw $e;
+        }
     }
 }

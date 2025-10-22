@@ -10,8 +10,14 @@ $tempDir = __DIR__.'/../storage/tmp';
 if (! is_dir($tempDir)) {
     mkdir($tempDir, 0777, true);
 }
-ini_set('upload_tmp_dir', $tempDir);
-ini_set('sys_temp_dir', $tempDir);
+// Convert to absolute path and use Windows-style path separators
+$absoluteTempDir = realpath($tempDir);
+if ($absoluteTempDir === false) {
+    // If realpath fails, try to create and get the path
+    $absoluteTempDir = str_replace('/', DIRECTORY_SEPARATOR, $tempDir);
+}
+ini_set('upload_tmp_dir', $absoluteTempDir);
+ini_set('sys_temp_dir', $absoluteTempDir);
 
 // Determine if the application is in maintenance mode...
 if (file_exists($maintenance = __DIR__.'/../storage/framework/maintenance.php')) {
