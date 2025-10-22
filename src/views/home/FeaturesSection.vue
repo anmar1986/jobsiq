@@ -1,0 +1,59 @@
+<template>
+  <section class="py-16 md:py-24 bg-white">
+    <div class="container-custom">
+      <div class="text-center mb-16">
+        <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Why Choose JobsIQ?</h2>
+        <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+          We provide the best platform for job seekers and employers
+        </p>
+      </div>
+
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div v-for="feature in features" :key="feature.title" class="text-center md:text-left">
+          <div class="w-14 h-14 bg-primary-100 rounded-lg flex items-center justify-center mb-4 mx-auto md:mx-0">
+            <component :is="feature.icon" class="h-7 w-7 text-primary-600" />
+          </div>
+          <h3 class="text-xl font-semibold text-gray-900 mb-3">{{ feature.title }}</h3>
+          <p class="text-gray-600">{{ feature.description }}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</template>
+
+<script setup lang="ts">
+import { h } from 'vue'
+
+const features = [
+  {
+    title: 'Easy Job Search',
+    description: 'Find jobs that match your skills with our powerful search and filter system',
+    icon: () => h('svg', { fill: 'none', stroke: 'currentColor', viewBox: '0 0 24 24' }, [h('path', { 'stroke-linecap': 'round', 'stroke-linejoin': 'round', 'stroke-width': '2', d: 'M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z' })]),
+  },
+  {
+    title: 'Verified Companies',
+    description: 'All companies are verified to ensure you\'re applying to legitimate opportunities',
+    icon: () => h('svg', { fill: 'none', stroke: 'currentColor', viewBox: '0 0 24 24' }, [h('path', { 'stroke-linecap': 'round', 'stroke-linejoin': 'round', 'stroke-width': '2', d: 'M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z' })]),
+  },
+  {
+    title: 'Quick Apply',
+    description: 'Apply to multiple jobs with one click using your saved profile and CV',
+    icon: () => h('svg', { fill: 'none', stroke: 'currentColor', viewBox: '0 0 24 24' }, [h('path', { 'stroke-linecap': 'round', 'stroke-linejoin': 'round', 'stroke-width': '2', d: 'M13 10V3L4 14h7v7l9-11h-7z' })]),
+  },
+  {
+    title: 'Career Resources',
+    description: 'Access resume tips, interview guides, and career advice from experts',
+    icon: () => h('svg', { fill: 'none', stroke: 'currentColor', viewBox: '0 0 24 24' }, [h('path', { 'stroke-linecap': 'round', 'stroke-linejoin': 'round', 'stroke-width': '2', d: 'M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253' })]),
+  },
+  {
+    title: 'Job Alerts',
+    description: 'Get notified when new jobs matching your preferences are posted',
+    icon: () => h('svg', { fill: 'none', stroke: 'currentColor', viewBox: '0 0 24 24' }, [h('path', { 'stroke-linecap': 'round', 'stroke-linejoin': 'round', 'stroke-width': '2', d: 'M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9' })]),
+  },
+  {
+    title: 'Secure & Private',
+    description: 'Your data is protected with enterprise-level security and privacy',
+    icon: () => h('svg', { fill: 'none', stroke: 'currentColor', viewBox: '0 0 24 24' }, [h('path', { 'stroke-linecap': 'round', 'stroke-linejoin': 'round', 'stroke-width': '2', d: 'M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z' })]),
+  },
+]
+</script>

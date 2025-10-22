@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CompanyController;
 use App\Http\Controllers\Api\FreeCvController;
+use App\Http\Controllers\Api\HomeController;
 use App\Http\Controllers\Api\JobController;
 use App\Http\Controllers\Api\UserCvController;
 use Illuminate\Support\Facades\Route;
@@ -16,6 +17,10 @@ use Illuminate\Support\Facades\Route;
 // Authentication routes
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
+
+// Home page routes
+Route::get('/home', [HomeController::class, 'index']);
+Route::get('/home/{section}', [HomeController::class, 'getSection']);
 
 // Public routes
 Route::get('/jobs', [JobController::class, 'index']);
