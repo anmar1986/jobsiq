@@ -69,15 +69,23 @@ class UserCv extends Model
             if (empty($cv->slug)) {
                 $baseSlug = $cv->title ?: $cv->full_name;
                 // Use a cleaner slug format: title/name (no random code)
-                $slug = Str::slug($baseSlug);
+                $originalSlug = Str::slug($baseSlug);
 
-                // Ensure uniqueness by appending a counter if needed
-                $counter = 1;
-                $originalSlug = $slug;
-
-                while (static::where('slug', $slug)->exists()) {
-                    $slug = $originalSlug.'-'.$counter;
-                    $counter++;
+                // Batch check for existing slugs to avoid N+1 queries
+                $possibleSlugs = [$originalSlug];
+                for ($i = 1; $i <= 20; $i++) {
+                    $possibleSlugs[] = $originalSlug . '-' . $i;
+                }
+                
+                $existingSlugs = static::whereIn('slug', $possibleSlugs)->pluck('slug')->all();
+                $slugSet = array_flip($existingSlugs);
+                
+                $slug = $originalSlug;
+                foreach ($possibleSlugs as $candidate) {
+                    if (!isset($slugSet[$candidate])) {
+                        $slug = $candidate;
+                        break;
+                    }
                 }
 
                 $cv->slug = $slug;

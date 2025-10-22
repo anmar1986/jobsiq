@@ -29,30 +29,42 @@ class RegenerateCvSlugs extends Command
     {
         $this->info('Starting CV slug regeneration...');
 
-        $cvs = UserCv::all();
         $updated = 0;
 
-        foreach ($cvs as $cv) {
-            $baseSlug = $cv->title ?: $cv->full_name;
-            $slug = Str::slug($baseSlug);
+        UserCv::chunk(100, function ($cvs) use (&$updated) {
+            foreach ($cvs as $cv) {
+                $baseSlug = $cv->title ?: $cv->full_name;
+                $originalSlug = Str::slug($baseSlug);
 
-            // Check if slug already exists (globally, not just per user)
-            $counter = 1;
-            $originalSlug = $slug;
+                // Batch check for existing slugs to avoid N+1 queries
+                $possibleSlugs = [$originalSlug];
+                for ($i = 1; $i <= 20; $i++) {
+                    $possibleSlugs[] = $originalSlug . '-' . $i;
+                }
+                
+                $existingSlugs = UserCv::where('id', '!=', $cv->id)
+                    ->whereIn('slug', $possibleSlugs)
+                    ->pluck('slug')
+                    ->all();
+                $slugSet = array_flip($existingSlugs);
+                
+                $slug = $originalSlug;
+                foreach ($possibleSlugs as $candidate) {
+                    if (!isset($slugSet[$candidate])) {
+                        $slug = $candidate;
+                        break;
+                    }
+                }
 
-            while (UserCv::where('slug', $slug)->where('id', '!=', $cv->id)->exists()) {
-                $slug = $originalSlug.'-'.$counter;
-                $counter++;
+                // Only update if slug has changed
+                if ($cv->slug !== $slug) {
+                    $cv->slug = $slug;
+                    $cv->save();
+                    $updated++;
+                    $this->line("Updated: {$cv->full_name} -> {$slug}");
+                }
             }
-
-            // Only update if slug has changed
-            if ($cv->slug !== $slug) {
-                $cv->slug = $slug;
-                $cv->save();
-                $updated++;
-                $this->line("Updated: {$cv->full_name} -> {$slug}");
-            }
-        }
+        });
 
         $this->info("Regeneration complete! Updated {$updated} CV slug(s).");
 
