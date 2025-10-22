@@ -162,8 +162,11 @@ class JobController extends Controller
      */
     public function destroy(Request $request, Job $job): JsonResponse
     {
+        /** @var \App\Models\Company $company */
+        $company = $job->company;
+
         // Check authorization
-        if (! $request->user()->ownsCompany($job->company)) {
+        if (! $company || ! $request->user()->ownsCompany($company)) {
             return response()->json([
                 'success' => false,
                 'message' => 'Unauthorized to delete this job',

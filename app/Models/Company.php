@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Support\Str;
 
 class Company extends Model
@@ -136,7 +137,7 @@ class Company extends Model
     /**
      * Get the primary logo for this company.
      */
-    public function logo()
+    public function logo(): HasOne
     {
         return $this->hasOne(CompanyImage::class)
             ->where('type', 'logo')
@@ -267,12 +268,12 @@ class Company extends Model
         $symbol = $symbols[$this->funding_currency] ?? $this->funding_currency;
 
         if ($this->funding_amount >= 1000000) {
-            return $symbol.number_format($this->funding_amount / 1000000, 1).'M';
+            return $symbol.number_format((float) $this->funding_amount / 1000000, 1).'M';
         } elseif ($this->funding_amount >= 1000) {
-            return $symbol.number_format($this->funding_amount / 1000, 1).'K';
+            return $symbol.number_format((float) $this->funding_amount / 1000, 1).'K';
         }
 
-        return $symbol.number_format($this->funding_amount, 2);
+        return $symbol.number_format((float) $this->funding_amount, 2);
     }
 
     /**

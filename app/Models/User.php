@@ -4,6 +4,9 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -50,7 +53,7 @@ class User extends Authenticatable
     /**
      * Get the jobs posted by this user.
      */
-    public function jobs()
+    public function jobs(): HasMany
     {
         return $this->hasMany(Job::class);
     }
@@ -58,7 +61,7 @@ class User extends Authenticatable
     /**
      * Get the companies owned by this user.
      */
-    public function ownedCompanies()
+    public function ownedCompanies(): BelongsToMany
     {
         return $this->belongsToMany(Company::class, 'company_owners')
             ->withPivot('is_primary')
@@ -68,7 +71,7 @@ class User extends Authenticatable
     /**
      * Get the search history for this user.
      */
-    public function searchHistory()
+    public function searchHistory(): HasMany
     {
         return $this->hasMany(SearchHistory::class);
     }
@@ -76,7 +79,7 @@ class User extends Authenticatable
     /**
      * Get the CVs created by this user.
      */
-    public function cvs()
+    public function cvs(): HasMany
     {
         return $this->hasMany(UserCv::class);
     }
@@ -84,7 +87,7 @@ class User extends Authenticatable
     /**
      * Get the primary CV for this user.
      */
-    public function primaryCv()
+    public function primaryCv(): HasOne
     {
         return $this->hasOne(UserCv::class)->where('is_primary', true);
     }

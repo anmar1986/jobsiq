@@ -52,7 +52,7 @@ class CompanyFactory extends Factory
             'slug' => Str::slug($name),
             'legal_name' => $name.' Inc.',
             'description' => fake()->paragraphs(3, true),
-            'tagline' => fake()->catchPhrase(),
+            'tagline' => fake()->sentence(6),
 
             // Contact Information
             'email' => fake()->companyEmail(),
@@ -62,9 +62,9 @@ class CompanyFactory extends Factory
 
             // Address
             'street' => fake()->streetAddress(),
-            'street_2' => fake()->boolean(20) ? fake()->secondaryAddress() : null,
+            'street_2' => fake()->boolean(20) ? 'Suite '.fake()->buildingNumber() : null,
             'city' => fake()->city(),
-            'state' => fake()->state(),
+            'state' => fake()->word(),
             'country' => fake()->country(),
             'postal_code' => fake()->postcode(),
             'latitude' => fake()->latitude(),

@@ -178,8 +178,8 @@ class Job extends Model
         }
 
         $currency = $this->salary_currency;
-        $min = $this->salary_min ? number_format($this->salary_min, 0) : null;
-        $max = $this->salary_max ? number_format($this->salary_max, 0) : null;
+        $min = $this->salary_min ? number_format((float) $this->salary_min, 0) : null;
+        $max = $this->salary_max ? number_format((float) $this->salary_max, 0) : null;
 
         if ($min && $max) {
             return "{$currency} {$min} - {$max}";
