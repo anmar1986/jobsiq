@@ -1,0 +1,31 @@
+includes:
+    - vendor/larastan/larastan/extension.neon
+
+parameters:
+    paths:
+        - app/
+        - config/
+        - database/
+        - routes/
+    
+    # Level of strictness (0-9, where 9 is the strictest)
+    level: 5
+    
+    # Ignore errors in these paths
+    excludePaths:
+        - database/migrations/*
+    
+    # Ignore specific errors
+    ignoreErrors:
+        # Ignore always-true ternary operators in CV models (these are safe null checks)
+        - '#Ternary operator condition is always true#'
+        - '#Negated boolean expression is always false#'
+        # Ignore Eloquent dynamic properties
+        - '#Access to an undefined property App\\Models\\UserCv::\$profile_image_path#'
+        - '#Access to an undefined property App\\Models\\UserCv::\$images#'
+        - '#Access to an undefined property Illuminate\\Database\\Eloquent\\Model::\$path#'
+        # Ignore return type mismatch for Eloquent create (known issue)
+        - '#Method .* should return .* but returns Illuminate\\Database\\Eloquent\\Model#'
+        # Ignore always-true conditions in CV models
+        - '#Left side of && is always true#'
+        - '#Right side of && is always true#'

@@ -324,6 +324,7 @@ class UserCvController extends Controller
             ]);
 
             // Delete old profile image if exists
+            /** @var UserCv $cv */
             if ($cv->profile_image_path) {
                 Storage::disk('public')->delete($cv->profile_image_path);
             }
@@ -366,6 +367,7 @@ class UserCvController extends Controller
         }
 
         // Delete profile image if exists
+        /** @var UserCv $cv */
         if ($cv->profile_image_path) {
             Storage::disk('public')->delete($cv->profile_image_path);
         }
