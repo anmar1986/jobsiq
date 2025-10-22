@@ -233,6 +233,7 @@ const navLinks = [
   { path: '/jobs', label: 'Jobs' },
   { path: '/companies', label: 'Companies' },
   { path: '/cvs', label: 'free cvs' },
+  { path: '/blogs', label: 'Blog & Tips' },
 ]
 
 const userMenuItems = [
