@@ -70,16 +70,16 @@ class UserCv extends Model
                 $baseSlug = $cv->title ?: $cv->full_name;
                 // Use a cleaner slug format: title/name (no random code)
                 $slug = Str::slug($baseSlug);
-                
+
                 // Ensure uniqueness by appending a counter if needed
                 $counter = 1;
                 $originalSlug = $slug;
-                
+
                 while (static::where('slug', $slug)->exists()) {
                     $slug = $originalSlug.'-'.$counter;
                     $counter++;
                 }
-                
+
                 $cv->slug = $slug;
             }
         });
