@@ -6,17 +6,32 @@ use App\Http\Controllers\Controller;
 use App\Models\Blog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 
 class BlogController extends Controller
 {
     /**
-     * Display a listing of all blogs (for development - showing all blogs).
+     * Display a listing of published blogs (and user's own drafts if authenticated).
      */
     public function index(Request $request)
     {
-        // TEMPORARY: Show all blogs to debug
-        $query = Blog::with('user:id,name')->latest();
+        $query = Blog::with('user:id,name');
+
+        // Show published blogs OR user's own blogs (including drafts) if authenticated
+        if (Auth::check()) {
+            $userId = Auth::id();
+            $query->where(function ($q) use ($userId) {
+                $q->where(function ($subQ) {
+                    $subQ->where('status', 'published')
+                        ->whereNotNull('published_at')
+                        ->where('published_at', '<=', now());
+                })->orWhere('user_id', $userId);
+            });
+        } else {
+            // For guests, only show published blogs
+            $query->published();
+        }
+
+        $query->latest();
 
         // Filter by category
         if ($request->has('category')) {
@@ -70,7 +85,22 @@ class BlogController extends Controller
     }
 
     /**
-     * Store a newly created blog (admin/authenticated users).
+     * Display the specified blog by ID (for authenticated users editing their own blogs).
+     */
+    public function showById(string $id)
+    {
+        $blog = Blog::with('user:id,name')->findOrFail($id);
+
+        // Only allow viewing if user owns the blog
+        if (! Auth::check() || $blog->user_id !== Auth::id()) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        return response()->json($blog);
+    }
+
+    /**
+     * Store a newly created blog (requires authentication).
      */
     public function store(Request $request)
     {
@@ -85,7 +115,7 @@ class BlogController extends Controller
             'published_at' => 'nullable|date',
         ]);
 
-        $validated['user_id'] = Auth::id() ?? 1; // Default to user ID 1 if not authenticated
+        $validated['user_id'] = Auth::id();
 
         if ($validated['status'] === 'published' && empty($validated['published_at'])) {
             $validated['published_at'] = now();
@@ -97,14 +127,14 @@ class BlogController extends Controller
     }
 
     /**
-     * Update the specified blog.
+     * Update the specified blog (requires authentication and ownership).
      */
     public function update(Request $request, string $id)
     {
         $blog = Blog::findOrFail($id);
 
-        // Authorization check - allow if authenticated and owns the blog, or if not authenticated
-        if (Auth::check() && $blog->user_id !== Auth::id()) {
+        // Authorization check - require authentication and ownership
+        if (! Auth::check() || $blog->user_id !== Auth::id()) {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 
@@ -129,14 +159,14 @@ class BlogController extends Controller
     }
 
     /**
-     * Remove the specified blog.
+     * Remove the specified blog (requires authentication and ownership).
      */
     public function destroy(string $id)
     {
         $blog = Blog::findOrFail($id);
 
-        // Authorization check - allow if authenticated and owns the blog, or if not authenticated
-        if (Auth::check() && $blog->user_id !== Auth::id()) {
+        // Authorization check - require authentication and ownership
+        if (! Auth::check() || $blog->user_id !== Auth::id()) {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 
@@ -188,7 +218,7 @@ class BlogController extends Controller
 
             return response()->json([
                 'path' => $path,
-                'url' => asset('storage/' . $path),
+                'url' => asset('storage/'.$path),
             ]);
         }
 

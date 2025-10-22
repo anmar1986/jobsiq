@@ -43,7 +43,7 @@ class Blog extends Model
                 // Batch check for existing slugs to avoid N+1 queries
                 $possibleSlugs = [$originalSlug];
                 for ($i = 1; $i <= 20; $i++) {
-                    $possibleSlugs[] = $originalSlug . '-' . $i;
+                    $possibleSlugs[] = $originalSlug.'-'.$i;
                 }
 
                 $existingSlugs = static::whereIn('slug', $possibleSlugs)->pluck('slug')->all();
@@ -51,7 +51,7 @@ class Blog extends Model
 
                 $slug = $originalSlug;
                 foreach ($possibleSlugs as $candidate) {
-                    if (!isset($slugSet[$candidate])) {
+                    if (! isset($slugSet[$candidate])) {
                         $slug = $candidate;
                         break;
                     }

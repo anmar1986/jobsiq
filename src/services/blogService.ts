@@ -26,6 +26,14 @@ export const blogService = {
   },
 
   /**
+   * Get a single blog by ID (for editing)
+   */
+  async getBlogById(id: number): Promise<Blog> {
+    const response = await apiClient.get(`${API_URL}/by-id/${id}`)
+    return response.data
+  },
+
+  /**
    * Get featured/popular blogs
    */
   async getFeaturedBlogs(): Promise<Blog[]> {

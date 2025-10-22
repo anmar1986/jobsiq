@@ -18,7 +18,7 @@ class BlogFactory extends Factory
     {
         $categories = ['Career Tips', 'Interview Advice', 'Resume Tips', 'Industry News', 'Job Search'];
         $tags = ['jobs', 'career', 'interview', 'resume', 'hiring', 'workplace', 'productivity', 'skills'];
-        
+
         return [
             'user_id' => \App\Models\User::factory(),
             'title' => fake()->sentence(6),

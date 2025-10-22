@@ -54,7 +54,7 @@ const routes: RouteRecordRaw[] = [
     path: '/blogs',
     name: 'blogs',
     component: () => import('@/views/blogs/BlogListView.vue'),
-    meta: { title: 'Blog & Tips' },
+    meta: { title: 'Blog & tips' },
   },
   {
     path: '/blogs/create',

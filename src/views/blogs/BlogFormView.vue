@@ -210,26 +210,18 @@ onMounted(async () => {
 
 async function loadBlog(id: number) {
   try {
-    // We need to get the blog by ID, but our API uses slug
-    // For now, we'll redirect to blogs page and handle edit from there
-    // Or we could add a new API endpoint to get by ID
-    const response = await blogService.getBlogs()
-    const blog = response.data.find(b => b.id === id)
+    const blog = await blogService.getBlogById(id)
     
-    if (blog) {
-      formData.value = {
-        title: blog.title,
-        excerpt: blog.excerpt || '',
-        content: blog.content,
-        featured_image: blog.featured_image || '',
-        category: blog.category || '',
-        tags: blog.tags || [],
-        status: blog.status,
-      }
-      tagsInput.value = blog.tags?.join(', ') || ''
-    } else {
-      error.value = 'Blog not found'
+    formData.value = {
+      title: blog.title,
+      excerpt: blog.excerpt || '',
+      content: blog.content,
+      featured_image: blog.featured_image || '',
+      category: blog.category || '',
+      tags: blog.tags || [],
+      status: blog.status,
     }
+    tagsInput.value = blog.tags?.join(', ') || ''
   } catch (err) {
     error.value = err instanceof Error ? err.message : 'Failed to load blog'
   }

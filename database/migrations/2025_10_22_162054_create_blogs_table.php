@@ -25,7 +25,7 @@ return new class extends Migration
             $table->timestamp('published_at')->nullable();
             $table->integer('views')->default(0);
             $table->timestamps();
-            
+
             $table->index('slug');
             $table->index('status');
             $table->index('published_at');
