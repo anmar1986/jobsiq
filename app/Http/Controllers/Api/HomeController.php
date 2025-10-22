@@ -97,12 +97,16 @@ class HomeController extends Controller
     }
 
     /**
-     * Format large numbers (e.g., 1000 -> 1K).
+     * Format large numbers (e.g., 1000 -> 1K, 10000 -> 10K+).
      */
     private function formatNumber(int $number): string
     {
-        if ($number >= 1000) {
+        if ($number >= 10000) {
             return round($number / 1000, 1).'K+';
+        }
+
+        if ($number >= 1000) {
+            return round($number / 1000, 1).'K';
         }
 
         return (string) $number;
@@ -111,17 +115,32 @@ class HomeController extends Controller
     /**
      * Format salary range.
      */
-    private function formatSalary($job): string
+    private function formatSalary(Job $job): string
     {
         if ($job->salary_min && $job->salary_max) {
             $currency = $job->salary_currency ?? '$';
-            $min = $this->formatNumber($job->salary_min);
-            $max = $this->formatNumber($job->salary_max);
+            $min = $this->formatSalaryAmount((int) $job->salary_min);
+            $max = $this->formatSalaryAmount((int) $job->salary_max);
 
             return "{$currency}{$min} - {$currency}{$max}";
         }
 
         return 'Competitive';
+    }
+
+    /**
+     * Format salary amount (similar to formatNumber but without '+' for salaries).
+     */
+    private function formatSalaryAmount(int $amount): string
+    {
+        if ($amount >= 1000) {
+            $value = $amount / 1000;
+
+            // Remove unnecessary decimals (e.g., 120.0K -> 120K)
+            return (floor($value) == $value) ? ((int) $value).'K' : round($value, 1).'K';
+        }
+
+        return (string) $amount;
     }
 
     /**
