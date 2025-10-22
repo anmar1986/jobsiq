@@ -68,7 +68,19 @@ class UserCv extends Model
         static::creating(function ($cv) {
             if (empty($cv->slug)) {
                 $baseSlug = $cv->title ?: $cv->full_name;
-                $cv->slug = Str::slug($baseSlug).'-'.Str::random(8);
+                // Use a cleaner slug format: title/name (no random code)
+                $slug = Str::slug($baseSlug);
+                
+                // Ensure uniqueness by appending a counter if needed
+                $counter = 1;
+                $originalSlug = $slug;
+                
+                while (static::where('slug', $slug)->exists()) {
+                    $slug = $originalSlug.'-'.$counter;
+                    $counter++;
+                }
+                
+                $cv->slug = $slug;
             }
         });
 
