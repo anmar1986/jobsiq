@@ -94,7 +94,7 @@ class CompanyController extends Controller
                 'message' => 'Company created successfully',
             ], 201);
         } catch (\Exception $e) {
-            Log::error('Company creation failed: ' . $e->getMessage(), [
+            Log::error('Company creation failed: '.$e->getMessage(), [
                 'trace' => $e->getTraceAsString(),
                 'file' => $e->getFile(),
                 'line' => $e->getLine(),
@@ -102,7 +102,7 @@ class CompanyController extends Controller
 
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to create company: ' . $e->getMessage(),
+                'message' => 'Failed to create company: '.$e->getMessage(),
             ], 500);
         }
     }
@@ -266,7 +266,7 @@ class CompanyController extends Controller
             // Store the file
             $path = $file->store('companies/logos', 'public');
 
-            if (!$path) {
+            if (! $path) {
                 throw new \Exception('Failed to store logo file');
             }
 
@@ -277,7 +277,7 @@ class CompanyController extends Controller
                 'is_primary' => true,
             ]);
         } catch (\Exception $e) {
-            Log::error('Logo upload failed: ' . $e->getMessage());
+            Log::error('Logo upload failed: '.$e->getMessage());
             throw $e;
         }
     }
