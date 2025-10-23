@@ -24,6 +24,7 @@ return new class extends Migration
             $table->string('website')->nullable();
             $table->string('linkedin')->nullable();
             $table->string('github')->nullable();
+            $table->string('profile_image_path')->nullable();
             $table->text('address')->nullable();
             $table->string('city')->nullable();
             $table->string('country')->nullable();

@@ -85,18 +85,21 @@ const fileInput = ref<HTMLInputElement | null>(null)
 const localPreview = ref<string | null>(props.preview || null)
 
 const previewUrl = computed(() => {
-  if (localPreview.value) {
-    // If it's a blob URL or already starts with /storage/, use it directly
-    if (localPreview.value.startsWith('blob:') || localPreview.value.startsWith('http')) {
-      return localPreview.value
-    }
-    // If it's a storage path, prepend /storage/
-    if (!localPreview.value.startsWith('/storage/')) {
-      return `/storage/${localPreview.value}`
-    }
-    return localPreview.value
+  const preview = localPreview.value
+  if (!preview) {
+    return null
   }
-  return null
+
+  // Respect inline data/blob URLs and fully qualified paths
+  if (preview.startsWith('data:') || preview.startsWith('blob:') || preview.startsWith('http')) {
+    return preview
+  }
+
+  if (preview.startsWith('/storage/')) {
+    return preview
+  }
+
+  return `/storage/${preview.replace(/^\//, '')}`
 })
 
 watch(() => props.preview, (newPreview) => {
