@@ -99,7 +99,9 @@ const previewUrl = computed(() => {
     return preview
   }
 
-  return `/storage/${preview.replace(/^\//, '')}`
+  // Remove all leading slashes and construct clean path
+  const cleanPath = preview.replace(/^\/+/, '')
+  return `/storage/${cleanPath}`
 })
 
 watch(() => props.preview, (newPreview) => {
