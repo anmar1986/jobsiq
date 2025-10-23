@@ -223,13 +223,13 @@ class StoreCvRequest extends FormRequest
         // Check for PHP file upload errors and provide better error messages
         if (isset($_FILES['profile_image']) && isset($_FILES['profile_image']['error'])) {
             $uploadError = $_FILES['profile_image']['error'];
-            
+
             Log::info('Profile image upload error code', [
                 'error_code' => $uploadError,
                 'file_size' => $_FILES['profile_image']['size'] ?? 'unknown',
                 'file_name' => $_FILES['profile_image']['name'] ?? 'unknown',
             ]);
-            
+
             if ($uploadError !== UPLOAD_ERR_OK) {
                 $errorMessages = [
                     UPLOAD_ERR_INI_SIZE => 'The uploaded file exceeds the upload_max_filesize directive in php.ini',
@@ -240,7 +240,7 @@ class StoreCvRequest extends FormRequest
                     UPLOAD_ERR_CANT_WRITE => 'Failed to write file to disk',
                     UPLOAD_ERR_EXTENSION => 'A PHP extension stopped the file upload',
                 ];
-                
+
                 Log::error('Profile image upload failed', [
                     'error_code' => $uploadError,
                     'error_message' => $errorMessages[$uploadError] ?? 'Unknown error',

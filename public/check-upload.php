@@ -1,4 +1,5 @@
 <?php
+
 // Check PHP upload configuration
 header('Content-Type: application/json');
 
@@ -13,12 +14,13 @@ $config = [
 ];
 
 // Convert to bytes for comparison
-function convertToBytes($value) {
+function convertToBytes($value)
+{
     $value = trim($value);
-    $last = strtolower($value[strlen($value)-1]);
-    $value = (int)$value;
-    
-    switch($last) {
+    $last = strtolower($value[strlen($value) - 1]);
+    $value = (int) $value;
+
+    switch ($last) {
         case 'g':
             $value *= 1024;
         case 'm':
@@ -26,7 +28,7 @@ function convertToBytes($value) {
         case 'k':
             $value *= 1024;
     }
-    
+
     return $value;
 }
 
@@ -51,7 +53,7 @@ if ($config['post_max_size_bytes'] < $minRequired) {
 }
 
 if ($config['post_max_size_bytes'] < $config['upload_max_filesize_bytes']) {
-    $config['warnings'][] = "post_max_size should be larger than upload_max_filesize";
+    $config['warnings'][] = 'post_max_size should be larger than upload_max_filesize';
 }
 
 echo json_encode($config, JSON_PRETTY_PRINT);
