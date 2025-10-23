@@ -144,9 +144,9 @@ class StoreCvRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'profile_image.file' => 'The profile image must be a file',
+            'profile_image.file' => 'The profile image must be a valid file. Please check your internet connection and try again.',
             'profile_image.mimes' => 'The profile image must be a file of type: jpeg, jpg, png, webp, gif',
-            'profile_image.max' => 'The profile image must not be larger than 2MB',
+            'profile_image.max' => 'The profile image must not be larger than 2MB. Please resize or compress your image.',
 
             'work_experience.*.position.required' => 'Position is required for work experience',
             'work_experience.*.company.required' => 'Company is required for work experience',
@@ -216,7 +216,39 @@ class StoreCvRequest extends FormRequest
             'files' => array_keys($this->allFiles()),
             'has_method' => $this->has('_method'),
             'method_value' => $this->input('_method'),
+            'profile_image_input' => $this->has('profile_image'),
+            'profile_image_upload_error' => isset($_FILES['profile_image']) ? $_FILES['profile_image']['error'] ?? 'no error key' : 'not in $_FILES',
         ]);
+
+        // Check for PHP file upload errors and provide better error messages
+        if (isset($_FILES['profile_image']) && isset($_FILES['profile_image']['error'])) {
+            $uploadError = $_FILES['profile_image']['error'];
+            
+            Log::info('Profile image upload error code', [
+                'error_code' => $uploadError,
+                'file_size' => $_FILES['profile_image']['size'] ?? 'unknown',
+                'file_name' => $_FILES['profile_image']['name'] ?? 'unknown',
+            ]);
+            
+            if ($uploadError !== UPLOAD_ERR_OK) {
+                $errorMessages = [
+                    UPLOAD_ERR_INI_SIZE => 'The uploaded file exceeds the upload_max_filesize directive in php.ini',
+                    UPLOAD_ERR_FORM_SIZE => 'The uploaded file exceeds the MAX_FILE_SIZE directive in the HTML form',
+                    UPLOAD_ERR_PARTIAL => 'The uploaded file was only partially uploaded',
+                    UPLOAD_ERR_NO_FILE => 'No file was uploaded',
+                    UPLOAD_ERR_NO_TMP_DIR => 'Missing a temporary folder',
+                    UPLOAD_ERR_CANT_WRITE => 'Failed to write file to disk',
+                    UPLOAD_ERR_EXTENSION => 'A PHP extension stopped the file upload',
+                ];
+                
+                Log::error('Profile image upload failed', [
+                    'error_code' => $uploadError,
+                    'error_message' => $errorMessages[$uploadError] ?? 'Unknown error',
+                    'php_upload_max_filesize' => ini_get('upload_max_filesize'),
+                    'php_post_max_size' => ini_get('post_max_size'),
+                ]);
+            }
+        }
 
         // Parse JSON strings if they come as strings (from FormData)
         // Skip 'profile_image' as it's a file upload

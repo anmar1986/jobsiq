@@ -118,16 +118,33 @@ const handleFileChange = (event: Event) => {
   
   if (!file) return
   
+  console.log('File selected:', {
+    name: file.name,
+    size: file.size,
+    type: file.type,
+    sizeInMB: (file.size / 1024 / 1024).toFixed(2) + ' MB'
+  })
+  
   // Validate file type
   const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif']
   if (!validTypes.includes(file.type)) {
     emit('error', 'Invalid file type. Please upload a JPG, PNG, WebP, or GIF image.')
+    // Clear the input
+    if (fileInput.value) {
+      fileInput.value.value = ''
+    }
     return
   }
   
-  // Validate file size (2MB)
-  if (file.size > 2 * 1024 * 1024) {
-    emit('error', 'File size too large. Please upload an image smaller than 2MB.')
+  // Validate file size (2MB = 2097152 bytes)
+  const maxSize = 2 * 1024 * 1024
+  if (file.size > maxSize) {
+    const fileSizeMB = (file.size / 1024 / 1024).toFixed(2)
+    emit('error', `File size too large (${fileSizeMB} MB). Please upload an image smaller than 2MB.`)
+    // Clear the input
+    if (fileInput.value) {
+      fileInput.value.value = ''
+    }
     return
   }
   
@@ -140,6 +157,9 @@ const handleFileChange = (event: Event) => {
     const result = e.target?.result as string
     localPreview.value = result
     emit('update:preview', result)
+  }
+  reader.onerror = () => {
+    emit('error', 'Failed to read image file. Please try again.')
   }
   reader.readAsDataURL(file)
 }

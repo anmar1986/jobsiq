@@ -356,10 +356,23 @@ const saveCv = async () => {
   } catch (error: unknown) {
     console.error('Failed to save CV:', error)
     
-    const err = error as { response?: { data?: { errors?: Record<string, string[]>; message?: string } }; message?: string }
+    const err = error as { 
+      response?: { 
+        data?: { 
+          errors?: Record<string, string[]>
+          message?: string 
+        }
+        status?: number
+      }
+      message?: string 
+    }
+    
+    console.error('Full error object:', err)
     console.error('Error response:', err.response)
+    console.error('Error response status:', err.response?.status)
     console.error('Error data:', err.response?.data)
     console.error('Validation errors:', err.response?.data?.errors)
+    console.error('Error message:', err.response?.data?.message)
     
     // Show validation errors if available
     if (err.response?.data?.errors) {
@@ -367,9 +380,12 @@ const saveCv = async () => {
       const errorMessages = Object.entries(errors)
         .map(([field, messages]) => `${field}: ${Array.isArray(messages) ? messages.join(', ') : messages}`)
         .join('\n')
-      toast.error(`Validation failed:\n${errorMessages}`)
+      toast.error(`Validation failed:\n${errorMessages}`, 8000)
+    } else if (err.response?.data?.message) {
+      // Show server error message
+      toast.error(err.response.data.message, 6000)
     } else {
-      toast.error(err.response?.data?.message || err.message || 'Failed to save CV. Please try again.')
+      toast.error(err.message || 'Failed to save CV. Please try again.', 5000)
     }
   } finally {
     saving.value = false
