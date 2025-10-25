@@ -66,7 +66,16 @@
         >
           <div class="p-6">
             <div class="flex items-start gap-4 mb-4">
-              <BaseAvatar :name="cv.full_name" size="lg" />
+              <!-- Profile Image -->
+              <div class="w-20 h-24 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0 flex items-center justify-center ring-2 ring-gray-200">
+                <img
+                  v-if="cv.profile_image_url"
+                  :src="cv.profile_image_url"
+                  :alt="cv.full_name"
+                  class="w-full h-full object-cover"
+                />
+                <BaseAvatar v-else :name="cv.full_name" size="lg" />
+              </div>
               
               <div class="flex-1 min-w-0">
                 <h3 class="text-xl font-semibold text-gray-900 mb-1">{{ cv.full_name }}</h3>
@@ -116,6 +125,7 @@ interface CvListItem {
   location: string
   top_skills: string[]
   experience: string
+  profile_image_url: string | null
 }
 
 const searchQuery = ref('')
@@ -147,6 +157,8 @@ const fetchCvs = async () => {
         country: string | null
         skills: unknown
         work_experiences: Array<{ start_date: string; end_date?: string; current?: boolean }>
+        profile_image?: { path: string; url: string } | null
+        profileImage?: { path: string; url: string } | null
       }) => ({
         id: cv.id,
         slug: cv.slug,
@@ -155,6 +167,8 @@ const fetchCvs = async () => {
         location: [cv.city, cv.country].filter(Boolean).join(', ') || 'Not specified',
         top_skills: Array.isArray(cv.skills) ? cv.skills : [],
         experience: calculateExperience(cv.work_experiences || []),
+        profile_image_url: (cv.profileImage?.path || cv.profile_image?.path) ? 
+          `/storage/${cv.profileImage?.path || cv.profile_image?.path}` : null,
       }))
     }
   } catch (err: unknown) {

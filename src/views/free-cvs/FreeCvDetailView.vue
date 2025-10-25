@@ -34,11 +34,15 @@
       <BaseCard no-padding class="p-4 mb-4">
         <div class="flex items-start gap-6 mb-6">
           <!-- Profile Image -->
-          <BaseAvatar
-            :name="cv.full_name"
-            size="2xl"
-            class="flex-shrink-0 ring-4 ring-gray-200"
-          />
+          <div class="w-32 h-40 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0 flex items-center justify-center ring-4 ring-gray-200">
+            <img
+              v-if="profileImageUrl"
+              :src="profileImageUrl"
+              :alt="cv.full_name"
+              class="w-full h-full object-cover"
+            />
+            <BaseAvatar v-else :name="cv.full_name" size="2xl" />
+          </div>
 
           <!-- Name & Title -->
           <div class="flex-1">
@@ -456,7 +460,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useCvStore } from '@/stores/cv'
 import BaseCard from '@/components/base/BaseCard.vue'
@@ -470,6 +474,15 @@ const cvStore = useCvStore()
 
 const loading = ref(true)
 const cv = ref<UserCv | null>(null)
+
+const profileImageUrl = computed(() => {
+  if (!cv.value) return null
+  const profileImage = cv.value.profileImage || cv.value.profile_image
+  if (profileImage?.path) {
+    return `/storage/${profileImage.path}`
+  }
+  return null
+})
 
 const formatDate = (dateString?: string | null) => {
   if (!dateString) return ''
