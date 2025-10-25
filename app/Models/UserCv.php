@@ -61,6 +61,10 @@ class UserCv extends Model
         'is_primary' => 'boolean',
     ];
 
+    protected $appends = [
+        'profile_image',
+    ];
+
     protected static function boot()
     {
         parent::boot();

@@ -21,14 +21,14 @@
       <div class="mb-4 flex-shrink-0">
         <div class="flex items-start gap-4 mb-3">
           <!-- Profile Image -->
-          <div class="w-16 h-16 bg-gray-100 rounded-full overflow-hidden flex-shrink-0 flex items-center justify-center ring-2 ring-gray-200 group-hover:ring-primary-300 transition-all duration-300">
+          <div class="w-20 h-24 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0 flex items-center justify-center ring-2 ring-gray-200 group-hover:ring-primary-300 transition-all duration-300">
             <img
               v-if="profileImageUrl"
               :src="profileImageUrl"
               :alt="cv.full_name"
               class="w-full h-full object-cover"
             />
-            <svg v-else class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg v-else class="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
             </svg>
           </div>
