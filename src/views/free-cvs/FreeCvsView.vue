@@ -167,7 +167,7 @@ const fetchCvs = async () => {
         location: [cv.city, cv.country].filter(Boolean).join(', ') || 'Not specified',
         top_skills: Array.isArray(cv.skills) ? cv.skills : [],
         experience: calculateExperience(cv.work_experiences || []),
-        profile_image_url: (cv.profileImage?.url || cv.profile_image?.url) ? 
+        profile_image_url: (cv.profileImage?.path || cv.profile_image?.path) ? 
           `/storage/${cv.profileImage?.path || cv.profile_image?.path}` : null,
       }))
     }
