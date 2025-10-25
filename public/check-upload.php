@@ -67,10 +67,10 @@ if (empty($config['upload_tmp_dir'])) {
     $tmpDir = $config['upload_tmp_dir'];
     $config['tmp_dir_exists'] = is_dir($tmpDir);
     $config['tmp_dir_writable'] = is_writable($tmpDir);
-    
-    if (!$config['tmp_dir_exists']) {
+
+    if (! $config['tmp_dir_exists']) {
         $config['warnings'][] = "upload_tmp_dir ($tmpDir) does not exist";
-    } elseif (!$config['tmp_dir_writable']) {
+    } elseif (! $config['tmp_dir_writable']) {
         $config['warnings'][] = "upload_tmp_dir ($tmpDir) is not writable";
     }
 }
