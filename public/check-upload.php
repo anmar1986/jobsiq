@@ -11,6 +11,9 @@ $config = [
     'max_execution_time' => ini_get('max_execution_time'),
     'max_input_time' => ini_get('max_input_time'),
     'file_uploads' => ini_get('file_uploads') ? 'Enabled' : 'Disabled',
+    'upload_tmp_dir' => ini_get('upload_tmp_dir'),
+    'sys_temp_dir' => ini_get('sys_temp_dir'),
+    'sys_get_temp_dir' => sys_get_temp_dir(),
 ];
 
 // Convert to bytes for comparison
@@ -56,6 +59,20 @@ if ($config['post_max_size_bytes'] < $minRequired) {
 
 if ($config['post_max_size_bytes'] < $config['upload_max_filesize_bytes']) {
     $config['warnings'][] = 'post_max_size should be larger than upload_max_filesize';
+}
+
+if (empty($config['upload_tmp_dir'])) {
+    $config['warnings'][] = 'upload_tmp_dir is NOT set - PHP will use system default';
+} else {
+    $tmpDir = $config['upload_tmp_dir'];
+    $config['tmp_dir_exists'] = is_dir($tmpDir);
+    $config['tmp_dir_writable'] = is_writable($tmpDir);
+    
+    if (!$config['tmp_dir_exists']) {
+        $config['warnings'][] = "upload_tmp_dir ($tmpDir) does not exist";
+    } elseif (!$config['tmp_dir_writable']) {
+        $config['warnings'][] = "upload_tmp_dir ($tmpDir) is not writable";
+    }
 }
 
 echo json_encode($config, JSON_PRETTY_PRINT);
