@@ -21,7 +21,6 @@ parameters:
         - '#Ternary operator condition is always true#'
         - '#Negated boolean expression is always false#'
         # Ignore Eloquent dynamic properties
-        - '#Access to an undefined property App\\Models\\UserCv::\$profile_image_path#'
         - '#Access to an undefined property App\\Models\\UserCv::\$images#'
         - '#Access to an undefined property Illuminate\\Database\\Eloquent\\Model::\$path#'
         # Ignore return type mismatch for Eloquent create (known issue)
