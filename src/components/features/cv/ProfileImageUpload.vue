@@ -118,13 +118,6 @@ const handleFileChange = (event: Event) => {
   
   if (!file) return
   
-  console.log('File selected:', {
-    name: file.name,
-    size: file.size,
-    type: file.type,
-    sizeInMB: (file.size / 1024 / 1024).toFixed(2) + ' MB'
-  })
-  
   // Validate file type
   const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif']
   if (!validTypes.includes(file.type)) {

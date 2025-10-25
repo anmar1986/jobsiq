@@ -246,17 +246,12 @@ const updateCvSettings = (settings: typeof cvSettings.value) => {
 const saveCv = async () => {
   saving.value = true
   try {
-    console.log('DEBUG: cvForm.value.skills before mapping:', cvForm.value.skills)
-    
     // Convert string skills to Skill objects
     const skillObjects = cvForm.value.skills.map(skill => ({
       name: skill,
       level: undefined,
       category: undefined,
     }))
-    
-    console.log('DEBUG: skillObjects after mapping:', skillObjects)
-    console.log('DEBUG: JSON.stringify(skillObjects):', JSON.stringify(skillObjects))
     
     // Sanitize education data - trim GPA to max 10 characters
     const sanitizedEducation = cvForm.value.education.map((edu: Education) => ({
@@ -320,25 +315,7 @@ const saveCv = async () => {
     
     // Add profile image ONLY if a NEW file was selected
     if (profileImageFile.value && profileImageFile.value instanceof File) {
-      console.log('Appending profile image to FormData:', {
-        name: profileImageFile.value.name,
-        size: profileImageFile.value.size,
-        type: profileImageFile.value.type,
-        isFile: profileImageFile.value instanceof File
-      })
       formData.append('profile_image', profileImageFile.value, profileImageFile.value.name)
-    } else {
-      console.log('No new profile image selected, skipping')
-    }
-    
-    // Log FormData contents (for debugging)
-    console.log('FormData entries:')
-    for (const [key, value] of formData.entries()) {
-      if (value instanceof File) {
-        console.log(`${key}:`, `File(${value.name}, ${value.size} bytes, ${value.type})`)
-      } else {
-        console.log(`${key}:`, value)
-      }
     }
     
     if (isEditing.value && cvId.value) {
@@ -354,8 +331,6 @@ const saveCv = async () => {
     // Navigate back to My CVs page
     await router.push('/my-cvs')
   } catch (error: unknown) {
-    console.error('Failed to save CV:', error)
-    
     const err = error as { 
       response?: { 
         data?: { 
@@ -366,13 +341,6 @@ const saveCv = async () => {
       }
       message?: string 
     }
-    
-    console.error('Full error object:', err)
-    console.error('Error response:', err.response)
-    console.error('Error response status:', err.response?.status)
-    console.error('Error data:', err.response?.data)
-    console.error('Validation errors:', err.response?.data?.errors)
-    console.error('Error message:', err.response?.data?.message)
     
     // Show validation errors if available
     if (err.response?.data?.errors) {
