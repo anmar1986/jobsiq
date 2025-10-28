@@ -87,14 +87,6 @@
             @update:model-value="edu.end_date = $event as string; updateEducation(index)"
           />
           
-          <BaseInput
-            :model-value="edu.gpa || ''"
-            label="GPA"
-            placeholder="e.g., 3.8/4.0"
-            maxlength="10"
-            @update:model-value="edu.gpa = $event as string; updateEducation(index)"
-          />
-          
           <div class="md:col-span-2">
             <label class="block text-sm font-medium text-gray-700 mb-2">
               Description
@@ -148,8 +140,7 @@ const addEducation = () => {
     location: '',
     start_date: '',
     end_date: '',
-    gpa: '',
-    description: ''
+    description: '',
   }
   localEducation.value.push(newEdu)
   emit('update:education', [...localEducation.value])

@@ -29,10 +29,8 @@ class StoreCvRequest extends FormRequest
             'email' => ['nullable', 'email', 'max:255'],
             'phone' => ['nullable', 'string', 'max:50'],
             'title' => ['nullable', 'string', 'max:255'],
-            'address' => ['nullable', 'string', 'max:500'],
             'city' => ['nullable', 'string', 'max:255'],
-            'country' => ['nullable', 'string', 'max:255'],
-            'postal_code' => ['nullable', 'string', 'max:20'],
+            'country' => ['nullable', 'string', 'in:Iraq'],
 
             // Profile Image - explicitly define MIME types
             'profile_image' => [
@@ -64,7 +62,6 @@ class StoreCvRequest extends FormRequest
             'education.*.location' => ['nullable', 'string', 'max:255'],
             'education.*.start_date' => ['required', 'date'],
             'education.*.end_date' => ['nullable', 'date', 'after_or_equal:education.*.start_date'],
-            'education.*.gpa' => ['nullable', 'string', 'max:10'],
             'education.*.description' => ['nullable', 'string', 'max:1000'],
 
             // Certifications
@@ -81,16 +78,6 @@ class StoreCvRequest extends FormRequest
             'languages.*.language' => ['required', 'string', 'max:100'],
             'languages.*.proficiency' => ['required', 'string', 'in:basic,conversational,fluent,native'],
 
-            // Projects
-            'projects' => ['nullable', 'array'],
-            'projects.*.title' => ['required', 'string', 'max:255'],
-            'projects.*.description' => ['required', 'string', 'max:2000'],
-            'projects.*.technologies' => ['nullable', 'array'],
-            'projects.*.technologies.*' => ['string', 'max:100'],
-            'projects.*.url' => ['nullable', 'url', 'max:500'],
-            'projects.*.start_date' => ['nullable', 'date'],
-            'projects.*.end_date' => ['nullable', 'date', 'after_or_equal:projects.*.start_date'],
-
             // References
             'references' => ['nullable', 'array'],
             'references.*.name' => ['required', 'string', 'max:255'],
@@ -99,21 +86,6 @@ class StoreCvRequest extends FormRequest
             'references.*.email' => ['nullable', 'email', 'max:255'],
             'references.*.phone' => ['nullable', 'string', 'max:50'],
             'references.*.relationship' => ['required', 'string', 'max:255'],
-
-            // Awards
-            'awards' => ['nullable', 'array'],
-            'awards.*.title' => ['required', 'string', 'max:255'],
-            'awards.*.issuer' => ['required', 'string', 'max:255'],
-            'awards.*.date' => ['required', 'date'],
-            'awards.*.description' => ['nullable', 'string', 'max:1000'],
-
-            // Publications
-            'publications' => ['nullable', 'array'],
-            'publications.*.title' => ['required', 'string', 'max:255'],
-            'publications.*.publisher' => ['required', 'string', 'max:255'],
-            'publications.*.date' => ['required', 'date'],
-            'publications.*.url' => ['nullable', 'url', 'max:500'],
-            'publications.*.description' => ['nullable', 'string', 'max:1000'],
 
             // Volunteer Work
             'volunteer_work' => ['nullable', 'array'],
@@ -211,6 +183,16 @@ class StoreCvRequest extends FormRequest
             ]);
         }
 
+        // Always set country to Iraq
+        $this->merge(['country' => 'Iraq']);
+
+        // Remove postal_code if present
+        if ($this->has('postal_code')) {
+            $input = $this->all();
+            unset($input['postal_code']);
+            $this->replace($input);
+        }
+
         Log::info('StoreCvRequest - Before prepareForValidation', [
             'hasFile' => $this->hasFile('profile_image'),
             'files' => array_keys($this->allFiles()),
@@ -252,7 +234,7 @@ class StoreCvRequest extends FormRequest
 
         // Parse JSON strings if they come as strings (from FormData)
         // Skip 'profile_image' as it's a file upload
-        $jsonFields = ['skills', 'work_experience', 'education', 'certifications', 'languages', 'projects', 'references', 'awards', 'publications', 'volunteer_work', 'hobbies'];
+        $jsonFields = ['skills', 'work_experience', 'education', 'certifications', 'languages', 'references', 'volunteer_work', 'hobbies'];
 
         Log::info('StoreCvRequest - Before JSON parsing', [
             'skills_raw' => $this->input('skills'),
@@ -352,14 +334,8 @@ class StoreCvRequest extends FormRequest
                             return ! empty($item['name']) && ! empty($item['issuer']) && ! empty($item['date']);
                         case 'languages':
                             return ! empty($item['language']) && ! empty($item['proficiency']);
-                        case 'projects':
-                            return ! empty($item['title']) && ! empty($item['description']);
                         case 'references':
                             return ! empty($item['name']) && ! empty($item['position']) && ! empty($item['company']) && ! empty($item['relationship']);
-                        case 'awards':
-                            return ! empty($item['title']) && ! empty($item['issuer']) && ! empty($item['date']);
-                        case 'publications':
-                            return ! empty($item['title']) && ! empty($item['publisher']) && ! empty($item['date']);
                         case 'volunteer_work':
                             return ! empty($item['organization']) && ! empty($item['role']) && ! empty($item['start_date']);
                         default:

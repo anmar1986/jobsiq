@@ -49,8 +49,14 @@
 
           <div class="flex items-start gap-6">
             <!-- Company Logo -->
-            <div class="w-24 h-24 rounded-2xl bg-white/10 backdrop-blur-sm flex items-center justify-center text-white text-3xl font-bold flex-shrink-0 border-2 border-white/20">
-              {{ company.name.charAt(0) }}
+            <div class="w-24 h-24 rounded-2xl bg-white/10 backdrop-blur-sm flex items-center justify-center text-white text-3xl font-bold flex-shrink-0 border-2 border-white/20 overflow-hidden">
+              <img 
+                v-if="company.logo?.path" 
+                :src="getLogoUrl(company.logo.path)" 
+                :alt="company.name"
+                class="w-full h-full object-cover"
+              />
+              <span v-else>{{ company.name.charAt(0) }}</span>
             </div>
 
             <div class="flex-1">
@@ -249,6 +255,76 @@
           </div>
         </BaseCard>
 
+        <!-- Company Photos Carousel -->
+        <BaseCard v-if="company.images && company.images.filter(img => img.type === 'gallery').length > 0" class="p-6 mb-6">
+          <h2 class="text-2xl font-bold text-gray-900 mb-6">Company Photos</h2>
+          
+          <div class="relative">
+            <!-- Carousel Container -->
+            <div class="overflow-hidden rounded-lg">
+              <div 
+                class="flex transition-transform duration-500 ease-in-out"
+                :style="{ transform: `translateX(-${currentSlide * 100}%)` }"
+              >
+                <div
+                  v-for="(image, index) in company.images.filter(img => img.type === 'gallery')"
+                  :key="index"
+                  class="w-full flex-shrink-0"
+                >
+                  <div class="aspect-[16/9] bg-gray-100 rounded-lg overflow-hidden">
+                    <img
+                      :src="getLogoUrl(image.path)"
+                      :alt="`Company photo ${index + 1}`"
+                      class="w-full h-full object-contain"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Navigation Buttons -->
+            <button
+              v-if="galleryImages.length > 1"
+              @click="previousSlide"
+              class="absolute left-2 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white text-gray-800 rounded-full p-2 shadow-lg transition-all hover:scale-110"
+            >
+              <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+            <button
+              v-if="galleryImages.length > 1"
+              @click="nextSlide"
+              class="absolute right-2 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white text-gray-800 rounded-full p-2 shadow-lg transition-all hover:scale-110"
+            >
+              <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+
+            <!-- Dots Indicator -->
+            <div v-if="galleryImages.length > 1" class="flex justify-center gap-2 mt-4">
+              <button
+                v-for="(image, index) in galleryImages"
+                :key="index"
+                @click="currentSlide = index"
+                class="transition-all"
+                :class="[
+                  currentSlide === index 
+                    ? 'w-8 h-2 bg-primary-600' 
+                    : 'w-2 h-2 bg-gray-300 hover:bg-gray-400'
+                ]"
+                style="border-radius: 9999px;"
+              />
+            </div>
+
+            <!-- Image Counter -->
+            <div class="absolute top-4 right-4 bg-black/60 text-white px-3 py-1 rounded-full text-sm">
+              {{ currentSlide + 1 }} / {{ galleryImages.length }}
+            </div>
+          </div>
+        </BaseCard>
+
         <!-- Jobs Section -->
         <div>
           <div class="flex items-center justify-between mb-6">
@@ -428,7 +504,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { companyService } from '@/services/cv.service'
 import { jobService } from '@/services/job.service'
@@ -451,6 +527,28 @@ const accessDenied = ref(false)
 const showDeleteJobModal = ref(false)
 const selectedJob = ref<Job | null>(null)
 const deletingJob = ref(false)
+
+// Carousel state
+const currentSlide = ref(0)
+const galleryImages = computed(() => {
+  return company.value?.images?.filter(img => img.type === 'gallery') || []
+})
+
+const nextSlide = () => {
+  if (currentSlide.value < galleryImages.value.length - 1) {
+    currentSlide.value++
+  } else {
+    currentSlide.value = 0
+  }
+}
+
+const previousSlide = () => {
+  if (currentSlide.value > 0) {
+    currentSlide.value--
+  } else {
+    currentSlide.value = galleryImages.value.length - 1
+  }
+}
 
 const formatWebsite = (url: string): string => {
   try {
@@ -634,6 +732,23 @@ const fetchCompanyDetail = async () => {
   } finally {
     loading.value = false
   }
+}
+
+const getLogoUrl = (path: string): string => {
+  if (!path) return ''
+  
+  // Handle different path formats
+  if (path.startsWith('data:') || path.startsWith('blob:') || path.startsWith('http')) {
+    return path
+  }
+  
+  if (path.startsWith('/storage/')) {
+    return path
+  }
+  
+  // Remove leading slashes and construct clean path
+  const cleanPath = path.replace(/^\/+/, '')
+  return `/storage/${cleanPath}`
 }
 
 onMounted(async () => {

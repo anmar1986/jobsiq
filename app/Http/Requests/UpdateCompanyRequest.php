@@ -24,6 +24,8 @@ class UpdateCompanyRequest extends FormRequest
     public function rules(): array
     {
         $companyId = $this->route('company')->id;
+        $companyCategories = config('company.categories');
+        $iraqCities = config('company.iraq_cities');
 
         return [
             // Basic Information
@@ -41,15 +43,14 @@ class UpdateCompanyRequest extends FormRequest
             // Address
             'street' => ['nullable', 'string', 'max:255'],
             'street_2' => ['nullable', 'string', 'max:255'],
-            'city' => ['nullable', 'string', 'max:100'],
+            'city' => ['sometimes', 'required', 'string', 'in:'.implode(',', $iraqCities)],
             'state' => ['nullable', 'string', 'max:100'],
-            'country' => ['nullable', 'string', 'max:100'],
-            'postal_code' => ['nullable', 'string', 'max:20'],
+            'country' => ['nullable', 'string', 'max:100', 'in:Iraq'],
             'latitude' => ['nullable', 'numeric', 'between:-90,90'],
             'longitude' => ['nullable', 'numeric', 'between:-180,180'],
 
             // Business Information
-            'industry' => ['nullable', 'string', 'max:100'],
+            'industry' => ['sometimes', 'required', 'string', 'in:'.implode(',', $companyCategories)],
             'company_size' => ['nullable', 'string', 'max:50'],
             'company_type' => ['nullable', 'in:startup,small_business,mid_market,enterprise,nonprofit,government,agency'],
             'founded_date' => ['nullable', 'date', 'before:today'],
@@ -71,6 +72,7 @@ class UpdateCompanyRequest extends FormRequest
             'values.*' => ['string', 'max:255'],
             'perks' => ['nullable', 'array'],
             'perks.*' => ['string', 'max:255'],
+            'required_skills' => ['nullable', 'json'],
             'culture_description' => ['nullable', 'string', 'max:5000'],
 
             // SEO
@@ -94,6 +96,8 @@ class UpdateCompanyRequest extends FormRequest
 
             // Image Upload
             'logo' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
+            'images' => ['nullable', 'array', 'max:10'],
+            'images.*' => ['image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
         ];
     }
 }

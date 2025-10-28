@@ -1,1 +1,0 @@
-import{d as a,c as e,a as s,o as t}from"./index-GVITuUF_.js";const n={class:"container-custom py-8"},l=a({__name:"DashboardView",setup(r){return(c,o)=>(t(),e("div",n,[...o[0]||(o[0]=[s("h1",{class:"text-3xl font-bold mb-6"},"Dashboard",-1),s("p",{class:"text-gray-600"},"Dashboard - Coming soon!",-1)])]))}});export{l as default};

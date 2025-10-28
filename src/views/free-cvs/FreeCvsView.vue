@@ -56,7 +56,7 @@
       </div>
 
       <!-- CVs Grid -->
-      <div v-else class="grid md:grid-cols-2 gap-6">
+      <div v-else class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
         <BaseCard
           v-for="cv in cvs"
           :key="cv.id"

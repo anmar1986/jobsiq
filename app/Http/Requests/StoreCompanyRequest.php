@@ -41,6 +41,9 @@ class StoreCompanyRequest extends FormRequest
             ]);
         }
 
+        $companyCategories = config('company.categories');
+        $iraqCities = config('company.iraq_cities');
+
         return [
             // Basic Information
             'name' => ['required', 'string', 'max:255', 'unique:companies,name'],
@@ -57,15 +60,14 @@ class StoreCompanyRequest extends FormRequest
             // Address
             'street' => ['nullable', 'string', 'max:255'],
             'street_2' => ['nullable', 'string', 'max:255'],
-            'city' => ['nullable', 'string', 'max:100'],
+            'city' => ['required', 'string', 'in:'.implode(',', $iraqCities)],
             'state' => ['nullable', 'string', 'max:100'],
-            'country' => ['nullable', 'string', 'max:100'],
-            'postal_code' => ['nullable', 'string', 'max:20'],
+            'country' => ['nullable', 'string', 'max:100', 'in:Iraq'],
             'latitude' => ['nullable', 'numeric', 'between:-90,90'],
             'longitude' => ['nullable', 'numeric', 'between:-180,180'],
 
             // Business Information
-            'industry' => ['nullable', 'string', 'max:100'],
+            'industry' => ['required', 'string', 'in:'.implode(',', $companyCategories)],
             'company_size' => ['nullable', 'string', 'max:50'],
             'company_type' => ['nullable', 'in:startup,small_business,mid_market,enterprise,nonprofit,government,agency'],
             'founded_date' => ['nullable', 'date', 'before:today'],
@@ -87,6 +89,7 @@ class StoreCompanyRequest extends FormRequest
             'values.*' => ['string', 'max:255'],
             'perks' => ['nullable', 'array'],
             'perks.*' => ['string', 'max:255'],
+            'required_skills' => ['nullable', 'json'],
             'culture_description' => ['nullable', 'string', 'max:5000'],
 
             // SEO
@@ -110,6 +113,8 @@ class StoreCompanyRequest extends FormRequest
 
             // Image Upload
             'logo' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
+            'images' => ['nullable', 'array', 'max:10'],
+            'images.*' => ['image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
         ];
     }
 
@@ -121,7 +126,11 @@ class StoreCompanyRequest extends FormRequest
         return [
             'name.required' => 'Company name is required',
             'name.unique' => 'A company with this name already exists',
-            'email.required' => 'Company email is required',
+            'industry.required' => 'Company category is required',
+            'industry.in' => 'Please select a valid category',
+            'city.required' => 'City is required',
+            'city.in' => 'Please select a valid Iraqi city',
+            'country.in' => 'Country must be Iraq',
             'email.unique' => 'A company with this email already exists',
             'website.url' => 'Please enter a valid URL',
             'logo.image' => 'Logo must be an image file',

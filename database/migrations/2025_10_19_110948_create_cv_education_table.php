@@ -20,7 +20,6 @@ return new class extends Migration
             $table->string('location')->nullable();
             $table->string('start_date'); // YYYY-MM format
             $table->string('end_date')->nullable(); // YYYY-MM format
-            $table->string('gpa', 10)->nullable();
             $table->text('description')->nullable();
             $table->integer('order')->default(0);
             $table->timestamps();

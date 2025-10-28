@@ -51,30 +51,6 @@ const routes: RouteRecordRaw[] = [
     meta: { title: 'CV Details' },
   },
   {
-    path: '/blogs',
-    name: 'blogs',
-    component: () => import('@/views/blogs/BlogListView.vue'),
-    meta: { title: 'Blog & tips' },
-  },
-  {
-    path: '/blogs/create',
-    name: 'blog-create',
-    component: () => import('@/views/blogs/BlogFormView.vue'),
-    meta: { title: 'Create Blog' },
-  },
-  {
-    path: '/blogs/edit/:id',
-    name: 'blog-edit',
-    component: () => import('@/views/blogs/BlogFormView.vue'),
-    meta: { title: 'Edit Blog' },
-  },
-  {
-    path: '/blogs/:slug',
-    name: 'blog-detail',
-    component: () => import('@/views/blogs/BlogDetailView.vue'),
-    meta: { title: 'Blog' },
-  },
-  {
     path: '/login',
     name: 'login',
     component: () => import('@/views/auth/LoginView.vue'),

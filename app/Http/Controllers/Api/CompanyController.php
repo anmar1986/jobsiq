@@ -84,7 +84,19 @@ class CompanyController extends Controller
                 Log::info('Logo uploaded successfully');
             }
 
-            $company->load(['logo', 'owners']);
+            // Handle company images upload
+            if ($request->hasFile('images')) {
+                Log::info('Processing company images upload');
+                $files = $request->file('images');
+                if (is_array($files)) {
+                    foreach ($files as $file) {
+                        $this->uploadCompanyImage($company, $file);
+                    }
+                    Log::info('Company images uploaded successfully', ['count' => count($files)]);
+                }
+            }
+
+            $company->load(['logo', 'images', 'owners']);
 
             Log::info('Company creation completed successfully');
 
@@ -140,7 +152,17 @@ class CompanyController extends Controller
             $this->uploadLogo($company, $request->file('logo'));
         }
 
-        $company->load(['logo', 'owners']);
+        // Handle company images upload
+        if ($request->hasFile('images')) {
+            $files = $request->file('images');
+            if (is_array($files)) {
+                foreach ($files as $file) {
+                    $this->uploadCompanyImage($company, $file);
+                }
+            }
+        }
+
+        $company->load(['logo', 'images', 'owners']);
 
         return response()->json([
             'success' => true,
@@ -247,7 +269,7 @@ class CompanyController extends Controller
     {
         $companies = $request->user()
             ->ownedCompanies()
-            ->with(['logo', 'jobs'])
+            ->with(['logo', 'images', 'jobs'])
             ->withCount('jobs')
             ->get();
 
@@ -278,6 +300,31 @@ class CompanyController extends Controller
             ]);
         } catch (\Exception $e) {
             Log::error('Logo upload failed: '.$e->getMessage());
+            throw $e;
+        }
+    }
+
+    /**
+     * Upload company image (gallery).
+     */
+    protected function uploadCompanyImage(Company $company, $file): CompanyImage
+    {
+        try {
+            // Store the file
+            $path = $file->store('companies/images', 'public');
+
+            if (! $path) {
+                throw new \Exception('Failed to store company image file');
+            }
+
+            // Create the image record
+            return $company->images()->create([
+                'path' => $path,
+                'type' => 'gallery',
+                'is_primary' => false,
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Company image upload failed: '.$e->getMessage());
             throw $e;
         }
     }

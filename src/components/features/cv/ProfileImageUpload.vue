@@ -7,7 +7,7 @@
     <div class="flex items-center gap-6">
       <!-- Image Preview -->
       <div class="relative">
-        <div class="w-32 h-32 rounded-full overflow-hidden bg-gray-100 border-4 border-gray-200 flex items-center justify-center">
+        <div class="w-32 h-40 rounded-lg overflow-hidden bg-gray-100 border-4 border-gray-200 flex items-center justify-center">
           <img
             v-if="previewUrl"
             :src="previewUrl"

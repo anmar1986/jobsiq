@@ -77,17 +77,17 @@
             </div>
           </div>
 
-          <div v-if="cv.city || cv.country || cv.postal_code || cv.address" class="flex items-center gap-3">
-            <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
-              <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div v-if="cv.city || cv.country" class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
+              <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
               </svg>
             </div>
             <div class="min-w-0">
-              <p class="text-xs text-gray-500">Location</p>
-              <p class="text-sm font-medium text-gray-900 truncate">
-                {{ [cv.city, cv.postal_code, cv.country].filter(Boolean).join(', ') }}
+              <p class="text-xs text-gray-500">Address</p>
+              <p class="text-sm font-medium text-gray-900">
+                {{ [cv.city, cv.country].filter(Boolean).join(', ') }}
               </p>
             </div>
           </div>
@@ -220,9 +220,6 @@
                 </svg>
                 {{ formatDate(edu.start_date) }} - {{ formatDate(edu.end_date) || 'Present' }}
               </span>
-              <span v-if="edu.gpa">
-                GPA: {{ edu.gpa }}
-              </span>
             </div>
             <p v-if="edu.description" class="text-gray-700">{{ edu.description }}</p>
           </div>
@@ -264,122 +261,20 @@
 
       <!-- Languages -->
       <BaseCard v-if="cv.languages && cv.languages.length > 0" no-padding class="p-4 mb-4">
-        <h3 class="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+        <h3 class="text-2xl font-bold text-gray-900 mb-4 flex items-center gap-2">
           <svg class="w-6 h-6 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" />
           </svg>
           Languages
         </h3>
-        <div class="grid md:grid-cols-3 gap-4">
+        <div class="grid md:grid-cols-2 gap-3">
           <div
             v-for="(lang, index) in cv.languages"
             :key="index"
-            class="p-4 bg-blue-50 border border-blue-200 rounded-lg"
+            class="flex justify-between items-center p-3 bg-blue-50 border border-blue-200 rounded-lg"
           >
-            <h4 class="font-bold text-gray-900 mb-1">{{ lang.language }}</h4>
-            <p class="text-sm text-gray-600 capitalize">{{ lang.proficiency }}</p>
-          </div>
-        </div>
-      </BaseCard>
-
-      <!-- Projects -->
-      <BaseCard v-if="cv.projects && cv.projects.length > 0" no-padding class="p-4 mb-4">
-        <h3 class="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-          <svg class="w-6 h-6 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-          </svg>
-          Projects
-        </h3>
-        <div class="space-y-6">
-          <div
-            v-for="(project, index) in cv.projects"
-            :key="index"
-            class="pb-6 border-b border-gray-200 last:border-0 last:pb-0"
-          >
-            <div class="flex items-start justify-between gap-4 mb-2">
-              <h4 class="text-lg font-bold text-gray-900">{{ project.title }}</h4>
-              <a
-                v-if="project.url"
-                :href="project.url"
-                target="_blank"
-                class="text-primary-600 hover:text-primary-700 text-sm flex items-center gap-1 flex-shrink-0"
-              >
-                View Project
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                </svg>
-              </a>
-            </div>
-            <p v-if="project.start_date || project.end_date" class="text-sm text-gray-600 mb-2">
-              {{ formatDate(project.start_date) }} - {{ project.end_date ? formatDate(project.end_date) : 'Present' }}
-            </p>
-            <p v-if="project.description" class="text-gray-700 mb-3 whitespace-pre-line">{{ project.description }}</p>
-            <div v-if="project.technologies && project.technologies.length > 0" class="flex flex-wrap gap-2">
-              <span
-                v-for="(tech, techIndex) in project.technologies"
-                :key="techIndex"
-                class="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-xs font-medium"
-              >
-                {{ tech }}
-              </span>
-            </div>
-          </div>
-        </div>
-      </BaseCard>
-
-      <!-- Awards -->
-      <BaseCard v-if="cv.awards && cv.awards.length > 0" no-padding class="p-4 mb-4">
-        <h3 class="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-          <svg class="w-6 h-6 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
-          </svg>
-          Awards & Honors
-        </h3>
-        <div class="grid md:grid-cols-2 gap-4">
-          <div
-            v-for="(award, index) in cv.awards"
-            :key="index"
-            class="p-4 bg-amber-50 border border-amber-200 rounded-lg"
-          >
-            <h4 class="font-bold text-gray-900 mb-1">{{ award.title }}</h4>
-            <p class="text-sm text-gray-600 mb-2">{{ award.issuer }}</p>
-            <p class="text-xs text-gray-500 mb-2">{{ formatDate(award.date) }}</p>
-            <p v-if="award.description" class="text-sm text-gray-700">{{ award.description }}</p>
-          </div>
-        </div>
-      </BaseCard>
-
-      <!-- Publications -->
-      <BaseCard v-if="cv.publications && cv.publications.length > 0" no-padding class="p-4 mb-4">
-        <h3 class="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-          <svg class="w-6 h-6 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-          </svg>
-          Publications
-        </h3>
-        <div class="space-y-4">
-          <div
-            v-for="(pub, index) in cv.publications"
-            :key="index"
-            class="p-4 bg-indigo-50 border border-indigo-200 rounded-lg"
-          >
-            <div class="flex items-start justify-between gap-4 mb-2">
-              <h4 class="font-bold text-gray-900">{{ pub.title }}</h4>
-              <a
-                v-if="pub.url"
-                :href="pub.url"
-                target="_blank"
-                class="text-primary-600 hover:text-primary-700 text-sm flex items-center gap-1 flex-shrink-0"
-              >
-                View
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                </svg>
-              </a>
-            </div>
-            <p class="text-sm text-gray-600 mb-1">{{ pub.publisher }}</p>
-            <p class="text-xs text-gray-500 mb-2">{{ formatDate(pub.date) }}</p>
-            <p v-if="pub.description" class="text-sm text-gray-700">{{ pub.description }}</p>
+            <span class="font-semibold text-gray-900">{{ lang.language }}</span>
+            <span class="text-sm text-gray-600 capitalize">{{ lang.proficiency }}</span>
           </div>
         </div>
       </BaseCard>

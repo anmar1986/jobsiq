@@ -51,8 +51,14 @@
           <div class="mb-4 flex-shrink-0">
             <div class="flex items-start gap-4 mb-3">
               <!-- Company Logo -->
-              <div class="w-16 h-16 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-lg flex items-center justify-center text-white text-2xl font-bold flex-shrink-0 ring-2 ring-primary-200 group-hover:ring-primary-300 transition-all duration-300">
-                {{ company.name[0] }}
+              <div class="w-16 h-16 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-lg flex items-center justify-center text-white text-2xl font-bold flex-shrink-0 ring-2 ring-primary-200 group-hover:ring-primary-300 transition-all duration-300 overflow-hidden">
+                <img 
+                  v-if="company.logo?.path" 
+                  :src="getLogoUrl(company.logo.path)" 
+                  :alt="company.name"
+                  class="w-full h-full object-cover"
+                />
+                <span v-else>{{ company.name[0] }}</span>
               </div>
               
               <!-- Company Name & Industry -->
@@ -297,6 +303,23 @@ const viewAllJobs = (company: Company) => {
     name: 'jobs',
     query: { company: company.slug }
   })
+}
+
+const getLogoUrl = (path: string): string => {
+  if (!path) return ''
+  
+  // Handle different path formats
+  if (path.startsWith('data:') || path.startsWith('blob:') || path.startsWith('http')) {
+    return path
+  }
+  
+  if (path.startsWith('/storage/')) {
+    return path
+  }
+  
+  // Remove leading slashes and construct clean path
+  const cleanPath = path.replace(/^\/+/, '')
+  return `/storage/${cleanPath}`
 }
 
 onMounted(() => {

@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
-use App\Http\Controllers\Api\BlogController;
 use App\Http\Controllers\Api\CompanyController;
 use App\Http\Controllers\Api\FreeCvController;
 use App\Http\Controllers\Api\HomeController;
@@ -35,12 +34,6 @@ Route::get('/companies/{company}', [CompanyController::class, 'show']);
 Route::get('/cvs', [FreeCvController::class, 'index']);
 Route::get('/cvs/{slug}', [FreeCvController::class, 'show']);
 
-// Blog routes - public access but Auth will work if token is provided
-Route::get('/blogs', [BlogController::class, 'index']);
-Route::get('/blogs/categories', [BlogController::class, 'categories']);
-Route::get('/blogs/featured', [BlogController::class, 'featured']);
-Route::get('/blogs/{slug}', [BlogController::class, 'show']);
-
 // Authenticated routes
 Route::middleware('auth:sanctum')->group(function () {
     // Auth user routes
@@ -64,13 +57,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/my-companies', [CompanyController::class, 'myCompanies']);
     Route::post('/companies/{company}/owners', [CompanyController::class, 'addOwner']);
     Route::delete('/companies/{company}/owners/{userId}', [CompanyController::class, 'removeOwner']);
-
-    // Blog management routes (require authentication)
-    Route::get('/blogs/by-id/{id}', [BlogController::class, 'showById']);
-    Route::post('/blogs', [BlogController::class, 'store']);
-    Route::post('/blogs/upload-image', [BlogController::class, 'uploadImage']);
-    Route::put('/blogs/{id}', [BlogController::class, 'update']);
-    Route::delete('/blogs/{id}', [BlogController::class, 'destroy']);
 
     // User CV management
     Route::get('/my-cvs', [UserCvController::class, 'myCvs']);

@@ -29,21 +29,44 @@
               </BaseInput>
             </div>
             
-            <div class="flex-1 md:max-w-xs">
-              <BaseInput
+            <div class="flex-1 md:max-w-xs relative">
+              <input
                 v-model="locationQuery"
                 type="text"
-                placeholder="City or country"
-                size="lg"
-                show-clear-button
+                placeholder="City"
+                class="w-full px-4 py-3 pl-12 border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-base"
+                @input="handleLocationInput"
+                @focus="showCitySuggestions = true"
+                @blur="handleCityBlur"
+                @keydown="handleCityKeyDown"
+              />
+              <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+              </div>
+              
+              <!-- City Suggestions Dropdown -->
+              <div
+                v-if="showCitySuggestions && filteredCities.length > 0"
+                class="absolute z-50 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-y-auto"
               >
-                <template #icon-left>
-                  <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                  </svg>
-                </template>
-              </BaseInput>
+                <button
+                  v-for="(city, index) in filteredCities"
+                  :key="city"
+                  :ref="el => { if (el) cityRefs[index] = el as HTMLElement }"
+                  type="button"
+                  :class="[
+                    'w-full px-3 py-2 text-left text-gray-900 hover:bg-gray-100 focus:bg-gray-100 focus:outline-none transition-colors',
+                    { 'bg-primary-100 font-medium': index === selectedCityIndex }
+                  ]"
+                  @mousedown.prevent="selectCity(city)"
+                  @mouseenter="selectedCityIndex = index"
+                >
+                  {{ city }}
+                </button>
+              </div>
             </div>
             
             <BaseButton type="submit" variant="primary" size="lg" class="md:w-auto">
@@ -75,15 +98,86 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
 import BaseInput from '@/components/base/BaseInput.vue'
 import BaseButton from '@/components/base/BaseButton.vue'
+import { iraqCities } from '@/config/iraqCities'
 
 const router = useRouter()
 
 const searchQuery = ref('')
 const locationQuery = ref('')
+
+// City suggestions state
+const showCitySuggestions = ref(false)
+const selectedCityIndex = ref(-1)
+const cityRefs: Record<number, HTMLElement> = {}
+
+const filteredCities = computed(() => {
+  if (!locationQuery.value) return iraqCities
+  const searchTerm = locationQuery.value.toLowerCase()
+  return iraqCities.filter(city => 
+    city.toLowerCase().includes(searchTerm)
+  )
+})
+
+const handleLocationInput = () => {
+  showCitySuggestions.value = true
+  selectedCityIndex.value = -1
+}
+
+const scrollToSelected = () => {
+  nextTick(() => {
+    if (selectedCityIndex.value >= 0 && cityRefs[selectedCityIndex.value]) {
+      cityRefs[selectedCityIndex.value].scrollIntoView({
+        block: 'nearest',
+        behavior: 'smooth'
+      })
+    }
+  })
+}
+
+const handleCityKeyDown = (event: KeyboardEvent) => {
+  if (!showCitySuggestions.value || filteredCities.value.length === 0) return
+
+  switch (event.key) {
+    case 'ArrowDown':
+      event.preventDefault()
+      selectedCityIndex.value = Math.min(selectedCityIndex.value + 1, filteredCities.value.length - 1)
+      scrollToSelected()
+      break
+    case 'ArrowUp':
+      event.preventDefault()
+      selectedCityIndex.value = Math.max(selectedCityIndex.value - 1, 0)
+      scrollToSelected()
+      break
+    case 'Enter':
+      event.preventDefault()
+      if (selectedCityIndex.value >= 0 && selectedCityIndex.value < filteredCities.value.length) {
+        selectCity(filteredCities.value[selectedCityIndex.value])
+      } else {
+        handleSearch()
+      }
+      break
+    case 'Escape':
+      showCitySuggestions.value = false
+      selectedCityIndex.value = -1
+      break
+  }
+}
+
+const selectCity = (city: string) => {
+  locationQuery.value = city
+  showCitySuggestions.value = false
+  selectedCityIndex.value = -1
+}
+
+const handleCityBlur = () => {
+  setTimeout(() => {
+    showCitySuggestions.value = false
+  }, 200)
+}
 
 const popularSearches = ['Designer', 'Developer', 'Marketing', 'Sales', 'Manager']
 

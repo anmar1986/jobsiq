@@ -58,6 +58,7 @@ class Company extends Model
         'benefits',
         'values',
         'perks',
+        'required_skills',
         'culture_description',
 
         // Status
@@ -90,6 +91,7 @@ class Company extends Model
         'benefits' => 'array',
         'values' => 'array',
         'perks' => 'array',
+        'required_skills' => 'array',
         'keywords' => 'array',
         'languages' => 'array',
         'locations' => 'array',

@@ -39,7 +39,6 @@
             <li><router-link to="/jobs" class="text-sm hover:text-primary-500 transition-colors">Browse Jobs</router-link></li>
             <li><router-link to="/companies" class="text-sm hover:text-primary-500 transition-colors">Browse Companies</router-link></li>
             <li><router-link to="/my-cvs" class="text-sm hover:text-primary-500 transition-colors">Create CV</router-link></li>
-            <li><router-link to="/blogs" class="text-sm hover:text-primary-500 transition-colors">Blog & Tips</router-link></li>
             <li><router-link to="/register" class="text-sm hover:text-primary-500 transition-colors">Sign Up</router-link></li>
           </ul>
         </div>

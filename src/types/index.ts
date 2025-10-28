@@ -103,6 +103,7 @@ export interface Company {
   benefits?: string[] | null
   values?: string[] | null
   perks?: string[] | null
+  required_skills?: string[] | null
   culture_description?: string | null
   is_verified?: boolean
   is_featured?: boolean
@@ -202,7 +203,6 @@ export interface Education {
   location?: string
   start_date: string
   end_date?: string | null
-  gpa?: string
   description?: string
   formatted_start_date?: string
   formatted_end_date?: string | null

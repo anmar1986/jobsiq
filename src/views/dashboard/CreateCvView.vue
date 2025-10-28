@@ -29,10 +29,10 @@
           @update:personal-info="updatePersonalInfo"
         />
 
-        <!-- Skills -->
-        <SkillsSection 
-          :skills="cvForm.skills"
-          @update:skills="cvForm.skills = $event"
+        <!-- Education -->
+        <EducationSection 
+          :education="cvForm.education"
+          @update:education="cvForm.education = $event"
         />
 
         <!-- Work Experience -->
@@ -41,28 +41,10 @@
           @update:work-experience="cvForm.work_experience = $event"
         />
 
-        <!-- Education -->
-        <EducationSection 
-          :education="cvForm.education"
-          @update:education="cvForm.education = $event"
-        />
-
         <!-- Certifications -->
         <CertificationsSection 
           :certifications="cvForm.certifications"
           @update:certifications="cvForm.certifications = $event"
-        />
-
-        <!-- Languages -->
-        <LanguagesSection 
-          :languages="cvForm.languages"
-          @update:languages="cvForm.languages = $event"
-        />
-
-        <!-- Projects -->
-        <ProjectsSection 
-          :projects="cvForm.projects"
-          @update:projects="cvForm.projects = $event"
         />
 
         <!-- Volunteer Work -->
@@ -71,22 +53,22 @@
           @update:volunteer-work="cvForm.volunteer_work = $event"
         />
 
-        <!-- Awards -->
-        <AwardsSection 
-          :awards="cvForm.awards"
-          @update:awards="cvForm.awards = $event"
-        />
-
-        <!-- Publications -->
-        <PublicationsSection 
-          :publications="cvForm.publications"
-          @update:publications="cvForm.publications = $event"
-        />
-
         <!-- References -->
         <ReferencesSection 
           :references="cvForm.references"
           @update:references="cvForm.references = $event"
+        />
+
+        <!-- Skills -->
+        <SkillsSection 
+          :skills="cvForm.skills"
+          @update:skills="cvForm.skills = $event"
+        />
+
+        <!-- Languages -->
+        <LanguagesSection 
+          :languages="cvForm.languages"
+          @update:languages="cvForm.languages = $event"
         />
 
         <!-- Hobbies -->
@@ -132,10 +114,7 @@ import type {
   Education,
   Certification,
   Language,
-  Project,
   Reference,
-  Award,
-  Publication,
   VolunteerWork
 } from '@/types'
 import BaseCard from '@/components/base/BaseCard.vue'
@@ -149,10 +128,7 @@ import CertificationsSection from '@/components/features/cv/CertificationsSectio
 import LanguagesSection from '@/components/features/cv/LanguagesSection.vue'
 import SocialLinksSection from '@/components/features/cv/SocialLinksSection.vue'
 import CvSettingsSection from '@/components/features/cv/CvSettingsSection.vue'
-import ProjectsSection from '@/components/features/cv/ProjectsSection.vue'
 import ReferencesSection from '@/components/features/cv/ReferencesSection.vue'
-import AwardsSection from '@/components/features/cv/AwardsSection.vue'
-import PublicationsSection from '@/components/features/cv/PublicationsSection.vue'
 import VolunteerWorkSection from '@/components/features/cv/VolunteerWorkSection.vue'
 import HobbiesSection from '@/components/features/cv/HobbiesSection.vue'
 
@@ -178,19 +154,15 @@ const cvForm = ref({
   website: '',
   linkedin: '',
   github: '',
-  address: '',
   city: '',
-  country: '',
+  country: 'Iraq',
   is_public: true,
   is_primary: false,
   work_experience: [] as WorkExperience[],
   education: [] as Education[],
   certifications: [] as Certification[],
   languages: [] as Language[],
-  projects: [] as Project[],
   references: [] as Reference[],
-  awards: [] as Award[],
-  publications: [] as Publication[],
   volunteer_work: [] as VolunteerWork[],
   hobbies: [] as string[],
 })
@@ -201,7 +173,6 @@ const personalInfo = computed(() => ({
   email: cvForm.value.email,
   phone: cvForm.value.phone,
   title: cvForm.value.title,
-  address: cvForm.value.address,
   city: cvForm.value.city,
   country: cvForm.value.country,
   postal_code: cvForm.value.postal_code,
@@ -224,7 +195,6 @@ const updatePersonalInfo = (info: typeof personalInfo.value) => {
   cvForm.value.email = info.email
   cvForm.value.phone = info.phone
   cvForm.value.title = info.title
-  cvForm.value.address = info.address
   cvForm.value.city = info.city
   cvForm.value.country = info.country
   cvForm.value.postal_code = info.postal_code
@@ -253,12 +223,6 @@ const saveCv = async () => {
       category: undefined,
     }))
     
-    // Sanitize education data - trim GPA to max 10 characters
-    const sanitizedEducation = cvForm.value.education.map((edu: Education) => ({
-      ...edu,
-      gpa: edu.gpa ? edu.gpa.substring(0, 10) : edu.gpa,
-    }))
-
     // Create FormData for file upload
     const formData = new FormData()
     
@@ -270,7 +234,6 @@ const saveCv = async () => {
     formData.append('website', cvForm.value.website || '')
     formData.append('linkedin', cvForm.value.linkedin || '')
     formData.append('github', cvForm.value.github || '')
-    formData.append('address', cvForm.value.address || '')
     formData.append('city', cvForm.value.city || '')
     formData.append('country', cvForm.value.country || '')
     formData.append('postal_code', cvForm.value.postal_code || '')
@@ -283,7 +246,7 @@ const saveCv = async () => {
     formData.append('work_experience', JSON.stringify(cvForm.value.work_experience))
     
     // Add education as JSON
-    formData.append('education', JSON.stringify(sanitizedEducation))
+    formData.append('education', JSON.stringify(cvForm.value.education))
     
     // Add certifications as JSON
     formData.append('certifications', JSON.stringify(cvForm.value.certifications))
@@ -291,17 +254,8 @@ const saveCv = async () => {
     // Add languages as JSON
     formData.append('languages', JSON.stringify(cvForm.value.languages))
     
-    // Add projects as JSON (always send, even if empty)
-    formData.append('projects', JSON.stringify(cvForm.value.projects))
-    
     // Add references as JSON (always send, even if empty)
     formData.append('references', JSON.stringify(cvForm.value.references))
-    
-    // Add awards as JSON (always send, even if empty)
-    formData.append('awards', JSON.stringify(cvForm.value.awards))
-    
-    // Add publications as JSON (always send, even if empty)
-    formData.append('publications', JSON.stringify(cvForm.value.publications))
     
     // Add volunteer work as JSON (always send, even if empty)
     formData.append('volunteer_work', JSON.stringify(cvForm.value.volunteer_work))
@@ -387,7 +341,6 @@ const loadCvForEditing = async () => {
           website: cv.website || '',
           linkedin: cv.linkedin || '',
           github: cv.github || '',
-          address: cv.address || '',
           city: cv.city || '',
           country: cv.country || '',
           is_public: cv.is_public,
@@ -396,10 +349,7 @@ const loadCvForEditing = async () => {
           education: cv.education || [],
           certifications: cv.certifications || [],
           languages: cv.languages || [],
-          projects: cv.projects || [],
           references: cv.references || [],
-          awards: cv.awards || [],
-          publications: cv.publications || [],
           volunteer_work: cv.volunteer_work || [],
           hobbies: hobbiesArray,
         }
