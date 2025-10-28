@@ -11,9 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
+        Schema::dropIfExists('blogs');
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
         Schema::create('blogs', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->string('title');
             $table->string('slug')->unique();
             $table->text('excerpt')->nullable();
@@ -22,21 +30,16 @@ return new class extends Migration
             $table->string('category')->nullable();
             $table->json('tags')->nullable();
             $table->enum('status', ['draft', 'published'])->default('draft');
-            $table->timestamp('published_at')->nullable();
+            $table->boolean('is_featured')->default(false);
             $table->integer('views')->default(0);
+            $table->timestamp('published_at')->nullable();
             $table->timestamps();
-
+            $table->softDeletes();
+            
             $table->index('slug');
             $table->index('status');
+            $table->index('category');
             $table->index('published_at');
         });
-    }
-
-    /**
-     * Reverse the migrations.
-     */
-    public function down(): void
-    {
-        Schema::dropIfExists('blogs');
     }
 };

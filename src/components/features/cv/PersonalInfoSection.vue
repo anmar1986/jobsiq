@@ -41,49 +41,67 @@
         @update:model-value="updateField('phone', $event)"
       />
       
-      <div class="md:col-span-2">
-        <BaseInput
-          v-model="localInfo.address"
-          label="Address"
-          placeholder="123 Main Street"
-          @update:model-value="updateField('address', $event)"
+      <div class="relative">
+        <label class="block text-sm font-medium text-gray-700 mb-1">
+          City
+        </label>
+        <input
+          v-model="cityInput"
+          type="text"
+          placeholder="Baghdad"
+          class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors appearance-none"
+          @input="handleCityInput"
+          @focus="showCitySuggestions = true"
+          @blur="handleCityBlur"
+          @keydown="handleKeyDown"
         />
+        
+        <!-- Suggestions Dropdown -->
+        <div
+          v-if="showCitySuggestions && filteredCities.length > 0"
+          ref="dropdownRef"
+          class="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-y-auto"
+        >
+          <button
+            v-for="(city, index) in filteredCities"
+            :key="city"
+            :ref="el => { if (el) cityRefs[index] = el as HTMLElement }"
+            type="button"
+            :class="[
+              'w-full px-3 py-2 text-left text-gray-900 hover:bg-gray-100 focus:bg-gray-100 focus:outline-none transition-colors',
+              { 'bg-primary-100 font-medium': index === selectedIndex }
+            ]"
+            @mousedown.prevent="selectCity(city)"
+            @mouseenter="selectedIndex = index"
+          >
+            {{ city }}
+          </button>
+        </div>
       </div>
       
-      <BaseInput
-        v-model="localInfo.city"
-        label="City"
-        placeholder="New York"
-        @update:model-value="updateField('city', $event)"
-      />
-      
-      <BaseInput
-        v-model="localInfo.country"
-        label="Country"
-        placeholder="United States"
-        @update:model-value="updateField('country', $event)"
-      />
-      
-      <BaseInput
-        v-model="localInfo.postal_code"
-        label="Postal Code"
-        placeholder="10001"
-        @update:model-value="updateField('postal_code', $event)"
-      />
+      <div class="relative">
+        <label class="block text-sm font-medium text-gray-700 mb-1">
+          Country
+        </label>
+        <div class="px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-700">
+          Iraq
+        </div>
+        <input type="hidden" value="Iraq" />
+      </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { ref, watch, computed, nextTick } from 'vue'
 import BaseInput from '@/components/base/BaseInput.vue'
+import { iraqCities } from '@/config/iraqCities'
 
 interface PersonalInfo {
   full_name: string
   email: string
   phone: string
   title: string
-  address: string
   city: string
   country: string
   postal_code: string
@@ -99,14 +117,92 @@ const emit = defineEmits<{
   'update:personal-info': [value: PersonalInfo]
 }>()
 
-const localInfo = ref<PersonalInfo>({ ...props.personalInfo })
+const localInfo = ref<PersonalInfo>({ ...props.personalInfo, country: 'Iraq' })
+const cityInput = ref(props.personalInfo.city || '')
+const showCitySuggestions = ref(false)
+const selectedIndex = ref(-1)
+const dropdownRef = ref<HTMLElement | null>(null)
+const cityRefs: Record<number, HTMLElement> = {}
+
+const filteredCities = computed(() => {
+  if (!cityInput.value) return iraqCities
+  const searchTerm = cityInput.value.toLowerCase()
+  return iraqCities.filter(city => 
+    city.toLowerCase().includes(searchTerm)
+  )
+})
 
 watch(() => props.personalInfo, (newInfo) => {
-  localInfo.value = { ...newInfo }
+  localInfo.value = { ...newInfo, country: 'Iraq' }
+  cityInput.value = newInfo.city || ''
 }, { deep: true })
+
+const handleCityInput = (event: Event) => {
+  const value = (event.target as HTMLInputElement).value
+  cityInput.value = value
+  localInfo.value.city = value
+  selectedIndex.value = -1
+  showCitySuggestions.value = true
+  updateField('city', value)
+}
+
+const scrollToSelected = () => {
+  nextTick(() => {
+    if (selectedIndex.value >= 0 && cityRefs[selectedIndex.value]) {
+      cityRefs[selectedIndex.value].scrollIntoView({
+        block: 'nearest',
+        behavior: 'smooth'
+      })
+    }
+  })
+}
+
+const handleKeyDown = (event: KeyboardEvent) => {
+  if (!showCitySuggestions.value || filteredCities.value.length === 0) return
+
+  switch (event.key) {
+    case 'ArrowDown':
+      event.preventDefault()
+      selectedIndex.value = Math.min(selectedIndex.value + 1, filteredCities.value.length - 1)
+      scrollToSelected()
+      break
+    case 'ArrowUp':
+      event.preventDefault()
+      selectedIndex.value = Math.max(selectedIndex.value - 1, 0)
+      scrollToSelected()
+      break
+    case 'Enter':
+      event.preventDefault()
+      if (selectedIndex.value >= 0 && selectedIndex.value < filteredCities.value.length) {
+        selectCity(filteredCities.value[selectedIndex.value])
+      }
+      break
+    case 'Escape':
+      showCitySuggestions.value = false
+      selectedIndex.value = -1
+      break
+  }
+}
+
+const selectCity = (city: string) => {
+  cityInput.value = city
+  localInfo.value.city = city
+  showCitySuggestions.value = false
+  selectedIndex.value = -1
+  updateField('city', city)
+}
+
+const handleCityBlur = () => {
+  // Delay hiding to allow click on suggestion
+  setTimeout(() => {
+    showCitySuggestions.value = false
+  }, 200)
+}
 
 const updateField = (field: keyof PersonalInfo, value: string | number) => {
   localInfo.value[field] = value as never
+  // Always ensure country is Iraq
+  localInfo.value.country = 'Iraq'
   emit('update:personal-info', { ...localInfo.value })
 }
 </script>

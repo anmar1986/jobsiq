@@ -1,6 +1,6 @@
 <template>
-  <div class="mb-8">
-    <div class="flex items-center justify-between mb-4">
+  <div class="mb-6">
+    <div class="flex items-center justify-between mb-3">
       <h3 class="text-lg font-semibold text-gray-900 flex items-center gap-2">
         <svg class="w-5 h-5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" />
@@ -21,13 +21,13 @@
     </div>
     
     <!-- Languages List -->
-    <div v-if="localLanguages.length > 0" class="space-y-4">
+    <div v-if="localLanguages.length > 0" class="space-y-3">
       <BaseCard
         v-for="(lang, index) in localLanguages"
         :key="index"
-        class="p-6 border-l-4 border-blue-500"
+        class="p-4 border-l-4 border-blue-500"
       >
-        <div class="flex justify-between items-start mb-4">
+        <div class="flex justify-between items-start mb-3">
           <h4 class="font-semibold text-gray-900">Language #{{ index + 1 }}</h4>
           <button
             type="button"
@@ -40,7 +40,7 @@
           </button>
         </div>
         
-        <div class="grid md:grid-cols-2 gap-4">
+        <div class="grid md:grid-cols-2 gap-3">
           <BaseInput
             v-model="lang.language"
             label="Language"

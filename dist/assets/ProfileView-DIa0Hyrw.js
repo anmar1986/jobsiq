@@ -1,1 +1,0 @@
-import{d as t,c as s,a as o,o as a}from"./index-GVITuUF_.js";const n={class:"container-custom py-8"},i=t({__name:"ProfileView",setup(r){return(c,e)=>(a(),s("div",n,[...e[0]||(e[0]=[o("h1",{class:"text-3xl font-bold mb-6"},"Profile",-1),o("p",{class:"text-gray-600"},"Profile page - Coming soon!",-1)])]))}});export{i as default};

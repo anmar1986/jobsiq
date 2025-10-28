@@ -3,6 +3,10 @@
         Options -MultiViews -Indexes
     </IfModule>
 
+    # Set PHP upload tmp directory
+    php_value upload_tmp_dir "C:/xampp/htdocs/myProjects/jobsiq/storage/tmp"
+    php_value sys_temp_dir "C:/xampp/htdocs/myProjects/jobsiq/storage/tmp"
+
     RewriteEngine On
 
     # Handle Authorization Header

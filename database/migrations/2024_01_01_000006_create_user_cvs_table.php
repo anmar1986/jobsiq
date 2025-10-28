@@ -40,7 +40,7 @@ return new class extends Migration
 
             // Education (JSON array)
             $table->json('education')->nullable();
-            // Structure: [{institution, degree, field, location, start_date, end_date, gpa, description}]
+            // Structure: [{institution, degree, field, location, start_date, end_date, description}]
 
             // Skills (JSON array)
             $table->json('skills')->nullable();

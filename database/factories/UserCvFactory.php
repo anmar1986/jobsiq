@@ -73,7 +73,6 @@ class UserCvFactory extends Factory
                 'location' => fake()->city().', '.fake()->country(),
                 'start_date' => $startDate->format('Y-m-d'),
                 'end_date' => $endDate->format('Y-m-d'),
-                'gpa' => fake()->randomFloat(2, 3.0, 4.0),
                 'description' => fake()->sentence(),
             ];
         }

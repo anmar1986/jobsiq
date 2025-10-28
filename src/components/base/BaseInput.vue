@@ -19,8 +19,8 @@
         :readonly="readonly"
         :required="required"
         :autocomplete="autocomplete"
-        :min="min"
-        :max="max"
+        :min="type === 'date' ? (min || '1900-01-01') : min"
+        :max="type === 'date' ? (max || '2100-12-31') : max"
         :pattern="pattern"
         :maxlength="maxlength"
         :class="inputClasses"
@@ -90,11 +90,63 @@ const inputId = `input-${Math.random().toString(36).substring(2, 9)}`
 
 const handleInput = (event: Event) => {
   const target = event.target as HTMLInputElement
-  emit('update:modelValue', target.value)
+  let value = target.value
+  
+  // Validate date inputs to prevent invalid years (more than 4 digits)
+  if (props.type === 'date' && value) {
+    // Date format is YYYY-MM-DD
+    const parts = value.split('-')
+    if (parts.length === 3) {
+      const year = parts[0]
+      // If year has more than 4 digits, truncate it to 4 digits
+      if (year.length > 4) {
+        parts[0] = year.substring(0, 4)
+        value = parts.join('-')
+        target.value = value
+      }
+      // Validate year is between 1900 and 2100
+      const yearNum = parseInt(parts[0])
+      if (yearNum < 1900 || yearNum > 2100) {
+        // Don't emit invalid dates
+        return
+      }
+    }
+  }
+  
+  emit('update:modelValue', value)
 }
 
 const handleBlur = (event: FocusEvent) => {
   isFocused.value = false
+  
+  // Additional validation on blur for date inputs
+  if (props.type === 'date') {
+    const target = event.target as HTMLInputElement
+    const value = target.value
+    
+    if (value) {
+      const parts = value.split('-')
+      if (parts.length === 3) {
+        const year = parts[0]
+        // Ensure year is exactly 4 digits
+        if (year.length !== 4) {
+          target.value = ''
+          emit('update:modelValue', '')
+          emit('blur', event)
+          return
+        }
+        // Validate year range
+        const yearNum = parseInt(year)
+        if (yearNum < 1900 || yearNum > 2100) {
+          target.value = ''
+          emit('update:modelValue', '')
+          emit('blur', event)
+          return
+        }
+      }
+    }
+  }
+  
   emit('blur', event)
 }
 

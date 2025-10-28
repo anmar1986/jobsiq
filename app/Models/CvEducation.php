@@ -22,7 +22,6 @@ class CvEducation extends Model
         'location',
         'start_date',
         'end_date',
-        'gpa',
         'description',
         'order',
     ];
