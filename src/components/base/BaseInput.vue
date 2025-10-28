@@ -19,8 +19,8 @@
         :readonly="readonly"
         :required="required"
         :autocomplete="autocomplete"
-        :min="type === 'date' ? (min || '1900-01-01') : min"
-        :max="type === 'date' ? (max || '2100-12-31') : max"
+        :min="type === 'date' ? (min || MIN_DATE) : min"
+        :max="type === 'date' ? (max || MAX_DATE) : max"
         :pattern="pattern"
         :maxlength="maxlength"
         :class="inputClasses"
@@ -51,6 +51,12 @@
 
 <script setup lang="ts">
 import { computed, ref, useSlots } from 'vue'
+
+// Date validation constants
+const MIN_YEAR = 1900
+const MAX_YEAR = 2100
+const MIN_DATE = `${MIN_YEAR}-01-01`
+const MAX_DATE = `${MAX_YEAR}-12-31`
 
 interface Props {
   modelValue: string | number
@@ -104,9 +110,9 @@ const handleInput = (event: Event) => {
         value = parts.join('-')
         target.value = value
       }
-      // Validate year is between 1900 and 2100
+      // Validate year is between MIN_YEAR and MAX_YEAR
       const yearNum = parseInt(parts[0])
-      if (yearNum < 1900 || yearNum > 2100) {
+      if (yearNum < MIN_YEAR || yearNum > MAX_YEAR) {
         // Don't emit invalid dates
         return
       }
@@ -137,7 +143,7 @@ const handleBlur = (event: FocusEvent) => {
         }
         // Validate year range
         const yearNum = parseInt(year)
-        if (yearNum < 1900 || yearNum > 2100) {
+        if (yearNum < MIN_YEAR || yearNum > MAX_YEAR) {
           target.value = ''
           emit('update:modelValue', '')
           emit('blur', event)

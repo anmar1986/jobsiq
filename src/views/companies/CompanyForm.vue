@@ -489,7 +489,14 @@ const logoFile = ref<File | null>(null)
 const logoPreview = ref<string | null>(null)
 const logoInput = ref<HTMLInputElement | null>(null)
 const imagesInput = ref<HTMLInputElement | null>(null)
-const companyImages = ref<Array<{ file: File; preview: string }>>([])
+
+interface GalleryImage {
+  file: File | null
+  preview: string
+  isExisting?: boolean
+}
+
+const companyImages = ref<GalleryImage[]>([])
 const requiredSkills = ref<string[]>([])
 const newSkill = ref('')
 
@@ -561,8 +568,9 @@ watch(() => props.company, (company) => {
         }
         
         return {
-          file: new File([], img.path), // Placeholder file object for existing images
-          preview: preview
+          file: null, // No file object for existing images
+          preview: preview,
+          isExisting: true // Explicitly mark as existing image
         }
       })
     }
@@ -668,7 +676,8 @@ const handleImagesChange = (event: Event) => {
     reader.onload = (e) => {
       companyImages.value.push({
         file: file,
-        preview: e.target?.result as string
+        preview: e.target?.result as string,
+        isExisting: false // Mark as new upload
       })
     }
     reader.readAsDataURL(file)
@@ -730,11 +739,11 @@ const handleSubmit = () => {
     data.append('logo', logoFile.value)
   }
 
-  // Append company images if selected (only new images with actual file content)
+  // Append company images if selected (only new uploads, not existing images)
   if (companyImages.value.length > 0) {
-    const newImages = companyImages.value.filter(image => image.file.size > 0)
+    const newImages = companyImages.value.filter(image => !image.isExisting && image.file !== null)
     newImages.forEach((image, index) => {
-      data.append(`images[${index}]`, image.file)
+      data.append(`images[${index}]`, image.file!)
     })
   }
 
