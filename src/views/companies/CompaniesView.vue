@@ -57,16 +57,20 @@
           v-for="company in companies"
           :key="company.id"
           hoverable
-          clickable
-          @click="$router.push(`/companies/${company.slug}`)"
         >
           <div class="p-6">
-            <div class="w-20 h-20 bg-gradient-to-br from-primary-100 to-secondary-100 rounded-xl flex items-center justify-center mb-4">
-              <span class="text-3xl font-bold text-primary-600">{{ company.name[0] }}</span>
+            <div class="w-20 h-20 bg-gradient-to-br from-primary-100 to-secondary-100 rounded-xl flex items-center justify-center mb-4 overflow-hidden">
+              <img 
+                v-if="company.logo?.path" 
+                :src="getLogoUrl(company.logo.path)" 
+                :alt="company.name || 'Company logo'"
+                class="w-full h-full object-contain"
+              />
+              <span v-else class="text-3xl font-bold text-primary-600">{{ company.name?.[0] || '?' }}</span>
             </div>
             
-            <h3 class="text-xl font-semibold text-gray-900 mb-2">{{ company.name }}</h3>
-            <p class="text-gray-600 text-sm mb-4 line-clamp-2">{{ company.description }}</p>
+            <h3 class="text-xl font-semibold text-gray-900 mb-2">{{ company.name || 'Unknown Company' }}</h3>
+            <p class="text-gray-600 text-sm mb-4 line-clamp-2">{{ company.description || 'No description available' }}</p>
             
             <div v-if="company.city || company.country" class="flex items-center gap-4 text-sm text-gray-600 mb-4">
               <span class="flex items-center gap-1">
@@ -77,10 +81,26 @@
               </span>
             </div>
             
-            <div class="flex items-center justify-between pt-4 border-t border-gray-100">
+            <div class="flex items-center justify-between pt-4 border-t border-gray-100 mb-4">
               <span class="text-sm font-medium text-gray-900">{{ company.jobs_count || 0 }} open jobs</span>
               <BaseBadge v-if="company.industry" variant="primary" size="sm">{{ company.industry }}</BaseBadge>
             </div>
+
+            <!-- View Profile Button -->
+            <BaseButton
+              variant="primary"
+              size="sm"
+              class="w-full"
+              @click="viewCompanyProfile(company)"
+            >
+              <template #icon-left>
+                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                </svg>
+              </template>
+              View Profile
+            </BaseButton>
           </div>
         </BaseCard>
       </div>
@@ -90,6 +110,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import { companyService } from '@/services/cv.service'
 import type { Company } from '@/types'
 import BaseInput from '@/components/base/BaseInput.vue'
@@ -98,6 +119,7 @@ import BaseCard from '@/components/base/BaseCard.vue'
 import BaseBadge from '@/components/base/BaseBadge.vue'
 import { useToast } from '@/composables/useToast'
 
+const router = useRouter()
 const toast = useToast()
 const searchQuery = ref('')
 const companies = ref<Company[]>([])
@@ -131,6 +153,29 @@ const loadCompanies = async () => {
 const handleSearch = () => {
   currentPage.value = 1
   loadCompanies()
+}
+
+// Navigate to company profile
+const viewCompanyProfile = (company: Company) => {
+  router.push(`/companies/${company.slug}`)
+}
+
+// Get logo URL
+const getLogoUrl = (path: string): string => {
+  if (!path) return ''
+  
+  // Handle different path formats
+  if (path.startsWith('data:') || path.startsWith('blob:') || path.startsWith('http')) {
+    return path
+  }
+  
+  if (path.startsWith('/storage/')) {
+    return path
+  }
+  
+  // Remove leading slashes and construct clean path
+  const cleanPath = path.replace(/^\/+/, '')
+  return `/storage/${cleanPath}`
 }
 
 // Load companies on mount

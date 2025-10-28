@@ -23,16 +23,19 @@ class UpdateJobRequest extends FormRequest
      */
     public function rules(): array
     {
+        $jobCategories = config('job.categories');
+        $iraqCities = config('company.iraq_cities');
+
         return [
             'title' => ['sometimes', 'string', 'max:255'],
             'description' => ['sometimes', 'string', 'max:10000'],
             'requirements' => ['nullable', 'string', 'max:10000'],
             'location' => ['sometimes', 'string', 'max:255'],
-            'city' => ['nullable', 'string', 'max:255'],
-            'country' => ['nullable', 'string', 'max:255'],
+            'city' => ['sometimes', 'string', 'in:'.implode(',', $iraqCities)],
+            'country' => ['sometimes', 'string', 'in:Iraq'],
             'employment_type' => ['sometimes', 'in:full-time,part-time,contract,freelance,internship'],
             'experience_level' => ['nullable', 'in:entry,junior,mid,senior,lead'],
-            'category' => ['nullable', 'string', 'max:255'],
+            'category' => ['sometimes', 'string', 'in:'.implode(',', $jobCategories)],
             'salary_min' => ['nullable', 'numeric', 'min:0'],
             'salary_max' => ['nullable', 'numeric', 'min:0', 'gte:salary_min'],
             'salary_currency' => ['nullable', 'string', 'size:3'],

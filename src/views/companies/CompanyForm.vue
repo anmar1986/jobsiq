@@ -16,7 +16,7 @@
         </div>
 
         <div class="md:col-span-2">
-          <label class="block text-sm font-medium text-gray-700 mb-2">
+          <label for="company-logo-input" class="block text-sm font-medium text-gray-700 mb-2">
             Company Logo
           </label>
           
@@ -51,6 +51,7 @@
             <!-- Upload Controls -->
             <div class="flex-1">
               <input
+                id="company-logo-input"
                 ref="logoInput"
                 type="file"
                 accept="image/*"
@@ -78,7 +79,70 @@
         </div>
 
         <div class="md:col-span-2">
-          <label class="block text-sm font-medium text-gray-700 mb-2">
+          <label for="company-cover-input" class="block text-sm font-medium text-gray-700 mb-2">
+            Cover Image
+          </label>
+          
+          <div class="flex items-center gap-6">
+            <!-- Cover Preview -->
+            <div class="relative">
+              <div class="w-32 h-32 rounded-lg overflow-hidden bg-gray-100 border-2 border-gray-200 flex items-center justify-center">
+                <img
+                  v-if="coverPreview"
+                  :src="coverPreview"
+                  alt="Cover preview"
+                  class="w-full h-full object-cover"
+                />
+                <svg v-else class="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+              </div>
+              
+              <!-- Remove Button -->
+              <button
+                v-if="coverPreview"
+                type="button"
+                @click="removeCover"
+                class="absolute -top-2 -right-2 p-2 bg-red-500 text-white rounded-full shadow-lg hover:bg-red-600 transition-colors"
+              >
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            
+            <!-- Upload Controls -->
+            <div class="flex-1">
+              <input
+                id="company-cover-input"
+                ref="coverInput"
+                type="file"
+                accept="image/*"
+                class="hidden"
+                @change="handleCoverChange"
+              />
+              
+              <BaseButton
+                type="button"
+                variant="outline"
+                @click="triggerCoverInput"
+              >
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+                Choose Cover Image
+              </BaseButton>
+              
+              <p class="text-xs text-gray-500 mt-2">
+                PNG, JPG, GIF up to 2MB
+              </p>
+              <p v-if="errors.cover" class="text-red-600 text-sm mt-1">{{ errors.cover }}</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="md:col-span-2">
+          <label for="company-images-input" class="block text-sm font-medium text-gray-700 mb-2">
             Company Pictures
             <span class="text-gray-500 text-xs font-normal ml-2">(Maximum 10 images)</span>
           </label>
@@ -86,6 +150,7 @@
           <!-- Image Upload Area -->
           <div class="mb-4">
             <input
+              id="company-images-input"
               ref="imagesInput"
               type="file"
               accept="image/*"
@@ -147,10 +212,25 @@
         </div>
 
         <div class="md:col-span-2">
-          <label class="block text-sm font-medium text-gray-700 mb-1">
+          <label for="company-about" class="block text-sm font-medium text-gray-700 mb-1">
+            About
+          </label>
+          <textarea
+            id="company-about"
+            v-model="formData.about"
+            rows="4"
+            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+            placeholder="Brief overview of your company..."
+          />
+          <p v-if="errors.about" class="text-red-600 text-sm mt-1">{{ errors.about }}</p>
+        </div>
+
+        <div class="md:col-span-2">
+          <label for="company-description" class="block text-sm font-medium text-gray-700 mb-1">
             Description
           </label>
           <textarea
+            id="company-description"
             v-model="formData.description"
             rows="4"
             class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
@@ -212,22 +292,14 @@
           />
         </div>
 
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">
-            City *
-          </label>
-          <select
-            v-model="formData.city"
-            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-            required
-          >
-            <option value="">Select city</option>
-            <option v-for="city in iraqCities" :key="city" :value="city">
-              {{ city }}
-            </option>
-          </select>
-          <p v-if="errors.city" class="text-red-600 text-sm mt-1">{{ errors.city }}</p>
-        </div>
+        <BaseAutocomplete
+          v-model="formData.city"
+          :options="iraqCities"
+          label="City"
+          placeholder="Type to search cities..."
+          required
+          :error="errors.city"
+        />
 
         <BaseInput
           v-model="formData.state"
@@ -252,10 +324,11 @@
       
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">
+          <label for="company-category" class="block text-sm font-medium text-gray-700 mb-1">
             Category *
           </label>
           <select
+            id="company-category"
             v-model="formData.category"
             class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
             required
@@ -269,10 +342,11 @@
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">
+          <label for="company-size" class="block text-sm font-medium text-gray-700 mb-1">
             Company Size
           </label>
           <select
+            id="company-size"
             v-model="formData.company_size"
             class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
           >
@@ -287,10 +361,11 @@
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">
+          <label for="company-type" class="block text-sm font-medium text-gray-700 mb-1">
             Company Type
           </label>
           <select
+            id="company-type"
             v-model="formData.company_type"
             class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
           >
@@ -313,59 +388,6 @@
           placeholder="100"
           :error="errors.total_employees"
         />
-
-        <div class="md:col-span-2">
-          <label class="block text-sm font-medium text-gray-700 mb-2">
-            Required Skills
-          </label>
-          
-          <div class="flex gap-2 mb-4">
-            <input
-              v-model="newSkill"
-              type="text"
-              placeholder="e.g., JavaScript, React, Node.js"
-              class="flex-1 px-4 py-2.5 text-sm border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
-              @keyup.enter="addSkill"
-            />
-            <BaseButton
-              type="button"
-              variant="primary"
-              @click="addSkill"
-              :disabled="!newSkill.trim()"
-            >
-              <svg class="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-              </svg>
-              Add
-            </BaseButton>
-          </div>
-          
-          <!-- Skills List -->
-          <div v-if="requiredSkills.length > 0" class="flex flex-wrap gap-2 p-4 bg-gray-50 rounded-lg border border-gray-200">
-            <span
-              v-for="(skill, index) in requiredSkills"
-              :key="index"
-              class="inline-flex items-center gap-2 px-3 py-1.5 bg-primary-100 text-primary-700 rounded-full text-sm font-medium"
-            >
-              {{ skill }}
-              <button
-                type="button"
-                @click="removeSkill(index)"
-                class="hover:text-primary-900 focus:outline-none"
-              >
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            </span>
-          </div>
-          
-          <p v-else class="text-sm text-gray-500 italic p-4 bg-gray-50 rounded-lg border border-gray-200">
-            No skills added yet. Add required skills for this position.
-          </p>
-          
-          <p v-if="errors.required_skills" class="text-red-600 text-sm mt-1">{{ errors.required_skills }}</p>
-        </div>
       </div>
     </div>
 
@@ -446,6 +468,7 @@ import { ref, reactive, watch } from 'vue'
 import type { Company } from '@/types'
 import BaseInput from '@/components/base/BaseInput.vue'
 import BaseButton from '@/components/base/BaseButton.vue'
+import BaseAutocomplete from '@/components/base/BaseAutocomplete.vue'
 import { companyCategories } from '@/config/companyCategories'
 import { iraqCities } from '@/config/iraqCities'
 
@@ -464,6 +487,7 @@ const isEdit = ref(!!props.company)
 
 const formData = reactive({
   name: '',
+  about: '',
   description: '',
   tagline: '',
   website: '',
@@ -488,6 +512,9 @@ const errors = reactive<Record<string, string>>({})
 const logoFile = ref<File | null>(null)
 const logoPreview = ref<string | null>(null)
 const logoInput = ref<HTMLInputElement | null>(null)
+const coverFile = ref<File | null>(null)
+const coverPreview = ref<string | null>(null)
+const coverInput = ref<HTMLInputElement | null>(null)
 const imagesInput = ref<HTMLInputElement | null>(null)
 
 interface GalleryImage {
@@ -497,14 +524,13 @@ interface GalleryImage {
 }
 
 const companyImages = ref<GalleryImage[]>([])
-const requiredSkills = ref<string[]>([])
-const newSkill = ref('')
 
 // Initialize form with existing company data if editing
 watch(() => props.company, (company) => {
   if (company) {
     Object.assign(formData, {
       name: company.name || '',
+      about: company.about || '',
       description: company.description || '',
       tagline: company.tagline || '',
       website: company.website || '',
@@ -524,16 +550,7 @@ watch(() => props.company, (company) => {
       facebook: company.facebook || '',
       github: company.github || '',
     })
-    // Initialize required skills if exists
-    if (company.required_skills) {
-      try {
-        requiredSkills.value = typeof company.required_skills === 'string' 
-          ? JSON.parse(company.required_skills) 
-          : company.required_skills
-      } catch {
-        requiredSkills.value = []
-      }
-    }
+    
     // Initialize logo preview if exists
     if (company.logo) {
       const path = company.logo.path
@@ -549,10 +566,25 @@ watch(() => props.company, (company) => {
       }
     }
     
+    // Initialize cover preview if exists
+    if (company.cover) {
+      const path = company.cover.path
+      // Handle different path formats
+      if (path.startsWith('data:') || path.startsWith('blob:') || path.startsWith('http')) {
+        coverPreview.value = path
+      } else if (path.startsWith('/storage/')) {
+        coverPreview.value = path
+      } else {
+        // Remove leading slashes and construct clean path
+        const cleanPath = path.replace(/^\/+/, '')
+        coverPreview.value = `/storage/${cleanPath}`
+      }
+    }
+    
     // Initialize company images if exists
     if (company.images && company.images.length > 0) {
-      // Filter out the logo image and only show gallery images
-      const galleryImages = company.images.filter(img => img.type !== 'logo')
+      // Filter out the logo and cover images and only show gallery images
+      const galleryImages = company.images.filter(img => img.type !== 'logo' && img.type !== 'cover')
       companyImages.value = galleryImages.map(img => {
         const path = img.path
         let preview = ''
@@ -576,18 +608,6 @@ watch(() => props.company, (company) => {
     }
   }
 }, { immediate: true })
-
-const addSkill = () => {
-  const skill = newSkill.value.trim()
-  if (skill && !requiredSkills.value.includes(skill)) {
-    requiredSkills.value.push(skill)
-    newSkill.value = ''
-  }
-}
-
-const removeSkill = (index: number) => {
-  requiredSkills.value.splice(index, 1)
-}
 
 const triggerLogoInput = () => {
   logoInput.value?.click()
@@ -632,6 +652,52 @@ const removeLogo = () => {
   logoPreview.value = null
   if (logoInput.value) {
     logoInput.value.value = ''
+  }
+}
+
+const triggerCoverInput = () => {
+  coverInput.value?.click()
+}
+
+const handleCoverChange = (event: Event) => {
+  const target = event.target as HTMLInputElement
+  const file = target.files?.[0]
+  
+  if (!file) return
+  
+  // Validate file type
+  const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/svg+xml']
+  if (!validTypes.includes(file.type)) {
+    errors.cover = 'Invalid file type. Please upload a JPG, PNG, GIF, or SVG image.'
+    return
+  }
+  
+  // Validate file size (2MB)
+  const maxSize = 2 * 1024 * 1024
+  if (file.size > maxSize) {
+    errors.cover = 'File size too large. Please upload an image smaller than 2MB.'
+    return
+  }
+  
+  // Clear any previous errors
+  delete errors.cover
+  
+  // Set the file
+  coverFile.value = file
+  
+  // Create preview
+  const reader = new FileReader()
+  reader.onload = (e) => {
+    coverPreview.value = e.target?.result as string
+  }
+  reader.readAsDataURL(file)
+}
+
+const removeCover = () => {
+  coverFile.value = null
+  coverPreview.value = null
+  if (coverInput.value) {
+    coverInput.value.value = ''
   }
 }
 
@@ -729,14 +795,14 @@ const handleSubmit = () => {
     }
   })
 
-  // Append required skills as JSON
-  if (requiredSkills.value.length > 0) {
-    data.append('required_skills', JSON.stringify(requiredSkills.value))
-  }
-
   // Append logo if selected
   if (logoFile.value) {
     data.append('logo', logoFile.value)
+  }
+
+  // Append cover if selected
+  if (coverFile.value) {
+    data.append('cover', coverFile.value)
   }
 
   // Append company images if selected (only new uploads, not existing images)

@@ -22,6 +22,7 @@ export interface User {
   name: string
   email: string
   email_verified_at: string | null
+  user_type: 'job_seeker' | 'company_owner'
   created_at: string
   updated_at: string
 }
@@ -73,6 +74,7 @@ export interface Company {
   name: string
   slug: string
   legal_name?: string | null
+  about?: string | null
   description: string | null
   tagline?: string | null
   website: string | null
@@ -103,7 +105,6 @@ export interface Company {
   benefits?: string[] | null
   values?: string[] | null
   perks?: string[] | null
-  required_skills?: string[] | null
   culture_description?: string | null
   is_verified?: boolean
   is_featured?: boolean
@@ -123,6 +124,7 @@ export interface Company {
   funding_amount?: number | null
   funding_currency?: string | null
   logo?: CompanyImage | null
+  cover?: CompanyImage | null
   images?: CompanyImage[]
   jobs?: Job[]
   jobs_count?: number
@@ -134,10 +136,29 @@ export interface CompanyImage {
   id: number
   company_id: number
   path: string
+  url: string
   type: 'logo' | 'cover' | 'gallery'
   is_primary: boolean
   created_at: string
   updated_at: string
+}
+
+// Job Application Types
+export interface JobApplication {
+  id: number
+  user_id: number
+  job_id: number
+  cv_id?: number | null
+  cover_letter?: string | null
+  status: 'pending' | 'reviewed' | 'accepted' | 'rejected'
+  applied_at: string
+  reviewed_at?: string | null
+  notes?: string | null
+  created_at: string
+  updated_at: string
+  user?: User
+  job?: Job
+  cv?: UserCv
 }
 
 // CV Types
@@ -306,6 +327,9 @@ export interface RegisterForm {
   email: string
   password: string
   password_confirmation: string
+  user_type: 'job_seeker' | 'company_owner'
+  company_name?: string
+  company_email?: string
 }
 
 export interface ProfileUpdateForm {

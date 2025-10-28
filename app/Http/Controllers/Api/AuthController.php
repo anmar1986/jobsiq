@@ -6,7 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\Validation\ValidationException;
 
@@ -21,26 +23,71 @@ class AuthController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'confirmed', Password::defaults()],
+            'user_type' => ['required', 'in:job_seeker,company_owner'],
+            // Company fields (only required if user_type is company_owner)
+            'company_name' => ['required_if:user_type,company_owner', 'string', 'max:255'],
+            'company_email' => ['required_if:user_type,company_owner', 'email', 'max:255'],
         ]);
 
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-        ]);
+        try {
+            DB::beginTransaction();
 
-        // Create token
-        $token = $user->createToken('auth_token')->plainTextToken;
+            $user = User::create([
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+                'user_type' => $request->user_type,
+            ]);
 
-        return response()->json([
-            'success' => true,
-            'message' => 'User registered successfully',
-            'data' => [
-                'user' => $user,
-                'token' => $token,
-                'token_type' => 'Bearer',
-            ],
-        ], 201);
+            // If registering as company owner, create the company
+            if ($request->user_type === 'company_owner' && $request->has('company_name')) {
+                $company = \App\Models\Company::create([
+                    'name' => $request->company_name,
+                    'email' => $request->company_email ?? $request->email,
+                    'is_active' => true,
+                ]);
+
+                Log::info('Company created during registration', [
+                    'company_id' => $company->id,
+                    'company_name' => $company->name,
+                    'user_id' => $user->id,
+                ]);
+
+                // Attach user as primary owner
+                $company->owners()->attach($user->id, ['is_primary' => true]);
+
+                Log::info('User attached as company owner', [
+                    'user_id' => $user->id,
+                    'company_id' => $company->id,
+                ]);
+            }
+
+            DB::commit();
+
+            // Create token
+            $token = $user->createToken('auth_token')->plainTextToken;
+
+            return response()->json([
+                'success' => true,
+                'message' => 'User registered successfully',
+                'data' => [
+                    'user' => $user,
+                    'token' => $token,
+                    'token_type' => 'Bearer',
+                ],
+            ], 201);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Registration failed', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Registration failed. Please try again.',
+            ], 500);
+        }
     }
 
     /**

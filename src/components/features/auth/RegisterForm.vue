@@ -3,7 +3,9 @@
     <form @submit.prevent="handleSubmit" class="space-y-6">
       <div class="text-center">
         <h2 class="text-2xl font-bold text-gray-900">Create Account</h2>
-        <p class="mt-2 text-sm text-gray-600">Join JobsIQ and start your career journey</p>
+        <p class="mt-2 text-sm text-gray-600">
+          {{ accountType === 'job_seeker' ? 'Join JobsIQ and start your career journey' : 'Register your company and find great talent' }}
+        </p>
       </div>
 
       <BaseAlert
@@ -17,27 +19,79 @@
       </BaseAlert>
 
       <div class="space-y-4">
-        <BaseInput
-          v-model="formData.name"
-          type="text"
-          label="Full Name"
-          placeholder="John Doe"
-          :error="errors.name"
-          required
-          autocomplete="name"
-        >
-          <template #icon-left>
-            <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-            </svg>
-          </template>
-        </BaseInput>
+        <!-- Job Seeker Fields -->
+        <template v-if="accountType === 'job_seeker'">
+          <BaseInput
+            v-model="formData.name"
+            type="text"
+            label="Full Name"
+            placeholder="John Doe"
+            :error="errors.name"
+            required
+            autocomplete="name"
+          >
+            <template #icon-left>
+              <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+              </svg>
+            </template>
+          </BaseInput>
+        </template>
+
+        <!-- Company Fields -->
+        <template v-else>
+          <BaseInput
+            v-model="formData.company_name"
+            type="text"
+            label="Company Name"
+            placeholder="Acme Corporation"
+            :error="errors.company_name"
+            required
+          >
+            <template #icon-left>
+              <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+              </svg>
+            </template>
+          </BaseInput>
+
+          <BaseInput
+            v-model="formData.name"
+            type="text"
+            label="Your Full Name"
+            placeholder="John Doe"
+            :error="errors.name"
+            required
+            autocomplete="name"
+          >
+            <template #icon-left>
+              <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+              </svg>
+            </template>
+          </BaseInput>
+
+          <BaseInput
+            v-model="formData.company_email"
+            type="email"
+            label="Company Email"
+            placeholder="info@company.com"
+            :error="errors.company_email"
+            required
+          >
+            <template #icon-left>
+              <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+              </svg>
+            </template>
+          </BaseInput>
+        </template>
 
         <BaseInput
           v-model="formData.email"
           type="email"
-          label="Email Address"
-          placeholder="john@example.com"
+          :label="accountType === 'company_owner' ? 'Your Email' : 'Email Address'"
+          :placeholder="accountType === 'company_owner' ? 'john@company.com' : 'john@example.com'"
           :error="errors.email"
           required
           autocomplete="email"
@@ -168,17 +222,32 @@ import BaseCard from '@/components/base/BaseCard.vue'
 import BaseInput from '@/components/base/BaseInput.vue'
 import BaseButton from '@/components/base/BaseButton.vue'
 import BaseAlert from '@/components/base/BaseAlert.vue'
-import type { RegisterForm } from '@/types'
+
+interface Props {
+  accountType: 'job_seeker' | 'company_owner'
+}
+
+const props = defineProps<Props>()
 
 const router = useRouter()
 const authStore = useAuthStore()
 
-const formData = reactive<RegisterForm & { agreeToTerms: boolean }>({
+const formData = reactive<{
+  name: string
+  email: string
+  password: string
+  password_confirmation: string
+  agreeToTerms: boolean
+  company_name: string
+  company_email: string
+}>({
   name: '',
   email: '',
   password: '',
   password_confirmation: '',
   agreeToTerms: false,
+  company_name: '',
+  company_email: '',
 })
 
 const errors = reactive({
@@ -187,6 +256,8 @@ const errors = reactive({
   password: '',
   password_confirmation: '',
   agreeToTerms: '',
+  company_name: '',
+  company_email: '',
 })
 
 const error = ref('')
@@ -230,6 +301,22 @@ const validateForm = (): boolean => {
   } else if (formData.name.length < 2) {
     errors.name = 'Name must be at least 2 characters'
     isValid = false
+  }
+
+  // Company name validation (for company owners)
+  if (props.accountType === 'company_owner') {
+    if (!formData.company_name) {
+      errors.company_name = 'Company name is required'
+      isValid = false
+    }
+    
+    if (!formData.company_email) {
+      errors.company_email = 'Company email is required'
+      isValid = false
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.company_email)) {
+      errors.company_email = 'Please enter a valid company email'
+      isValid = false
+    }
   }
   
   // Email validation
@@ -276,7 +363,11 @@ const handleSubmit = async () => {
   
   try {
     const { agreeToTerms: _agreeToTerms, ...registerData } = formData
-    await authStore.register(registerData)
+    const payload = {
+      ...registerData,
+      user_type: props.accountType,
+    }
+    await authStore.register(payload)
     router.push('/dashboard')
   } catch (err: unknown) {
     const errorMessage = err && typeof err === 'object' && 'response' in err

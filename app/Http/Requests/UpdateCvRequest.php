@@ -141,6 +141,24 @@ class UpdateCvRequest extends FormRequest
     }
 
     /**
+     * Handle a failed validation attempt.
+     */
+    protected function failedValidation(\Illuminate\Contracts\Validation\Validator $validator)
+    {
+        \Illuminate\Support\Facades\Log::error('UpdateCvRequest - Validation failed', [
+            'errors' => $validator->errors()->toArray(),
+            'hasFile' => $this->hasFile('profile_image'),
+            'profile_image_info' => $this->hasFile('profile_image') ? [
+                'size' => $this->file('profile_image')->getSize(),
+                'mime' => $this->file('profile_image')->getMimeType(),
+                'original' => $this->file('profile_image')->getClientOriginalName(),
+            ] : null,
+        ]);
+
+        parent::failedValidation($validator);
+    }
+
+    /**
      * Prepare the data for validation.
      */
     protected function prepareForValidation(): void

@@ -17,7 +17,12 @@ export const jobService = {
   },
 
   async getJob(id: number | string): Promise<ApiResponse<Job>> {
-    const response = await apiClient.get<ApiResponse<Job>>(`/jobs/${id}`)
+    // Use /my-jobs endpoint for ID-based fetching (authenticated)
+    // Use /jobs endpoint for slug-based fetching (public)
+    const endpoint = typeof id === 'number' || !isNaN(Number(id)) 
+      ? `/my-jobs/${id}` 
+      : `/jobs/${id}`
+    const response = await apiClient.get<ApiResponse<Job>>(endpoint)
     return response.data
   },
 

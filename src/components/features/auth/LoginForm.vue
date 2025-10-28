@@ -3,7 +3,9 @@
     <form @submit.prevent="handleSubmit" class="space-y-6">
       <div class="text-center">
         <h2 class="text-2xl font-bold text-gray-900">Welcome Back</h2>
-        <p class="mt-2 text-sm text-gray-600">Sign in to your account to continue</p>
+        <p class="mt-2 text-sm text-gray-600">
+          {{ accountType === 'job_seeker' ? 'Sign in to find your dream job' : 'Sign in to manage your company' }}
+        </p>
       </div>
 
       <BaseAlert
@@ -108,6 +110,12 @@ import BaseInput from '@/components/base/BaseInput.vue'
 import BaseButton from '@/components/base/BaseButton.vue'
 import BaseAlert from '@/components/base/BaseAlert.vue'
 import type { LoginForm } from '@/types'
+
+interface Props {
+  accountType: 'job_seeker' | 'company_owner'
+}
+
+defineProps<Props>()
 
 const router = useRouter()
 const authStore = useAuthStore()

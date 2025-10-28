@@ -10,7 +10,12 @@ export const companyService = {
   },
 
   async getCompany(id: number | string): Promise<ApiResponse<Company>> {
-    const response = await apiClient.get<ApiResponse<Company>>(`/companies/${id}`)
+    const response = await apiClient.get<ApiResponse<Company>>(`/my-companies/${id}`)
+    return response.data
+  },
+
+  async getPublicCompany(slug: string): Promise<ApiResponse<Company>> {
+    const response = await apiClient.get<ApiResponse<Company>>(`/companies/${slug}`)
     return response.data
   },
 

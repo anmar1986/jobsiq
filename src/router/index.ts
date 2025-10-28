@@ -21,6 +21,18 @@ const routes: RouteRecordRaw[] = [
     meta: { title: 'Job Details' },
   },
   {
+    path: '/application/:slug',
+    name: 'apply-job',
+    component: () => import('@/views/jobs/ApplyJobView.vue'),
+    meta: { title: 'Apply for Job', requiresAuth: true },
+  },
+  {
+    path: '/my-applications',
+    name: 'my-applications',
+    component: () => import('@/views/jobs/MyApplicationsView.vue'),
+    meta: { title: 'My Applications', requiresAuth: true },
+  },
+  {
     path: '/companies',
     name: 'companies',
     component: () => import('@/views/companies/CompaniesView.vue'),
@@ -42,13 +54,13 @@ const routes: RouteRecordRaw[] = [
     path: '/cvs',
     name: 'cvs',
     component: () => import('@/views/free-cvs/FreeCvsView.vue'),
-    meta: { title: 'Browse CVs' },
+    meta: { title: 'Browse CVs', requiresAuth: true, requiresCompany: true },
   },
   {
     path: '/cvs/:slug',
     name: 'cv-detail',
     component: () => import('@/views/free-cvs/FreeCvDetailView.vue'),
-    meta: { title: 'CV Details' },
+    meta: { title: 'CV Details', requiresAuth: true, requiresCompany: true },
   },
   {
     path: '/login',
@@ -95,7 +107,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/my-companies/:companyId/jobs/:jobId/edit',
     name: 'edit-company-job',
-    component: () => import('@/views/companies/EditCompanyJobView.vue'),
+    component: () => import('@/views/jobs/EditJobView.vue'),
     meta: { title: 'Edit Job', requiresAuth: true },
   },
   {
@@ -115,12 +127,6 @@ const routes: RouteRecordRaw[] = [
     name: 'post-job',
     component: () => import('@/views/jobs/PostJobView.vue'),
     meta: { title: 'Post a Job', requiresAuth: true },
-  },
-  {
-    path: '/jobs/:id/edit',
-    name: 'edit-job',
-    component: () => import('@/views/jobs/EditJobView.vue'),
-    meta: { title: 'Edit Job', requiresAuth: true },
   },
   {
     path: '/my-cvs',
@@ -177,6 +183,7 @@ router.beforeEach((to: RouteLocationNormalized, _from: RouteLocationNormalized, 
   const authStore = useAuthStore()
   const requiresAuth = to.matched.some((record) => record.meta.requiresAuth)
   const isGuestRoute = to.matched.some((record) => record.meta.guest)
+  const requiresCompany = to.matched.some((record) => record.meta.requiresCompany)
 
   // Set page title
   document.title = to.meta.title ? `${to.meta.title} | JobsIQ` : 'JobsIQ'
@@ -186,6 +193,9 @@ router.beforeEach((to: RouteLocationNormalized, _from: RouteLocationNormalized, 
     next({ name: 'login', query: { redirect: to.fullPath } })
   } else if (isGuestRoute && authStore.isAuthenticated) {
     // Redirect to dashboard if user is already authenticated
+    next({ name: 'dashboard' })
+  } else if (requiresCompany && authStore.user?.user_type !== 'company_owner') {
+    // Redirect to dashboard if route requires company owner role
     next({ name: 'dashboard' })
   } else {
     next()

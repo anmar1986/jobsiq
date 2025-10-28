@@ -43,11 +43,12 @@ export const useCompanyStore = defineStore('company', () => {
     }
   }
 
-  async function fetchCompany(id: number | string) {
+  async function fetchCompany(slug: string) {
     try {
       loading.value = true
       error.value = null
-      const response = await companyService.getCompany(id)
+      // Use public endpoint for viewing company details by slug
+      const response = await companyService.getPublicCompany(slug)
       
       if (response.success && response.data) {
         currentCompany.value = response.data

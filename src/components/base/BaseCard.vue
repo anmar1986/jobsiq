@@ -64,7 +64,7 @@ const cardClasses = computed(() => {
   }
   
   const borderClass = props.bordered ? 'border border-gray-200' : ''
-  const hoverClass = props.hoverable ? 'hover:shadow-lg hover:-translate-y-0.5' : ''
+  const hoverClass = props.hoverable ? 'hover:shadow-lg hover:-translate-y-0.5 hover:border-primary-500' : ''
   const clickableClass = props.clickable ? 'cursor-pointer' : ''
   
   return [base, shadowClasses[props.shadow], borderClass, hoverClass, clickableClass].filter(Boolean).join(' ')
