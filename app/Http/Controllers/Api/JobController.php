@@ -116,14 +116,14 @@ class JobController extends Controller
     {
         $validated = $request->validated();
         $validated['user_id'] = $request->user()->id;
-        
+
         // Set published_at to now if not provided
-        if (!isset($validated['published_at'])) {
+        if (! isset($validated['published_at'])) {
             $validated['published_at'] = now();
         }
-        
+
         // Ensure is_active is true by default
-        if (!isset($validated['is_active'])) {
+        if (! isset($validated['is_active'])) {
             $validated['is_active'] = true;
         }
 

@@ -20,7 +20,7 @@ return new class extends Migration
             $table->enum('user_type', ['job_seeker', 'company_owner'])->default('job_seeker');
             $table->rememberToken();
             $table->timestamps();
-            
+
             $table->index('user_type');
         });
 

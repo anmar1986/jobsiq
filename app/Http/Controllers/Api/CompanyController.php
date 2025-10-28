@@ -168,7 +168,7 @@ class CompanyController extends Controller
     public function update(UpdateCompanyRequest $request, Company $company): JsonResponse
     {
         // Check if user owns this company
-        if (!$request->user()->ownsCompany($company)) {
+        if (! $request->user()->ownsCompany($company)) {
             return response()->json([
                 'success' => false,
                 'message' => 'You do not have permission to edit this company.',

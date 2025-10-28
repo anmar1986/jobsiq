@@ -28,7 +28,7 @@ return new class extends Migration
             $table->index('job_id');
             $table->index('status');
             $table->index('applied_at');
-            
+
             // Unique constraint to prevent duplicate applications
             $table->unique(['user_id', 'job_id']);
         });

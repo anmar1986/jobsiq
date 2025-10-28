@@ -112,8 +112,8 @@ class JobApplicationController extends Controller
         $job = $application->job;
         /** @var Company $company */
         $company = $job->company;
-        
-        if (!$company->isOwnedBy(Auth::user())) {
+
+        if (! $company->isOwnedBy(Auth::user())) {
             return response()->json([
                 'success' => false,
                 'message' => 'Unauthorized. Only company owners can update application status.',
@@ -154,7 +154,7 @@ class JobApplicationController extends Controller
         }
 
         // Only allow withdrawal of pending applications
-        if (!$application->isPending()) {
+        if (! $application->isPending()) {
             return response()->json([
                 'success' => false,
                 'message' => 'You can only withdraw pending applications.',
@@ -181,7 +181,7 @@ class JobApplicationController extends Controller
         return response()->json([
             'success' => true,
             'data' => [
-                'has_applied' => !is_null($application),
+                'has_applied' => ! is_null($application),
                 'application' => $application,
             ],
         ]);
