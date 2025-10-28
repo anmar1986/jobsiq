@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('slug')->unique();
             $table->string('legal_name')->nullable(); // Official registered name
+            $table->text('about')->nullable(); // Brief overview of the company
             $table->text('description')->nullable();
             $table->text('tagline')->nullable(); // Short company tagline/slogan
 

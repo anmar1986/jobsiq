@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CompanyController;
 use App\Http\Controllers\Api\FreeCvController;
 use App\Http\Controllers\Api\HomeController;
+use App\Http\Controllers\Api\JobApplicationController;
 use App\Http\Controllers\Api\JobController;
 use App\Http\Controllers\Api\UserCvController;
 use Illuminate\Support\Facades\Route;
@@ -25,10 +26,10 @@ Route::get('/home/{section}', [HomeController::class, 'getSection']);
 // Public routes
 Route::get('/jobs', [JobController::class, 'index']);
 Route::get('/jobs/featured', [JobController::class, 'featured']);
-Route::get('/jobs/{job}', [JobController::class, 'show']);
+Route::get('/jobs/{job:slug}', [JobController::class, 'show']);
 
 Route::get('/companies', [CompanyController::class, 'index']);
-Route::get('/companies/{company}', [CompanyController::class, 'show']);
+Route::get('/companies/{slug}', [CompanyController::class, 'showBySlug'])->where('slug', '[a-z0-9-]+');
 
 // Public CV routes (for companies to view public CVs)
 Route::get('/cvs', [FreeCvController::class, 'index']);
@@ -44,19 +45,21 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/change-password', [AuthController::class, 'changePassword']);
 
     // Job management
+    Route::get('/my-jobs/{job}', [JobController::class, 'show']); // Get owned job by ID
     Route::post('/jobs', [JobController::class, 'store']);
-    Route::put('/jobs/{job}', [JobController::class, 'update']);
-    Route::delete('/jobs/{job}', [JobController::class, 'destroy']);
+    Route::put('/jobs/{job:id}', [JobController::class, 'update']);
+    Route::delete('/jobs/{job:id}', [JobController::class, 'destroy']);
 
     // Company management
+    Route::get('/my-companies/{company}', [CompanyController::class, 'show']); // Get owned company by ID
     Route::post('/companies', [CompanyController::class, 'store']);
-    Route::put('/companies/{company}', [CompanyController::class, 'update']);
-    Route::delete('/companies/{company}', [CompanyController::class, 'destroy']);
+    Route::put('/companies/{company:id}', [CompanyController::class, 'update']);
+    Route::delete('/companies/{company:id}', [CompanyController::class, 'destroy']);
 
     // Company ownership
     Route::get('/my-companies', [CompanyController::class, 'myCompanies']);
-    Route::post('/companies/{company}/owners', [CompanyController::class, 'addOwner']);
-    Route::delete('/companies/{company}/owners/{userId}', [CompanyController::class, 'removeOwner']);
+    Route::post('/companies/{company:id}/owners', [CompanyController::class, 'addOwner']);
+    Route::delete('/companies/{company:id}/owners/{userId}', [CompanyController::class, 'removeOwner']);
 
     // User CV management
     Route::get('/my-cvs', [UserCvController::class, 'myCvs']);
@@ -65,4 +68,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/my-cvs/{id}', [UserCvController::class, 'update']);
     Route::delete('/my-cvs/{id}', [UserCvController::class, 'destroy']);
     Route::post('/my-cvs/{id}/primary', [UserCvController::class, 'setPrimary']);
+
+    // Job Application management
+    Route::get('/my-applications', [JobApplicationController::class, 'index']);
+    Route::post('/jobs/{job:slug}/apply', [JobApplicationController::class, 'store']);
+    Route::get('/jobs/{job:slug}/check-application', [JobApplicationController::class, 'checkApplication']);
+    Route::get('/applications/{application}', [JobApplicationController::class, 'show']);
+    Route::put('/applications/{application}/status', [JobApplicationController::class, 'updateStatus']);
+    Route::delete('/applications/{application}', [JobApplicationController::class, 'destroy']);
 });

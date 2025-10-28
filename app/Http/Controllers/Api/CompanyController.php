@@ -38,6 +38,9 @@ class CompanyController extends Controller
             $query->where('country', $request->country);
         }
 
+        // Random order for variety
+        $query->inRandomOrder();
+
         $companies = $query->paginate($request->get('per_page', 15));
 
         return response()->json([
@@ -84,6 +87,13 @@ class CompanyController extends Controller
                 Log::info('Logo uploaded successfully');
             }
 
+            // Handle cover image upload
+            if ($request->hasFile('cover')) {
+                Log::info('Processing cover image upload');
+                $this->uploadCover($company, $request->file('cover'));
+                Log::info('Cover image uploaded successfully');
+            }
+
             // Handle company images upload
             if ($request->hasFile('images')) {
                 Log::info('Processing company images upload');
@@ -96,7 +106,7 @@ class CompanyController extends Controller
                 }
             }
 
-            $company->load(['logo', 'images', 'owners']);
+            $company->load(['logo', 'cover', 'images', 'owners']);
 
             Log::info('Company creation completed successfully');
 
@@ -120,11 +130,29 @@ class CompanyController extends Controller
     }
 
     /**
-     * Display the specified company.
+     * Display the specified company by slug (public).
+     */
+    public function showBySlug(string $slug): JsonResponse
+    {
+        $company = Company::where('slug', $slug)
+            ->where('is_active', true)
+            ->with(['logo', 'cover', 'images', 'jobs' => function ($query) {
+                $query->active()->published()->latest('published_at');
+            }])
+            ->firstOrFail();
+
+        return response()->json([
+            'success' => true,
+            'data' => $company,
+        ]);
+    }
+
+    /**
+     * Display the specified company by ID (authenticated).
      */
     public function show(Company $company): JsonResponse
     {
-        $company->load(['logo', 'images', 'jobs' => function ($query) {
+        $company->load(['logo', 'cover', 'images', 'jobs' => function ($query) {
             $query->active()->published()->latest('published_at');
         }, 'owners']);
 
@@ -139,6 +167,14 @@ class CompanyController extends Controller
      */
     public function update(UpdateCompanyRequest $request, Company $company): JsonResponse
     {
+        // Check if user owns this company
+        if (!$request->user()->ownsCompany($company)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'You do not have permission to edit this company.',
+            ], 403);
+        }
+
         $company->update($request->validated());
 
         // Handle logo upload
@@ -152,6 +188,18 @@ class CompanyController extends Controller
             $this->uploadLogo($company, $request->file('logo'));
         }
 
+        // Handle cover upload
+        if ($request->hasFile('cover')) {
+            // Delete old cover
+            $oldCover = $company->images()->where('type', 'cover')->first();
+            if ($oldCover) {
+                Storage::delete($oldCover->path);
+                $oldCover->delete();
+            }
+
+            $this->uploadCover($company, $request->file('cover'));
+        }
+
         // Handle company images upload
         if ($request->hasFile('images')) {
             $files = $request->file('images');
@@ -162,7 +210,7 @@ class CompanyController extends Controller
             }
         }
 
-        $company->load(['logo', 'images', 'owners']);
+        $company->load(['logo', 'cover', 'images', 'owners']);
 
         return response()->json([
             'success' => true,
@@ -176,11 +224,11 @@ class CompanyController extends Controller
      */
     public function destroy(Request $request, Company $company): JsonResponse
     {
-        // Check if user is primary owner
-        if (! $company->isPrimaryOwner($request->user())) {
+        // Check if user is an owner of the company
+        if (! $company->isOwnedBy($request->user())) {
             return response()->json([
                 'success' => false,
-                'message' => 'Only the primary owner can delete the company',
+                'message' => 'You do not have permission to delete this company',
             ], 403);
         }
 
@@ -269,7 +317,7 @@ class CompanyController extends Controller
     {
         $companies = $request->user()
             ->ownedCompanies()
-            ->with(['logo', 'images', 'jobs'])
+            ->with(['logo', 'cover', 'images', 'jobs'])
             ->withCount('jobs')
             ->get();
 
@@ -300,6 +348,31 @@ class CompanyController extends Controller
             ]);
         } catch (\Exception $e) {
             Log::error('Logo upload failed: '.$e->getMessage());
+            throw $e;
+        }
+    }
+
+    /**
+     * Upload company cover image.
+     */
+    protected function uploadCover(Company $company, $file): CompanyImage
+    {
+        try {
+            // Store the file
+            $path = $file->store('companies/covers', 'public');
+
+            if (! $path) {
+                throw new \Exception('Failed to store cover file');
+            }
+
+            // Create the image record
+            return $company->images()->create([
+                'path' => $path,
+                'type' => 'cover',
+                'is_primary' => true,
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Cover upload failed: '.$e->getMessage());
             throw $e;
         }
     }

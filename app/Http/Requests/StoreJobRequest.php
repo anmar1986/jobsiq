@@ -29,17 +29,20 @@ class StoreJobRequest extends FormRequest
      */
     public function rules(): array
     {
+        $jobCategories = config('job.categories');
+        $iraqCities = config('company.iraq_cities');
+
         return [
             'company_id' => ['required', 'exists:companies,id'],
             'title' => ['required', 'string', 'max:255'],
             'description' => ['required', 'string', 'max:10000'],
             'requirements' => ['nullable', 'string', 'max:10000'],
             'location' => ['required', 'string', 'max:255'],
-            'city' => ['nullable', 'string', 'max:255'],
-            'country' => ['nullable', 'string', 'max:255'],
+            'city' => ['required', 'string', 'in:'.implode(',', $iraqCities)],
+            'country' => ['required', 'string', 'in:Iraq'],
             'employment_type' => ['required', 'in:full-time,part-time,contract,freelance,internship'],
             'experience_level' => ['nullable', 'in:entry,junior,mid,senior,lead'],
-            'category' => ['nullable', 'string', 'max:255'],
+            'category' => ['required', 'string', 'in:'.implode(',', $jobCategories)],
             'salary_min' => ['nullable', 'numeric', 'min:0'],
             'salary_max' => ['nullable', 'numeric', 'min:0', 'gte:salary_min'],
             'salary_currency' => ['nullable', 'string', 'size:3'],
@@ -63,8 +66,14 @@ class StoreJobRequest extends FormRequest
             'title.required' => 'Job title is required',
             'description.required' => 'Job description is required',
             'location.required' => 'Job location is required',
+            'city.required' => 'City is required',
+            'city.in' => 'Please select a valid Iraqi city',
+            'country.required' => 'Country is required',
+            'country.in' => 'Country must be Iraq',
             'employment_type.required' => 'Employment type is required',
             'employment_type.in' => 'Invalid employment type',
+            'category.required' => 'Job category is required',
+            'category.in' => 'Please select a valid category',
             'salary_max.gte' => 'Maximum salary must be greater than or equal to minimum salary',
             'expires_at.after' => 'Expiration date must be in the future',
         ];

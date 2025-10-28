@@ -86,12 +86,23 @@
           <p v-if="errors.requirements" class="text-red-600 text-sm mt-1">{{ errors.requirements }}</p>
         </div>
 
-        <BaseInput
-          v-model="formData.category"
-          label="Category"
-          placeholder="e.g. Technology, Marketing, Sales"
-          :error="errors.category"
-        />
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">
+            Category *
+          </label>
+          <select
+            v-model="formData.category"
+            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+            :class="{ 'border-red-500': errors.category }"
+            required
+          >
+            <option value="">Select category</option>
+            <option v-for="category in jobCategories" :key="category" :value="category">
+              {{ category }}
+            </option>
+          </select>
+          <p v-if="errors.category" class="text-red-600 text-sm mt-1">{{ errors.category }}</p>
+        </div>
 
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-1">
@@ -132,32 +143,34 @@
       </div>
     </div>
 
-    <!-- Location Section -->
+    <!-- Address Section -->
     <div v-if="userCompanies && userCompanies.length > 0" class="bg-white p-6 rounded-lg border border-gray-200">
-      <h3 class="text-lg font-semibold text-gray-900 mb-4">Location</h3>
+      <h3 class="text-lg font-semibold text-gray-900 mb-4">Address</h3>
       
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div class="md:col-span-2">
           <BaseInput
-            v-model="formData.location"
-            label="Location *"
-            placeholder="e.g. San Francisco, CA or Remote"
-            :error="errors.location"
-            required
+            v-model="formData.street"
+            label="Street Address"
+            placeholder="123 Main Street"
+            :error="errors.street"
           />
         </div>
 
-        <BaseInput
+        <BaseAutocomplete
           v-model="formData.city"
+          :options="iraqCities"
           label="City"
-          placeholder="San Francisco"
+          placeholder="Type to search cities..."
+          required
           :error="errors.city"
         />
 
         <BaseInput
           v-model="formData.country"
           label="Country"
-          placeholder="United States"
+          value="Iraq"
+          readonly
           :error="errors.country"
         />
 
@@ -270,32 +283,32 @@
     <div v-if="userCompanies && userCompanies.length > 0" class="bg-white p-6 rounded-lg border border-gray-200">
       <h3 class="text-lg font-semibold text-gray-900 mb-4">Additional Options</h3>
       
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <BaseInput
-          v-model="formData.expires_at"
-          label="Expiration Date"
-          type="date"
-          :error="errors.expires_at"
-        />
+      <div class="space-y-3">
+        <label class="flex items-center gap-2">
+          <input
+            type="checkbox"
+            v-model="formData.is_featured"
+            class="w-4 h-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500"
+          />
+          <span class="text-sm font-medium text-gray-700">Feature this job</span>
+        </label>
+        
+        <label class="flex items-center gap-2">
+          <input
+            type="checkbox"
+            v-model="formData.is_active"
+            class="w-4 h-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500"
+          />
+          <span class="text-sm font-medium text-gray-700">Active (visible to job seekers)</span>
+        </label>
 
-        <div class="space-y-3">
-          <label class="flex items-center gap-2">
-            <input
-              type="checkbox"
-              v-model="formData.is_featured"
-              class="w-4 h-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500"
-            />
-            <span class="text-sm font-medium text-gray-700">Feature this job</span>
-          </label>
-          
-          <label class="flex items-center gap-2">
-            <input
-              type="checkbox"
-              v-model="formData.is_active"
-              class="w-4 h-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500"
-            />
-            <span class="text-sm font-medium text-gray-700">Active (visible to job seekers)</span>
-          </label>
+        <div class="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+          <p class="text-sm text-blue-800">
+            <svg class="inline h-4 w-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            This job posting will automatically expire in 30 days
+          </p>
         </div>
       </div>
     </div>
@@ -322,10 +335,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, watch } from 'vue'
+import { ref, reactive, watch, computed } from 'vue'
 import type { Job, Company } from '@/types'
 import BaseInput from '@/components/base/BaseInput.vue'
 import BaseButton from '@/components/base/BaseButton.vue'
+import BaseAutocomplete from '@/components/base/BaseAutocomplete.vue'
+import { JOB_CATEGORIES } from '@/config/constants'
+import { iraqCities } from '@/config/iraqCities'
 
 interface Props {
   job?: Job
@@ -339,17 +355,25 @@ const emit = defineEmits<{
   cancel: []
 }>()
 
-const isEdit = ref(!!props.job)
+const isEdit = computed(() => !!props.job)
 const skillInput = ref('')
+const jobCategories = JOB_CATEGORIES
+
+// Calculate expiration date (30 days from now)
+const getExpirationDate = () => {
+  const date = new Date()
+  date.setDate(date.getDate() + 30)
+  return date.toISOString().split('T')[0]
+}
 
 const formData = reactive({
   company_id: '',
   title: '',
   description: '',
   requirements: '',
-  location: '',
+  street: '',
   city: '',
-  country: '',
+  country: 'Iraq',
   employment_type: '',
   experience_level: '',
   category: '',
@@ -361,7 +385,7 @@ const formData = reactive({
   is_featured: false,
   is_active: true,
   skills: [] as string[],
-  expires_at: '',
+  expires_at: getExpirationDate(),
 })
 
 const errors = reactive<Record<string, string>>({})
@@ -369,14 +393,18 @@ const errors = reactive<Record<string, string>>({})
 // Initialize form with existing job data if editing
 watch(() => props.job, (job) => {
   if (job) {
-    Object.assign(formData, {
+    const expiresAt = job.expires_at 
+      ? new Date(job.expires_at).toISOString().split('T')[0] 
+      : getExpirationDate()
+    
+    const formDataToAssign = {
       company_id: job.company_id?.toString() || '',
       title: job.title || '',
       description: job.description || '',
       requirements: job.requirements || '',
-      location: job.location || '',
+      street: job.location || '', // Use location as street for backward compatibility
       city: job.city || '',
-      country: job.country || '',
+      country: job.country || 'Iraq',
       employment_type: job.employment_type || '',
       experience_level: job.experience_level || '',
       category: job.category || '',
@@ -387,11 +415,12 @@ watch(() => props.job, (job) => {
       is_remote: job.is_remote || false,
       is_featured: job.is_featured || false,
       is_active: job.is_active !== false,
-      skills: job.skills || [],
-      expires_at: job.expires_at || '',
-    })
+      skills: Array.isArray(job.skills) ? job.skills : [],
+      expires_at: expiresAt,
+    }
+    Object.assign(formData, formDataToAssign)
   }
-}, { immediate: true })
+}, { immediate: true, deep: true })
 
 const addSkill = () => {
   const skill = skillInput.value.trim()
@@ -422,13 +451,26 @@ const handleSubmit = () => {
     errors.description = 'Job description is required'
     return
   }
-  if (!formData.location.trim()) {
-    errors.location = 'Location is required'
+  if (!formData.city.trim()) {
+    errors.city = 'City is required'
     return
   }
   if (!formData.employment_type) {
     errors.employment_type = 'Employment type is required'
     return
+  }
+  if (!formData.category) {
+    errors.category = 'Category is required'
+    return
+  }
+
+  // Prepare location string from street and city
+  const locationParts = [formData.street, formData.city].filter(Boolean)
+  const location = locationParts.join(', ')
+
+  // Ensure expiration date is set (30 days from now if not already set)
+  if (!formData.expires_at) {
+    formData.expires_at = getExpirationDate()
   }
 
   // Prepare data
@@ -437,12 +479,12 @@ const handleSubmit = () => {
     title: formData.title,
     description: formData.description,
     requirements: formData.requirements || undefined,
-    location: formData.location,
-    city: formData.city || undefined,
-    country: formData.country || undefined,
+    location: location || formData.city, // Use combined street + city, or just city
+    city: formData.city,
+    country: formData.country,
     employment_type: formData.employment_type,
     experience_level: formData.experience_level || undefined,
-    category: formData.category || undefined,
+    category: formData.category,
     salary_min: formData.salary_min ? parseFloat(formData.salary_min) : undefined,
     salary_max: formData.salary_max ? parseFloat(formData.salary_max) : undefined,
     salary_currency: formData.salary_currency,
@@ -451,7 +493,7 @@ const handleSubmit = () => {
     is_featured: formData.is_featured,
     is_active: formData.is_active,
     skills: formData.skills.length > 0 ? formData.skills : undefined,
-    expires_at: formData.expires_at || undefined,
+    expires_at: formData.expires_at, // Always send expiration date
   }
 
   emit('submit', data)

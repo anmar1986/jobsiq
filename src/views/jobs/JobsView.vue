@@ -184,14 +184,14 @@
                 <!-- Company Logo -->
                 <div class="w-12 h-12 bg-gray-100 rounded flex items-center justify-center flex-shrink-0">
                   <img
-                    v-if="job.company?.logo?.path"
-                    :src="job.company.logo.path"
+                    v-if="job.company?.logo?.url"
+                    :src="job.company.logo.url"
                     :alt="job.company.name"
-                    class="w-full h-full object-cover rounded"
+                    class="w-full h-full object-contain rounded p-1"
                   />
-                  <svg v-else class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                  </svg>
+                  <span v-else class="text-lg font-bold text-gray-600">
+                    {{ job.company?.name?.charAt(0) || 'C' }}
+                  </span>
                 </div>
 
                 <div class="flex-1 min-w-0">
@@ -303,14 +303,19 @@
                 </div>
 
                 <div class="flex gap-3">
-                  <BaseButton variant="primary" size="lg" @click="goToJobDetail(selectedJob)">
-                    View Full Details & Apply
+                  <BaseButton variant="primary" size="lg" @click="applyForJob(selectedJob)">
+                    <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    Apply Now
+                  </BaseButton>
+                  <BaseButton variant="outline" size="lg" @click="goToJobDetail(selectedJob)">
+                    View Details
                   </BaseButton>
                   <BaseButton variant="outline" size="lg" @click="saveJob(selectedJob)">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
                     </svg>
-                    Save
                   </BaseButton>
                 </div>
               </div>
@@ -380,6 +385,7 @@
 import { ref, reactive, computed, onMounted, nextTick } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useJobStore } from '@/stores/job'
+import { useAuthStore } from '@/stores/auth'
 import BaseInput from '@/components/base/BaseInput.vue'
 import BaseButton from '@/components/base/BaseButton.vue'
 import type { Job, JobFilters } from '@/types'
@@ -388,6 +394,7 @@ import { iraqCities } from '@/config/iraqCities'
 const router = useRouter()
 const route = useRoute()
 const jobStore = useJobStore()
+const authStore = useAuthStore()
 
 // City suggestions state
 const showCitySuggestions = ref(false)
@@ -521,6 +528,17 @@ const selectJob = async (job: Job) => {
 
 const goToJobDetail = (job: Job) => {
   router.push(`/jobs/${job.slug}`)
+}
+
+const applyForJob = (job: Job) => {
+  if (!authStore.isAuthenticated) {
+    router.push({
+      path: '/login',
+      query: { redirect: `/application/${job.slug}` }
+    })
+    return
+  }
+  router.push(`/application/${job.slug}`)
 }
 
 const saveJob = (job: Job) => {

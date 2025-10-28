@@ -17,8 +17,21 @@
       <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
     </div>
 
-    <!-- Error State -->
-    <BaseCard v-else-if="!job && !loadingJob" class="max-w-4xl p-12 text-center">
+    <!-- Job Form -->
+    <BaseCard v-else-if="job" class="max-w-4xl">
+      <div class="p-6 md:p-8">
+        <JobForm
+          :job="job"
+          :user-companies="userCompanies"
+          :loading="submitting"
+          @submit="handleSubmit"
+          @cancel="handleCancel"
+        />
+      </div>
+    </BaseCard>
+
+    <!-- Error State (no job found) -->
+    <BaseCard v-else class="max-w-4xl p-12 text-center">
       <svg class="h-16 w-16 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
       </svg>
@@ -27,20 +40,6 @@
       <BaseButton variant="primary" @click="router.push({ name: 'my-companies' })">
         Go to My Companies
       </BaseButton>
-    </BaseCard>
-
-    <!-- Job Form -->
-    <BaseCard v-else class="max-w-4xl">
-      <div class="p-6 md:p-8">
-        <JobForm
-          :initial-data="job"
-          :user-companies="userCompanies"
-          :loading="submitting"
-          :is-edit="true"
-          @submit="handleSubmit"
-          @cancel="handleCancel"
-        />
-      </div>
     </BaseCard>
 
     <!-- Success Modal -->
@@ -104,7 +103,8 @@ const showSuccessModal = ref(false)
 const loadJob = async () => {
   loadingJob.value = true
   try {
-    const jobId = parseInt(route.params.id as string)
+    // Handle both route parameter names: 'id' and 'jobId'
+    const jobId = parseInt((route.params.jobId || route.params.id) as string)
     const response = await jobService.getJob(jobId)
     
     if (response.success && response.data) {
@@ -115,6 +115,7 @@ const loadJob = async () => {
       await loadCompanies()
       
       const userCompanyIds = userCompanies.value.map(c => c.id)
+      
       if (job.value && !userCompanyIds.includes(job.value.company_id)) {
         toast.error('You do not have permission to edit this job')
         job.value = null

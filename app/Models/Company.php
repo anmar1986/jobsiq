@@ -19,6 +19,7 @@ class Company extends Model
         'name',
         'slug',
         'legal_name',
+        'about',
         'description',
         'tagline',
 
@@ -58,7 +59,6 @@ class Company extends Model
         'benefits',
         'values',
         'perks',
-        'required_skills',
         'culture_description',
 
         // Status
@@ -91,7 +91,6 @@ class Company extends Model
         'benefits' => 'array',
         'values' => 'array',
         'perks' => 'array',
-        'required_skills' => 'array',
         'keywords' => 'array',
         'languages' => 'array',
         'locations' => 'array',
@@ -143,6 +142,16 @@ class Company extends Model
     {
         return $this->hasOne(CompanyImage::class)
             ->where('type', 'logo')
+            ->where('is_primary', true);
+    }
+
+    /**
+     * Get the cover image for this company.
+     */
+    public function cover(): HasOne
+    {
+        return $this->hasOne(CompanyImage::class)
+            ->where('type', 'cover')
             ->where('is_primary', true);
     }
 

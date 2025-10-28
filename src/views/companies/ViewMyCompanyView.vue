@@ -36,55 +36,90 @@
     </div>
 
     <!-- Company Detail Content -->
-    <div v-else>
-      <!-- Hero Banner -->
-      <div class="bg-gradient-to-br from-primary-600 to-secondary-600 text-white">
-        <div class="container-custom py-12">
-          <button @click="router.push({ name: 'my-companies' })" class="flex items-center gap-2 text-white/80 hover:text-white mb-6 transition-colors">
+    <div v-else-if="company">
+      <!-- Cover Image Hero Section -->
+      <div class="relative">
+        <!-- Cover Image -->
+        <div class="h-96 bg-gradient-to-br from-primary-600 to-secondary-600 relative overflow-hidden">
+          <img 
+            v-if="company.cover?.path" 
+            :src="getLogoUrl(company.cover.path)" 
+            :alt="company.name || 'Company cover'"
+            class="w-full h-full object-contain"
+          />
+          <!-- Gradient Overlay -->
+          <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
+          
+          <!-- Back Button -->
+          <button 
+            @click="router.push({ name: 'my-companies' })" 
+            class="absolute top-6 left-6 flex items-center gap-2 text-white/90 hover:text-white bg-black/30 hover:bg-black/50 px-4 py-2 rounded-lg backdrop-blur-sm transition-all"
+          >
             <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
             </svg>
             Back to My Companies
           </button>
+        </div>
 
-          <div class="flex items-start gap-6">
-            <!-- Company Logo -->
-            <div class="w-24 h-24 rounded-2xl bg-white/10 backdrop-blur-sm flex items-center justify-center text-white text-3xl font-bold flex-shrink-0 border-2 border-white/20 overflow-hidden">
+        <!-- Company Logo - Centered and Overlapping -->
+        <div class="container-custom relative">
+          <div class="absolute left-1/2 -translate-x-1/2 -translate-y-1/2">
+            <div class="w-40 h-40 rounded-2xl bg-white shadow-2xl flex items-center justify-center overflow-hidden border-4 border-white">
               <img 
                 v-if="company.logo?.path" 
                 :src="getLogoUrl(company.logo.path)" 
                 :alt="company.name"
-                class="w-full h-full object-cover"
+                class="w-full h-full object-contain p-2"
               />
-              <span v-else>{{ company.name.charAt(0) }}</span>
+              <span v-else class="text-5xl font-bold text-primary-600">{{ company.name.charAt(0) }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Company Info Section -->
+      <div class="bg-white border-b border-gray-200">
+        <div class="container-custom pt-24 pb-8">
+          <div class="text-center mb-8">
+            <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-3">{{ company.name }}</h1>
+            <p v-if="company.tagline" class="text-xl text-gray-600 mb-4">{{ company.tagline }}</p>
+            
+            <div class="flex flex-wrap items-center justify-center gap-4 text-gray-600 mb-6">
+              <span v-if="company.city" class="flex items-center gap-1.5">
+                <svg class="h-5 w-5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                </svg>
+                {{ company.city }}, {{ company.country }}
+              </span>
+              <span v-if="company.industry" class="text-gray-300">•</span>
+              <span v-if="company.industry" class="flex items-center gap-1.5">
+                <svg class="h-5 w-5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                </svg>
+                {{ company.industry }}
+              </span>
+              <span v-if="company.company_size" class="text-gray-300">•</span>
+              <span v-if="company.company_size" class="flex items-center gap-1.5">
+                <svg class="h-5 w-5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                </svg>
+                {{ company.company_size }} employees
+              </span>
+              <span v-if="company.website" class="text-gray-300">•</span>
+              <span v-if="company.website" class="flex items-center gap-1.5">
+                <svg class="h-5 w-5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
+                </svg>
+                <a :href="company.website" target="_blank" class="text-primary-600 hover:text-primary-700 hover:underline">
+                  {{ formatWebsite(company.website) }}
+                </a>
+              </span>
             </div>
 
-            <div class="flex-1">
-              <div class="flex items-start justify-between">
-                <div>
-                  <h1 class="text-4xl md:text-5xl font-bold mb-3">{{ company.name }}</h1>
-                  <div class="flex flex-wrap gap-4 text-white/90 mb-4">
-                    <span v-if="company.city" class="flex items-center gap-1.5">
-                      <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                      </svg>
-                      {{ company.city }}, {{ company.country }}
-                    </span>
-                    <span v-if="company.website" class="flex items-center gap-1.5">
-                      <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
-                      </svg>
-                      <a :href="company.website" target="_blank" class="hover:underline">
-                        {{ formatWebsite(company.website) }}
-                      </a>
-                    </span>
-                  </div>
-                  <p v-if="company.description" class="text-lg text-white/90 leading-relaxed max-w-3xl">
-                    {{ company.description }}
-                  </p>
-                </div>
-              </div>
-            </div>
+            <p v-if="company.description" class="text-lg text-gray-700 leading-relaxed max-w-4xl mx-auto">
+              {{ company.description }}
+            </p>
           </div>
         </div>
       </div>
@@ -202,18 +237,17 @@
                   </div>
                 </div>
 
-                <div v-if="company.address || company.city" class="flex items-start gap-3">
+                <div v-if="company.street || company.city" class="flex items-start gap-3">
                   <svg class="h-5 w-5 text-gray-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                   </svg>
                   <div class="flex-1 min-w-0">
                     <p class="text-sm text-gray-600 mb-1">Address</p>
                     <p class="text-sm text-gray-900">
-                      <span v-if="company.address">{{ company.address }}<br /></span>
-                      <span v-if="company.city">{{ company.city }}, </span>
-                      <span v-if="company.state">{{ company.state }} </span>
-                      <span v-if="company.postal_code">{{ company.postal_code }}<br /></span>
-                      <span v-if="company.country">{{ company.country }}</span>
+                      <span v-if="company.street">{{ company.street }}<br /></span>
+                      <span v-if="company.street_2">{{ company.street_2 }}<br /></span>
+                      <span v-if="company.city">{{ company.city }}</span>
+                      <span v-if="company.country">, {{ company.country }}</span>
                     </p>
                   </div>
                 </div>
@@ -358,7 +392,8 @@
             <BaseCard
               v-for="job in jobs"
               :key="job.id"
-              class="p-6 hover:shadow-lg transition-shadow group relative"
+              hoverable
+              class="p-6 group relative"
             >
               <!-- Job Header -->
               <div class="mb-4">
@@ -640,10 +675,19 @@ const navigateToPostJob = () => {
 
 const viewPublicProfile = () => {
   if (company.value?.slug) {
-    router.push({
+    // Open in new tab so user can see the public view
+    const route = router.resolve({
       name: 'company-detail-slug',
       params: { slug: company.value.slug }
     })
+    window.open(route.href, '_blank')
+  } else if (company.value?.id) {
+    // Fallback to ID if slug doesn't exist
+    const route = router.resolve({
+      name: 'company-detail',
+      params: { id: company.value.id.toString() }
+    })
+    window.open(route.href, '_blank')
   }
 }
 

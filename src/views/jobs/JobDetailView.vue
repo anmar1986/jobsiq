@@ -45,8 +45,16 @@
             <div class="flex-1">
               <div class="flex items-start gap-4 mb-6">
                 <!-- Company Logo -->
-                <div class="w-20 h-20 rounded-xl bg-gradient-to-br from-primary-500 to-secondary-500 flex items-center justify-center text-white text-2xl font-bold flex-shrink-0">
-                  {{ job.company?.name?.charAt(0) || 'C' }}
+                <div class="w-20 h-20 rounded-xl overflow-hidden bg-white border-2 border-gray-200 flex items-center justify-center flex-shrink-0">
+                  <img 
+                    v-if="job.company?.logo?.url" 
+                    :src="job.company.logo.url" 
+                    :alt="job.company.name"
+                    class="w-full h-full object-contain p-2"
+                  />
+                  <div v-else class="w-full h-full bg-gradient-to-br from-primary-500 to-secondary-500 flex items-center justify-center text-white text-2xl font-bold">
+                    {{ job.company?.name?.charAt(0) || 'C' }}
+                  </div>
                 </div>
 
                 <div class="flex-1 min-w-0">
@@ -357,6 +365,7 @@ import { ref, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useJobStore } from '@/stores/job'
 import { useAuthStore } from '@/stores/auth'
+import { jobApplicationService } from '@/services/jobApplication.service'
 import BaseCard from '@/components/base/BaseCard.vue'
 import BaseButton from '@/components/base/BaseButton.vue'
 import BaseInput from '@/components/base/BaseInput.vue'
@@ -453,7 +462,8 @@ const handleApply = () => {
     router.push(`/login?redirect=/jobs/${route.params.slug}`)
     return
   }
-  showApplyModal.value = true
+  // Redirect to apply page instead of showing modal
+  router.push(`/application/${route.params.slug}`)
 }
 
 const toggleSave = async () => {
@@ -527,6 +537,18 @@ const fetchJobDetail = async () => {
     // Fetch job by slug - use fetchJob which accepts slug or id
     await jobStore.fetchJob(slug)
     job.value = jobStore.currentJob
+    
+    // Check if user has already applied (only if authenticated)
+    if (authStore.isAuthenticated && job.value) {
+      try {
+        const checkResponse = await jobApplicationService.checkApplication(slug)
+        if (checkResponse.success && checkResponse.data) {
+          hasApplied.value = checkResponse.data.has_applied
+        }
+      } catch (error) {
+        console.error('Failed to check application status:', error)
+      }
+    }
     
     // Fetch similar jobs if category exists
     if (job.value && job.value.category) {

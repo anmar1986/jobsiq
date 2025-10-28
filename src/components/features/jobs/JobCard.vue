@@ -4,8 +4,16 @@
       <div class="p-6">
         <!-- Company Logo & Job Title -->
         <div class="flex items-start gap-4 mb-4">
-          <div class="w-14 h-14 flex-shrink-0 bg-gradient-to-br from-primary-100 to-secondary-100 rounded-lg flex items-center justify-center">
-            <span class="text-2xl font-bold text-primary-600">{{ job.company.name[0] }}</span>
+          <div class="w-14 h-14 flex-shrink-0 rounded-lg overflow-hidden bg-white border border-gray-200">
+            <img 
+              v-if="job.company.logo?.url" 
+              :src="job.company.logo.url" 
+              :alt="job.company.name"
+              class="w-full h-full object-contain p-1"
+            />
+            <div v-else class="w-full h-full bg-gradient-to-br from-primary-100 to-secondary-100 flex items-center justify-center">
+              <span class="text-2xl font-bold text-primary-600">{{ job.company.name[0] }}</span>
+            </div>
           </div>
           
           <div class="flex-1 min-w-0">

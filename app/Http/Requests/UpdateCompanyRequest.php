@@ -72,7 +72,6 @@ class UpdateCompanyRequest extends FormRequest
             'values.*' => ['string', 'max:255'],
             'perks' => ['nullable', 'array'],
             'perks.*' => ['string', 'max:255'],
-            'required_skills' => ['nullable', 'json'],
             'culture_description' => ['nullable', 'string', 'max:5000'],
 
             // SEO

@@ -22,9 +22,7 @@ class JobController extends Controller
         try {
             $perPage = min((int) $request->get('per_page', 15), 100); // Max 100 items per page
 
-            $query = Job::with(['company' => function ($q) {
-                $q->select('id', 'name', 'slug');
-            }, 'company.logo'])
+            $query = Job::with(['company:id,name,slug', 'company.logo'])
                 ->select([
                     'id', 'company_id', 'title', 'slug', 'description', 'requirements',
                     'location', 'city', 'country', 'employment_type', 'experience_level',
@@ -34,7 +32,7 @@ class JobController extends Controller
                 ])
                 ->active()
                 ->published()
-                ->latest('published_at');
+                ->inRandomOrder();
 
             // Apply filters
             $query = $this->applyFilters($query, $request);
@@ -118,6 +116,16 @@ class JobController extends Controller
     {
         $validated = $request->validated();
         $validated['user_id'] = $request->user()->id;
+        
+        // Set published_at to now if not provided
+        if (!isset($validated['published_at'])) {
+            $validated['published_at'] = now();
+        }
+        
+        // Ensure is_active is true by default
+        if (!isset($validated['is_active'])) {
+            $validated['is_active'] = true;
+        }
 
         $job = Job::create($validated);
         $job->load(['company', 'company.logo']);
@@ -190,9 +198,7 @@ class JobController extends Controller
 
         // Cache featured jobs for 1 hour
         $jobs = Cache::remember("featured_jobs_{$limit}", 3600, function () use ($limit) {
-            return Job::with(['company' => function ($q) {
-                $q->select('id', 'name', 'slug');
-            }, 'company.logo'])
+            return Job::with(['company:id,name,slug', 'company.logo'])
                 ->select([
                     'id', 'company_id', 'title', 'slug', 'location', 'city', 'country',
                     'employment_type', 'experience_level', 'category', 'salary_min', 'salary_max',

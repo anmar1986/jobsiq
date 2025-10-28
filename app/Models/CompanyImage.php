@@ -23,6 +23,10 @@ class CompanyImage extends Model
         'order' => 'integer',
     ];
 
+    protected $appends = [
+        'url',
+    ];
+
     /**
      * Get the company that owns this image.
      */
@@ -36,6 +40,6 @@ class CompanyImage extends Model
      */
     public function getUrlAttribute(): string
     {
-        return asset('storage/'.$this->path);
+        return url('storage/'.$this->path);
     }
 }
