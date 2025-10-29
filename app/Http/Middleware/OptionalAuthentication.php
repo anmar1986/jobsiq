@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\Response;
 
 class OptionalAuthentication
@@ -23,7 +24,13 @@ class OptionalAuthentication
                     Auth::setUser($user);
                 }
             } catch (\Exception $e) {
-                // Silently fail - optional authentication
+                // Log authentication errors for debugging while allowing request to proceed
+                Log::warning('Optional authentication failed', [
+                    'error' => $e->getMessage(),
+                    'token_prefix' => substr($request->bearerToken(), 0, 10).'...',
+                    'ip' => $request->ip(),
+                    'url' => $request->fullUrl(),
+                ]);
             }
         }
 

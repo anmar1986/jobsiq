@@ -111,6 +111,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { useSavedJobStore } from '@/stores/savedJob'
 import { savedJobService } from '@/services/savedJob.service'
 import type { Job } from '@/types'
 import BaseCard from '@/components/base/BaseCard.vue'
@@ -120,6 +121,7 @@ import { useToast } from '@/composables/useToast'
 
 const router = useRouter()
 const toast = useToast()
+const savedJobStore = useSavedJobStore()
 
 const savedJobs = ref<Job[]>([])
 const loading = ref(true)
@@ -156,7 +158,7 @@ const fetchSavedJobs = async () => {
 
 const handleUnsaveJob = async (job: Job) => {
   try {
-    await savedJobService.unsaveJob(job.id)
+    await savedJobStore.unsaveJob(job.id)
     savedJobs.value = savedJobs.value.filter(j => j.id !== job.id)
     toast.success('Job removed from saved')
   } catch (err: unknown) {

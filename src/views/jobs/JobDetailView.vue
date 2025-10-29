@@ -134,7 +134,7 @@
                     variant="outline"
                     size="lg"
                     class="w-full"
-                    @click="toggleShareMenu"
+                    @click.stop="toggleShareMenu"
                   >
                     <template #icon-left>
                       <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -436,9 +436,11 @@ import { ref, onMounted, watch, onBeforeUnmount } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useJobStore } from '@/stores/job'
 import { useAuthStore } from '@/stores/auth'
+import { useSavedJobStore } from '@/stores/savedJob'
 import { jobApplicationService } from '@/services/jobApplication.service'
-import { savedJobService } from '@/services/savedJob.service'
 import { useToast } from '@/composables/useToast'
+import { copyToClipboard } from '@/utils/clipboard'
+import { stripAndTruncate } from '@/utils/html'
 import BaseCard from '@/components/base/BaseCard.vue'
 import BaseButton from '@/components/base/BaseButton.vue'
 import BaseInput from '@/components/base/BaseInput.vue'
@@ -450,6 +452,7 @@ const router = useRouter()
 const route = useRoute()
 const jobStore = useJobStore()
 const authStore = useAuthStore()
+const savedJobStore = useSavedJobStore()
 const toast = useToast()
 
 const loading = ref(true)
@@ -496,25 +499,39 @@ const formatDate = (date: string): string => {
   const now = new Date()
   const postDate = new Date(date)
   const diffTime = now.getTime() - postDate.getTime()
-  const diffDays = Math.ceil(Math.abs(diffTime) / (1000 * 60 * 60 * 24))
+  const diffDays = Math.floor(Math.abs(diffTime) / (1000 * 60 * 60 * 24))
   
   // If date is in the future
   if (diffTime < 0) {
     if (diffDays === 0) return 'Today'
     if (diffDays === 1) return 'Tomorrow'
     if (diffDays < 7) return `in ${diffDays} days`
-    if (diffDays < 30) return `in ${Math.floor(diffDays / 7)} weeks`
-    if (diffDays < 365) return `in ${Math.floor(diffDays / 30)} months`
-    return `in ${Math.floor(diffDays / 365)} years`
+    if (diffDays < 30) {
+      const weeks = Math.floor(diffDays / 7)
+      return `in ${weeks} ${weeks === 1 ? 'week' : 'weeks'}`
+    }
+    if (diffDays < 365) {
+      const months = Math.floor(diffDays / 30)
+      return `in ${months} ${months === 1 ? 'month' : 'months'}`
+    }
+    const years = Math.floor(diffDays / 365)
+    return `in ${years} ${years === 1 ? 'year' : 'years'}`
   }
   
   // If date is in the past
   if (diffDays === 0) return 'Today'
   if (diffDays === 1) return 'Yesterday'
   if (diffDays < 7) return `${diffDays} days ago`
-  if (diffDays < 30) return `${Math.floor(diffDays / 7)} weeks ago`
-  if (diffDays < 365) return `${Math.floor(diffDays / 30)} months ago`
-  return `${Math.floor(diffDays / 365)} years ago`
+  if (diffDays < 30) {
+    const weeks = Math.floor(diffDays / 7)
+    return `${weeks} ${weeks === 1 ? 'week' : 'weeks'} ago`
+  }
+  if (diffDays < 365) {
+    const months = Math.floor(diffDays / 30)
+    return `${months} ${months === 1 ? 'month' : 'months'} ago`
+  }
+  const years = Math.floor(diffDays / 365)
+  return `${years} ${years === 1 ? 'year' : 'years'} ago`
 }
 
 const formatNumber = (num: number): string => {
@@ -563,11 +580,11 @@ const toggleSave = async () => {
 
   try {
     if (isSaved.value) {
-      await savedJobService.unsaveJob(job.value.id)
+      await savedJobStore.unsaveJob(job.value.id)
       isSaved.value = false
       toast.success('Job removed from saved')
     } else {
-      await savedJobService.saveJob(job.value.id)
+      await savedJobStore.saveJob(job.value.id)
       isSaved.value = true
       toast.success('Job saved successfully')
     }
@@ -609,7 +626,7 @@ const submitApplication = async () => {
 
 const copyJobLink = async () => {
   try {
-    await navigator.clipboard.writeText(window.location.href)
+    await copyToClipboard(window.location.href)
     toast.success('Link copied to clipboard!')
     showShareMenu.value = false
   } catch (error) {
@@ -640,7 +657,7 @@ const shareOn = (platform: string) => {
       break
     case 'instagram':
       // Instagram doesn't support direct web sharing, so we'll copy the link and notify the user
-      navigator.clipboard.writeText(url).then(() => {
+      copyToClipboard(url).then(() => {
         toast.info('Link copied! Open Instagram app to share')
         showShareMenu.value = false
       }).catch(() => {
@@ -680,14 +697,11 @@ const fetchJobDetail = async () => {
       }
 
       // Check if job is saved
-      try {
-        const savedResponse = await savedJobService.checkSaved(job.value.id)
-        if (savedResponse.success && savedResponse.data) {
-          isSaved.value = savedResponse.data.is_saved
-        }
-      } catch (error) {
-        console.error('Failed to check saved status:', error)
+      if (savedJobStore.savedJobIds.size === 0) {
+        // If savedJobIds is empty, fetch it
+        await savedJobStore.fetchSavedJobsCount()
       }
+      isSaved.value = savedJobStore.savedJobIds.has(job.value.id)
     }
     
     // Fetch similar jobs if category exists
@@ -709,7 +723,9 @@ const fetchJobDetail = async () => {
 const updateMetaTags = (jobData: Job) => {
   const url = window.location.href
   const title = `${jobData.title} at ${jobData.company?.name} | JobsIQ`
-  const description = jobData.description?.replace(/<[^>]*>/g, '').substring(0, 160) || `Apply for ${jobData.title} at ${jobData.company?.name}. ${jobData.location}`
+  const description = jobData.description 
+    ? stripAndTruncate(jobData.description, 160, '...') 
+    : `Apply for ${jobData.title} at ${jobData.company?.name}. ${jobData.location}`
   const image = jobData.company?.logo?.url || jobData.company?.cover?.url || `${window.location.origin}/logo.png`
 
   // Update document title
@@ -730,6 +746,8 @@ const updateMetaTags = (jobData: Job) => {
     { name: 'twitter:title', content: title },
     { name: 'twitter:description', content: description },
     { name: 'twitter:image', content: image },
+    { name: 'twitter:site', content: '@JobsIQ' },
+    { name: 'twitter:creator', content: '@JobsIQ' },
     { name: 'description', content: description },
   ]
 

@@ -15,6 +15,20 @@ use Illuminate\Support\Facades\Log;
 class JobController extends Controller
 {
     /**
+     * Searchable filter parameters that should trigger search history logging.
+     */
+    private const SEARCHABLE_FILTERS = [
+        'search',
+        'location',
+        'employment_type',
+        'experience_level',
+        'is_remote',
+        'category',
+        'salary_min',
+        'company',
+    ];
+
+    /**
      * Display a listing of jobs with search and filters.
      */
     public function index(Request $request): JsonResponse
@@ -54,7 +68,7 @@ class JobController extends Controller
             $total = $jobs->total();
 
             // Log search history if search or filters are used
-            if ($request->hasAny(['search', 'location', 'employment_type', 'experience_level', 'is_remote', 'category', 'salary_min'])) {
+            if ($request->hasAny(self::SEARCHABLE_FILTERS)) {
                 $this->logSearch($request, $total);
             }
 
@@ -256,6 +270,9 @@ class JobController extends Controller
             }
             if ($request->filled('salary_min')) {
                 $filters['salary_min'] = $request->salary_min;
+            }
+            if ($request->filled('company')) {
+                $filters['company'] = $request->company;
             }
 
             SearchHistory::create([

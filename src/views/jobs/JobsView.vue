@@ -305,7 +305,7 @@
                   
                   <!-- Share Job Button with Dropdown -->
                   <div class="relative" ref="shareMenuRef">
-                    <BaseButton variant="outline" size="lg" @click="toggleShareMenu">
+                    <BaseButton variant="outline" size="lg" @click.stop="toggleShareMenu">
                       <template #icon-left>
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
@@ -389,15 +389,15 @@
                     <template #icon-left>
                       <svg 
                         class="w-5 h-5" 
-                        :class="savedJobIds.has(selectedJob.id) ? 'fill-yellow-500 text-yellow-500' : ''"
-                        :fill="savedJobIds.has(selectedJob.id) ? 'currentColor' : 'none'" 
+                        :class="savedJobStore.savedJobIds.has(selectedJob.id) ? 'fill-yellow-500 text-yellow-500' : ''"
+                        :fill="savedJobStore.savedJobIds.has(selectedJob.id) ? 'currentColor' : 'none'" 
                         stroke="currentColor" 
                         viewBox="0 0 24 24"
                       >
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
                       </svg>
                     </template>
-                    {{ savedJobIds.has(selectedJob.id) ? 'Saved' : 'Save' }}
+                    {{ savedJobStore.savedJobIds.has(selectedJob.id) ? 'Saved' : 'Save' }}
                   </BaseButton>
                 </div>
               </div>
@@ -468,8 +468,9 @@ import { ref, reactive, computed, onMounted, onBeforeUnmount, nextTick } from 'v
 import { useRouter, useRoute } from 'vue-router'
 import { useJobStore } from '@/stores/job'
 import { useAuthStore } from '@/stores/auth'
-import { savedJobService } from '@/services/savedJob.service'
+import { useSavedJobStore } from '@/stores/savedJob'
 import { useToast } from '@/composables/useToast'
+import { copyToClipboard } from '@/utils/clipboard'
 import BaseInput from '@/components/base/BaseInput.vue'
 import BaseButton from '@/components/base/BaseButton.vue'
 import type { Job, JobFilters } from '@/types'
@@ -479,6 +480,7 @@ const router = useRouter()
 const route = useRoute()
 const jobStore = useJobStore()
 const authStore = useAuthStore()
+const savedJobStore = useSavedJobStore()
 const toast = useToast()
 
 // City suggestions state
@@ -564,7 +566,6 @@ const handleCityBlur = () => {
 const loading = ref(false)
 const loadingMore = ref(false)
 const selectedJob = ref<Job | null>(null)
-const savedJobIds = ref<Set<number>>(new Set())
 const showShareMenu = ref(false)
 const shareMenuRef = ref<HTMLElement | null>(null)
 
@@ -686,15 +687,13 @@ const saveJob = async (job: Job) => {
   }
 
   try {
-    if (savedJobIds.value.has(job.id)) {
+    if (savedJobStore.savedJobIds.has(job.id)) {
       // Unsave the job
-      await savedJobService.unsaveJob(job.id)
-      savedJobIds.value.delete(job.id)
+      await savedJobStore.unsaveJob(job.id)
       toast.success('Job removed from saved')
     } else {
       // Save the job
-      await savedJobService.saveJob(job.id)
-      savedJobIds.value.add(job.id)
+      await savedJobStore.saveJob(job.id)
       toast.success('Job saved successfully')
     }
   } catch (err: unknown) {
@@ -727,7 +726,7 @@ const shareOn = (platform: string) => {
       break
     case 'instagram':
       // Instagram doesn't support direct web sharing, so we'll copy the link and notify the user
-      navigator.clipboard.writeText(url).then(() => {
+      copyToClipboard(url).then(() => {
         toast.info('Link copied! Open Instagram app to share')
         showShareMenu.value = false
       }).catch(() => {
@@ -751,7 +750,7 @@ const copyJobLink = async () => {
   
   const url = `${window.location.origin}/jobs/${selectedJob.value.slug}`
   try {
-    await navigator.clipboard.writeText(url)
+    await copyToClipboard(url)
     toast.success('Link copied to clipboard!')
     showShareMenu.value = false
   } catch (error) {
@@ -802,14 +801,7 @@ const formatSalaryPeriod = (period: string): string => {
 
 const fetchSavedJobs = async () => {
   if (authStore.isAuthenticated) {
-    try {
-      const response = await savedJobService.getSavedJobs()
-      if (response.success && response.data) {
-        savedJobIds.value = new Set(response.data.map(job => job.id))
-      }
-    } catch (error) {
-      console.error('Failed to fetch saved jobs:', error)
-    }
+    await savedJobStore.fetchSavedJobsCount()
   }
 }
 

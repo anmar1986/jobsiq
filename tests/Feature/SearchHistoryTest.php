@@ -217,4 +217,29 @@ class SearchHistoryTest extends TestCase
         $response->assertStatus(200);
         // The API should not fail even if logging fails
     }
+
+    #[Test]
+    public function it_logs_search_history_with_company_filter()
+    {
+        $user = User::factory()->create();
+        $company = Company::first();
+
+        $this->assertEquals(0, SearchHistory::count());
+
+        $response = $this->actingAs($user, 'sanctum')
+            ->getJson("/api/jobs?company={$company->slug}");
+
+        $response->assertStatus(200);
+
+        // Check that search history was logged
+        $this->assertEquals(1, SearchHistory::count());
+
+        $searchHistory = SearchHistory::first();
+        $this->assertEquals($user->id, $searchHistory->user_id);
+        $this->assertNull($searchHistory->search_query);
+        $this->assertNull($searchHistory->location);
+        $this->assertNotNull($searchHistory->filters);
+        $this->assertArrayHasKey('company', $searchHistory->filters);
+        $this->assertEquals($company->slug, $searchHistory->filters['company']);
+    }
 }

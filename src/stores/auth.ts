@@ -3,6 +3,7 @@ import { ref, computed } from 'vue'
 import type { User, LoginForm, RegisterForm } from '@/types'
 import { authService } from '@/services/auth.service'
 import { STORAGE_KEYS } from '@/config/constants'
+import { useSavedJobStore } from './savedJob'
 
 export const useAuthStore = defineStore('auth', () => {
   // State
@@ -82,6 +83,10 @@ export const useAuthStore = defineStore('auth', () => {
       user.value = null
       localStorage.removeItem(STORAGE_KEYS.AUTH_TOKEN)
       localStorage.removeItem(STORAGE_KEYS.USER)
+      
+      // Reset saved job store
+      const savedJobStore = useSavedJobStore()
+      savedJobStore.resetCount()
     }
   }
 

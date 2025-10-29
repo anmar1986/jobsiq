@@ -91,7 +91,7 @@
         </div>
         <h3 class="text-xl font-semibold text-gray-900 mb-2 group-hover:text-primary-600 transition-colors">
           Saved Jobs
-          <span v-if="savedJobsCount !== null" class="text-sm text-gray-500 font-normal ml-2">({{ savedJobsCount }})</span>
+          <span v-if="savedJobStore.savedJobsCount !== null" class="text-sm text-gray-500 font-normal ml-2">({{ savedJobStore.savedJobsCount }})</span>
         </h3>
         <p class="text-gray-600 text-sm">View jobs you've bookmarked</p>
       </router-link>
@@ -177,27 +177,16 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { onMounted } from 'vue'
 import { useAuthStore } from '@/stores/auth'
-import { savedJobService } from '@/services/savedJob.service'
+import { useSavedJobStore } from '@/stores/savedJob'
 
 const authStore = useAuthStore()
-const savedJobsCount = ref<number | null>(null)
-
-const fetchSavedJobsCount = async () => {
-  if (authStore.isJobSeeker) {
-    try {
-      const response = await savedJobService.getSavedJobs()
-      if (response.success && response.data) {
-        savedJobsCount.value = response.data.length
-      }
-    } catch (err) {
-      console.error('Failed to fetch saved jobs count:', err)
-    }
-  }
-}
+const savedJobStore = useSavedJobStore()
 
 onMounted(() => {
-  fetchSavedJobsCount()
+  if (authStore.isJobSeeker) {
+    savedJobStore.fetchSavedJobsCount()
+  }
 })
 </script>
