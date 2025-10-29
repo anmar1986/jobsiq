@@ -107,7 +107,7 @@
                 v-model="applicationForm.cv_id"
                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
               >
-                <option :value="null">No CV attached</option>
+                <option value="">No CV attached</option>
                 <option v-for="cv in userCvs" :key="cv.id" :value="cv.id">
                   {{ cv.full_name }} - {{ cv.title || 'Untitled' }}
                 </option>
@@ -207,7 +207,7 @@ const hasApplied = ref(false)
 const existingApplication = ref<JobApplication | null>(null)
 
 const applicationForm = ref({
-  cv_id: null as number | null,
+  cv_id: '' as string,
   cover_letter: '',
 })
 
@@ -245,7 +245,7 @@ const fetchJobAndCheckApplication = async () => {
       // Auto-select primary CV if available
       const primaryCv = userCvs.value.find(cv => cv.is_primary)
       if (primaryCv) {
-        applicationForm.value.cv_id = primaryCv.id
+        applicationForm.value.cv_id = String(primaryCv.id)
       }
     }
   } catch (err) {
@@ -264,7 +264,7 @@ const submitApplication = async () => {
 
   try {
     const response = await jobApplicationService.applyForJob(job.value.slug, {
-      cv_id: applicationForm.value.cv_id || undefined,
+      cv_id: applicationForm.value.cv_id ? Number(applicationForm.value.cv_id) : undefined,
       cover_letter: applicationForm.value.cover_letter || undefined,
     })
 

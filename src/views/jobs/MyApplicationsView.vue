@@ -371,7 +371,7 @@ const formatDate = (date: string): string => {
   const now = new Date()
   const appliedDate = new Date(date)
   const diffTime = Math.abs(now.getTime() - appliedDate.getTime())
-  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+  const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24))
   
   if (diffDays === 0) return 'today'
   if (diffDays === 1) return 'yesterday'
