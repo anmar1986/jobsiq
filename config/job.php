@@ -3,6 +3,19 @@
 return [
     /*
     |--------------------------------------------------------------------------
+    | Default Job Expiration Period
+    |--------------------------------------------------------------------------
+    |
+    | The default number of days after which a job posting will expire if
+    | no expiration date is explicitly set. This can be overridden when
+    | creating individual job postings.
+    |
+    */
+
+    'default_expiration_days' => env('JOB_DEFAULT_EXPIRATION_DAYS', 30),
+
+    /*
+    |--------------------------------------------------------------------------
     | Job Categories
     |--------------------------------------------------------------------------
     |

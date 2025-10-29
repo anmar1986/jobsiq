@@ -94,6 +94,15 @@ class User extends Authenticatable
     }
 
     /**
+     * Get the jobs saved by this user.
+     */
+    public function savedJobs(): BelongsToMany
+    {
+        return $this->belongsToMany(Job::class, 'saved_jobs')
+            ->withTimestamps();
+    }
+
+    /**
      * Check if user owns a specific company.
      */
     public function ownsCompany(Company $company): bool

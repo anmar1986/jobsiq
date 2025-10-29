@@ -120,11 +120,100 @@
                   @click="handleApply"
                   :disabled="hasApplied"
                 >
-                  <svg v-if="!hasApplied" class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
+                  <template #icon-left>
+                    <svg v-if="!hasApplied" class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </template>
                   {{ hasApplied ? 'Already Applied' : 'Apply Now' }}
                 </BaseButton>
+
+                <!-- Share Job Button with Dropdown -->
+                <div class="relative w-full mb-3" ref="shareMenuRef">
+                  <BaseButton
+                    variant="outline"
+                    size="lg"
+                    class="w-full"
+                    @click.stop="toggleShareMenu"
+                  >
+                    <template #icon-left>
+                      <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
+                      </svg>
+                    </template>
+                    Share Job
+                  </BaseButton>
+
+                  <!-- Share Menu Dropdown -->
+                  <Transition
+                    enter-active-class="transition ease-out duration-100"
+                    enter-from-class="transform opacity-0 scale-95"
+                    enter-to-class="transform opacity-100 scale-100"
+                    leave-active-class="transition ease-in duration-75"
+                    leave-from-class="transform opacity-100 scale-100"
+                    leave-to-class="transform opacity-0 scale-95"
+                  >
+                    <div
+                      v-if="showShareMenu"
+                      class="absolute top-full left-0 right-0 mt-2 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-10 max-h-96 overflow-y-auto"
+                    >
+                      <!-- Share on X (Twitter) -->
+                      <button
+                        @click="shareOn('twitter')"
+                        class="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center gap-3 text-gray-700"
+                      >
+                        <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+                        </svg>
+                        <span>Share on X</span>
+                      </button>
+
+                      <!-- Share on Facebook -->
+                      <button
+                        @click="shareOn('facebook')"
+                        class="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center gap-3 text-gray-700"
+                      >
+                        <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+                        </svg>
+                        <span>Share on Facebook</span>
+                      </button>
+
+                      <!-- Share on Instagram -->
+                      <button
+                        @click="shareOn('instagram')"
+                        class="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center gap-3 text-gray-700"
+                      >
+                        <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
+                        </svg>
+                        <span>Share on Instagram</span>
+                      </button>
+
+                      <!-- Share on Snapchat -->
+                      <button
+                        @click="shareOn('snapchat')"
+                        class="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center gap-3 text-gray-700"
+                      >
+                        <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M12.206.793c.99 0 4.347.276 5.93 3.821.529 1.193.403 3.219.299 4.847l-.003.06c-.012.18-.022.345-.03.51.075.045.203.09.401.09.3 0 .73-.057 1.126-.12.57-.084 1.185-.179 1.757-.179.3 0 .582.04.84.12.42.15.81.42 1.023.84.195.39.225.84.09 1.289-.12.45-.36.87-.645 1.17-.27.285-.645.54-1.065.705l-.084.045c-.3.165-.704.42-.78.885-.03.135-.015.27.045.404.09.21.21.405.345.585.195.27.42.54.645.81.51.585 1.065 1.185 1.47 1.83.225.36.42.72.57 1.095.09.24.15.495.18.75.015.195 0 .375-.045.555-.075.27-.24.54-.495.705-.3.195-.659.285-1.065.285l-.075-.015c-.705-.075-1.38-.24-2.04-.42-.585-.165-1.17-.3-1.77-.42-.15-.03-.296-.045-.444-.045-.555 0-1.05.195-1.53.42-.45.195-.945.405-1.485.57-.9.3-1.725.345-2.385.345-.405 0-.78-.045-1.095-.09-.75-.15-1.485-.42-2.22-.705-.585-.225-1.17-.48-1.77-.705-.42-.15-.885-.225-1.335-.225-.3 0-.585.03-.87.09-.555.12-1.095.27-1.65.42-.705.195-1.38.42-2.085.57-.705.15-1.38.225-2.01.195-.45-.015-.885-.135-1.26-.375-.3-.195-.495-.495-.585-.84-.075-.3-.075-.615 0-.915.09-.375.27-.735.495-1.065.42-.645.96-1.23 1.485-1.815.24-.27.465-.54.675-.81.12-.165.225-.345.3-.54.09-.195.12-.405.075-.615-.045-.435-.375-.705-.69-.87l-.096-.06c-.42-.165-.795-.42-1.065-.705-.285-.3-.525-.72-.645-1.17-.135-.45-.105-.9.09-1.29.21-.42.6-.69 1.02-.84.259-.08.541-.12.84-.12.573 0 1.185.09 1.757.18.39.06.825.12 1.124.12.195 0 .315-.045.375-.075-.015-.165-.03-.345-.045-.54l-.015-.09c-.105-1.59-.21-3.615.285-4.806C7.86 1.068 11.19.792 12.206.792zm0 0" />
+                        </svg>
+                        <span>Share on Snapchat</span>
+                      </button>
+
+                      <!-- Copy Link -->
+                      <button
+                        @click="copyJobLink"
+                        class="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center gap-3 text-gray-700 border-t border-gray-100"
+                      >
+                        <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
+                        </svg>
+                        <span>Copy Link</span>
+                      </button>
+                    </div>
+                  </Transition>
+                </div>
 
                 <BaseButton
                   variant="outline"
@@ -132,18 +221,22 @@
                   class="w-full"
                   @click="toggleSave"
                 >
-                  <svg :class="[isSaved ? 'fill-current' : '']" class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
-                  </svg>
+                  <template #icon-left>
+                    <svg 
+                      class="h-5 w-5" 
+                      :class="isSaved ? 'fill-yellow-500 text-yellow-500' : ''"
+                      :fill="isSaved ? 'currentColor' : 'none'" 
+                      stroke="currentColor" 
+                      viewBox="0 0 24 24"
+                    >
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+                    </svg>
+                  </template>
                   {{ isSaved ? 'Saved' : 'Save Job' }}
                 </BaseButton>
 
                 <!-- Job Stats -->
                 <div class="mt-6 pt-6 border-t border-gray-200 space-y-3">
-                  <div class="flex items-center justify-between text-sm">
-                    <span class="text-gray-600">Job ID</span>
-                    <span class="font-medium text-gray-900">#{{ job.id }}</span>
-                  </div>
                   <div class="flex items-center justify-between text-sm">
                     <span class="text-gray-600">Posted</span>
                     <span class="font-medium text-gray-900">{{ formatDate(job.created_at) }}</span>
@@ -235,28 +328,6 @@
 
           <!-- Sidebar -->
           <aside class="lg:w-80 flex-shrink-0">
-            <!-- Share Job -->
-            <BaseCard class="p-6 mb-6">
-              <h3 class="font-semibold text-gray-900 mb-4">Share this job</h3>
-              <div class="flex gap-2">
-                <button @click="shareJob('twitter')" class="flex-1 px-4 py-2 bg-blue-400 hover:bg-blue-500 text-white rounded-lg transition-colors">
-                  <svg class="h-5 w-5 mx-auto" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M23 3a10.9 10.9 0 01-3.14 1.53 4.48 4.48 0 00-7.86 3v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2c9 5 20 0 20-11.5a4.5 4.5 0 00-.08-.83A7.72 7.72 0 0023 3z" />
-                  </svg>
-                </button>
-                <button @click="shareJob('linkedin')" class="flex-1 px-4 py-2 bg-blue-700 hover:bg-blue-800 text-white rounded-lg transition-colors">
-                  <svg class="h-5 w-5 mx-auto" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
-                  </svg>
-                </button>
-                <button @click="copyJobLink" class="flex-1 px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-colors">
-                  <svg class="h-5 w-5 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-                  </svg>
-                </button>
-              </div>
-            </BaseCard>
-
             <!-- Similar Jobs -->
             <BaseCard v-if="similarJobs.length > 0" class="p-6">
               <h3 class="font-semibold text-gray-900 mb-4">Similar Jobs</h3>
@@ -361,11 +432,15 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch, onBeforeUnmount } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useJobStore } from '@/stores/job'
 import { useAuthStore } from '@/stores/auth'
+import { useSavedJobStore } from '@/stores/savedJob'
 import { jobApplicationService } from '@/services/jobApplication.service'
+import { useToast } from '@/composables/useToast'
+import { copyToClipboard } from '@/utils/clipboard'
+import { stripAndTruncate } from '@/utils/html'
 import BaseCard from '@/components/base/BaseCard.vue'
 import BaseButton from '@/components/base/BaseButton.vue'
 import BaseInput from '@/components/base/BaseInput.vue'
@@ -377,6 +452,8 @@ const router = useRouter()
 const route = useRoute()
 const jobStore = useJobStore()
 const authStore = useAuthStore()
+const savedJobStore = useSavedJobStore()
+const toast = useToast()
 
 const loading = ref(true)
 const job = ref<Job | null>(null)
@@ -385,6 +462,8 @@ const isSaved = ref(false)
 const hasApplied = ref(false)
 const showApplyModal = ref(false)
 const submitting = ref(false)
+const showShareMenu = ref(false)
+const shareMenuRef = ref<HTMLElement | null>(null)
 
 const applicationForm = ref({
   full_name: authStore.user?.name || '',
@@ -419,15 +498,40 @@ const formatExperienceLevel = (level: string): string => {
 const formatDate = (date: string): string => {
   const now = new Date()
   const postDate = new Date(date)
-  const diffTime = Math.abs(now.getTime() - postDate.getTime())
-  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+  const diffTime = now.getTime() - postDate.getTime()
+  const diffDays = Math.floor(Math.abs(diffTime) / (1000 * 60 * 60 * 24))
   
+  // If date is in the future
+  if (diffTime < 0) {
+    if (diffDays === 0) return 'Today'
+    if (diffDays === 1) return 'Tomorrow'
+    if (diffDays < 7) return `in ${diffDays} days`
+    if (diffDays < 30) {
+      const weeks = Math.floor(diffDays / 7)
+      return `in ${weeks} ${weeks === 1 ? 'week' : 'weeks'}`
+    }
+    if (diffDays < 365) {
+      const months = Math.floor(diffDays / 30)
+      return `in ${months} ${months === 1 ? 'month' : 'months'}`
+    }
+    const years = Math.floor(diffDays / 365)
+    return `in ${years} ${years === 1 ? 'year' : 'years'}`
+  }
+  
+  // If date is in the past
   if (diffDays === 0) return 'Today'
   if (diffDays === 1) return 'Yesterday'
   if (diffDays < 7) return `${diffDays} days ago`
-  if (diffDays < 30) return `${Math.floor(diffDays / 7)} weeks ago`
-  if (diffDays < 365) return `${Math.floor(diffDays / 30)} months ago`
-  return `${Math.floor(diffDays / 365)} years ago`
+  if (diffDays < 30) {
+    const weeks = Math.floor(diffDays / 7)
+    return `${weeks} ${weeks === 1 ? 'week' : 'weeks'} ago`
+  }
+  if (diffDays < 365) {
+    const months = Math.floor(diffDays / 30)
+    return `${months} ${months === 1 ? 'month' : 'months'} ago`
+  }
+  const years = Math.floor(diffDays / 365)
+  return `${years} ${years === 1 ? 'year' : 'years'} ago`
 }
 
 const formatNumber = (num: number): string => {
@@ -472,9 +576,25 @@ const toggleSave = async () => {
     return
   }
   
-  isSaved.value = !isSaved.value
-  // TODO: Call API to save/unsave job
-  console.log('Toggle save job:', job.value?.id)
+  if (!job.value) return
+
+  try {
+    if (isSaved.value) {
+      await savedJobStore.unsaveJob(job.value.id)
+      isSaved.value = false
+      toast.success('Job removed from saved')
+    } else {
+      await savedJobStore.saveJob(job.value.id)
+      isSaved.value = true
+      toast.success('Job saved successfully')
+    }
+  } catch (err: unknown) {
+    // Revert the state if the API call fails
+    const errorMessage = err && typeof err === 'object' && 'response' in err
+      ? (err as { response?: { data?: { message?: string } } }).response?.data?.message
+      : undefined
+    toast.error(errorMessage || 'Failed to save job')
+  }
 }
 
 const handleFileUpload = (event: Event) => {
@@ -504,28 +624,55 @@ const submitApplication = async () => {
   }
 }
 
-const shareJob = (platform: string) => {
-  const url = window.location.href
-  const title = job.value?.title || 'Check out this job'
-  
-  let shareUrl = ''
-  if (platform === 'twitter') {
-    shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(title)}&url=${encodeURIComponent(url)}`
-  } else if (platform === 'linkedin') {
-    shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`
-  }
-  
-  if (shareUrl) {
-    window.open(shareUrl, '_blank', 'width=600,height=400')
+const copyJobLink = async () => {
+  try {
+    await copyToClipboard(window.location.href)
+    toast.success('Link copied to clipboard!')
+    showShareMenu.value = false
+  } catch (error) {
+    console.error('Failed to copy link:', error)
+    toast.error('Failed to copy link')
   }
 }
 
-const copyJobLink = async () => {
-  try {
-    await navigator.clipboard.writeText(window.location.href)
-    alert('Link copied to clipboard!')
-  } catch (error) {
-    console.error('Failed to copy link:', error)
+const toggleShareMenu = () => {
+  showShareMenu.value = !showShareMenu.value
+}
+
+const shareOn = (platform: string) => {
+  if (!job.value) return
+
+  const url = window.location.href
+  const title = job.value.title
+  const text = `Check out this job opportunity: ${title} at ${job.value.company?.name || 'a great company'}`
+  
+  let shareUrl = ''
+
+  switch (platform) {
+    case 'twitter':
+      shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`
+      break
+    case 'facebook':
+      shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`
+      break
+    case 'instagram':
+      // Instagram doesn't support direct web sharing, so we'll copy the link and notify the user
+      copyToClipboard(url).then(() => {
+        toast.info('Link copied! Open Instagram app to share')
+        showShareMenu.value = false
+      }).catch(() => {
+        toast.error('Failed to copy link')
+      })
+      return
+    case 'snapchat':
+      // Snapchat web sharing
+      shareUrl = `https://www.snapchat.com/scan?attachmentUrl=${encodeURIComponent(url)}`
+      break
+  }
+
+  if (shareUrl) {
+    window.open(shareUrl, '_blank', 'width=600,height=400')
+    showShareMenu.value = false
   }
 }
 
@@ -548,6 +695,13 @@ const fetchJobDetail = async () => {
       } catch (error) {
         console.error('Failed to check application status:', error)
       }
+
+      // Check if job is saved
+      if (savedJobStore.savedJobIds.size === 0) {
+        // If savedJobIds is empty, fetch it
+        await savedJobStore.fetchSavedJobsCount()
+      }
+      isSaved.value = savedJobStore.savedJobIds.has(job.value.id)
     }
     
     // Fetch similar jobs if category exists
@@ -566,9 +720,69 @@ const fetchJobDetail = async () => {
   }
 }
 
+const updateMetaTags = (jobData: Job) => {
+  const url = window.location.href
+  const title = `${jobData.title} at ${jobData.company?.name} | JobsIQ`
+  const description = jobData.description 
+    ? stripAndTruncate(jobData.description, 160, '...') 
+    : `Apply for ${jobData.title} at ${jobData.company?.name}. ${jobData.location}`
+  const image = jobData.company?.logo?.url || jobData.company?.cover?.url || `${window.location.origin}/logo.png`
+
+  // Update document title
+  document.title = title
+
+  // Remove existing meta tags
+  const existingMetaTags = document.querySelectorAll('meta[property^="og:"], meta[name^="twitter:"]')
+  existingMetaTags.forEach(tag => tag.remove())
+
+  // Add Open Graph meta tags
+  const metaTags = [
+    { property: 'og:title', content: title },
+    { property: 'og:description', content: description },
+    { property: 'og:image', content: image },
+    { property: 'og:url', content: url },
+    { property: 'og:type', content: 'website' },
+    { name: 'twitter:card', content: 'summary_large_image' },
+    { name: 'twitter:title', content: title },
+    { name: 'twitter:description', content: description },
+    { name: 'twitter:image', content: image },
+    { name: 'twitter:site', content: '@JobsIQ' },
+    { name: 'twitter:creator', content: '@JobsIQ' },
+    { name: 'description', content: description },
+  ]
+
+  metaTags.forEach(({ property, name, content }) => {
+    const meta = document.createElement('meta')
+    if (property) meta.setAttribute('property', property)
+    if (name) meta.setAttribute('name', name)
+    meta.setAttribute('content', content)
+    document.head.appendChild(meta)
+  })
+}
+
+watch(job, (newJob) => {
+  if (newJob) {
+    updateMetaTags(newJob)
+  }
+})
+
 onMounted(() => {
   fetchJobDetail()
+  
+  // Add click-outside listener for share menu
+  document.addEventListener('click', handleClickOutside)
 })
+
+onBeforeUnmount(() => {
+  // Clean up click-outside listener
+  document.removeEventListener('click', handleClickOutside)
+})
+
+const handleClickOutside = (event: MouseEvent) => {
+  if (shareMenuRef.value && !shareMenuRef.value.contains(event.target as Node)) {
+    showShareMenu.value = false
+  }
+}
 </script>
 
 <style scoped>

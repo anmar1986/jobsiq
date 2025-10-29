@@ -3,13 +3,19 @@
     <!-- Header -->
     <div class="mb-8">
       <h1 class="text-3xl font-bold text-gray-900 mb-2">Dashboard</h1>
-      <p class="text-gray-600">Welcome back! Manage your companies and CVs from here.</p>
+      <p class="text-gray-600">
+        {{ authStore.isCompanyOwner 
+          ? 'Welcome back! Manage your companies and jobs from here.' 
+          : 'Welcome back! Manage your CVs and job applications from here.' 
+        }}
+      </p>
     </div>
 
     <!-- Quick Actions Grid -->
     <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-      <!-- My Companies Card -->
+      <!-- My Companies Card - Company Owners Only -->
       <router-link
+        v-if="authStore.isCompanyOwner"
         to="/my-companies"
         class="block p-6 bg-white border border-gray-200 rounded-lg hover:shadow-lg hover:border-primary-500 transition-all group"
       >
@@ -27,8 +33,9 @@
         <p class="text-gray-600 text-sm">Manage your companies and post jobs</p>
       </router-link>
 
-      <!-- My CVs Card -->
+      <!-- My CVs Card - Job Seekers Only -->
       <router-link
+        v-if="authStore.isJobSeeker"
         to="/my-cvs"
         class="block p-6 bg-white border border-gray-200 rounded-lg hover:shadow-lg hover:border-primary-500 transition-all group"
       >
@@ -44,6 +51,49 @@
         </div>
         <h3 class="text-xl font-semibold text-gray-900 mb-2 group-hover:text-primary-600 transition-colors">My CVs</h3>
         <p class="text-gray-600 text-sm">Create and manage your resumes</p>
+      </router-link>
+
+      <!-- My Applications Card - Job Seekers Only -->
+      <router-link
+        v-if="authStore.isJobSeeker"
+        to="/my-applications"
+        class="block p-6 bg-white border border-gray-200 rounded-lg hover:shadow-lg hover:border-primary-500 transition-all group"
+      >
+        <div class="flex items-start justify-between mb-4">
+          <div class="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center group-hover:bg-indigo-200 transition-colors">
+            <svg class="h-6 w-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+            </svg>
+          </div>
+          <svg class="h-5 w-5 text-gray-400 group-hover:text-primary-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+          </svg>
+        </div>
+        <h3 class="text-xl font-semibold text-gray-900 mb-2 group-hover:text-primary-600 transition-colors">My Applications</h3>
+        <p class="text-gray-600 text-sm">Track your job applications</p>
+      </router-link>
+
+      <!-- Saved Jobs Card - Job Seekers Only -->
+      <router-link
+        v-if="authStore.isJobSeeker"
+        to="/saved-jobs"
+        class="block p-6 bg-white border border-gray-200 rounded-lg hover:shadow-lg hover:border-primary-500 transition-all group"
+      >
+        <div class="flex items-start justify-between mb-4">
+          <div class="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center group-hover:bg-yellow-200 transition-colors">
+            <svg class="h-6 w-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+            </svg>
+          </div>
+          <svg class="h-5 w-5 text-gray-400 group-hover:text-primary-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+          </svg>
+        </div>
+        <h3 class="text-xl font-semibold text-gray-900 mb-2 group-hover:text-primary-600 transition-colors">
+          Saved Jobs
+          <span v-if="savedJobStore.savedJobsCount !== null" class="text-sm text-gray-500 font-normal ml-2">({{ savedJobStore.savedJobsCount }})</span>
+        </h3>
+        <p class="text-gray-600 text-sm">View jobs you've bookmarked</p>
       </router-link>
 
       <!-- Profile Card -->
@@ -103,8 +153,9 @@
         <p class="text-gray-600 text-sm">Explore companies hiring now</p>
       </router-link>
 
-      <!-- Free CVs Card -->
+      <!-- Free CVs Card - Company Owners Only -->
       <router-link
+        v-if="authStore.isCompanyOwner"
         to="/cvs"
         class="block p-6 bg-white border border-gray-200 rounded-lg hover:shadow-lg hover:border-primary-500 transition-all group"
       >
@@ -126,5 +177,16 @@
 </template>
 
 <script setup lang="ts">
-// Dashboard page with quick links
+import { onMounted } from 'vue'
+import { useAuthStore } from '@/stores/auth'
+import { useSavedJobStore } from '@/stores/savedJob'
+
+const authStore = useAuthStore()
+const savedJobStore = useSavedJobStore()
+
+onMounted(() => {
+  if (authStore.isJobSeeker) {
+    savedJobStore.fetchSavedJobsCount()
+  }
+})
 </script>

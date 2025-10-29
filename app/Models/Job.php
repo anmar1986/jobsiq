@@ -58,6 +58,11 @@ class Job extends Model
             if (empty($job->published_at)) {
                 $job->published_at = now();
             }
+            // Auto-set expiration to configurable number of days from posting date if not provided
+            if (empty($job->expires_at)) {
+                $expirationDays = config('job.default_expiration_days', 30);
+                $job->expires_at = now()->addDays($expirationDays);
+            }
         });
     }
 

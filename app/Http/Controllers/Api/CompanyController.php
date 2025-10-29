@@ -19,7 +19,7 @@ class CompanyController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
-        $query = Company::with(['logo', 'jobs'])
+        $query = Company::with(['logo', 'cover', 'jobs'])
             ->where('is_active', true)
             ->withCount('jobs');
 
@@ -144,6 +144,7 @@ class CompanyController extends Controller
             ->with(['logo', 'cover', 'images', 'jobs' => function ($query) {
                 $query->active()->published()->latest('published_at');
             }])
+            ->withCount('jobs')
             ->firstOrFail();
 
         return response()->json([
@@ -160,6 +161,8 @@ class CompanyController extends Controller
         $company->load(['logo', 'cover', 'images', 'jobs' => function ($query) {
             $query->active()->published()->latest('published_at');
         }, 'owners']);
+
+        $company->loadCount('jobs');
 
         return response()->json([
             'success' => true,

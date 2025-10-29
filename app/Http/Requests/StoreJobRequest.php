@@ -11,6 +11,11 @@ class StoreJobRequest extends FormRequest
      */
     public function authorize(): bool
     {
+        // Only company owners can post jobs
+        if ($this->user()->user_type !== 'company_owner') {
+            return false;
+        }
+
         // Check if user owns the company
         $companyId = $this->input('company_id');
         if (! $companyId) {
@@ -51,7 +56,7 @@ class StoreJobRequest extends FormRequest
             'is_featured' => ['boolean'],
             'skills' => ['nullable', 'array'],
             'skills.*' => ['string', 'max:100'],
-            'expires_at' => ['nullable', 'date', 'after:today'],
+            'expires_at' => ['nullable', 'date', 'after_or_equal:today'],
         ];
     }
 
