@@ -179,10 +179,21 @@ const router = createRouter({
     if (savedPosition) {
       return savedPosition
     } else {
-      return { top: 0 }
+      return { top: 0, behavior: 'smooth' }
     }
   },
 })
+
+// Prefetch commonly visited routes after initial load
+if (typeof window !== 'undefined') {
+  router.isReady().then(() => {
+    // Prefetch important routes after a short delay
+    setTimeout(() => {
+      import('@/views/jobs/JobsView.vue')
+      import('@/views/companies/CompaniesView.vue')
+    }, 2000)
+  })
+}
 
 // Navigation guards
 router.beforeEach((to: RouteLocationNormalized, _from: RouteLocationNormalized, next: NavigationGuardNext) => {

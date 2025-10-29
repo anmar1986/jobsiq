@@ -4,7 +4,7 @@
     <div class="bg-white border-b-2 border-gray-300 sticky top-0 z-30">
       <div class="mx-auto px-4 py-4 max-w-[1200px]">
         <!-- Search Row -->
-        <div class="flex gap-3 mb-3">
+        <div class="flex flex-col sm:flex-row gap-3 mb-3">
           <div class="flex-1">
             <BaseInput
               v-model="filters.search"
@@ -21,7 +21,7 @@
               </template>
             </BaseInput>
           </div>
-          <div class="w-72 relative">
+          <div class="w-full sm:w-72 relative">
             <input
               v-model="filters.location"
               type="text"
@@ -61,76 +61,77 @@
               </button>
             </div>
           </div>
-          <BaseButton variant="primary" size="md" @click="searchJobs" :loading="loading">
+          <BaseButton variant="primary" size="md" class="w-full sm:w-auto" @click="searchJobs" :loading="loading">
             Search
           </BaseButton>
         </div>
 
         <!-- Filters Row -->
-        <div class="flex gap-3 items-center">
+        <div class="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center">
           <!-- Results count -->
-          <span class="text-sm font-medium text-gray-900">
+          <span class="text-sm font-medium text-gray-900 sm:flex-shrink-0">
             {{ totalJobs }} {{ totalJobs === 1 ? 'job' : 'jobs' }}
           </span>
 
-          <!-- Employment Type -->
-          <select
-            v-model="filters.employment_type"
-            @change="searchJobs"
-            class="px-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-primary-500 focus:border-primary-500 bg-white"
-          >
-            <option value="">Employment Type</option>
-            <option value="full-time">Full-time</option>
-            <option value="part-time">Part-time</option>
-            <option value="contract">Contract</option>
-            <option value="freelance">Freelance</option>
-            <option value="internship">Internship</option>
-          </select>
-
-          <!-- Experience Level -->
-          <select
-            v-model="filters.experience_level"
-            @change="searchJobs"
-            class="px-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-primary-500 focus:border-primary-500 bg-white"
-          >
-            <option value="">Experience Level</option>
-            <option value="entry">Entry Level</option>
-            <option value="mid">Mid Level</option>
-            <option value="senior">Senior</option>
-            <option value="lead">Lead</option>
-            <option value="executive">Executive</option>
-          </select>
-
-          <!-- Salary -->
-          <select
-            v-model="filters.salary_min"
-            @change="searchJobs"
-            class="px-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-primary-500 focus:border-primary-500 bg-white"
-          >
-            <option value="">Salary</option>
-            <option value="250">From $250</option>
-            <option value="500">From $500</option>
-            <option value="1000">From $1000</option>
-            <option value="2000">From $2000</option>
-          </select>
-
-          <!-- Remote Only Checkbox -->
-          <label class="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg text-sm bg-white cursor-pointer hover:bg-gray-50">
-            <input
-              v-model="filters.is_remote"
-              type="checkbox"
-              class="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
+          <!-- Scrollable filters container on mobile -->
+          <div class="flex gap-3 overflow-x-auto pb-2 sm:pb-0 flex-1">
+            <!-- Employment Type -->
+            <select
+              v-model="filters.employment_type"
               @change="searchJobs"
-            />
-            <span class="font-medium text-gray-700">Remote Only</span>
-          </label>
+              class="px-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-primary-500 focus:border-primary-500 bg-white flex-shrink-0"
+            >
+              <option value="">Employment Type</option>
+              <option value="full-time">Full-time</option>
+              <option value="part-time">Part-time</option>
+              <option value="contract">Contract</option>
+              <option value="freelance">Freelance</option>
+              <option value="internship">Internship</option>
+            </select>
 
-          <div class="flex-1"></div>
+            <!-- Experience Level -->
+            <select
+              v-model="filters.experience_level"
+              @change="searchJobs"
+              class="px-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-primary-500 focus:border-primary-500 bg-white flex-shrink-0"
+            >
+              <option value="">Experience Level</option>
+              <option value="entry">Entry Level</option>
+              <option value="mid">Mid Level</option>
+              <option value="senior">Senior</option>
+              <option value="lead">Lead</option>
+              <option value="executive">Executive</option>
+            </select>
+
+            <!-- Salary -->
+            <select
+              v-model="filters.salary_min"
+              @change="searchJobs"
+              class="px-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-primary-500 focus:border-primary-500 bg-white flex-shrink-0"
+            >
+              <option value="">Salary</option>
+              <option value="250">From $250</option>
+              <option value="500">From $500</option>
+              <option value="1000">From $1000</option>
+              <option value="2000">From $2000</option>
+            </select>
+
+            <!-- Remote Only Checkbox -->
+            <label class="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg text-sm bg-white cursor-pointer hover:bg-gray-50 flex-shrink-0 whitespace-nowrap">
+              <input
+                v-model="filters.is_remote"
+                type="checkbox"
+                class="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
+                @change="searchJobs"
+              />
+              <span class="font-medium text-gray-700">Remote Only</span>
+            </label>
+          </div>
 
           <!-- Clear Filters -->
           <button
             @click="clearFilters"
-            class="px-4 py-2 text-sm text-gray-600 hover:text-gray-900 font-medium"
+            class="px-4 py-2 text-sm text-gray-600 hover:text-gray-900 font-medium flex-shrink-0"
           >
             Clear all
           </button>
@@ -140,9 +141,9 @@
 
     <!-- Main Content: Split View -->
     <div class="container-custom py-6">
-      <div class="flex gap-6 min-h-[calc(100vh-280px)]">
+      <div class="flex flex-col lg:flex-row gap-6 min-h-[calc(100vh-280px)]">
         <!-- Left: Jobs List -->
-        <div class="w-96 flex-shrink-0 bg-white rounded-lg border border-gray-200">
+        <div class="w-full lg:w-96 flex-shrink-0 bg-white rounded-lg border border-gray-200">
           <!-- Loading State -->
           <div v-if="loading" class="divide-y divide-gray-200">
             <div v-for="i in 8" :key="i" class="p-4">
@@ -247,8 +248,8 @@
           </div>
         </div>
 
-        <!-- Right: Job Details -->
-        <div class="flex-1 bg-white rounded-lg border border-gray-200 sticky top-20 self-start max-h-[calc(100vh-120px)] overflow-y-auto">
+        <!-- Right: Job Details - Desktop Only -->
+        <div class="flex-1 bg-white rounded-lg border border-gray-200 lg:sticky lg:top-20 self-start max-h-[calc(100vh-120px)] overflow-y-auto hidden lg:block">
           <!-- Job Selected -->
           <div v-if="selectedJob" class="p-8">
             <!-- Header -->
@@ -290,8 +291,8 @@
                   </div>
                 </div>
 
-                <div class="flex gap-3 flex-wrap">
-                  <BaseButton variant="primary" size="lg" @click="applyForJob(selectedJob)">
+                <div class="flex flex-wrap gap-3">
+                  <BaseButton variant="primary" size="lg" class="flex-1 sm:flex-initial" @click="applyForJob(selectedJob)">
                     <template #icon-left>
                       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -299,7 +300,7 @@
                     </template>
                     Apply Now
                   </BaseButton>
-                  <BaseButton variant="outline" size="lg" @click="goToJobDetail(selectedJob)">
+                  <BaseButton variant="outline" size="lg" class="flex-1 sm:flex-initial" @click="goToJobDetail(selectedJob)">
                     View Details
                   </BaseButton>
                   
@@ -397,14 +398,14 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
                       </svg>
                     </template>
-                    {{ savedJobStore.savedJobIds.has(selectedJob.id) ? 'Saved' : 'Save' }}
+                    <span class="hidden sm:inline">{{ savedJobStore.savedJobIds.has(selectedJob.id) ? 'Saved' : 'Save' }}</span>
                   </BaseButton>
                 </div>
               </div>
             </div>
 
             <!-- Salary & Details -->
-            <div v-if="selectedJob.salary_min && selectedJob.salary_max" class="grid grid-cols-2 gap-4 mb-8 p-6 bg-gray-50 rounded-lg">
+            <div v-if="selectedJob.salary_min && selectedJob.salary_max" class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8 p-6 bg-gray-50 rounded-lg">
               <div>
                 <p class="text-sm text-gray-600 mb-1">Salary Range</p>
                 <p class="text-2xl font-bold text-gray-900">
@@ -654,6 +655,13 @@ const clearFilters = () => {
 }
 
 const selectJob = async (job: Job) => {
+  // On mobile devices (screen width < 1024px), navigate to job detail page
+  if (window.innerWidth < 1024) {
+    router.push(`/jobs/${job.slug}`)
+    return
+  }
+  
+  // On desktop, show in the side panel
   selectedJob.value = job
   // Optionally fetch full job details if needed:
   // try {
@@ -676,7 +684,8 @@ const applyForJob = (job: Job) => {
     })
     return
   }
-  router.push(`/application/${job.slug}`)
+  // Open application page in a new tab
+  window.open(`/application/${job.slug}`, '_blank')
 }
 
 const saveJob = async (job: Job) => {

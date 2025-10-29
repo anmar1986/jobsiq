@@ -18,7 +18,6 @@ class Company extends Model
         // Basic Information
         'name',
         'slug',
-        'legal_name',
         'about',
         'description',
         'tagline',
@@ -26,26 +25,19 @@ class Company extends Model
         // Contact Information
         'email',
         'phone',
-        'fax',
         'website',
 
         // Address
         'street',
-        'street_2',
         'city',
-        'state',
         'country',
         'postal_code',
-        'latitude',
-        'longitude',
 
         // Business Information
         'industry',
         'company_size',
         'company_type',
         'founded_date',
-        'registration_number',
-        'tax_id',
 
         // Social Media
         'linkedin',
@@ -53,7 +45,6 @@ class Company extends Model
         'facebook',
         'instagram',
         'youtube',
-        'github',
 
         // Company Culture
         'benefits',
@@ -75,16 +66,6 @@ class Company extends Model
         // Statistics
         'total_employees',
         'active_jobs_count',
-        'total_jobs_posted',
-        'profile_views',
-
-        // Additional
-        'timezone',
-        'languages',
-        'locations',
-        'why_work_here',
-        'funding_amount',
-        'funding_currency',
     ];
 
     protected $casts = [
@@ -92,20 +73,13 @@ class Company extends Model
         'values' => 'array',
         'perks' => 'array',
         'keywords' => 'array',
-        'languages' => 'array',
-        'locations' => 'array',
         'is_verified' => 'boolean',
         'is_featured' => 'boolean',
         'is_active' => 'boolean',
         'is_hiring' => 'boolean',
         'founded_date' => 'date',
-        'funding_amount' => 'decimal:2',
-        'latitude' => 'decimal:8',
-        'longitude' => 'decimal:8',
         'total_employees' => 'integer',
         'active_jobs_count' => 'integer',
-        'total_jobs_posted' => 'integer',
-        'profile_views' => 'integer',
     ];
 
     protected static function boot()
@@ -251,47 +225,11 @@ class Company extends Model
     {
         $parts = array_filter([
             $this->street,
-            $this->street_2,
             $this->city,
-            $this->state,
             $this->postal_code,
             $this->country,
         ]);
 
         return implode(', ', $parts);
-    }
-
-    /**
-     * Get formatted funding amount.
-     */
-    public function getFormattedFundingAttribute(): ?string
-    {
-        if (! $this->funding_amount) {
-            return null;
-        }
-
-        $symbols = [
-            'USD' => '$',
-            'EUR' => '€',
-            'GBP' => '£',
-        ];
-
-        $symbol = $symbols[$this->funding_currency] ?? $this->funding_currency;
-
-        if ($this->funding_amount >= 1000000) {
-            return $symbol.number_format((float) $this->funding_amount / 1000000, 1).'M';
-        } elseif ($this->funding_amount >= 1000) {
-            return $symbol.number_format((float) $this->funding_amount / 1000, 1).'K';
-        }
-
-        return $symbol.number_format((float) $this->funding_amount, 2);
-    }
-
-    /**
-     * Increment profile views.
-     */
-    public function incrementViews(): void
-    {
-        $this->increment('profile_views');
     }
 }

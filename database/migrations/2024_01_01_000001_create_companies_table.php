@@ -17,7 +17,6 @@ return new class extends Migration
             // Basic Information
             $table->string('name');
             $table->string('slug')->unique();
-            $table->string('legal_name')->nullable(); // Official registered name
             $table->text('about')->nullable(); // Brief overview of the company
             $table->text('description')->nullable();
             $table->text('tagline')->nullable(); // Short company tagline/slogan
@@ -25,26 +24,19 @@ return new class extends Migration
             // Contact Information
             $table->string('email')->nullable();
             $table->string('phone')->nullable();
-            $table->string('fax')->nullable();
             $table->string('website')->nullable();
 
             // Address
             $table->string('street')->nullable();
-            $table->string('street_2')->nullable(); // Additional address line
             $table->string('city')->nullable();
-            $table->string('state')->nullable(); // State/Province
             $table->string('country')->nullable();
             $table->string('postal_code')->nullable();
-            $table->decimal('latitude', 10, 8)->nullable(); // For map location
-            $table->decimal('longitude', 11, 8)->nullable();
 
             // Business Information
             $table->string('industry')->nullable(); // Tech, Finance, Healthcare, etc.
             $table->string('company_size')->nullable(); // 1-10, 11-50, 51-200, 201-500, 501-1000, 1001-5000, 5001+
             $table->enum('company_type', ['startup', 'small_business', 'mid_market', 'enterprise', 'nonprofit', 'government', 'agency'])->nullable();
             $table->date('founded_date')->nullable();
-            $table->string('registration_number')->nullable(); // Business registration number
-            $table->string('tax_id')->nullable(); // Tax ID/VAT number
 
             // Social Media & Online Presence
             $table->string('linkedin')->nullable();
@@ -52,7 +44,6 @@ return new class extends Migration
             $table->string('facebook')->nullable();
             $table->string('instagram')->nullable();
             $table->string('youtube')->nullable();
-            $table->string('github')->nullable();
 
             // Company Culture & Benefits
             $table->json('benefits')->nullable(); // Array of benefits offered
@@ -74,16 +65,6 @@ return new class extends Migration
             // Statistics (can be calculated but cached for performance)
             $table->integer('total_employees')->nullable();
             $table->integer('active_jobs_count')->default(0);
-            $table->integer('total_jobs_posted')->default(0);
-            $table->integer('profile_views')->default(0);
-
-            // Additional Info
-            $table->string('timezone')->nullable();
-            $table->json('languages')->nullable(); // Languages used in company
-            $table->json('locations')->nullable(); // Multiple office locations
-            $table->text('why_work_here')->nullable(); // Why join this company
-            $table->decimal('funding_amount', 15, 2)->nullable(); // Funding raised
-            $table->string('funding_currency', 3)->default('USD');
 
             $table->timestamps();
             $table->softDeletes(); // Soft delete support

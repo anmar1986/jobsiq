@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\JobApplicationController;
 use App\Http\Controllers\Api\JobController;
 use App\Http\Controllers\Api\SavedJobController;
 use App\Http\Controllers\Api\UserCvController;
+use App\Http\Middleware\CacheResponse;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -20,17 +21,29 @@ use Illuminate\Support\Facades\Route;
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
-// Home page routes
-Route::get('/home', [HomeController::class, 'index']);
-Route::get('/home/{section}', [HomeController::class, 'getSection']);
+// Home page routes - cached for 5 minutes
+Route::middleware([CacheResponse::class.':300'])->group(function () {
+    Route::get('/home', [HomeController::class, 'index']);
+    Route::get('/home/{section}', [HomeController::class, 'getSection']);
+});
 
-// Public routes with optional authentication (authenticates if token is present)
-Route::middleware('optional.auth')->get('/jobs', [JobController::class, 'index']);
-Route::get('/jobs/featured', [JobController::class, 'featured']);
-Route::middleware('optional.auth')->get('/jobs/{job:slug}', [JobController::class, 'show']);
+// Public routes with caching (3 minutes for lists, 10 minutes for details)
+Route::middleware([CacheResponse::class.':180'])->group(function () {
+    Route::middleware('optional.auth')->get('/jobs', [JobController::class, 'index']);
+    Route::get('/jobs/featured', [JobController::class, 'featured']);
+});
 
-Route::get('/companies', [CompanyController::class, 'index']);
-Route::get('/companies/{slug}', [CompanyController::class, 'showBySlug'])->where('slug', '[a-z0-9-]+');
+Route::middleware([CacheResponse::class.':600'])->group(function () {
+    Route::middleware('optional.auth')->get('/jobs/{job:slug}', [JobController::class, 'show']);
+});
+
+Route::middleware([CacheResponse::class.':180'])->group(function () {
+    Route::get('/companies', [CompanyController::class, 'index']);
+});
+
+Route::middleware([CacheResponse::class.':600'])->group(function () {
+    Route::get('/companies/{slug}', [CompanyController::class, 'showBySlug'])->where('slug', '[a-z0-9-]+');
+});
 
 // Public CV routes (for companies to view public CVs)
 Route::get('/cvs', [FreeCvController::class, 'index']);
