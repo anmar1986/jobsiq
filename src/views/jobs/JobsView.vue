@@ -467,6 +467,7 @@
 <script setup lang="ts">
 import { ref, reactive, computed, onMounted, onBeforeUnmount, nextTick } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
+import { useMediaQuery } from '@vueuse/core'
 import { useJobStore } from '@/stores/job'
 import { useAuthStore } from '@/stores/auth'
 import { useSavedJobStore } from '@/stores/savedJob'
@@ -483,6 +484,9 @@ const jobStore = useJobStore()
 const authStore = useAuthStore()
 const savedJobStore = useSavedJobStore()
 const toast = useToast()
+
+// Responsive breakpoint for mobile detection
+const isMobile = useMediaQuery('(max-width: 1023px)')
 
 // City suggestions state
 const showCitySuggestions = ref(false)
@@ -655,8 +659,8 @@ const clearFilters = () => {
 }
 
 const selectJob = async (job: Job) => {
-  // On mobile devices (screen width < 1024px), navigate to job detail page
-  if (window.innerWidth < 1024) {
+  // On mobile devices, navigate to job detail page
+  if (isMobile.value) {
     router.push(`/jobs/${job.slug}`)
     return
   }

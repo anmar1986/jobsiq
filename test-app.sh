@@ -134,12 +134,12 @@ test_count=$((test_count + 1))
 
 # Type check
 echo -n "  Running TypeScript type check... "
-if npm run type-check --silent 2>&1 | grep -q "error"; then
-    echo -e "${RED}✗ TYPE ERRORS${NC}"
-    fail_count=$((fail_count + 1))
-else
+if npm run type-check --silent > /tmp/type-check.log 2>&1; then
     echo -e "${GREEN}✓ NO ERRORS${NC}"
     pass_count=$((pass_count + 1))
+else
+    echo -e "${RED}✗ TYPE ERRORS${NC}"
+    fail_count=$((fail_count + 1))
 fi
 test_count=$((test_count + 1))
 
