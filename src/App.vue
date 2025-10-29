@@ -2,7 +2,7 @@
   <div id="app" class="min-h-screen flex flex-col">
     <AppHeader />
     <main class="flex-1">
-      <RouterView :key="$route.fullPath" />
+      <RouterView />
     </main>
     <AppFooter />
     <ToastContainer />

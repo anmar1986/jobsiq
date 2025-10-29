@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Traits\CachesApiResponses;
 use App\Models\HomeContent;
 use App\Models\Job;
 use Illuminate\Http\JsonResponse;
@@ -10,57 +11,64 @@ use Illuminate\Support\Facades\DB;
 
 class HomeController extends Controller
 {
+    use CachesApiResponses;
+
     /**
      * Get all home page content.
      */
     public function index(): JsonResponse
     {
         try {
-            // Get home content from database
-            $content = HomeContent::getAllContent();
+            // Cache home page data for 5 minutes
+            $data = $this->cacheResponse('home_page_content', function () {
+                // Get home content from database
+                $content = HomeContent::getAllContent();
 
-            // Get featured jobs (latest 3 active jobs)
-            $featuredJobs = Job::with(['company'])
-                ->where('is_active', true)
-                ->latest()
-                ->take(3)
-                ->get()
-                ->map(function (Job $job) {
-                    return [
-                        'id' => $job->id,
-                        'title' => $job->title,
-                        'company' => $job->company->name ?? 'Unknown Company',
-                        'location' => $job->location,
-                        'type' => $job->employment_type,
-                        'level' => $job->experience_level,
-                        'salary' => $this->formatSalary($job),
-                        'posted' => $job->created_at->diffForHumans(),
-                        'slug' => $job->slug,
-                    ];
-                });
+                // Get featured jobs (latest 3 active jobs)
+                $featuredJobs = Job::with(['company'])
+                    ->where('is_active', true)
+                    ->latest()
+                    ->take(3)
+                    ->get()
+                    ->map(function (Job $job): array {
+                        return [
+                            'id' => $job->id,
+                            'title' => $job->title,
+                            'company' => $job->company->name ?? 'Unknown Company',
+                            'location' => $job->location,
+                            'type' => $job->employment_type,
+                            'level' => $job->experience_level ?? '',
+                            'salary' => $this->formatSalary($job),
+                            'posted' => $job->created_at->diffForHumans(),
+                            'slug' => $job->slug,
+                        ];
+                    });
 
-            // Get job counts by category
-            $categories = DB::table('jobs')
-                ->select('category', DB::raw('COUNT(*) as count'))
-                ->where('is_active', true)
-                ->whereNotNull('category')
-                ->groupBy('category')
-                ->get()
-                ->map(function (\stdClass $item) {
-                    return [
-                        'name' => $item->category,
-                        'count' => (int) $item->count,
-                    ];
-                });
+                // Get job counts by category
+                $categories = DB::table('jobs')
+                    ->select('category', DB::raw('COUNT(*) as count'))
+                    ->where('is_active', true)
+                    ->whereNotNull('category')
+                    ->groupBy('category')
+                    ->get()
+                    ->map(function (\stdClass $item) {
+                        return [
+                            'name' => $item->category,
+                            'count' => (int) $item->count,
+                        ];
+                    });
 
-            return response()->json([
-                'success' => true,
-                'data' => [
+                return [
                     'content' => $content,
                     'featuredJobs' => $featuredJobs,
                     'categories' => $categories,
                     'stats' => $this->getStats(),
-                ],
+                ];
+            }, 300); // 5 minutes
+
+            return response()->json([
+                'success' => true,
+                'data' => $data,
             ]);
         } catch (\Exception $e) {
             return response()->json([
@@ -149,7 +157,10 @@ class HomeController extends Controller
     public function getSection(string $section): JsonResponse
     {
         try {
-            $content = HomeContent::getSection($section);
+            // Cache section content for 10 minutes
+            $content = $this->cacheResponse("home_section_{$section}", function () use ($section) {
+                return HomeContent::getSection($section);
+            }, 600);
 
             return response()->json([
                 'success' => true,

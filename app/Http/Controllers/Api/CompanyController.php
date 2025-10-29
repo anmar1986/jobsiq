@@ -5,15 +5,19 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreCompanyRequest;
 use App\Http\Requests\UpdateCompanyRequest;
+use App\Http\Traits\CachesApiResponses;
 use App\Models\Company;
 use App\Models\CompanyImage;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 
 class CompanyController extends Controller
 {
+    use CachesApiResponses;
+
     /**
      * Display a listing of companies.
      */
@@ -114,6 +118,9 @@ class CompanyController extends Controller
             $company->load(['logo', 'cover', 'images', 'owners']);
 
             Log::info('Company creation completed successfully');
+
+            // Clear relevant caches
+            $this->clearCompanyCaches();
 
             return response()->json([
                 'success' => true,
@@ -220,6 +227,9 @@ class CompanyController extends Controller
 
         $company->load(['logo', 'cover', 'images', 'owners']);
 
+        // Clear relevant caches
+        $this->clearCompanyCaches($company->slug);
+
         return response()->json([
             'success' => true,
             'data' => $company,
@@ -240,12 +250,17 @@ class CompanyController extends Controller
             ], 403);
         }
 
+        $slug = $company->slug;
+
         // Delete all images
         foreach ($company->images as $image) {
             Storage::delete($image->path);
         }
 
         $company->delete();
+
+        // Clear relevant caches
+        $this->clearCompanyCaches($slug);
 
         return response()->json([
             'success' => true,
@@ -407,6 +422,20 @@ class CompanyController extends Controller
         } catch (\Exception $e) {
             Log::error('Company image upload failed: '.$e->getMessage());
             throw $e;
+        }
+    }
+
+    /**
+     * Clear company-related caches
+     */
+    protected function clearCompanyCaches(?string $slug = null): void
+    {
+        // Clear home page cache (affects companies count)
+        Cache::forget('home_page_content');
+
+        // Clear specific company cache if slug provided
+        if ($slug) {
+            Cache::forget("company_detail_{$slug}");
         }
     }
 }

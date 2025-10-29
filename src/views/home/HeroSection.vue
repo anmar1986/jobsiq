@@ -1,17 +1,17 @@
 <template>
   <section class="bg-gradient-to-br from-primary-600 via-primary-700 to-secondary-700 text-white">
-    <div class="container-custom py-16 md:py-24">
+    <div class="container-custom py-12 sm:py-16 md:py-24">
       <div class="max-w-4xl mx-auto text-center">
-        <h1 class="text-4xl md:text-6xl font-bold mb-6 animate-fade-in">
+        <h1 class="text-3xl sm:text-4xl md:text-6xl font-bold mb-4 sm:mb-6 animate-fade-in">
           Your Career Journey Starts Here
         </h1>
-        <p class="text-xl md:text-2xl text-primary-100 mb-10 animate-fade-in animation-delay-200">
+        <p class="text-lg sm:text-xl md:text-2xl text-primary-100 mb-6 sm:mb-8 md:mb-10 animate-fade-in animation-delay-200">
           Discover thousands of job opportunities with all the information you need.
           Connect with top companies worldwide.
         </p>
         
         <!-- Search Bar -->
-        <div class="bg-white rounded-lg shadow-2xl p-4 md:p-6 animate-fade-in animation-delay-400">
+        <div class="bg-white rounded-lg shadow-2xl p-3 sm:p-4 md:p-6 animate-fade-in animation-delay-400">
           <form @submit.prevent="handleSearch" class="flex flex-col md:flex-row gap-3">
             <div class="flex-1">
               <BaseInput
@@ -34,14 +34,14 @@
                 v-model="locationQuery"
                 type="text"
                 placeholder="City"
-                class="w-full px-4 py-3 pl-12 border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-base"
+                class="w-full px-4 py-2.5 sm:py-3 pl-10 sm:pl-12 border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-sm sm:text-base"
                 @input="handleLocationInput"
                 @focus="showCitySuggestions = true"
                 @blur="handleCityBlur"
                 @keydown="handleCityKeyDown"
               />
-              <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div class="absolute inset-y-0 left-0 pl-3 sm:pl-4 flex items-center pointer-events-none">
+                <svg class="h-4 w-4 sm:h-5 sm:w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                 </svg>
@@ -69,9 +69,9 @@
               </div>
             </div>
             
-            <BaseButton type="submit" variant="primary" size="lg" class="md:w-auto">
+            <BaseButton type="submit" variant="primary" size="lg" class="w-full md:w-auto">
               <template #icon-left>
-                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="h-4 w-4 sm:h-5 sm:w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
               </template>
@@ -80,7 +80,7 @@
           </form>
           
           <!-- Popular Searches -->
-          <div class="mt-4 flex flex-wrap gap-2 text-sm">
+          <div class="mt-3 sm:mt-4 flex flex-wrap gap-2 text-xs sm:text-sm justify-center">
             <span class="text-gray-600">Popular:</span>
             <button
               v-for="tag in popularSearches"

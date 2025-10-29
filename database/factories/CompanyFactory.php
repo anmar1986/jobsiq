@@ -50,33 +50,25 @@ class CompanyFactory extends Factory
             // Basic Information
             'name' => $name,
             'slug' => Str::slug($name),
-            'legal_name' => $name.' Inc.',
             'description' => fake()->paragraphs(3, true),
             'tagline' => fake()->sentence(6),
 
             // Contact Information
             'email' => fake()->companyEmail(),
             'phone' => fake()->phoneNumber(),
-            'fax' => fake()->boolean(30) ? fake()->phoneNumber() : null,
             'website' => fake()->url(),
 
             // Address
             'street' => fake()->streetAddress(),
-            'street_2' => fake()->boolean(20) ? 'Suite '.fake()->buildingNumber() : null,
             'city' => fake()->city(),
-            'state' => fake()->word(),
             'country' => fake()->country(),
             'postal_code' => fake()->postcode(),
-            'latitude' => fake()->latitude(),
-            'longitude' => fake()->longitude(),
 
             // Business Information
             'industry' => fake()->randomElement($industries),
             'company_size' => fake()->randomElement($companySizes),
             'company_type' => fake()->randomElement(['startup', 'small_business', 'mid_market', 'enterprise']),
             'founded_date' => fake()->dateTimeBetween('-50 years', '-1 year'),
-            'registration_number' => fake()->boolean(60) ? fake()->numerify('REG-#######') : null,
-            'tax_id' => fake()->boolean(60) ? fake()->numerify('TAX-#########') : null,
 
             // Social Media
             'linkedin' => fake()->boolean(80) ? 'https://linkedin.com/company/'.Str::slug($name) : null,
@@ -84,7 +76,6 @@ class CompanyFactory extends Factory
             'facebook' => fake()->boolean(50) ? 'https://facebook.com/'.Str::slug($name) : null,
             'instagram' => fake()->boolean(40) ? 'https://instagram.com/'.Str::slug($name) : null,
             'youtube' => fake()->boolean(30) ? 'https://youtube.com/@'.Str::slug($name) : null,
-            'github' => fake()->boolean(50) ? 'https://github.com/'.Str::slug($name) : null,
 
             // Company Culture
             'benefits' => fake()->randomElements($benefits, fake()->numberBetween(5, 10)),
@@ -106,16 +97,6 @@ class CompanyFactory extends Factory
             // Statistics
             'total_employees' => fake()->numberBetween(5, 5000),
             'active_jobs_count' => 0,
-            'total_jobs_posted' => 0,
-            'profile_views' => fake()->numberBetween(0, 10000),
-
-            // Additional
-            'timezone' => fake()->timezone(),
-            'languages' => fake()->randomElements(['English', 'Spanish', 'French', 'German', 'Chinese'], fake()->numberBetween(1, 3)),
-            'locations' => null, // Can be added later
-            'why_work_here' => fake()->paragraphs(2, true),
-            'funding_amount' => fake()->boolean(30) ? fake()->randomFloat(2, 100000, 50000000) : null,
-            'funding_currency' => 'USD',
         ];
     }
 }

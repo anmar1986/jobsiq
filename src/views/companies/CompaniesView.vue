@@ -2,16 +2,16 @@
   <div class="bg-gray-50 min-h-screen">
     <!-- Page Header -->
     <div class="bg-white border-b border-gray-200">
-      <div class="container-custom py-8">
-        <h1 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Discover Top Companies</h1>
-        <p class="text-lg text-gray-600">Browse leading companies hiring on JobsIQ</p>
+      <div class="container-custom py-6 sm:py-8">
+        <h1 class="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-2 sm:mb-4">Discover Top Companies</h1>
+        <p class="text-base sm:text-lg text-gray-600">Browse leading companies hiring on JobsIQ</p>
       </div>
     </div>
 
     <!-- Search Bar -->
     <div class="bg-white border-b border-gray-200">
       <div class="container-custom py-4">
-        <div class="flex gap-4">
+        <div class="flex flex-col sm:flex-row gap-3 sm:gap-4">
           <BaseInput
             v-model="searchQuery"
             type="text"
@@ -27,7 +27,7 @@
               </svg>
             </template>
           </BaseInput>
-          <BaseButton variant="primary" size="md" @click="handleSearch">
+          <BaseButton variant="primary" size="md" class="w-full sm:w-auto" @click="handleSearch">
             Search
           </BaseButton>
         </div>
@@ -35,7 +35,7 @@
     </div>
 
     <!-- Companies Grid -->
-    <div class="container-custom py-8">
+    <div class="container-custom py-6 sm:py-8">
       <!-- Loading State -->
       <div v-if="isLoading" class="text-center py-12">
         <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
@@ -52,7 +52,7 @@
       </div>
 
       <!-- Companies Grid -->
-      <div v-else class="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
         <div
           v-for="company in companies"
           :key="company.id"
@@ -60,7 +60,7 @@
           @click="viewCompanyProfile(company)"
         >
           <!-- Cover Image with Logo -->
-          <div class="w-full h-40 bg-gradient-to-br from-primary-500 to-secondary-500 flex-shrink-0 relative overflow-hidden">
+          <div class="w-full h-32 sm:h-40 bg-gradient-to-br from-primary-500 to-secondary-500 flex-shrink-0 relative overflow-hidden">
             <img 
               v-if="company.cover?.path" 
               :src="getLogoUrl(company.cover.path)" 
@@ -69,7 +69,7 @@
             />
             
             <!-- Company Logo - Positioned at bottom left -->
-            <div class="absolute bottom-4 left-4 w-20 h-20 bg-white rounded-lg flex items-center justify-center text-white text-2xl font-bold shadow-lg ring-4 ring-white overflow-hidden">
+            <div class="absolute bottom-3 left-3 sm:bottom-4 sm:left-4 w-16 h-16 sm:w-20 sm:h-20 bg-white rounded-lg flex items-center justify-center text-white text-xl sm:text-2xl font-bold shadow-lg ring-4 ring-white overflow-hidden">
               <img 
                 v-if="company.logo?.path" 
                 :src="getLogoUrl(company.logo.path)" 
@@ -80,19 +80,19 @@
             </div>
           </div>
 
-          <div class="p-6 flex flex-col flex-1">
+          <div class="p-4 sm:p-6 flex flex-col flex-1">
             <!-- Company Name & Industry -->
-            <div class="mb-4 flex-shrink-0">
-              <h3 class="text-xl font-bold text-gray-900 mb-1 truncate group-hover:text-primary-600 transition-colors">
+            <div class="mb-3 sm:mb-4 flex-shrink-0">
+              <h3 class="text-lg sm:text-xl font-bold text-gray-900 mb-1 truncate group-hover:text-primary-600 transition-colors">
                 {{ company.name || 'Unknown Company' }}
               </h3>
-              <p v-if="company.industry" class="text-primary-600 font-medium mb-2 truncate">
+              <p v-if="company.industry" class="text-sm sm:text-base text-primary-600 font-medium mb-2 truncate">
                 {{ company.industry }}
               </p>
             </div>
 
             <!-- Company Info -->
-            <div class="space-y-2 mb-4 flex-shrink-0">
+            <div class="space-y-2 mb-3 sm:mb-4 flex-shrink-0">
               <div v-if="company.city || company.country" class="flex items-center gap-2 text-sm text-gray-600">
                 <svg class="h-4 w-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />

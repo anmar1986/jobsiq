@@ -566,8 +566,8 @@ const handleApply = () => {
     router.push(`/login?redirect=/jobs/${route.params.slug}`)
     return
   }
-  // Redirect to apply page instead of showing modal
-  router.push(`/application/${route.params.slug}`)
+  // Open application page in a new tab
+  window.open(`/application/${route.params.slug}`, '_blank')
 }
 
 const toggleSave = async () => {

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreJobRequest;
 use App\Http\Requests\UpdateJobRequest;
+use App\Http\Traits\CachesApiResponses;
 use App\Models\Job;
 use App\Models\SearchHistory;
 use Illuminate\Http\JsonResponse;
@@ -14,6 +15,8 @@ use Illuminate\Support\Facades\Log;
 
 class JobController extends Controller
 {
+    use CachesApiResponses;
+
     /**
      * Searchable filter parameters that should trigger search history logging.
      */
@@ -159,6 +162,9 @@ class JobController extends Controller
         $job = Job::create($validated);
         $job->load(['company', 'company.logo']);
 
+        // Clear relevant caches
+        $this->clearJobCaches();
+
         return response()->json([
             'success' => true,
             'data' => $job,
@@ -184,8 +190,15 @@ class JobController extends Controller
      */
     public function update(UpdateJobRequest $request, Job $job): JsonResponse
     {
+        $oldSlug = $job->slug;
         $job->update($request->validated());
         $job->load(['company', 'company.logo']);
+
+        // Clear relevant caches
+        $this->clearJobCaches($oldSlug);
+        if ($job->slug !== $oldSlug) {
+            $this->clearJobCaches($job->slug);
+        }
 
         return response()->json([
             'success' => true,
@@ -210,12 +223,35 @@ class JobController extends Controller
             ], 403);
         }
 
+        $slug = $job->slug;
         $job->delete();
+
+        // Clear relevant caches
+        $this->clearJobCaches($slug);
 
         return response()->json([
             'success' => true,
             'message' => 'Job deleted successfully',
         ]);
+    }
+
+    /**
+     * Clear job-related caches
+     */
+    protected function clearJobCaches(?string $slug = null): void
+    {
+        // Clear home page cache
+        Cache::forget('home_page_content');
+
+        // Clear featured jobs cache
+        for ($i = 1; $i <= 20; $i++) {
+            Cache::forget("featured_jobs_{$i}");
+        }
+
+        // Clear specific job cache if slug provided
+        if ($slug) {
+            Cache::forget("job_detail_{$slug}");
+        }
     }
 
     /**

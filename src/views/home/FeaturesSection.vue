@@ -1,20 +1,20 @@
 <template>
-  <section class="py-16 md:py-24 bg-white">
+  <section class="py-12 sm:py-16 md:py-24 bg-white">
     <div class="container-custom">
-      <div class="text-center mb-16">
-        <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Why Choose JobsIQ?</h2>
-        <p class="text-xl text-gray-600 max-w-2xl mx-auto">
+      <div class="text-center mb-12 sm:mb-16">
+        <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-3 sm:mb-4">Why Choose JobsIQ?</h2>
+        <p class="text-base sm:text-lg md:text-xl text-gray-600 max-w-2xl mx-auto px-4">
           We provide the best platform for job seekers and employers
         </p>
       </div>
 
-      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-        <div v-for="feature in features" :key="feature.title" class="text-center md:text-left">
-          <div class="w-14 h-14 bg-primary-100 rounded-lg flex items-center justify-center mb-4 mx-auto md:mx-0">
-            <component :is="feature.icon" class="h-7 w-7 text-primary-600" />
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+        <div v-for="feature in features" :key="feature.title" class="text-center md:text-left p-4">
+          <div class="w-12 h-12 sm:w-14 sm:h-14 bg-primary-100 rounded-lg flex items-center justify-center mb-3 sm:mb-4 mx-auto md:mx-0">
+            <component :is="feature.icon" class="h-6 w-6 sm:h-7 sm:w-7 text-primary-600" />
           </div>
-          <h3 class="text-xl font-semibold text-gray-900 mb-3">{{ feature.title }}</h3>
-          <p class="text-gray-600">{{ feature.description }}</p>
+          <h3 class="text-lg sm:text-xl font-semibold text-gray-900 mb-2 sm:mb-3">{{ feature.title }}</h3>
+          <p class="text-sm sm:text-base text-gray-600">{{ feature.description }}</p>
         </div>
       </div>
     </div>
