@@ -84,10 +84,6 @@ return new class extends Migration
             if (Schema::hasColumn('users', 'user_type')) {
                 $table->index('user_type', 'idx_users_user_type');
             }
-            // Email should already be unique, but adding index if not exists
-            if (! Schema::hasColumn('users', 'email_index')) {
-                $table->index('email', 'idx_users_email');
-            }
         });
     }
 
@@ -140,7 +136,6 @@ return new class extends Migration
         // Users table
         Schema::table('users', function (Blueprint $table) {
             $table->dropIndex('idx_users_user_type');
-            $table->dropIndex('idx_users_email');
         });
     }
 };
