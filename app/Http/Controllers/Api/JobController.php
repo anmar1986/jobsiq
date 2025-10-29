@@ -31,11 +31,19 @@ class JobController extends Controller
                     'expires_at', 'created_at',
                 ])
                 ->active()
-                ->published()
-                ->inRandomOrder();
+                ->published();
 
             // Apply filters
             $query = $this->applyFilters($query, $request);
+
+            // Sort: Featured jobs first, then by most recent
+            if ($request->get('sort') === 'oldest') {
+                $query->orderBy('published_at', 'asc');
+            } else {
+                // Default: Featured first, then newest
+                $query->orderByDesc('is_featured')
+                    ->orderByDesc('published_at');
+            }
 
             // Get total count efficiently
             $total = $query->count();

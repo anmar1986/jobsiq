@@ -106,7 +106,7 @@ const emit = defineEmits<{
   'update:modelValue': [value: string]
 }>()
 
-const inputId = `autocomplete-${Math.random().toString(36).substr(2, 9)}`
+const inputId = `autocomplete-${crypto.randomUUID()}`
 const inputRef = ref<HTMLInputElement | null>(null)
 const searchQuery = ref(props.modelValue)
 const showDropdown = ref(false)

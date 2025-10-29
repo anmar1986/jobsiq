@@ -38,8 +38,13 @@ class CompanyController extends Controller
             $query->where('country', $request->country);
         }
 
-        // Random order for variety
-        $query->inRandomOrder();
+        // Sort by most active (most jobs) by default, or by name if specified
+        if ($request->get('sort') === 'name') {
+            $query->orderBy('name');
+        } else {
+            $query->orderByDesc('jobs_count')
+                ->orderByDesc('created_at');
+        }
 
         $companies = $query->paginate($request->get('per_page', 15));
 
