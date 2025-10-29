@@ -161,7 +161,7 @@ class CompanyController extends Controller
         $company->load(['logo', 'cover', 'images', 'jobs' => function ($query) {
             $query->active()->published()->latest('published_at');
         }, 'owners']);
-        
+
         $company->loadCount('jobs');
 
         return response()->json([

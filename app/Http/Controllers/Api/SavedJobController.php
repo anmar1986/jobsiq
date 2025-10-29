@@ -68,7 +68,7 @@ class SavedJobController extends Controller
             ->where('job_id', $job->id)
             ->delete();
 
-        if (!$deleted) {
+        if (! $deleted) {
             return response()->json([
                 'success' => false,
                 'message' => 'Saved job not found',

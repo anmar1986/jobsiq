@@ -2,10 +2,10 @@
 
 namespace Tests\Feature;
 
+use App\Models\Company;
 use App\Models\Job;
 use App\Models\SearchHistory;
 use App\Models\User;
-use App\Models\Company;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -17,7 +17,7 @@ class SearchHistoryTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        
+
         // Create a company and some jobs for testing
         $company = Company::factory()->create();
         Job::factory()->count(5)->create([
@@ -83,7 +83,7 @@ class SearchHistoryTest extends TestCase
         $searchHistory = SearchHistory::first();
         $this->assertEquals($user->id, $searchHistory->user_id);
         $this->assertEquals('developer', $searchHistory->search_query);
-        
+
         $filters = $searchHistory->filters;
         $this->assertEquals('full-time', $filters['employment_type']);
         $this->assertEquals('senior', $filters['experience_level']);
@@ -172,7 +172,7 @@ class SearchHistoryTest extends TestCase
             ->getJson('/api/jobs?location=Baghdad');
 
         $this->assertEquals(3, SearchHistory::count());
-        
+
         $allSearches = SearchHistory::where('user_id', $user->id)->get();
         $this->assertEquals(3, $allSearches->count());
     }
@@ -200,7 +200,7 @@ class SearchHistoryTest extends TestCase
         ]);
 
         $userSearches = SearchHistory::where('user_id', $user->id)->get();
-        
+
         $this->assertEquals(2, $userSearches->count());
         $this->assertEquals('developer', $userSearches->first()->search_query);
     }
