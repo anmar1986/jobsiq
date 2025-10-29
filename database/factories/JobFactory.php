@@ -24,9 +24,11 @@ class JobFactory extends Factory
         $experienceLevels = ['entry', 'junior', 'mid', 'senior', 'lead'];
         $categories = ['Engineering', 'Design', 'Marketing', 'Sales', 'Finance', 'HR', 'Customer Service', 'Operations'];
         $skills = ['JavaScript', 'Python', 'React', 'Vue.js', 'Laravel', 'Node.js', 'TypeScript', 'PHP', 'Java', 'C#', 'AWS', 'Docker', 'Kubernetes'];
+        $iraqCities = config('company.iraq_cities');
 
         $salaryMin = fake()->numberBetween(40000, 100000);
         $salaryMax = $salaryMin + fake()->numberBetween(20000, 80000);
+        $city = fake()->randomElement($iraqCities);
 
         return [
             'company_id' => Company::factory(),
@@ -35,9 +37,9 @@ class JobFactory extends Factory
             'slug' => Str::slug($title.'-'.Str::random(6)),
             'description' => fake()->paragraphs(5, true),
             'requirements' => fake()->paragraphs(3, true),
-            'location' => fake()->city().', '.fake()->country(),
-            'city' => fake()->city(),
-            'country' => fake()->country(),
+            'location' => $city.', Iraq',
+            'city' => $city,
+            'country' => 'Iraq',
             'employment_type' => fake()->randomElement($employmentTypes),
             'experience_level' => fake()->randomElement($experienceLevels),
             'category' => fake()->randomElement($categories),

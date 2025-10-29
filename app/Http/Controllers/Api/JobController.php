@@ -45,18 +45,9 @@ class JobController extends Controller
                     ->orderByDesc('published_at');
             }
 
-            // Get total count efficiently
-            $total = $query->count();
-
             // Paginate results
             $jobs = $query->paginate($perPage);
-
-            // Log search asynchronously (don't wait for it)
-            if ($request->filled('search') || $request->filled('location')) {
-                dispatch(function () use ($request, $total) {
-                    $this->logSearch($request, $total);
-                })->afterResponse();
-            }
+            $total = $jobs->total();
 
             return response()->json([
                 'success' => true,
@@ -109,7 +100,7 @@ class JobController extends Controller
             $query->where('category', $request->category);
         }
 
-        // Filter by salary range
+        // Filter by minimum salary
         if ($request->filled('salary_min') && $request->salary_min > 0) {
             $query->where('salary_max', '>=', $request->salary_min);
         }

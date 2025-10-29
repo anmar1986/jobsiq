@@ -115,7 +115,7 @@ const selectedCityIndex = ref(-1)
 const cityRefs: Record<number, HTMLElement> = {}
 
 const filteredCities = computed(() => {
-  if (!locationQuery.value) return iraqCities
+  if (!locationQuery.value) return []
   const searchTerm = locationQuery.value.toLowerCase()
   return iraqCities.filter(city => 
     city.toLowerCase().includes(searchTerm)
@@ -139,6 +139,26 @@ const scrollToSelected = () => {
 }
 
 const handleCityKeyDown = (event: KeyboardEvent) => {
+  // Handle Enter key always (even without suggestions)
+  if (event.key === 'Enter') {
+    event.preventDefault()
+    if (showCitySuggestions.value && filteredCities.value.length > 0 && 
+        selectedCityIndex.value >= 0 && selectedCityIndex.value < filteredCities.value.length) {
+      selectCity(filteredCities.value[selectedCityIndex.value])
+    } else {
+      handleSearch()
+    }
+    return
+  }
+
+  // Handle Escape key
+  if (event.key === 'Escape') {
+    showCitySuggestions.value = false
+    selectedCityIndex.value = -1
+    return
+  }
+
+  // For arrow keys, only work if suggestions are showing
   if (!showCitySuggestions.value || filteredCities.value.length === 0) return
 
   switch (event.key) {
@@ -151,18 +171,6 @@ const handleCityKeyDown = (event: KeyboardEvent) => {
       event.preventDefault()
       selectedCityIndex.value = Math.max(selectedCityIndex.value - 1, 0)
       scrollToSelected()
-      break
-    case 'Enter':
-      event.preventDefault()
-      if (selectedCityIndex.value >= 0 && selectedCityIndex.value < filteredCities.value.length) {
-        selectCity(filteredCities.value[selectedCityIndex.value])
-      } else {
-        handleSearch()
-      }
-      break
-    case 'Escape':
-      showCitySuggestions.value = false
-      selectedCityIndex.value = -1
       break
   }
 }

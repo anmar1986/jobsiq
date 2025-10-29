@@ -300,9 +300,9 @@ export interface JobFilters {
   location?: string
   employment_type?: string
   experience_level?: string
+  salary_min?: string | number
   is_remote?: boolean
   category?: string
-  salary_min?: number
   per_page?: number
   page?: number
 }
