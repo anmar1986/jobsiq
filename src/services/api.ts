@@ -30,6 +30,7 @@ apiClient.interceptors.request.use(
         delete (config.headers as Record<string, unknown>)['content-type']
       }
     }
+    
     return config
   },
   (error) => {

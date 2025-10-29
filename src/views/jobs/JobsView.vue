@@ -1,16 +1,8 @@
 <template>
   <div class="bg-gray-50 min-h-screen">
-    <!-- Page Header -->
-    <div class="bg-white border-b border-gray-200">
-      <div class="container-custom py-6">
-        <h1 class="text-3xl font-bold text-gray-900 mb-2">Find Your Dream Job</h1>
-        <p class="text-gray-600">Browse {{ totalJobs }} open positions from top companies</p>
-      </div>
-    </div>
-
     <!-- Search & Filters Bar -->
     <div class="bg-white border-b border-gray-200 sticky top-0 z-30 shadow-sm">
-      <div class="container-custom py-4">
+      <div class="mx-auto px-4 py-4 max-w-[1200px]">
         <!-- Search Row -->
         <div class="flex gap-3 mb-3">
           <div class="flex-1">
@@ -76,6 +68,11 @@
 
         <!-- Filters Row -->
         <div class="flex gap-3 items-center">
+          <!-- Results count -->
+          <span class="text-sm font-medium text-gray-900">
+            {{ totalJobs }} {{ totalJobs === 1 ? 'job' : 'jobs' }}
+          </span>
+
           <!-- Employment Type -->
           <select
             v-model="filters.employment_type"
@@ -104,6 +101,19 @@
             <option value="executive">Executive</option>
           </select>
 
+          <!-- Salary -->
+          <select
+            v-model="filters.salary_min"
+            @change="searchJobs"
+            class="px-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-primary-500 focus:border-primary-500 bg-white"
+          >
+            <option value="">Salary</option>
+            <option value="250">From $250</option>
+            <option value="500">From $500</option>
+            <option value="1000">From $1000</option>
+            <option value="2000">From $2000</option>
+          </select>
+
           <!-- Remote Only Checkbox -->
           <label class="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg text-sm bg-white cursor-pointer hover:bg-gray-50">
             <input
@@ -115,20 +125,6 @@
             <span class="font-medium text-gray-700">Remote Only</span>
           </label>
 
-          <!-- Salary Min -->
-          <BaseInput
-            v-model.number="filters.salary_min"
-            type="number"
-            placeholder="Min Salary"
-            size="md"
-            class="w-40"
-            @blur="searchJobs"
-          >
-            <template #icon-left>
-              <span class="text-gray-400 text-sm">$</span>
-            </template>
-          </BaseInput>
-
           <div class="flex-1"></div>
 
           <!-- Clear Filters -->
@@ -138,20 +134,15 @@
           >
             Clear all
           </button>
-
-          <!-- Results count -->
-          <span class="text-sm text-gray-600">
-            {{ totalJobs }} {{ totalJobs === 1 ? 'job' : 'jobs' }}
-          </span>
         </div>
       </div>
     </div>
 
     <!-- Main Content: Split View -->
     <div class="container-custom py-6">
-      <div class="flex gap-6 h-[calc(100vh-280px)]">
+      <div class="flex gap-6 min-h-[calc(100vh-280px)]">
         <!-- Left: Jobs List -->
-        <div class="w-96 flex-shrink-0 overflow-y-auto bg-white rounded-lg border border-gray-200">
+        <div class="w-96 flex-shrink-0 bg-white rounded-lg border border-gray-200">
           <!-- Loading State -->
           <div v-if="loading" class="divide-y divide-gray-200">
             <div v-for="i in 8" :key="i" class="p-4">
@@ -170,53 +161,56 @@
           </div>
 
           <!-- Jobs List -->
-          <div v-else-if="jobs.length > 0" class="divide-y divide-gray-200">
+          <div v-else-if="jobs.length > 0">
             <div
               v-for="job in jobs"
               :key="job.id"
               @click="selectJob(job)"
               :class="[
-                'p-4 cursor-pointer transition-colors',
+                'p-4 cursor-pointer transition-colors border-b-2 border-gray-300',
                 selectedJob?.id === job.id ? 'bg-primary-50 border-l-4 border-l-primary-600' : 'hover:bg-gray-50'
               ]"
             >
-              <div class="flex gap-3 mb-2">
+              <div class="flex gap-3">
                 <!-- Company Logo -->
-                <div class="w-12 h-12 bg-gray-100 rounded flex items-center justify-center flex-shrink-0">
+                <div class="w-20 h-20 bg-gray-100 rounded flex items-center justify-center flex-shrink-0 self-start">
                   <img
                     v-if="job.company?.logo?.url"
                     :src="job.company.logo.url"
                     :alt="job.company.name"
-                    class="w-full h-full object-contain rounded p-1"
+                    class="w-full h-full object-contain rounded"
                   />
-                  <span v-else class="text-lg font-bold text-gray-600">
+                  <span v-else class="text-2xl font-bold text-gray-600">
                     {{ job.company?.name?.charAt(0) || 'C' }}
                   </span>
                 </div>
 
                 <div class="flex-1 min-w-0">
                   <h3 class="font-semibold text-gray-900 text-sm mb-1 truncate">{{ job.title }}</h3>
-                  <p class="text-xs text-gray-600 truncate">{{ job.company?.name }}</p>
+                  <p class="text-sm text-gray-600 mb-2 truncate">{{ job.company?.name }}</p>
+                  
+                  <div class="flex items-center gap-2 text-xs text-gray-500 mb-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                    </svg>
+                    <span class="truncate">{{ job.location }}</span>
+                  </div>
+
+                  <div class="flex flex-wrap gap-2 mb-2">
+                    <span v-if="job.employment_type" class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-blue-100 text-blue-800">
+                      {{ formatEmploymentType(job.employment_type) }}
+                    </span>
+                    <span v-if="job.is_remote" class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-green-100 text-green-800">
+                      Remote
+                    </span>
+                  </div>
+                  
+                  <div v-if="job.salary_min && job.salary_max">
+                    <span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-gray-100 text-gray-800">
+                      ${{ formatSalary(job.salary_min) }} - ${{ formatSalary(job.salary_max) }}{{ job.salary_period ? '/' + formatSalaryPeriod(job.salary_period) : '' }}
+                    </span>
+                  </div>
                 </div>
-              </div>
-
-              <div class="flex items-center gap-2 text-xs text-gray-500 mb-2">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                </svg>
-                <span class="truncate">{{ job.location }}</span>
-              </div>
-
-              <div class="flex flex-wrap gap-2">
-                <span v-if="job.employment_type" class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-blue-100 text-blue-800">
-                  {{ formatEmploymentType(job.employment_type) }}
-                </span>
-                <span v-if="job.is_remote" class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-green-100 text-green-800">
-                  Remote
-                </span>
-                <span v-if="job.salary_min && job.salary_max" class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-gray-100 text-gray-800">
-                  ${{ formatSalary(job.salary_min) }} - ${{ formatSalary(job.salary_max) }}
-                </span>
               </div>
             </div>
           </div>
@@ -231,36 +225,30 @@
             <BaseButton variant="primary" size="sm" @click="clearFilters">Clear Filters</BaseButton>
           </div>
 
-          <!-- Pagination -->
-          <div v-if="!loading && totalPages > 1" class="p-4 border-t border-gray-200 bg-gray-50">
-            <div class="flex items-center justify-between">
-              <BaseButton
-                variant="outline"
-                size="sm"
-                :disabled="currentPage === 1"
-                @click="goToPage(currentPage - 1)"
-              >
-                Previous
-              </BaseButton>
-              
-              <span class="text-xs text-gray-600">
-                Page {{ currentPage }} of {{ totalPages }}
-              </span>
-              
-              <BaseButton
-                variant="outline"
-                size="sm"
-                :disabled="currentPage === totalPages"
-                @click="goToPage(currentPage + 1)"
-              >
-                Next
-              </BaseButton>
-            </div>
+          <!-- Load More Button -->
+          <div v-if="!loading && hasMoreJobs" class="p-6 border-t border-gray-200 bg-gray-50">
+            <BaseButton
+              variant="primary"
+              size="lg"
+              class="w-full"
+              :loading="loadingMore"
+              @click="loadMoreJobs"
+            >
+              <template #icon-left>
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                </svg>
+              </template>
+              Load More Jobs
+            </BaseButton>
+            <p class="text-center text-sm text-gray-500 mt-3">
+              Showing {{ jobs.length }} of {{ totalJobs }} jobs
+            </p>
           </div>
         </div>
 
         <!-- Right: Job Details -->
-        <div class="flex-1 overflow-y-auto bg-white rounded-lg border border-gray-200">
+        <div class="flex-1 bg-white rounded-lg border border-gray-200 sticky top-20 self-start max-h-[calc(100vh-120px)] overflow-y-auto">
           <!-- Job Selected -->
           <div v-if="selectedJob" class="p-8">
             <!-- Header -->
@@ -403,7 +391,7 @@ const citySuggestionsRef = ref<HTMLElement | null>(null)
 const cityRefs: Record<number, HTMLElement> = {}
 
 const filteredCities = computed(() => {
-  if (!filters.location) return iraqCities
+  if (!filters.location) return []
   const searchTerm = filters.location.toLowerCase()
   return iraqCities.filter(city => 
     city.toLowerCase().includes(searchTerm)
@@ -427,6 +415,26 @@ const scrollToSelected = () => {
 }
 
 const handleCityKeyDown = (event: KeyboardEvent) => {
+  // Handle Enter key always (even without suggestions)
+  if (event.key === 'Enter') {
+    event.preventDefault()
+    if (showCitySuggestions.value && filteredCities.value.length > 0 && 
+        selectedCityIndex.value >= 0 && selectedCityIndex.value < filteredCities.value.length) {
+      selectCity(filteredCities.value[selectedCityIndex.value])
+    } else {
+      searchJobs()
+    }
+    return
+  }
+
+  // Handle Escape key
+  if (event.key === 'Escape') {
+    showCitySuggestions.value = false
+    selectedCityIndex.value = -1
+    return
+  }
+
+  // For arrow keys, only work if suggestions are showing
   if (!showCitySuggestions.value || filteredCities.value.length === 0) return
 
   switch (event.key) {
@@ -439,18 +447,6 @@ const handleCityKeyDown = (event: KeyboardEvent) => {
       event.preventDefault()
       selectedCityIndex.value = Math.max(selectedCityIndex.value - 1, 0)
       scrollToSelected()
-      break
-    case 'Enter':
-      event.preventDefault()
-      if (selectedCityIndex.value >= 0 && selectedCityIndex.value < filteredCities.value.length) {
-        selectCity(filteredCities.value[selectedCityIndex.value])
-      } else {
-        searchJobs()
-      }
-      break
-    case 'Escape':
-      showCitySuggestions.value = false
-      selectedCityIndex.value = -1
       break
   }
 }
@@ -469,6 +465,7 @@ const handleCityBlur = () => {
 
 
 const loading = ref(false)
+const loadingMore = ref(false)
 const selectedJob = ref<Job | null>(null)
 
 const filters = reactive({
@@ -476,25 +473,69 @@ const filters = reactive({
   location: '',
   employment_type: '',
   experience_level: '',
+  salary_min: '',
   is_remote: false,
-  salary_min: 0,
-  per_page: 12,
+  per_page: 20,
   page: 1,
-} as Required<JobFilters>)
+})
 
 const jobs = computed(() => jobStore.jobs)
 const totalJobs = computed(() => jobStore.pagination?.total || 0)
 const currentPage = computed(() => jobStore.pagination?.current_page || 1)
 const totalPages = computed(() => jobStore.pagination?.last_page || 1)
+const hasMoreJobs = computed(() => currentPage.value < totalPages.value)
 
 const searchJobs = async () => {
   loading.value = true
   try {
-    await jobStore.fetchJobs(filters)
+    // Reset to page 1 when searching
+    filters.page = 1
+    
+    // Clean filters: remove empty strings and zero values
+    const cleanFilters = Object.entries(filters).reduce((acc, [key, value]) => {
+      if (value !== '' && value !== 0 && value !== false && value !== undefined && value !== null) {
+        acc[key as keyof JobFilters] = value as never
+      }
+      // Always include page and per_page
+      if (key === 'page' || key === 'per_page') {
+        acc[key as keyof JobFilters] = value as never
+      }
+      return acc
+    }, {} as JobFilters)
+    
+    await jobStore.fetchJobs(cleanFilters, false)
   } catch (error) {
     console.error('Failed to fetch jobs:', error)
   } finally {
     loading.value = false
+  }
+}
+
+const loadMoreJobs = async () => {
+  if (!hasMoreJobs.value || loadingMore.value) return
+  
+  loadingMore.value = true
+  try {
+    // Increment page
+    filters.page += 1
+    
+    // Clean filters
+    const cleanFilters = Object.entries(filters).reduce((acc, [key, value]) => {
+      if (value !== '' && value !== 0 && value !== false && value !== undefined && value !== null) {
+        acc[key as keyof JobFilters] = value as never
+      }
+      if (key === 'page' || key === 'per_page') {
+        acc[key as keyof JobFilters] = value as never
+      }
+      return acc
+    }, {} as JobFilters)
+    
+    await jobStore.loadMoreJobs(cleanFilters)
+  } catch (error) {
+    console.error('Failed to load more jobs:', error)
+    filters.page -= 1 // Revert page increment on error
+  } finally {
+    loadingMore.value = false
   }
 }
 
@@ -503,15 +544,10 @@ const clearFilters = () => {
   filters.location = ''
   filters.employment_type = ''
   filters.experience_level = ''
+  filters.salary_min = ''
   filters.is_remote = false
-  filters.salary_min = 0
   filters.page = 1
   selectedJob.value = null
-  searchJobs()
-}
-
-const goToPage = (page: number) => {
-  filters.page = page
   searchJobs()
 }
 
@@ -576,6 +612,16 @@ const formatSalary = (amount: number): string => {
   return amount.toString()
 }
 
+const formatSalaryPeriod = (period: string): string => {
+  const periods: Record<string, string> = {
+    'hourly': 'hourly',
+    'daily': 'daily',
+    'monthly': 'monthly',
+    'yearly': 'yearly',
+  }
+  return periods[period] || period
+}
+
 onMounted(() => {
   // Load filters from URL query params
   if (route.query.search) filters.search = route.query.search as string
@@ -583,7 +629,6 @@ onMounted(() => {
   if (route.query.employment_type) filters.employment_type = route.query.employment_type as string
   if (route.query.experience_level) filters.experience_level = route.query.experience_level as string
   if (route.query.is_remote) filters.is_remote = route.query.is_remote === 'true'
-  if (route.query.salary_min) filters.salary_min = parseInt(route.query.salary_min as string)
   
   searchJobs()
 })

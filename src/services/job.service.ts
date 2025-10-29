@@ -3,8 +3,20 @@ import apiClient from './api'
 
 export const jobService = {
   async getJobs(filters?: JobFilters): Promise<ApiResponse<PaginatedResponse<Job>>> {
+    // Remove null, undefined, empty string, and false values
+    const cleanFilters = filters ? Object.entries(filters).reduce((acc, [key, value]) => {
+      if (value !== null && value !== undefined && value !== '' && value !== false) {
+        acc[key as keyof JobFilters] = value as never
+      }
+      // Always include page and per_page even if they're 0 or false
+      if ((key === 'page' || key === 'per_page') && value !== null && value !== undefined) {
+        acc[key as keyof JobFilters] = value as never
+      }
+      return acc
+    }, {} as JobFilters) : {}
+    
     const response = await apiClient.get<ApiResponse<PaginatedResponse<Job>>>('/jobs', {
-      params: filters,
+      params: cleanFilters,
     })
     return response.data
   },

@@ -23,7 +23,7 @@ export const useJobStore = defineStore('job', () => {
   const error = ref<string | null>(null)
 
   // Actions
-  async function fetchJobs(customFilters?: JobFilters) {
+  async function fetchJobs(customFilters?: JobFilters, append = false) {
     try {
       loading.value = true
       error.value = null
@@ -32,7 +32,8 @@ export const useJobStore = defineStore('job', () => {
       
       if (response.success && response.data) {
         const { data, ...paginationData } = response.data
-        jobs.value = data
+        // Append to existing jobs or replace
+        jobs.value = append ? [...jobs.value, ...data] : data
         pagination.value = paginationData
       }
     } catch (err: unknown) {
@@ -44,6 +45,10 @@ export const useJobStore = defineStore('job', () => {
     } finally {
       loading.value = false
     }
+  }
+
+  async function loadMoreJobs(customFilters?: JobFilters) {
+    return fetchJobs(customFilters, true)
   }
 
   async function fetchFeaturedJobs(limit = 6) {
@@ -103,6 +108,7 @@ export const useJobStore = defineStore('job', () => {
     loading,
     error,
     fetchJobs,
+    loadMoreJobs,
     fetchFeaturedJobs,
     fetchJob,
     updateFilters,
