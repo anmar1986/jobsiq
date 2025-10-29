@@ -25,7 +25,7 @@ class AppServiceProvider extends ServiceProvider
         Vite::prefetch(concurrency: 3);
 
         // Prevent lazy loading issues in production
-        Model::preventLazyLoading(!app()->isProduction());
+        Model::preventLazyLoading(! app()->isProduction());
 
         // Enable query caching for better performance
         if (app()->isProduction()) {
@@ -33,6 +33,6 @@ class AppServiceProvider extends ServiceProvider
         }
 
         // Optimize database connections
-        Model::shouldBeStrict(!app()->isProduction());
+        Model::shouldBeStrict(! app()->isProduction());
     }
 }

@@ -1,9 +1,8 @@
 <?php
 
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
@@ -13,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         // Add missing composite indexes for better query performance
-        
+
         // Jobs table - composite indexes for common queries
         Schema::table('jobs', function (Blueprint $table) {
             // For filtering active jobs by location
@@ -86,7 +85,7 @@ return new class extends Migration
                 $table->index('user_type', 'idx_users_user_type');
             }
             // Email should already be unique, but adding index if not exists
-            if (!Schema::hasColumn('users', 'email_index')) {
+            if (! Schema::hasColumn('users', 'email_index')) {
                 $table->index('email', 'idx_users_email');
             }
         });

@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Log;
 class JobController extends Controller
 {
     use CachesApiResponses;
+
     /**
      * Searchable filter parameters that should trigger search history logging.
      */
@@ -241,12 +242,12 @@ class JobController extends Controller
     {
         // Clear home page cache
         Cache::forget('home_page_content');
-        
+
         // Clear featured jobs cache
         for ($i = 1; $i <= 20; $i++) {
             Cache::forget("featured_jobs_{$i}");
         }
-        
+
         // Clear specific job cache if slug provided
         if ($slug) {
             Cache::forget("job_detail_{$slug}");

@@ -32,13 +32,13 @@ class TestRedisCommand extends Command
 
         // Test 1: Basic Connection
         $this->testConnection();
-        
+
         // Test 2: Cache Operations
         $this->testCacheOperations();
-        
+
         // Test 3: Performance Comparison
         $this->testPerformance();
-        
+
         // Test 4: Redis Info
         $this->showRedisInfo();
 
@@ -52,17 +52,18 @@ class TestRedisCommand extends Command
     protected function testConnection(): void
     {
         $this->info('📡 Test 1: Redis Connection');
-        
+
         try {
             $redis = Redis::connection();
             $pong = $redis->ping();
-            
+
             if ($pong) {
                 $this->line('  ✓ Redis is responding');
-                $this->line('  ✓ Connection: ' . config('database.redis.default.host') . ':' . config('database.redis.default.port'));
+                $this->line('  ✓ Connection: '.config('database.redis.default.host').':'.config('database.redis.default.port'));
             }
         } catch (\Exception $e) {
-            $this->error('  ✗ Redis connection failed: ' . $e->getMessage());
+            $this->error('  ✗ Redis connection failed: '.$e->getMessage());
+
             return;
         }
 
@@ -75,9 +76,9 @@ class TestRedisCommand extends Command
 
         try {
             // Test Write
-            $key = 'test_key_' . time();
+            $key = 'test_key_'.time();
             $value = 'Hello from Redis!';
-            
+
             Cache::store('redis')->put($key, $value, 60);
             $this->line('  ✓ Cache write successful');
 
@@ -100,19 +101,19 @@ class TestRedisCommand extends Command
             $complexData = [
                 'array' => [1, 2, 3],
                 'string' => 'test',
-                'nested' => ['key' => 'value']
+                'nested' => ['key' => 'value'],
             ];
             Cache::store('redis')->put('complex_test', $complexData, 60);
             $retrievedComplex = Cache::store('redis')->get('complex_test');
-            
+
             if ($retrievedComplex === $complexData) {
                 $this->line('  ✓ Complex data storage successful');
             }
-            
+
             Cache::store('redis')->forget('complex_test');
 
         } catch (\Exception $e) {
-            $this->error('  ✗ Cache operations failed: ' . $e->getMessage());
+            $this->error('  ✗ Cache operations failed: '.$e->getMessage());
         }
 
         $this->newLine();
@@ -172,23 +173,23 @@ class TestRedisCommand extends Command
             $info = $redis->info();
 
             if (isset($info['Server'])) {
-                $this->line('  Redis Version: ' . ($info['Server']['redis_version'] ?? 'Unknown'));
+                $this->line('  Redis Version: '.($info['Server']['redis_version'] ?? 'Unknown'));
             }
-            
+
             if (isset($info['Memory'])) {
-                $this->line('  Used Memory: ' . ($info['Memory']['used_memory_human'] ?? 'Unknown'));
-                $this->line('  Peak Memory: ' . ($info['Memory']['used_memory_peak_human'] ?? 'Unknown'));
+                $this->line('  Used Memory: '.($info['Memory']['used_memory_human'] ?? 'Unknown'));
+                $this->line('  Peak Memory: '.($info['Memory']['used_memory_peak_human'] ?? 'Unknown'));
             }
 
             if (isset($info['Stats'])) {
-                $this->line('  Total Commands: ' . ($info['Stats']['total_commands_processed'] ?? 'Unknown'));
-                $this->line('  Keyspace Hits: ' . ($info['Stats']['keyspace_hits'] ?? '0'));
-                $this->line('  Keyspace Misses: ' . ($info['Stats']['keyspace_misses'] ?? '0'));
-                
-                $hits = (int)($info['Stats']['keyspace_hits'] ?? 0);
-                $misses = (int)($info['Stats']['keyspace_misses'] ?? 0);
+                $this->line('  Total Commands: '.($info['Stats']['total_commands_processed'] ?? 'Unknown'));
+                $this->line('  Keyspace Hits: '.($info['Stats']['keyspace_hits'] ?? '0'));
+                $this->line('  Keyspace Misses: '.($info['Stats']['keyspace_misses'] ?? '0'));
+
+                $hits = (int) ($info['Stats']['keyspace_hits'] ?? 0);
+                $misses = (int) ($info['Stats']['keyspace_misses'] ?? 0);
                 $total = $hits + $misses;
-                
+
                 if ($total > 0) {
                     $hitRate = ($hits / $total) * 100;
                     $this->line(sprintf('  Hit Rate: %.2f%%', $hitRate));
@@ -197,22 +198,22 @@ class TestRedisCommand extends Command
 
             // Count keys
             $keys = $redis->keys('*');
-            $this->line('  Total Keys: ' . count($keys));
+            $this->line('  Total Keys: '.count($keys));
 
             // Show sample keys
             if (count($keys) > 0) {
                 $this->line('  Sample Keys:');
                 $sampleKeys = array_slice($keys, 0, 5);
                 foreach ($sampleKeys as $key) {
-                    $this->line('    - ' . $key);
+                    $this->line('    - '.$key);
                 }
                 if (count($keys) > 5) {
-                    $this->line('    ... and ' . (count($keys) - 5) . ' more');
+                    $this->line('    ... and '.(count($keys) - 5).' more');
                 }
             }
 
         } catch (\Exception $e) {
-            $this->error('  ✗ Failed to get Redis info: ' . $e->getMessage());
+            $this->error('  ✗ Failed to get Redis info: '.$e->getMessage());
         }
 
         $this->newLine();
@@ -221,18 +222,18 @@ class TestRedisCommand extends Command
     protected function clearTestData(): void
     {
         $this->info('🧹 Clearing test data...');
-        
+
         try {
             $redis = Redis::connection();
             $keys = $redis->keys('test_*');
-            
+
             foreach ($keys as $key) {
                 $redis->del($key);
             }
-            
-            $this->line('  ✓ Test data cleared (' . count($keys) . ' keys removed)');
+
+            $this->line('  ✓ Test data cleared ('.count($keys).' keys removed)');
         } catch (\Exception $e) {
-            $this->error('  ✗ Failed to clear test data: ' . $e->getMessage());
+            $this->error('  ✗ Failed to clear test data: '.$e->getMessage());
         }
 
         $this->newLine();

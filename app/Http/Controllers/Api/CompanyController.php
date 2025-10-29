@@ -17,6 +17,7 @@ use Illuminate\Support\Facades\Storage;
 class CompanyController extends Controller
 {
     use CachesApiResponses;
+
     /**
      * Display a listing of companies.
      */
@@ -431,7 +432,7 @@ class CompanyController extends Controller
     {
         // Clear home page cache (affects companies count)
         Cache::forget('home_page_content');
-        
+
         // Clear specific company cache if slug provided
         if ($slug) {
             Cache::forget("company_detail_{$slug}");

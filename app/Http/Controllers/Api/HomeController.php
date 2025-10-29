@@ -20,7 +20,7 @@ class HomeController extends Controller
     {
         try {
             // Cache home page data for 5 minutes
-            $data = $this->cacheResponse('home_page_content', function() {
+            $data = $this->cacheResponse('home_page_content', function () {
                 // Get home content from database
                 $content = HomeContent::getAllContent();
 
@@ -30,14 +30,14 @@ class HomeController extends Controller
                     ->latest()
                     ->take(3)
                     ->get()
-                    ->map(function (Job $job) {
+                    ->map(function (Job $job): array {
                         return [
                             'id' => $job->id,
                             'title' => $job->title,
                             'company' => $job->company->name ?? 'Unknown Company',
                             'location' => $job->location,
                             'type' => $job->employment_type,
-                            'level' => $job->experience_level,
+                            'level' => $job->experience_level ?? '',
                             'salary' => $this->formatSalary($job),
                             'posted' => $job->created_at->diffForHumans(),
                             'slug' => $job->slug,
@@ -158,7 +158,7 @@ class HomeController extends Controller
     {
         try {
             // Cache section content for 10 minutes
-            $content = $this->cacheResponse("home_section_{$section}", function() use ($section) {
+            $content = $this->cacheResponse("home_section_{$section}", function () use ($section) {
                 return HomeContent::getSection($section);
             }, 600);
 

@@ -29,28 +29,31 @@ const BASE_URL = 'http://localhost:8000';
 export default function () {
   // Test 1: Home page
   let response = http.get(`${BASE_URL}/api/home`);
-  check(response, {
+  const homeCheck = check(response, {
     'home page status is 200': (r) => r.status === 200,
     'home page response time < 500ms': (r) => r.timings.duration < 500,
-  }) || errorRate.add(1);
+  });
+  if (!homeCheck) errorRate.add(1);
   
   sleep(1);
 
   // Test 2: Jobs listing
   response = http.get(`${BASE_URL}/api/jobs?page=1&per_page=20`);
-  check(response, {
+  const jobsCheck = check(response, {
     'jobs listing status is 200': (r) => r.status === 200,
     'jobs listing response time < 800ms': (r) => r.timings.duration < 800,
-  }) || errorRate.add(1);
+  });
+  if (!jobsCheck) errorRate.add(1);
   
   sleep(1);
 
   // Test 3: Companies listing
   response = http.get(`${BASE_URL}/api/companies?page=1&per_page=20`);
-  check(response, {
+  const companiesCheck = check(response, {
     'companies listing status is 200': (r) => r.status === 200,
     'companies listing response time < 800ms': (r) => r.timings.duration < 800,
-  }) || errorRate.add(1);
+  });
+  if (!companiesCheck) errorRate.add(1);
   
   sleep(2);
 }
@@ -62,7 +65,7 @@ export function handleSummary(data) {
   };
 }
 
-function textSummary(data, options) {
+function textSummary(data, _options) {
   return `
 📊 Load Test Summary
 ====================
