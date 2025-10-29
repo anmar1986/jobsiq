@@ -27,11 +27,6 @@ class AppServiceProvider extends ServiceProvider
         // Prevent lazy loading issues in production
         Model::preventLazyLoading(! app()->isProduction());
 
-        // Enable query caching for better performance
-        if (app()->isProduction()) {
-            DB::enableQueryLog();
-        }
-
         // Optimize database connections
         Model::shouldBeStrict(! app()->isProduction());
     }
