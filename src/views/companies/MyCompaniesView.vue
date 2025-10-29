@@ -271,14 +271,21 @@ const viewCompany = (company: Company) => {
   })
 }
 
-const viewJob = (job: { id: number; slug: string }) => {
+const _editCompany = (company: Company) => {
+  router.push({
+    name: 'edit-company',
+    params: { id: company.id }
+  })
+}
+
+const _viewJob = (job: { id: number; slug: string }) => {
   router.push({
     name: 'job-details',
     params: { slug: job.slug }
   })
 }
 
-const viewAllJobs = (company: Company) => {
+const _viewAllJobs = (company: Company) => {
   // Navigate to jobs page filtered by this company
   router.push({
     name: 'jobs',

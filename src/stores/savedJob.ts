@@ -26,43 +26,35 @@ export const useSavedJobStore = defineStore('savedJob', () => {
   }
 
   async function saveJob(jobId: number) {
-    try {
-      const response = await savedJobService.saveJob(jobId)
-      if (response.success) {
-        // Add to savedJobIds set
-        savedJobIds.value.add(jobId)
-        // Increment count optimistically
-        if (savedJobsCount.value !== null) {
-          savedJobsCount.value++
-        } else {
-          // If count is null, fetch it
-          await fetchSavedJobsCount()
-        }
+    const response = await savedJobService.saveJob(jobId)
+    if (response.success) {
+      // Add to savedJobIds set
+      savedJobIds.value.add(jobId)
+      // Increment count optimistically
+      if (savedJobsCount.value !== null) {
+        savedJobsCount.value++
+      } else {
+        // If count is null, fetch it
+        await fetchSavedJobsCount()
       }
-      return response
-    } catch (err: unknown) {
-      throw err
     }
+    return response
   }
 
   async function unsaveJob(jobId: number) {
-    try {
-      const response = await savedJobService.unsaveJob(jobId)
-      if (response.success) {
-        // Remove from savedJobIds set
-        savedJobIds.value.delete(jobId)
-        // Decrement count optimistically
-        if (savedJobsCount.value !== null && savedJobsCount.value > 0) {
-          savedJobsCount.value--
-        } else {
-          // If count is null, fetch it
-          await fetchSavedJobsCount()
-        }
+    const response = await savedJobService.unsaveJob(jobId)
+    if (response.success) {
+      // Remove from savedJobIds set
+      savedJobIds.value.delete(jobId)
+      // Decrement count optimistically
+      if (savedJobsCount.value !== null && savedJobsCount.value > 0) {
+        savedJobsCount.value--
+      } else {
+        // If count is null, fetch it
+        await fetchSavedJobsCount()
       }
-      return response
-    } catch (err: unknown) {
-      throw err
     }
+    return response
   }
 
   function resetCount() {
