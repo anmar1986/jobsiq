@@ -207,7 +207,7 @@ const hasApplied = ref(false)
 const existingApplication = ref<JobApplication | null>(null)
 
 const applicationForm = ref({
-  cv_id: '' as number | string,
+  cv_id: '' as string,
   cover_letter: '',
 })
 
@@ -245,7 +245,7 @@ const fetchJobAndCheckApplication = async () => {
       // Auto-select primary CV if available
       const primaryCv = userCvs.value.find(cv => cv.is_primary)
       if (primaryCv) {
-        applicationForm.value.cv_id = primaryCv.id
+        applicationForm.value.cv_id = String(primaryCv.id)
       }
     }
   } catch (err) {
