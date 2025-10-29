@@ -13,6 +13,11 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
+        // Register optional authentication middleware
+        $middleware->alias([
+            'optional.auth' => \App\Http\Middleware\OptionalAuthentication::class,
+        ]);
+
         // Configure API authentication to return JSON instead of redirecting
         $middleware->redirectGuestsTo(function (Request $request) {
             if ($request->expectsJson() || $request->is('api/*')) {

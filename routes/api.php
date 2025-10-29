@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\FreeCvController;
 use App\Http\Controllers\Api\HomeController;
 use App\Http\Controllers\Api\JobApplicationController;
 use App\Http\Controllers\Api\JobController;
+use App\Http\Controllers\Api\SavedJobController;
 use App\Http\Controllers\Api\UserCvController;
 use Illuminate\Support\Facades\Route;
 
@@ -23,10 +24,10 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::get('/home', [HomeController::class, 'index']);
 Route::get('/home/{section}', [HomeController::class, 'getSection']);
 
-// Public routes
-Route::get('/jobs', [JobController::class, 'index']);
+// Public routes with optional authentication (authenticates if token is present)
+Route::middleware('optional.auth')->get('/jobs', [JobController::class, 'index']);
 Route::get('/jobs/featured', [JobController::class, 'featured']);
-Route::get('/jobs/{job:slug}', [JobController::class, 'show']);
+Route::middleware('optional.auth')->get('/jobs/{job:slug}', [JobController::class, 'show']);
 
 Route::get('/companies', [CompanyController::class, 'index']);
 Route::get('/companies/{slug}', [CompanyController::class, 'showBySlug'])->where('slug', '[a-z0-9-]+');
@@ -76,4 +77,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/applications/{application}', [JobApplicationController::class, 'show']);
     Route::put('/applications/{application}/status', [JobApplicationController::class, 'updateStatus']);
     Route::delete('/applications/{application}', [JobApplicationController::class, 'destroy']);
+
+    // Saved Jobs management
+    Route::get('/saved-jobs', [SavedJobController::class, 'index']);
+    Route::post('/jobs/{job}/save', [SavedJobController::class, 'store']);
+    Route::delete('/jobs/{job}/save', [SavedJobController::class, 'destroy']);
+    Route::get('/jobs/{job}/saved', [SavedJobController::class, 'check']);
 });

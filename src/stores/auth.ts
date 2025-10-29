@@ -15,6 +15,9 @@ export const useAuthStore = defineStore('auth', () => {
   const isAuthenticated = computed(() => !!token.value && !!user.value)
   const userName = computed(() => user.value?.name || '')
   const userEmail = computed(() => user.value?.email || '')
+  const userType = computed(() => user.value?.user_type || null)
+  const isCompanyOwner = computed(() => user.value?.user_type === 'company_owner')
+  const isJobSeeker = computed(() => user.value?.user_type === 'job_seeker')
 
   // Actions
   async function login(credentials: LoginForm) {
@@ -117,6 +120,9 @@ export const useAuthStore = defineStore('auth', () => {
     isAuthenticated,
     userName,
     userEmail,
+    userType,
+    isCompanyOwner,
+    isJobSeeker,
     login,
     register,
     logout,

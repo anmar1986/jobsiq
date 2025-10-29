@@ -54,37 +54,42 @@
     </div>
 
     <!-- Companies List -->
-    <div v-else class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div v-else class="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
       <div
         v-for="company in companies"
         :key="company.id"
-        class="bg-white rounded-lg border-2 border-gray-200 hover:border-primary-500 hover:shadow-lg transition-all duration-300 h-[520px] flex flex-col group"
+        class="bg-white rounded-lg border-2 border-gray-200 hover:border-primary-500 hover:shadow-lg transition-all duration-300 h-[520px] flex flex-col group overflow-hidden"
       >
-        <div class="p-6 flex flex-col h-full">
-          <!-- Company Logo & Info -->
+        <!-- Cover Image with Logo -->
+        <div class="w-full h-40 bg-gradient-to-br from-primary-500 to-secondary-500 flex-shrink-0 relative overflow-hidden">
+          <img 
+            v-if="company.cover?.path" 
+            :src="getLogoUrl(company.cover.path)" 
+            :alt="company.name"
+            class="w-full h-full object-cover"
+          />
+          
+          <!-- Company Logo - Positioned at bottom left -->
+          <div class="absolute bottom-4 left-4 w-20 h-20 bg-white rounded-lg flex items-center justify-center text-white text-2xl font-bold shadow-lg ring-4 ring-white overflow-hidden">
+            <img 
+              v-if="company.logo?.path" 
+              :src="getLogoUrl(company.logo.path)" 
+              :alt="company.name"
+              class="w-full h-full object-cover"
+            />
+            <span v-else class="text-primary-600">{{ company.name[0] }}</span>
+          </div>
+        </div>
+
+        <div class="p-6 flex flex-col flex-1">
+          <!-- Company Name & Industry -->
           <div class="mb-4 flex-shrink-0">
-            <div class="flex items-start gap-4 mb-3">
-              <!-- Company Logo -->
-              <div class="w-16 h-16 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-lg flex items-center justify-center text-white text-2xl font-bold flex-shrink-0 ring-2 ring-primary-200 group-hover:ring-primary-300 transition-all duration-300 overflow-hidden">
-                <img 
-                  v-if="company.logo?.path" 
-                  :src="getLogoUrl(company.logo.path)" 
-                  :alt="company.name"
-                  class="w-full h-full object-cover"
-                />
-                <span v-else>{{ company.name[0] }}</span>
-              </div>
-              
-              <!-- Company Name & Industry -->
-              <div class="flex-1 min-w-0">
-                <h3 class="text-xl font-bold text-gray-900 mb-1 truncate group-hover:text-primary-600 transition-colors">
-                  {{ company.name }}
-                </h3>
-                <p v-if="company.industry" class="text-primary-600 font-medium mb-2 truncate">
-                  {{ company.industry }}
-                </p>
-              </div>
-            </div>
+            <h3 class="text-xl font-bold text-gray-900 mb-1 truncate group-hover:text-primary-600 transition-colors">
+              {{ company.name }}
+            </h3>
+            <p v-if="company.industry" class="text-primary-600 font-medium mb-2 truncate">
+              {{ company.industry }}
+            </p>
           </div>
 
           <!-- Company Info -->
@@ -110,44 +115,6 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
               </svg>
               <span>{{ company.jobs_count || 0 }} active job{{ (company.jobs_count || 0) !== 1 ? 's' : '' }}</span>
-            </div>
-          </div>
-
-          <!-- Description -->
-          <p v-if="company.description" class="text-sm text-gray-600 mb-4 line-clamp-2 flex-shrink-0">
-            {{ company.description }}
-          </p>
-
-          <!-- Jobs List - Scrollable Area -->
-          <div class="flex-1 min-h-0 mb-4 flex flex-col">
-            <div v-if="company.jobs && company.jobs.length > 0" class="flex flex-col h-full">
-              <h4 class="text-sm font-semibold text-gray-900 mb-2 flex-shrink-0">Active Jobs:</h4>
-              <div class="space-y-2 overflow-y-auto flex-1 pr-1 custom-scrollbar">
-                <div
-                  v-for="job in company.jobs.slice(0, 3)"
-                  :key="job.id"
-                  class="flex items-center justify-between p-2 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
-                  @click="viewJob(job)"
-                >
-                  <div class="flex-1 min-w-0">
-                    <p class="text-sm font-medium text-gray-900 truncate">{{ job.title }}</p>
-                    <p class="text-xs text-gray-600">{{ job.location }}</p>
-                  </div>
-                  <svg class="h-4 w-4 text-gray-400 flex-shrink-0 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-                  </svg>
-                </div>
-                <button
-                  v-if="company.jobs.length > 3"
-                  class="w-full text-xs text-primary-600 hover:text-primary-700 font-medium py-1"
-                  @click="viewAllJobs(company)"
-                >
-                  View all {{ company.jobs.length }} jobs →
-                </button>
-              </div>
-            </div>
-            <div v-else class="p-3 bg-gray-50 rounded-lg text-center flex-shrink-0">
-              <p class="text-sm text-gray-600">No jobs posted yet</p>
             </div>
           </div>
 

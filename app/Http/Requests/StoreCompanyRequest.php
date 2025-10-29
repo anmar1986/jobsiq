@@ -12,7 +12,8 @@ class StoreCompanyRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true; // Authorization is handled in the controller
+        // Only company owners can create companies
+        return $this->user() && $this->user()->user_type === 'company_owner';
     }
 
     /**

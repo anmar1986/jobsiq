@@ -36,18 +36,27 @@ class JobController extends Controller
             // Apply filters
             $query = $this->applyFilters($query, $request);
 
-            // Sort: Featured jobs first, then by most recent
+            // Sort: Random order with featured jobs having priority
             if ($request->get('sort') === 'oldest') {
                 $query->orderBy('published_at', 'asc');
-            } else {
-                // Default: Featured first, then newest
+            } elseif ($request->get('sort') === 'newest') {
+                // Optional: keep newest sorting as an option
                 $query->orderByDesc('is_featured')
                     ->orderByDesc('published_at');
+            } else {
+                // Default: Featured first, then random
+                $query->orderByDesc('is_featured')
+                    ->inRandomOrder();
             }
 
             // Paginate results
             $jobs = $query->paginate($perPage);
             $total = $jobs->total();
+
+            // Log search history if search or filters are used
+            if ($request->hasAny(['search', 'location', 'employment_type', 'experience_level', 'is_remote', 'category', 'salary_min'])) {
+                $this->logSearch($request, $total);
+            }
 
             return response()->json([
                 'success' => true,
@@ -103,6 +112,13 @@ class JobController extends Controller
         // Filter by minimum salary
         if ($request->filled('salary_min') && $request->salary_min > 0) {
             $query->where('salary_max', '>=', $request->salary_min);
+        }
+
+        // Filter by company slug
+        if ($request->filled('company')) {
+            $query->whereHas('company', function ($q) use ($request) {
+                $q->where('slug', $request->company);
+            });
         }
 
         return $query;

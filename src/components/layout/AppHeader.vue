@@ -18,8 +18,8 @@
             v-for="link in navLinks"
             :key="link.path"
             :to="link.path"
-            class="text-gray-700 hover:text-primary-600 font-medium transition-colors"
-            active-class="text-primary-600"
+            class="text-gray-700 hover:text-primary-600 font-medium transition-all relative pb-1 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-primary-600 after:transition-all after:duration-300 hover:after:w-full"
+            active-class="text-primary-600 after:!w-full"
           >
             {{ link.label }}
           </router-link>
@@ -30,6 +30,7 @@
           <!-- Authenticated User -->
           <template v-if="authStore.isAuthenticated && authStore.user">
             <router-link
+              v-if="authStore.isCompanyOwner"
               to="/my-companies"
               class="hidden md:inline-flex btn-primary text-sm"
             >
@@ -165,6 +166,7 @@
                 Dashboard
               </router-link>
               <router-link
+                v-if="authStore.isCompanyOwner"
                 to="/my-companies"
                 class="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg font-medium transition-colors"
                 @click="closeMobileMenu"
@@ -179,6 +181,7 @@
                 Profile
               </router-link>
               <router-link
+                v-if="authStore.isJobSeeker"
                 to="/my-cvs"
                 class="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg font-medium transition-colors"
                 @click="closeMobileMenu"
@@ -186,6 +189,7 @@
                 My CVs
               </router-link>
               <router-link
+                v-if="authStore.isJobSeeker"
                 to="/my-applications"
                 class="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg font-medium transition-colors"
                 @click="closeMobileMenu"
@@ -240,6 +244,7 @@ const navLinks = computed(() => {
   const links = [
     { path: '/jobs', label: 'Jobs' },
     { path: '/companies', label: 'Companies' },
+    { path: '/about', label: 'About Us' },
   ]
   
   // Only show CVs link to company owners

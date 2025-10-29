@@ -362,11 +362,18 @@ const handleSubmit = async () => {
   error.value = ''
   
   try {
-    const { agreeToTerms: _agreeToTerms, ...registerData } = formData
+    const { agreeToTerms: _agreeToTerms, company_name, company_email, ...baseData } = formData
+    
+    // Only include company fields for company owners
     const payload = {
-      ...registerData,
+      ...baseData,
       user_type: props.accountType,
+      ...(props.accountType === 'company_owner' && {
+        company_name,
+        company_email,
+      }),
     }
+    
     await authStore.register(payload)
     router.push('/dashboard')
   } catch (err: unknown) {
