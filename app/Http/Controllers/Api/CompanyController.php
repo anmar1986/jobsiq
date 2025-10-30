@@ -79,7 +79,7 @@ class CompanyController extends Controller
 
             // Remove file upload fields from mass assignment (they're handled separately)
             $companyData = collect($validated)->except(['logo', 'images', 'cover'])->toArray();
-            
+
             Log::info('Company data prepared for creation', [
                 'original_keys' => array_keys($validated),
                 'filtered_keys' => array_keys($companyData),
@@ -200,7 +200,7 @@ class CompanyController extends Controller
 
         // Remove file upload fields from mass assignment (they're handled separately)
         $companyData = collect($request->validated())->except(['logo', 'images', 'cover'])->toArray();
-        
+
         $company->update($companyData);
 
         // Handle logo upload
