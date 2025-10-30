@@ -161,7 +161,7 @@
                 </p>
               </div>
             </div>
-            <div v-if="edu.description" class="w-1/2 pr-4">
+            <div v-if="edu.description" class="pr-4">
               <p class="text-gray-700 whitespace-pre-line mt-3">{{ edu.description }}</p>
             </div>
           </div>
@@ -204,7 +204,7 @@
                 </p>
               </div>
             </div>
-            <div v-if="exp.description" class="w-1/2 pr-4">
+            <div v-if="exp.description" class="pr-4">
               <p class="text-gray-700 whitespace-pre-line mt-3">{{ exp.description }}</p>
             </div>
           </div>
@@ -389,7 +389,6 @@
       </div>
 
       <!-- Volunteer Work -->
-      <!-- Volunteer Work -->
       <div v-if="cv.volunteer_work && cv.volunteer_work.length > 0" class="mb-6">
         <h3 class="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
           <svg class="w-6 h-6 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -469,6 +468,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useCvStore } from '@/stores/cv'
+import BaseCard from '@/components/base/BaseCard.vue'
 import BaseButton from '@/components/base/BaseButton.vue'
 import type { UserCv } from '@/types'
 
