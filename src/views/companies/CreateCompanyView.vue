@@ -34,19 +34,7 @@ const submitting = ref(false)
 const handleSubmit = async (formData: FormData) => {
   submitting.value = true
   try {
-    // Log what we're sending
-    console.log('=== CREATING COMPANY ===')
-    console.log('FormData contents:')
-    for (const [key, value] of formData.entries()) {
-      if (value instanceof File) {
-        console.log(`${key}: [File] ${value.name} (${value.size} bytes, ${value.type})`)
-      } else {
-        console.log(`${key}: ${value}`)
-      }
-    }
-    
     const response = await companyService.createCompany(formData)
-    console.log('Response:', response)
     
     if (response.success) {
       toast.success('Company created successfully!')

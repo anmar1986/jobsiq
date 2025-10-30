@@ -294,7 +294,6 @@ const duplicateCv = async () => {
 
 const downloadCv = async () => {
   try {
-    console.log('Downloading CV:', selectedCv.value)
     alert('PDF download feature coming soon!')
     showMenuModal.value = false
   } catch (error) {

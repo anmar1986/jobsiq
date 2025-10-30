@@ -77,8 +77,16 @@ class CompanyController extends Controller
             // Ensure is_active is set to true for new companies
             $validated['is_active'] = true;
 
+            // Remove file upload fields from mass assignment (they're handled separately)
+            $companyData = collect($validated)->except(['logo', 'images', 'cover'])->toArray();
+
+            Log::info('Company data prepared for creation', [
+                'original_keys' => array_keys($validated),
+                'filtered_keys' => array_keys($companyData),
+            ]);
+
             // Create company
-            $company = Company::create($validated);
+            $company = Company::create($companyData);
 
             Log::info('Company created', ['company_id' => $company->id]);
 
@@ -190,7 +198,10 @@ class CompanyController extends Controller
             ], 403);
         }
 
-        $company->update($request->validated());
+        // Remove file upload fields from mass assignment (they're handled separately)
+        $companyData = collect($request->validated())->except(['logo', 'images', 'cover'])->toArray();
+
+        $company->update($companyData);
 
         // Handle logo upload
         if ($request->hasFile('logo')) {

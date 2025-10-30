@@ -455,6 +455,44 @@
       </div>
     </div>
 
+    <!-- Status Section -->
+    <div class="bg-white rounded-lg border border-gray-200 p-6">
+      <h3 class="text-lg font-semibold text-gray-900 mb-4">Company Status</h3>
+      <div class="space-y-4">
+        <!-- Is Active -->
+        <div class="flex items-start">
+          <div class="flex items-center h-5">
+            <input
+              id="is_active"
+              v-model="formData.is_active"
+              type="checkbox"
+              class="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
+            />
+          </div>
+          <div class="ml-3 text-sm">
+            <label for="is_active" class="font-medium text-gray-700">Company Active</label>
+            <p class="text-gray-500">Make this company visible to job seekers</p>
+          </div>
+        </div>
+
+        <!-- Is Hiring -->
+        <div class="flex items-start">
+          <div class="flex items-center h-5">
+            <input
+              id="is_hiring"
+              v-model="formData.is_hiring"
+              type="checkbox"
+              class="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
+            />
+          </div>
+          <div class="ml-3 text-sm">
+            <label for="is_hiring" class="font-medium text-gray-700">Currently Hiring</label>
+            <p class="text-gray-500">Show "We're Hiring" badge on company profile</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Form Actions -->
     <div class="flex items-center justify-end gap-3 pt-4 border-t border-gray-200">
       <BaseButton
@@ -519,6 +557,8 @@ const formData = reactive({
   facebook: '',
   instagram: '',
   youtube: '',
+  is_active: true,
+  is_hiring: true,
 })
 
 const errors = reactive<Record<string, string>>({})
@@ -562,6 +602,8 @@ watch(() => props.company, (company) => {
       facebook: company.facebook || '',
       instagram: company.instagram || '',
       youtube: company.youtube || '',
+      is_active: company.is_active ?? true,
+      is_hiring: company.is_hiring ?? true,
     })
     
     // Initialize logo preview if exists
@@ -798,7 +840,10 @@ const handleSubmit = () => {
   
   // Append all form fields (only if they have actual values)
   Object.entries(formData).forEach(([key, value]) => {
-    if (value && value.trim() !== '') {
+    // Handle boolean values
+    if (typeof value === 'boolean') {
+      data.append(key, value ? '1' : '0')
+    } else if (value !== null && value !== undefined && value.toString().trim() !== '') {
       // Map category to industry for backend compatibility
       if (key === 'category') {
         data.append('industry', value.toString())

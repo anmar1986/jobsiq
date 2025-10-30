@@ -216,6 +216,7 @@
                 </div>
 
                 <BaseButton
+                  v-if="!isOwnJob"
                   variant="outline"
                   size="lg"
                   class="w-full"
@@ -432,7 +433,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch, onBeforeUnmount } from 'vue'
+import { ref, computed, onMounted, watch, onBeforeUnmount } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useJobStore } from '@/stores/job'
 import { useAuthStore } from '@/stores/auth'
@@ -464,6 +465,13 @@ const showApplyModal = ref(false)
 const submitting = ref(false)
 const showShareMenu = ref(false)
 const shareMenuRef = ref<HTMLElement | null>(null)
+
+const isOwnJob = computed(() => {
+  if (!authStore.isAuthenticated || !authStore.user || !job.value) {
+    return false
+  }
+  return job.value.user_id === authStore.user.id
+})
 
 const applicationForm = ref({
   full_name: authStore.user?.name || '',
@@ -608,7 +616,6 @@ const submitApplication = async () => {
   submitting.value = true
   try {
     // TODO: Call API to submit application
-    console.log('Submit application:', applicationForm.value)
     
     // Simulate API call
     await new Promise(resolve => setTimeout(resolve, 1500))

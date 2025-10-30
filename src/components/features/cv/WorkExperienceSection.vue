@@ -58,10 +58,24 @@
           />
           
           <BaseInput
-            :model-value="exp.location || ''"
-            label="Location"
-            placeholder="e.g., New York, NY"
-            @update:model-value="exp.location = $event as string; updateExperience(index)"
+            :model-value="exp.street_address || ''"
+            label="Street Address"
+            placeholder="e.g., 123 Main Street"
+            @update:model-value="exp.street_address = $event as string; updateLocationField(exp); updateExperience(index)"
+          />
+          
+          <BaseInput
+            :model-value="exp.city || ''"
+            label="City"
+            placeholder="e.g., New York"
+            @update:model-value="exp.city = $event as string; updateLocationField(exp); updateExperience(index)"
+          />
+          
+          <BaseInput
+            :model-value="exp.country || ''"
+            label="Country"
+            placeholder="e.g., United States"
+            @update:model-value="exp.country = $event as string; updateLocationField(exp); updateExperience(index)"
           />
           
           <BaseInput
@@ -142,6 +156,9 @@ const addExperience = () => {
     position: '',
     company: '',
     location: '',
+    street_address: '',
+    city: '',
+    country: '',
     start_date: '',
     end_date: '',
     current: false,
@@ -155,6 +172,12 @@ const addExperience = () => {
 const removeExperience = (index: number) => {
   localExperiences.value.splice(index, 1)
   emit('update:work-experience', [...localExperiences.value])
+}
+
+const updateLocationField = (exp: WorkExperience) => {
+  // Combine street_address, city, and country into location field
+  const parts = [exp.street_address, exp.city, exp.country].filter(part => part && part.trim())
+  exp.location = parts.join(', ')
 }
 
 const updateExperience = (_index: number) => {

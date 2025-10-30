@@ -223,12 +223,6 @@ const loadCompanies = async () => {
     
     if (response.success && response.data) {
       companies.value = response.data
-      // Debug: Check if jobs are loaded
-      console.log('Loaded companies:', companies.value.map(c => ({
-        name: c.name,
-        jobs_count: c.jobs_count,
-        jobs: c.jobs?.length || 0
-      })))
     }
   } catch (error) {
     console.error('Failed to load companies:', error)

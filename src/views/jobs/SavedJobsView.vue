@@ -90,16 +90,18 @@
           <!-- Actions -->
           <div class="flex-shrink-0 flex items-start gap-2">
             <BaseButton
-              variant="ghost"
-              size="sm"
+              variant="outline"
+              size="md"
               @click.stop="handleUnsaveJob(job)"
-              title="Remove from saved"
+              title="Remove from saved jobs"
+              class="cursor-pointer hover:bg-red-50 hover:border-red-300 transition-colors"
             >
               <template #icon-left>
                 <svg class="h-5 w-5 text-yellow-500 fill-current" viewBox="0 0 24 24">
                   <path d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0111.186 0z" />
                 </svg>
               </template>
+              <span class="hidden sm:inline">Unsave</span>
             </BaseButton>
           </div>
         </div>

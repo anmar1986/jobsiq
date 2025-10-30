@@ -36,6 +36,14 @@ class SavedJobController extends Controller
             'job_id' => 'sometimes|exists:jobs,id',
         ]);
 
+        // Prevent company owners from saving their own jobs
+        if ($job->user_id === $request->user()->id) {
+            return response()->json([
+                'success' => false,
+                'message' => 'You cannot save your own job posting',
+            ], 403);
+        }
+
         // Check if already saved
         $exists = SavedJob::where('user_id', $request->user()->id)
             ->where('job_id', $job->id)
