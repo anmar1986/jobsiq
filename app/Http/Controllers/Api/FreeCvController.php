@@ -57,6 +57,21 @@ class FreeCvController extends Controller
         $perPage = $request->get('per_page', 15);
         $cvs = $query->latest('updated_at')->paginate($perPage);
 
+        // Transform the data to include JSON columns as fallback
+        $cvs->getCollection()->transform(function ($cv) {
+            $cvData = $cv->toArray();
+
+            // If relationships are empty but JSON columns have data, use JSON column data
+            if (empty($cvData['work_experiences']) && ! empty($cvData['work_experience'])) {
+                $cvData['work_experiences'] = $cvData['work_experience'];
+            }
+            if (empty($cvData['education_entries']) && ! empty($cvData['education'])) {
+                $cvData['education_entries'] = $cvData['education'];
+            }
+
+            return $cvData;
+        });
+
         return response()->json([
             'success' => true,
             'data' => $cvs,
@@ -250,9 +265,20 @@ class FreeCvController extends Controller
             ], 403);
         }
 
+        // Append JSON column data as snake_case properties for backwards compatibility
+        $cvData = $cv->toArray();
+
+        // If relationships are empty but JSON columns have data, use JSON column data
+        if (empty($cvData['work_experiences']) && ! empty($cvData['work_experience'])) {
+            $cvData['work_experiences'] = $cvData['work_experience'];
+        }
+        if (empty($cvData['education_entries']) && ! empty($cvData['education'])) {
+            $cvData['education_entries'] = $cvData['education'];
+        }
+
         return response()->json([
             'success' => true,
-            'data' => $cv,
+            'data' => $cvData,
         ]);
     }
 

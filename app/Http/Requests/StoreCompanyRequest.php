@@ -23,25 +23,6 @@ class StoreCompanyRequest extends FormRequest
      */
     public function rules(): array
     {
-        // Log file info for debugging
-        if ($this->hasFile('logo')) {
-            $file = $this->file('logo');
-            Log::info('Logo file received', [
-                'name' => $file->getClientOriginalName(),
-                'size' => $file->getSize(),
-                'mime' => $file->getMimeType(),
-                'extension' => $file->getClientOriginalExtension(),
-                'is_valid' => $file->isValid(),
-                'error' => $file->getError(),
-                'error_message' => $file->getErrorMessage(),
-            ]);
-        } else {
-            Log::info('No logo file in request', [
-                'has_file' => $this->hasFile('logo'),
-                'all_files' => array_keys($this->allFiles()),
-            ]);
-        }
-
         $companyCategories = config('company.categories');
         $iraqCities = config('company.iraq_cities');
 
@@ -58,8 +39,8 @@ class StoreCompanyRequest extends FormRequest
 
             // Address
             'street' => ['nullable', 'string', 'max:255'],
-            'city' => ['required', 'string', 'max:100'],
-            'country' => ['nullable', 'string', 'max:100'],
+            'city' => ['required', 'string', 'in:'.implode(',', $iraqCities)],
+            'country' => ['required', 'in:Iraq'],
 
             // Business Information
             'industry' => ['required', 'string', 'in:'.implode(',', $companyCategories)],
@@ -95,11 +76,71 @@ class StoreCompanyRequest extends FormRequest
             // Status
             'is_hiring' => ['nullable', 'boolean'],
 
-            // Image Upload
-            'logo' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
-            'cover' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
+            // Image Upload (accepts both file uploads and base64 strings)
+            'logo' => ['nullable', function ($attribute, $value, $fail) {
+                // If it's a file upload
+                if ($value instanceof \Illuminate\Http\UploadedFile) {
+                    if (! in_array($value->getMimeType(), ['image/jpeg', 'image/png', 'image/jpg', 'image/gif', 'image/svg+xml'])) {
+                        $fail('The logo must be an image file.');
+                    }
+                    if ($value->getSize() > 2048 * 1024) {
+                        $fail('The logo size must not exceed 2MB.');
+                    }
+                }
+                // If it's a base64 string
+                elseif (is_string($value) && preg_match('/^data:image\/(jpeg|png|jpg|gif|svg\+xml);base64,/', $value)) {
+                    // Validate base64 size (rough estimation)
+                    $size = (strlen($value) * 3) / 4;
+                    if ($size > 2048 * 1024) {
+                        $fail('The logo size must not exceed 2MB.');
+                    }
+                } elseif (! empty($value)) {
+                    $fail('The logo must be a valid image file or base64 encoded image.');
+                }
+            }],
+            'cover' => ['nullable', function ($attribute, $value, $fail) {
+                // If it's a file upload
+                if ($value instanceof \Illuminate\Http\UploadedFile) {
+                    if (! in_array($value->getMimeType(), ['image/jpeg', 'image/png', 'image/jpg', 'image/gif', 'image/svg+xml'])) {
+                        $fail('The cover must be an image file.');
+                    }
+                    if ($value->getSize() > 2048 * 1024) {
+                        $fail('The cover size must not exceed 2MB.');
+                    }
+                }
+                // If it's a base64 string
+                elseif (is_string($value) && preg_match('/^data:image\/(jpeg|png|jpg|gif|svg\+xml);base64,/', $value)) {
+                    // Validate base64 size (rough estimation)
+                    $size = (strlen($value) * 3) / 4;
+                    if ($size > 2048 * 1024) {
+                        $fail('The cover size must not exceed 2MB.');
+                    }
+                } elseif (! empty($value)) {
+                    $fail('The cover must be a valid image file or base64 encoded image.');
+                }
+            }],
             'images' => ['nullable', 'array', 'max:10'],
-            'images.*' => ['image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
+            'images.*' => ['nullable', function ($attribute, $value, $fail) {
+                // If it's a file upload
+                if ($value instanceof \Illuminate\Http\UploadedFile) {
+                    if (! in_array($value->getMimeType(), ['image/jpeg', 'image/png', 'image/jpg', 'image/gif', 'image/svg+xml'])) {
+                        $fail('Each image must be an image file.');
+                    }
+                    if ($value->getSize() > 2048 * 1024) {
+                        $fail('Each image size must not exceed 2MB.');
+                    }
+                }
+                // If it's a base64 string
+                elseif (is_string($value) && preg_match('/^data:image\/(jpeg|png|jpg|gif|svg\+xml);base64,/', $value)) {
+                    // Validate base64 size (rough estimation)
+                    $size = (strlen($value) * 3) / 4;
+                    if ($size > 2048 * 1024) {
+                        $fail('Each image size must not exceed 2MB.');
+                    }
+                } elseif (! empty($value)) {
+                    $fail('Each image must be a valid image file or base64 encoded image.');
+                }
+            }],
         ];
     }
 

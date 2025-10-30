@@ -11,7 +11,7 @@
     <!-- Search Bar -->
     <div class="bg-white border-b border-gray-200">
       <div class="container-custom py-4">
-        <div class="flex gap-4">
+        <div class="flex gap-4 max-w-[1200px] mx-auto">
           <BaseInput
             v-model="searchQuery"
             type="text"
@@ -62,42 +62,67 @@
           :key="cv.id"
           hoverable
           clickable
+          class="group h-full flex flex-col border-2 border-gray-200 hover:border-primary-500 hover:shadow-lg transition-all duration-300"
           @click="$router.push(`/cvs/${cv.slug}`)"
         >
-          <div class="p-6">
-            <div class="flex items-start gap-4 mb-4">
-              <!-- Profile Image -->
-              <div class="w-20 h-24 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0 flex items-center justify-center ring-2 ring-gray-200">
-                <img
-                  v-if="cv.profile_image_url"
-                  :src="cv.profile_image_url"
-                  :alt="cv.full_name"
-                  class="w-full h-full object-cover"
-                />
-                <BaseAvatar v-else :name="cv.full_name" size="lg" />
-              </div>
-              
-              <div class="flex-1 min-w-0">
-                <h3 class="text-xl font-semibold text-gray-900 mb-1">{{ cv.full_name }}</h3>
-                <p class="text-primary-600 font-medium mb-2">{{ cv.title }}</p>
-                <p class="text-sm text-gray-600">{{ cv.location }}</p>
+          <div class="p-6 flex flex-col h-full">
+            <!-- Profile Image & Name Section -->
+            <div class="mb-4 flex-shrink-0">
+              <div class="flex items-start gap-4 mb-3">
+                <!-- Profile Image -->
+                <div class="w-20 h-24 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0 flex items-center justify-center ring-2 ring-gray-200 group-hover:ring-primary-300 transition-all duration-300">
+                  <img
+                    v-if="cv.profile_image_url"
+                    :src="cv.profile_image_url"
+                    :alt="cv.full_name"
+                    class="w-full h-full object-cover"
+                  />
+                  <BaseAvatar v-else :name="cv.full_name" size="lg" />
+                </div>
+                
+                <!-- Name and Title -->
+                <div class="flex-1 min-w-0">
+                  <h3 class="text-xl font-bold text-gray-900 mb-1 truncate group-hover:text-primary-600 transition-colors">
+                    {{ cv.full_name }}
+                  </h3>
+                  <p class="text-primary-600 font-medium mb-2 truncate">
+                    {{ cv.title || 'No title' }}
+                  </p>
+                  <p class="text-sm text-gray-600 truncate">{{ cv.location }}</p>
+                </div>
               </div>
             </div>
-            
-            <div class="flex flex-wrap gap-2 mb-4">
-              <BaseBadge
-                v-for="skill in cv.top_skills.slice(0, 4)"
-                :key="skill"
-                variant="secondary"
-                size="sm"
+
+            <!-- Skills Preview -->
+            <div class="flex-shrink-0 mb-4 h-14 overflow-hidden">
+              <div v-if="cv.top_skills && cv.top_skills.length > 0" class="flex flex-wrap gap-2">
+                <span
+                  v-for="(skill, index) in cv.top_skills.slice(0, 3)"
+                  :key="index"
+                  class="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs font-medium group-hover:bg-primary-50 group-hover:text-primary-700 transition-colors"
+                >
+                  {{ skill }}
+                </span>
+                <span v-if="cv.top_skills.length > 3" class="px-2 py-1 text-gray-500 text-xs">
+                  +{{ cv.top_skills.length - 3 }} more
+                </span>
+              </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="flex gap-2 pt-4 border-t border-gray-200 flex-shrink-0 mt-auto">
+              <BaseButton 
+                variant="primary" 
+                size="sm" 
+                @click.stop="$router.push(`/cvs/${cv.slug}`)"
+                class="flex-1"
               >
-                {{ skill }}
-              </BaseBadge>
-            </div>
-            
-            <div class="flex items-center justify-between pt-4 border-t border-gray-100">
-              <span class="text-sm text-gray-600">{{ cv.experience }} experience</span>
-              <BaseButton variant="primary" size="sm">
+                <template #icon-left>
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                  </svg>
+                </template>
                 View Profile
               </BaseButton>
             </div>
@@ -114,7 +139,6 @@ import api from '@/services/api'
 import BaseInput from '@/components/base/BaseInput.vue'
 import BaseButton from '@/components/base/BaseButton.vue'
 import BaseCard from '@/components/base/BaseCard.vue'
-import BaseBadge from '@/components/base/BaseBadge.vue'
 import BaseAvatar from '@/components/base/BaseAvatar.vue'
 
 interface CvListItem {
