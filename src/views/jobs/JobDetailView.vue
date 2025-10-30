@@ -468,21 +468,9 @@ const shareMenuRef = ref<HTMLElement | null>(null)
 
 const isOwnJob = computed(() => {
   if (!authStore.isAuthenticated || !authStore.user || !job.value) {
-    console.log('isOwnJob check:', {
-      isAuthenticated: authStore.isAuthenticated,
-      hasUser: !!authStore.user,
-      hasJob: !!job.value,
-    })
     return false
   }
-  const result = job.value.user_id === authStore.user.id
-  console.log('isOwnJob check:', {
-    jobUserId: job.value.user_id,
-    currentUserId: authStore.user.id,
-    isOwn: result,
-    jobTitle: job.value.title,
-  })
-  return result
+  return job.value.user_id === authStore.user.id
 })
 
 const applicationForm = ref({
@@ -628,7 +616,6 @@ const submitApplication = async () => {
   submitting.value = true
   try {
     // TODO: Call API to submit application
-    console.log('Submit application:', applicationForm.value)
     
     // Simulate API call
     await new Promise(resolve => setTimeout(resolve, 1500))

@@ -157,7 +157,7 @@
                     {{ formatEducationDate(edu) }}
                   </div>
                 </div>
-                <div class="flex-1 pl-48">
+                <div class="flex-1 pl-cv-section">
                   <p class="text-primary-600 font-semibold">{{ edu.institution }}</p>
                   <p v-if="edu.location" class="text-sm text-gray-600 flex items-start gap-1 mt-1">
                     <svg class="w-4 h-4 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -169,7 +169,7 @@
                 </div>
               </div>
               <div v-if="edu.description" class="w-1/2 pr-4">
-                <p class="text-gray-700 mt-3">{{ edu.description }}</p>
+                <p class="text-gray-700 whitespace-pre-line mt-3">{{ edu.description }}</p>
               </div>
             </div>
           </div>
@@ -200,7 +200,7 @@
                     {{ formatWorkDate(exp) }}
                   </div>
                 </div>
-                <div class="flex-1 pl-48">
+                <div class="flex-1 pl-cv-section">
                   <p class="text-primary-600 font-semibold">{{ exp.company }}</p>
                   <p v-if="exp.location" class="text-sm text-gray-600 flex items-start gap-1 mt-1">
                     <svg class="w-4 h-4 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -249,7 +249,7 @@
                     Expires: {{ formatDate(cert.expiry_date) }}
                   </p>
                 </div>
-                <div class="flex-1 pl-48">
+                <div class="flex-1 pl-cv-section">
                   <p class="text-primary-600 font-semibold">{{ cert.issuer }}</p>
                   <a
                     v-if="cert.url"
@@ -293,7 +293,7 @@
                     {{ formatVolunteerDate(vol) }}
                   </div>
                 </div>
-                <div class="flex-1 pl-48">
+                <div class="flex-1 pl-cv-section">
                   <p class="text-primary-600 font-semibold">{{ vol.organization }}</p>
                 </div>
               </div>
@@ -325,7 +325,7 @@
                   <p class="text-gray-700 font-medium mt-1">{{ reference.position }}</p>
                   <p v-if="reference.relationship" class="text-sm text-gray-600 mt-1">{{ reference.relationship }}</p>
                 </div>
-                <div class="flex-1 pl-48">
+                <div class="flex-1 pl-cv-section">
                   <p class="text-primary-600 font-semibold">{{ reference.company }}</p>
                   <div class="space-y-1 mt-1">
                     <a v-if="reference.email" :href="`mailto:${reference.email}`" class="text-sm text-gray-600 hover:text-primary-600 flex items-center gap-1">

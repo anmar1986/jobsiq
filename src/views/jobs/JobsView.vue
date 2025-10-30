@@ -699,17 +699,9 @@ const applyForJob = (job: Job) => {
 
 const isOwnJob = (job: Job): boolean => {
   if (!authStore.isAuthenticated || !authStore.user) {
-    console.log('isOwnJob (JobsView) - not authenticated or no user')
     return false
   }
-  const result = job.user_id === authStore.user.id
-  console.log('isOwnJob (JobsView):', {
-    jobUserId: job.user_id,
-    currentUserId: authStore.user.id,
-    isOwn: result,
-    jobTitle: job.title,
-  })
-  return result
+  return job.user_id === authStore.user.id
 }
 
 const saveJob = async (job: Job) => {

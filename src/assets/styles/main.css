@@ -26,6 +26,9 @@
   --color-secondary-900: #581c87;
   --color-secondary-950: #3b0764;
 
+  /* Custom Spacing for CV Layout */
+  --spacing-cv-section: 12rem;
+
   /* Custom Animations */
   --animate-fade-in: fade-in 0.3s ease-in-out;
   --animate-slide-up: slide-up 0.3s ease-in-out;
@@ -128,6 +131,10 @@ h4 {
 }
 
 /* Custom Utility Classes */
+.pl-cv-section {
+  padding-left: var(--spacing-cv-section);
+}
+
 .container-custom {
   max-width: 100rem;
   margin-left: auto;

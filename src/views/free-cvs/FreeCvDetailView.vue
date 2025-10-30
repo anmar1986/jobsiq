@@ -394,17 +394,13 @@ const fetchCvDetail = async () => {
     
     if (id) {
       // Fetching by ID (from my-cvs view)
-      console.log('Fetching CV with ID:', id)
       await cvStore.fetchCvById(Number(id))
     } else if (slug) {
       // Fetching by slug (from public cvs view)
-      console.log('Fetching CV with slug:', slug)
       await cvStore.fetchCv(slug)
     }
     
-    console.log('CV Store currentCv:', cvStore.currentCv)
     cv.value = cvStore.currentCv
-    console.log('CV value set:', cv.value)
   } catch (error) {
     console.error('Failed to fetch CV:', error)
     cv.value = null

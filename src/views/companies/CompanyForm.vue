@@ -854,29 +854,18 @@ const handleSubmit = () => {
   })
 
   // Append logo if selected
-  console.log('Logo file status:', {
-    hasLogoFile: !!logoFile.value,
-    logoFile: logoFile.value,
-    type: logoFile.value?.type,
-    size: logoFile.value?.size,
-  })
   if (logoFile.value) {
     data.append('logo', logoFile.value)
-    console.log('✓ Logo appended to FormData')
-  } else {
-    console.log('✗ No logo file to append')
   }
 
   // Append cover if selected
   if (coverFile.value) {
     data.append('cover', coverFile.value)
-    console.log('✓ Cover appended to FormData')
   }
 
   // Append company images if selected (only new uploads, not existing images)
   if (companyImages.value.length > 0) {
     const newImages = companyImages.value.filter(image => !image.isExisting && image.file !== null)
-    console.log('Company images:', { total: companyImages.value.length, new: newImages.length })
     newImages.forEach((image, index) => {
       data.append(`images[${index}]`, image.file!)
     })
