@@ -573,6 +573,9 @@ const loadingJobs = ref(true)
 const company = ref<Company | null>(null)
 const jobs = ref<Job[]>([])
 
+// Gallery scroll distance constant
+const GALLERY_SCROLL_DISTANCE = 900 // Scroll by approximately one group (480 + 400 + gap)
+
 // Gallery carousel ref
 const galleryContainer = ref<HTMLElement | null>(null)
 
@@ -587,7 +590,7 @@ const galleryImages = computed(() => {
 const scrollGalleryLeft = () => {
   if (galleryContainer.value) {
     galleryContainer.value.scrollBy({
-      left: -900,
+      left: -GALLERY_SCROLL_DISTANCE,
       behavior: 'smooth'
     })
   }
@@ -596,7 +599,7 @@ const scrollGalleryLeft = () => {
 const scrollGalleryRight = () => {
   if (galleryContainer.value) {
     galleryContainer.value.scrollBy({
-      left: 900,
+      left: GALLERY_SCROLL_DISTANCE,
       behavior: 'smooth'
     })
   }

@@ -197,7 +197,7 @@ class StoreCompanyRequest extends FormRequest
     {
         // Check if the failure is due to already having a company
         if ($this->user() && $this->user()->ownedCompanies()->exists()) {
-            throw new \Illuminate\Auth\Access\AuthorizationException('You can only create one company. Please manage your existing company.');
+            throw new \Illuminate\Auth\Access\AuthorizationException('You can only create one company. To manage your existing company, visit the My Company page from your dashboard.');
         }
 
         throw new \Illuminate\Auth\Access\AuthorizationException('You are not authorized to create a company.');

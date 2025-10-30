@@ -762,6 +762,9 @@ const deletingJob = ref(false)
 const showDeleteCompanyModal = ref(false)
 const deletingCompany = ref(false)
 
+// Gallery scroll distance constant
+const GALLERY_SCROLL_DISTANCE = 900 // Scroll by approximately one group (480 + 400 + gap)
+
 // Carousel state
 const currentSlide = ref(0)
 const galleryImages = computed(() => {
@@ -778,7 +781,7 @@ const galleryContainer = ref<HTMLElement | null>(null)
 const scrollGalleryLeft = () => {
   if (galleryContainer.value) {
     galleryContainer.value.scrollBy({
-      left: -900, // Scroll by approximately one group (480 + 400 + gap)
+      left: -GALLERY_SCROLL_DISTANCE,
       behavior: 'smooth'
     })
   }
@@ -787,7 +790,7 @@ const scrollGalleryLeft = () => {
 const scrollGalleryRight = () => {
   if (galleryContainer.value) {
     galleryContainer.value.scrollBy({
-      left: 900, // Scroll by approximately one group (480 + 400 + gap)
+      left: GALLERY_SCROLL_DISTANCE,
       behavior: 'smooth'
     })
   }
@@ -1034,9 +1037,6 @@ const fetchCompanyDetail = async () => {
       const foundCompany = response.data.find((c: Company) => c.id.toString() === companyId)
       
       if (foundCompany) {
-        console.log('Company data received:', foundCompany)
-        console.log('is_active value:', foundCompany.is_active)
-        console.log('is_active type:', typeof foundCompany.is_active)
         company.value = foundCompany
         
         // Load jobs if available

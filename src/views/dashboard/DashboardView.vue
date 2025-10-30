@@ -30,10 +30,10 @@
           </svg>
         </div>
         <h3 class="text-lg sm:text-xl font-semibold text-gray-900 mb-2 group-hover:text-primary-600 transition-colors">
-          {{ companyStore.myCompanies.length > 0 ? 'My Company' : 'My Companies' }}
+          {{ companyStore.myCompanies.length === 1 ? 'My Company' : 'My Companies' }}
         </h3>
         <p class="text-gray-600 text-xs sm:text-sm">
-          {{ companyStore.myCompanies.length > 0 ? 'Manage your company and post jobs' : 'Create your company profile' }}
+          {{ companyStore.myCompanies.length === 1 ? 'Manage your company and post jobs' : 'Create your company profile' }}
         </p>
       </router-link>
 
