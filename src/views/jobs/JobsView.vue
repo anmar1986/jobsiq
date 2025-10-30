@@ -386,7 +386,12 @@
                     </Transition>
                   </div>
 
-                  <BaseButton variant="outline" size="lg" @click="saveJob(selectedJob)">
+                  <BaseButton 
+                    v-if="!isOwnJob(selectedJob)"
+                    variant="outline" 
+                    size="lg" 
+                    @click="saveJob(selectedJob)"
+                  >
                     <template #icon-left>
                       <svg 
                         class="w-5 h-5" 
@@ -690,6 +695,21 @@ const applyForJob = (job: Job) => {
   }
   // Open application page in a new tab
   window.open(`/application/${job.slug}`, '_blank')
+}
+
+const isOwnJob = (job: Job): boolean => {
+  if (!authStore.isAuthenticated || !authStore.user) {
+    console.log('isOwnJob (JobsView) - not authenticated or no user')
+    return false
+  }
+  const result = job.user_id === authStore.user.id
+  console.log('isOwnJob (JobsView):', {
+    jobUserId: job.user_id,
+    currentUserId: authStore.user.id,
+    isOwn: result,
+    jobTitle: job.title,
+  })
+  return result
 }
 
 const saveJob = async (job: Job) => {

@@ -208,6 +208,9 @@ export interface WorkExperience {
   company: string
   position: string
   location?: string
+  street_address?: string
+  city?: string
+  country?: string
   start_date: string
   end_date?: string | null
   current: boolean
@@ -222,6 +225,9 @@ export interface Education {
   degree: string
   field: string
   location?: string
+  street_address?: string
+  city?: string
+  country?: string
   start_date: string
   end_date?: string | null
   description?: string

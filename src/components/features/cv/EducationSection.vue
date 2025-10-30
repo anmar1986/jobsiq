@@ -66,10 +66,24 @@
           />
           
           <BaseInput
-            :model-value="edu.location || ''"
-            label="Location"
-            placeholder="e.g., Cambridge, MA"
-            @update:model-value="edu.location = $event as string; updateEducation(index)"
+            :model-value="edu.street_address || ''"
+            label="Street Address"
+            placeholder="e.g., 77 Massachusetts Avenue"
+            @update:model-value="edu.street_address = $event as string; updateLocationField(edu); updateEducation(index)"
+          />
+          
+          <BaseInput
+            :model-value="edu.city || ''"
+            label="City"
+            placeholder="e.g., Cambridge"
+            @update:model-value="edu.city = $event as string; updateLocationField(edu); updateEducation(index)"
+          />
+          
+          <BaseInput
+            :model-value="edu.country || ''"
+            label="Country"
+            placeholder="e.g., United States"
+            @update:model-value="edu.country = $event as string; updateLocationField(edu); updateEducation(index)"
           />
           
           <BaseInput
@@ -138,6 +152,9 @@ const addEducation = () => {
     field: '',
     institution: '',
     location: '',
+    street_address: '',
+    city: '',
+    country: '',
     start_date: '',
     end_date: '',
     description: '',
@@ -149,6 +166,12 @@ const addEducation = () => {
 const removeEducation = (index: number) => {
   localEducation.value.splice(index, 1)
   emit('update:education', [...localEducation.value])
+}
+
+const updateLocationField = (edu: Education) => {
+  // Combine street_address, city, and country into location field
+  const parts = [edu.street_address, edu.city, edu.country].filter(part => part && part.trim())
+  edu.location = parts.join(', ')
 }
 
 const updateEducation = (_index: number) => {

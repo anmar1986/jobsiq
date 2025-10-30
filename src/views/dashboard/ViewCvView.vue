@@ -1,7 +1,7 @@
 <template>
   <div class="container-custom py-8">
     <!-- Back Button and Actions -->
-    <div class="flex items-center justify-between mb-6">
+    <div class="flex items-center justify-between mb-6 no-print">
       <button 
         @click="router.back()" 
         class="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
@@ -40,6 +40,7 @@
         <button
           @click="downloadPdf"
           class="flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
+          title="Print to PDF - Remember to disable headers/footers in print settings"
         >
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -144,23 +145,32 @@
               :key="index"
               class="pb-6 border-b border-gray-200 last:border-0 last:pb-0"
             >
-              <h4 class="text-lg font-bold text-gray-900">{{ edu.degree }} in {{ edu.field }}</h4>
-              <p class="text-primary-600 font-medium mb-2">{{ edu.institution }}</p>
-              <div class="flex flex-wrap gap-4 text-sm text-gray-600 mb-3">
-                <span v-if="edu.location" class="flex items-center gap-1">
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                  </svg>
-                  {{ edu.location }}
-                </span>
-                <span class="flex items-center gap-1">
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                  </svg>
-                  {{ formatEducationDate(edu) }}
-                </span>
+              <!-- Two Column Layout: Degree Left, Institution Right -->
+              <div class="flex justify-between items-start mb-2">
+                <div class="flex-1">
+                  <h4 class="text-lg font-bold text-gray-900">{{ edu.degree }}</h4>
+                  <p class="text-gray-700 font-medium">{{ edu.field }}</p>
+                  <div class="flex items-center gap-1 text-sm text-gray-600 mt-1">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    {{ formatEducationDate(edu) }}
+                  </div>
+                </div>
+                <div class="flex-1 pl-48">
+                  <p class="text-primary-600 font-semibold">{{ edu.institution }}</p>
+                  <p v-if="edu.location" class="text-sm text-gray-600 flex items-start gap-1 mt-1">
+                    <svg class="w-4 h-4 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                    <span>{{ edu.location }}</span>
+                  </p>
+                </div>
               </div>
-              <p v-if="edu.description" class="text-gray-700">{{ edu.description }}</p>
+              <div v-if="edu.description" class="w-1/2 pr-4">
+                <p class="text-gray-700 mt-3">{{ edu.description }}</p>
+              </div>
             </div>
           </div>
         </div>
@@ -179,23 +189,31 @@
               :key="index"
               class="pb-6 border-b border-gray-200 last:border-0 last:pb-0"
             >
-              <h4 class="text-lg font-bold text-gray-900">{{ exp.position }}</h4>
-              <p class="text-primary-600 font-medium mb-2">{{ exp.company }}</p>
-              <div class="flex flex-wrap gap-4 text-sm text-gray-600 mb-3">
-                <span v-if="exp.location" class="flex items-center gap-1">
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                  </svg>
-                  {{ exp.location }}
-                </span>
-                <span class="flex items-center gap-1">
-                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                  </svg>
-                  {{ formatWorkDate(exp) }}
-                </span>
+              <!-- Two Column Layout: Title Left, Company Right -->
+              <div class="flex justify-between items-start mb-2">
+                <div class="flex-1">
+                  <h4 class="text-lg font-bold text-gray-900">{{ exp.position }}</h4>
+                  <div class="flex items-center gap-1 text-sm text-gray-600 mt-1">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    {{ formatWorkDate(exp) }}
+                  </div>
+                </div>
+                <div class="flex-1 pl-48">
+                  <p class="text-primary-600 font-semibold">{{ exp.company }}</p>
+                  <p v-if="exp.location" class="text-sm text-gray-600 flex items-start gap-1 mt-1">
+                    <svg class="w-4 h-4 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                    <span>{{ exp.location }}</span>
+                  </p>
+                </div>
               </div>
-              <p v-if="exp.description" class="text-gray-700 whitespace-pre-line">{{ exp.description }}</p>
+              <div v-if="exp.description" class="w-1/2 pr-4">
+                <p class="text-gray-700 whitespace-pre-line mt-3">{{ exp.description }}</p>
+              </div>
             </div>
           </div>
         </div>
@@ -208,27 +226,44 @@
             </svg>
             Certifications
           </h3>
-          <div class="grid md:grid-cols-2 gap-4">
+          <div class="space-y-6">
             <div
               v-for="(cert, index) in certifications"
               :key="index"
-              class="p-4 bg-white border border-gray-200 rounded-lg"
+              class="pb-6 border-b border-gray-200 last:border-0 last:pb-0"
             >
-              <h4 class="font-bold text-gray-900 mb-1">{{ cert.name }}</h4>
-              <p class="text-sm text-gray-600 mb-2">{{ cert.issuer }}</p>
-              <p class="text-xs text-gray-500">Issued: {{ formatDate(cert.date) }}</p>
-              <p v-if="cert.expiry_date" class="text-xs text-gray-500">Expires: {{ formatDate(cert.expiry_date) }}</p>
-              <a
-                v-if="cert.url"
-                :href="cert.url"
-                target="_blank"
-                class="text-xs text-primary-600 hover:text-primary-700 inline-flex items-center gap-1 mt-2"
-              >
-                View Credential
-                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                </svg>
-              </a>
+              <!-- Two Column Layout: Certification Left, Issuer Right -->
+              <div class="flex justify-between items-start mb-2">
+                <div class="flex-1">
+                  <h4 class="text-lg font-bold text-gray-900">{{ cert.name }}</h4>
+                  <div class="flex items-center gap-1 text-sm text-gray-600 mt-1">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    Issued: {{ formatDate(cert.date) }}
+                  </div>
+                  <p v-if="cert.expiry_date" class="text-sm text-gray-600 flex items-center gap-1 mt-1">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    Expires: {{ formatDate(cert.expiry_date) }}
+                  </p>
+                </div>
+                <div class="flex-1 pl-48">
+                  <p class="text-primary-600 font-semibold">{{ cert.issuer }}</p>
+                  <a
+                    v-if="cert.url"
+                    :href="cert.url"
+                    target="_blank"
+                    class="text-sm text-gray-600 hover:text-primary-600 inline-flex items-center gap-1 mt-1"
+                  >
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                    </svg>
+                    View Credential
+                  </a>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -247,12 +282,24 @@
               :key="index"
               class="pb-6 border-b border-gray-200 last:border-0 last:pb-0"
             >
-              <h4 class="text-lg font-bold text-gray-900">{{ vol.role }}</h4>
-              <p class="text-primary-600 font-medium mb-2">{{ vol.organization }}</p>
-              <p v-if="vol.start_date || vol.end_date" class="text-sm text-gray-600 mb-3">
-                {{ formatVolunteerDate(vol) }}
-              </p>
-              <p v-if="vol.description" class="text-gray-700 whitespace-pre-line">{{ vol.description }}</p>
+              <!-- Two Column Layout: Role Left, Organization Right -->
+              <div class="flex justify-between items-start mb-2">
+                <div class="flex-1">
+                  <h4 class="text-lg font-bold text-gray-900">{{ vol.role }}</h4>
+                  <div v-if="vol.start_date || vol.end_date" class="flex items-center gap-1 text-sm text-gray-600 mt-1">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    {{ formatVolunteerDate(vol) }}
+                  </div>
+                </div>
+                <div class="flex-1 pl-48">
+                  <p class="text-primary-600 font-semibold">{{ vol.organization }}</p>
+                </div>
+              </div>
+              <div v-if="vol.description" class="w-1/2 pr-4">
+                <p class="text-gray-700 whitespace-pre-line mt-3">{{ vol.description }}</p>
+              </div>
             </div>
           </div>
         </div>
@@ -265,22 +312,36 @@
             </svg>
             References
           </h3>
-          <div class="grid md:grid-cols-2 gap-4">
+          <div class="space-y-6">
             <div
               v-for="(reference, index) in references"
               :key="index"
-              class="p-4 bg-green-50 border border-green-200 rounded-lg"
+              class="pb-6 border-b border-gray-200 last:border-0 last:pb-0"
             >
-              <h4 class="font-bold text-gray-900 mb-1">{{ reference.name }}</h4>
-              <p class="text-sm text-gray-600 mb-2">{{ reference.position }} at {{ reference.company }}</p>
-              <p v-if="reference.relationship" class="text-xs text-gray-500 mb-2">{{ reference.relationship }}</p>
-              <div class="space-y-1">
-                <a v-if="reference.email" :href="`mailto:${reference.email}`" class="text-xs text-primary-600 hover:text-primary-700 block">
-                  {{ reference.email }}
-                </a>
-                <a v-if="reference.phone" :href="`tel:${reference.phone}`" class="text-xs text-primary-600 hover:text-primary-700 block">
-                  {{ reference.phone }}
-                </a>
+              <!-- Two Column Layout: Name/Position Left, Company/Contact Right -->
+              <div class="flex justify-between items-start mb-2">
+                <div class="flex-1">
+                  <h4 class="text-lg font-bold text-gray-900">{{ reference.name }}</h4>
+                  <p class="text-gray-700 font-medium mt-1">{{ reference.position }}</p>
+                  <p v-if="reference.relationship" class="text-sm text-gray-600 mt-1">{{ reference.relationship }}</p>
+                </div>
+                <div class="flex-1 pl-48">
+                  <p class="text-primary-600 font-semibold">{{ reference.company }}</p>
+                  <div class="space-y-1 mt-1">
+                    <a v-if="reference.email" :href="`mailto:${reference.email}`" class="text-sm text-gray-600 hover:text-primary-600 flex items-center gap-1">
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                      </svg>
+                      {{ reference.email }}
+                    </a>
+                    <a v-if="reference.phone" :href="`tel:${reference.phone}`" class="text-sm text-gray-600 hover:text-primary-600 flex items-center gap-1">
+                      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                      </svg>
+                      {{ reference.phone }}
+                    </a>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -313,7 +374,7 @@
             </svg>
             Languages
           </h3>
-          <div class="grid md:grid-cols-2 gap-3">
+          <div class="grid md:grid-cols-3 gap-3">
             <div
               v-for="(lang, index) in languages"
               :key="index"
@@ -326,30 +387,6 @@
         </div>
 
         <!-- Hobbies & Interests -->
-
-        <!-- Volunteer Work -->
-        <div v-if="volunteerWork.length > 0" class="mb-6">
-          <h3 class="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-            <svg class="w-6 h-6 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-            </svg>
-            Volunteer Experience
-          </h3>
-          <div class="space-y-6">
-            <div
-              v-for="(vol, index) in volunteerWork"
-              :key="index"
-              class="pb-6 border-b border-gray-200 last:border-0 last:pb-0"
-            >
-              <h4 class="text-lg font-bold text-gray-900">{{ vol.role }}</h4>
-              <p class="text-primary-600 font-medium mb-2">{{ vol.organization }}</p>
-              <p v-if="vol.start_date || vol.end_date" class="text-sm text-gray-600 mb-3">
-                {{ formatVolunteerDate(vol) }}
-              </p>
-              <p v-if="vol.description" class="text-gray-700 whitespace-pre-line">{{ vol.description }}</p>
-            </div>
-          </div>
-        </div>
 
         <!-- References -->
         <div v-if="references.length > 0" class="mb-6">
@@ -514,9 +551,32 @@ const formatVolunteerDate = (vol: VolunteerWork) => {
 const downloadPdf = () => {
   if (!cv.value) return
   
-  // Use browser's native print dialog which supports "Save as PDF"
+  // Get current year
+  const currentYear = new Date().getFullYear()
+  
+  // Format the full name: replace spaces with underscores and remove special characters
+  const formattedName = cv.value.full_name
+    .replace(/\s+/g, '_')
+    .replace(/[^a-zA-Z0-9_]/g, '')
+  
+  // Create the desired filename format
+  const filename = `${formattedName}_CV_${currentYear}`
+  
+  // Save original title
+  const originalTitle = document.title
+  
+  // Set document title to desired filename (browser uses this for PDF name)
+  document.title = filename
+  
+  // Trigger print dialog
   window.print()
-  toast.success('Use your browser\'s print dialog to save as PDF')
+  
+  // Restore original title after a short delay
+  setTimeout(() => {
+    document.title = originalTitle
+  }, 1000)
+  
+  toast.success('In the print dialog, disable "Headers and footers" for a clean PDF')
 }
 
 const handleDelete = async () => {
@@ -556,6 +616,12 @@ onMounted(async () => {
 
 <style scoped>
 @media print {
+  /* Remove browser's default headers and footers */
+  @page {
+    margin: 0;
+    size: A4;
+  }
+  
   /* Hide everything except the print-cv-pdf div */
   :global(body *) {
     visibility: hidden;
@@ -571,6 +637,7 @@ onMounted(async () => {
     left: 0;
     top: 0;
     width: 100%;
+    padding: 20mm; /* Add padding for proper margins */
   }
 
   /* Ensure proper page breaks */
@@ -578,6 +645,20 @@ onMounted(async () => {
   :global(.cert-item),
   :global(.reference-item) {
     page-break-inside: avoid;
+  }
+  
+  /* Hide any potential headers/footers */
+  :global(header),
+  :global(footer),
+  :global(nav),
+  :global(.no-print) {
+    display: none !important;
+  }
+
+  /* Keep languages in 3 columns when printing */
+  :global(.grid.md\:grid-cols-3) {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
   }
 }
 </style>

@@ -78,9 +78,10 @@ class UpdateCompanyRequest extends FormRequest
             'is_hiring' => ['nullable', 'boolean'],
 
             // Image Upload
-            'logo' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
+            'logo' => ['nullable'],
+            'cover' => ['nullable'],
             'images' => ['nullable', 'array', 'max:10'],
-            'images.*' => ['image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
+            'images.*' => ['nullable'],
         ];
     }
 }

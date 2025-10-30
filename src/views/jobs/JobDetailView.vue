@@ -216,6 +216,7 @@
                 </div>
 
                 <BaseButton
+                  v-if="!isOwnJob"
                   variant="outline"
                   size="lg"
                   class="w-full"
@@ -432,7 +433,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch, onBeforeUnmount } from 'vue'
+import { ref, computed, onMounted, watch, onBeforeUnmount } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useJobStore } from '@/stores/job'
 import { useAuthStore } from '@/stores/auth'
@@ -464,6 +465,25 @@ const showApplyModal = ref(false)
 const submitting = ref(false)
 const showShareMenu = ref(false)
 const shareMenuRef = ref<HTMLElement | null>(null)
+
+const isOwnJob = computed(() => {
+  if (!authStore.isAuthenticated || !authStore.user || !job.value) {
+    console.log('isOwnJob check:', {
+      isAuthenticated: authStore.isAuthenticated,
+      hasUser: !!authStore.user,
+      hasJob: !!job.value,
+    })
+    return false
+  }
+  const result = job.value.user_id === authStore.user.id
+  console.log('isOwnJob check:', {
+    jobUserId: job.value.user_id,
+    currentUserId: authStore.user.id,
+    isOwn: result,
+    jobTitle: job.value.title,
+  })
+  return result
+})
 
 const applicationForm = ref({
   full_name: authStore.user?.name || '',

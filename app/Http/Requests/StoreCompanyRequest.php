@@ -58,8 +58,8 @@ class StoreCompanyRequest extends FormRequest
 
             // Address
             'street' => ['nullable', 'string', 'max:255'],
-            'city' => ['required', 'string', 'in:'.implode(',', $iraqCities)],
-            'country' => ['nullable', 'string', 'max:100', 'in:Iraq'],
+            'city' => ['required', 'string', 'max:100'],
+            'country' => ['nullable', 'string', 'max:100'],
 
             // Business Information
             'industry' => ['required', 'string', 'in:'.implode(',', $companyCategories)],
@@ -96,9 +96,10 @@ class StoreCompanyRequest extends FormRequest
             'is_hiring' => ['nullable', 'boolean'],
 
             // Image Upload
-            'logo' => ['nullable', 'image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
+            'logo' => ['nullable'],
+            'cover' => ['nullable'],
             'images' => ['nullable', 'array', 'max:10'],
-            'images.*' => ['image', 'mimes:jpeg,png,jpg,gif,svg', 'max:2048'],
+            'images.*' => ['nullable'],
         ];
     }
 
