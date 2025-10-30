@@ -16,7 +16,7 @@
       <!-- My Companies Card - Company Owners Only -->
       <router-link
         v-if="authStore.isCompanyOwner"
-        to="/my-companies"
+        :to="myCompaniesLink"
         class="block p-4 sm:p-6 bg-white border border-gray-200 rounded-lg hover:shadow-lg hover:border-primary-500 transition-all group"
       >
         <div class="flex items-start justify-between mb-3 sm:mb-4">
@@ -29,8 +29,12 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
           </svg>
         </div>
-        <h3 class="text-lg sm:text-xl font-semibold text-gray-900 mb-2 group-hover:text-primary-600 transition-colors">My Companies</h3>
-        <p class="text-gray-600 text-xs sm:text-sm">Manage your companies and post jobs</p>
+        <h3 class="text-lg sm:text-xl font-semibold text-gray-900 mb-2 group-hover:text-primary-600 transition-colors">
+          {{ companyStore.myCompanies.length > 0 ? 'My Company' : 'My Companies' }}
+        </h3>
+        <p class="text-gray-600 text-xs sm:text-sm">
+          {{ companyStore.myCompanies.length > 0 ? 'Manage your company and post jobs' : 'Create your company profile' }}
+        </p>
       </router-link>
 
       <!-- My CVs Card - Job Seekers Only -->
@@ -177,16 +181,31 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted } from 'vue'
+import { onMounted, computed } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import { useSavedJobStore } from '@/stores/savedJob'
+import { useCompanyStore } from '@/stores/company'
 
 const authStore = useAuthStore()
 const savedJobStore = useSavedJobStore()
+const companyStore = useCompanyStore()
 
-onMounted(() => {
+// Compute the my companies link - goes directly to company profile if exists
+const myCompaniesLink = computed(() => {
+  if (companyStore.myCompanies.length > 0) {
+    return `/my-companies/${companyStore.myCompanies[0].id}`
+  }
+  return '/my-companies'
+})
+
+onMounted(async () => {
   if (authStore.isJobSeeker) {
     savedJobStore.fetchSavedJobsCount()
+  }
+  
+  // Fetch user's companies for company owners
+  if (authStore.isCompanyOwner) {
+    await companyStore.fetchMyCompanies()
   }
 })
 </script>

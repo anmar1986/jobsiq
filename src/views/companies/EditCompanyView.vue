@@ -54,7 +54,7 @@ const company = ref<Company | null>(null)
 const loadCompany = async () => {
   const id = route.params.id
   if (!id) {
-    router.push({ name: 'my-companies' })
+    router.push({ name: 'dashboard' })
     return
   }
 
@@ -81,7 +81,8 @@ const handleSubmit = async (formData: FormData) => {
     const response = await companyService.updateCompany(company.value.id, formData)
     if (response.success) {
       toast.success('Company updated successfully!')
-      router.push({ name: 'my-companies' })
+      // Redirect back to the company profile
+      router.push({ name: 'view-my-company', params: { id: company.value.id } })
     }
   } catch (error) {
     console.error('Failed to update company:', error)
@@ -93,7 +94,12 @@ const handleSubmit = async (formData: FormData) => {
 }
 
 const handleCancel = () => {
-  router.push({ name: 'my-companies' })
+  // Go back to the company profile if we have a company, otherwise to dashboard
+  if (company.value) {
+    router.push({ name: 'view-my-company', params: { id: company.value.id } })
+  } else {
+    router.push({ name: 'dashboard' })
+  }
 }
 
 onMounted(() => {

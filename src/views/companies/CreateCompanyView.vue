@@ -36,9 +36,10 @@ const handleSubmit = async (formData: FormData) => {
   try {
     const response = await companyService.createCompany(formData)
     
-    if (response.success) {
+    if (response.success && response.data) {
       toast.success('Company created successfully!')
-      router.push({ name: 'my-companies' })
+      // Redirect to the company profile instead of my-companies list
+      router.push({ name: 'view-my-company', params: { id: response.data.id } })
     }
   } catch (error) {
     console.error('=== COMPANY CREATION ERROR ===')
