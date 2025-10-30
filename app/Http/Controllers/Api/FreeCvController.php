@@ -60,7 +60,7 @@ class FreeCvController extends Controller
         // Transform the data to include JSON columns as fallback
         $cvs->getCollection()->transform(function ($cv) {
             $cvData = $cv->toArray();
-            
+
             // If relationships are empty but JSON columns have data, use JSON column data
             if (empty($cvData['work_experiences']) && ! empty($cvData['work_experience'])) {
                 $cvData['work_experiences'] = $cvData['work_experience'];
@@ -68,7 +68,7 @@ class FreeCvController extends Controller
             if (empty($cvData['education_entries']) && ! empty($cvData['education'])) {
                 $cvData['education_entries'] = $cvData['education'];
             }
-            
+
             return $cvData;
         });
 
@@ -267,7 +267,7 @@ class FreeCvController extends Controller
 
         // Append JSON column data as snake_case properties for backwards compatibility
         $cvData = $cv->toArray();
-        
+
         // If relationships are empty but JSON columns have data, use JSON column data
         if (empty($cvData['work_experiences']) && ! empty($cvData['work_experience'])) {
             $cvData['work_experiences'] = $cvData['work_experience'];
