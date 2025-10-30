@@ -108,32 +108,38 @@
               </span>
             </div>
 
-            <p v-if="company.description" class="text-lg text-gray-700 leading-relaxed max-w-4xl mx-auto">
-              {{ company.description }}
+            <p v-if="company.about" class="text-lg text-gray-700 leading-relaxed max-w-4xl mx-auto">
+              {{ company.about }}
             </p>
           </div>
         </div>
       </div>
 
       <!-- Stats Bar -->
-      <div class="bg-white border-b border-gray-200 shadow-sm">
+      <div class="bg-gradient-to-r from-primary-600 to-secondary-600 border-b border-primary-700 shadow-sm">
         <div class="container-custom">
           <div class="grid grid-cols-2 md:grid-cols-4 gap-4 py-6">
             <div class="text-center">
-              <p class="text-3xl font-bold text-primary-600">{{ company.jobs_count || 0 }}</p>
-              <p class="text-sm text-gray-600 mt-1">Open Positions</p>
+              <p class="text-3xl font-bold text-white">{{ company.jobs_count || 0 }}</p>
+              <p class="text-sm text-primary-100 mt-1">Open Positions</p>
             </div>
             <div class="text-center">
-              <p class="text-3xl font-bold text-primary-600">{{ formatDate(company.created_at) }}</p>
-              <p class="text-sm text-gray-600 mt-1">On JobsIQ Since</p>
+              <p class="text-3xl font-bold text-white">{{ formatDate(company.created_at) }}</p>
+              <p class="text-sm text-primary-100 mt-1">Member Since</p>
             </div>
             <div v-if="company.city" class="text-center">
-              <p class="text-3xl font-bold text-primary-600">1</p>
-              <p class="text-sm text-gray-600 mt-1">Location</p>
+              <p class="text-3xl font-bold text-white">1</p>
+              <p class="text-sm text-primary-100 mt-1">Location</p>
             </div>
             <div class="text-center">
-              <p class="text-3xl font-bold text-primary-600">{{ company.is_active ? 'Active' : 'Inactive' }}</p>
-              <p class="text-sm text-gray-600 mt-1">Status</p>
+              <div class="flex items-center justify-center gap-2">
+                <span 
+                  class="inline-block w-3 h-3 rounded-full" 
+                  :class="company.is_active ? 'bg-green-400' : 'bg-red-400'"
+                ></span>
+                <p class="text-3xl font-bold text-white">{{ company.is_active ? 'Active' : 'Inactive' }}</p>
+              </div>
+              <p class="text-sm text-primary-100 mt-1">Status</p>
             </div>
           </div>
         </div>
@@ -141,102 +147,100 @@
 
       <!-- Main Content -->
       <div class="container-custom py-8">
-        <div class="flex flex-col lg:flex-row gap-8">
-          <!-- Left Content -->
-          <div class="flex-1">
-            <!-- About Section -->
-            <BaseCard class="p-8 mb-8">
-              <h2 class="text-2xl font-bold text-gray-900 mb-6">About {{ company.name }}</h2>
-              <div class="prose prose-gray max-w-none">
-                <p class="text-gray-700 leading-relaxed">
-                  {{ company.description || 'No detailed description available for this company.' }}
-                </p>
-              </div>
-            </BaseCard>
+        <!-- Company Details Container -->
+        <BaseCard class="p-8 mb-8">
+          <div class="flex flex-col lg:flex-row gap-8">
+            <!-- Left Sidebar - Social Media Links -->
+            <div class="lg:w-64 flex-shrink-0">
+              <div v-if="company.linkedin || company.twitter || company.facebook || company.instagram || company.youtube">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Follow Us</h3>
+                <div class="flex flex-col gap-3 items-start">
+                  <a
+                    v-if="company.linkedin" :href="company.linkedin" target="_blank" rel="noopener noreferrer" 
+                    class="flex items-center gap-2 px-3 py-2 bg-blue-700 hover:bg-blue-800 text-white rounded-lg transition-colors text-sm w-full"
+                  >
+                    <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
+                    </svg>
+                    LinkedIn
+                  </a>
 
-            <!-- Open Positions -->
-            <BaseCard class="p-8">
-              <div class="flex items-center justify-between mb-6">
-                <h2 class="text-2xl font-bold text-gray-900">Open Positions ({{ jobs.length }})</h2>
-                <BaseButton v-if="jobs.length > 0" variant="outline" size="sm" @click="viewAllJobs">
-                  View All
-                </BaseButton>
-              </div>
+                  <a
+                    v-if="company.facebook" :href="company.facebook" target="_blank" rel="noopener noreferrer"
+                    class="flex items-center gap-2 px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors text-sm w-full"
+                  >
+                    <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+                    </svg>
+                    Facebook
+                  </a>
 
-              <!-- Jobs List -->
-              <div v-if="loadingJobs" class="space-y-4">
-                <div v-for="i in 3" :key="i" class="animate-pulse border border-gray-200 rounded-lg p-6">
-                  <div class="h-5 bg-gray-200 rounded w-3/4 mb-3"></div>
-                  <div class="h-4 bg-gray-200 rounded w-1/2"></div>
+                  <a
+                    v-if="company.instagram" :href="company.instagram" target="_blank" rel="noopener noreferrer"
+                    class="flex items-center gap-2 px-3 py-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-lg transition-colors text-sm w-full"
+                  >
+                    <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
+                    </svg>
+                    Instagram
+                  </a>
+
+                  <a
+                    v-if="company.youtube" :href="company.youtube" target="_blank" rel="noopener noreferrer"
+                    class="flex items-center gap-2 px-3 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors text-sm w-full"
+                  >
+                    <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
+                    </svg>
+                    YouTube
+                  </a>
+
+                  <a
+                    v-if="company.twitter" :href="company.twitter" target="_blank" rel="noopener noreferrer"
+                    class="flex items-center gap-2 px-3 py-2 bg-black hover:bg-gray-900 text-white rounded-lg transition-colors text-sm w-full"
+                  >
+                    <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+                    </svg>
+                    X
+                  </a>
                 </div>
               </div>
+            </div>
 
-              <div v-else-if="jobs.length > 0" class="space-y-4">
-                <router-link
-                  v-for="job in jobs"
-                  :key="job.id"
-                  :to="`/jobs/${job.slug}`"
-                  class="block border border-gray-200 rounded-lg p-6 hover:border-primary-500 hover:shadow-md transition-all group"
-                >
-                  <div class="flex items-start justify-between mb-3">
-                    <div class="flex-1">
-                      <h3 class="text-lg font-semibold text-gray-900 group-hover:text-primary-600 transition-colors mb-2">
-                        {{ job.title }}
-                      </h3>
-                      <div class="flex flex-wrap gap-3 text-sm text-gray-600">
-                        <span class="flex items-center gap-1">
-                          <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                          </svg>
-                          {{ job.location }}
-                        </span>
-                        <span class="flex items-center gap-1">
-                          <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                          </svg>
-                          {{ formatEmploymentType(job.employment_type) }}
-                        </span>
-                        <span class="flex items-center gap-1">
-                          <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                          </svg>
-                          {{ formatJobDate(job.created_at) }}
-                        </span>
-                      </div>
-                    </div>
-                    <div v-if="job.salary_min && job.salary_max" class="text-right ml-4">
-                      <p class="text-lg font-bold text-primary-600">
-                        {{ formatSalary(job.salary_min, job.salary_max) }}
-                      </p>
-                      <p class="text-xs text-gray-500">{{ job.salary_currency }}</p>
-                    </div>
-                  </div>
-
-                  <div class="flex flex-wrap gap-2">
-                    <BaseBadge :variant="getBadgeVariant(job.experience_level)">
-                      {{ formatExperienceLevel(job.experience_level) }}
-                    </BaseBadge>
-                    <BaseBadge v-if="job.is_remote" variant="success">Remote</BaseBadge>
-                    <BaseBadge v-if="job.category" variant="info">{{ job.category }}</BaseBadge>
-                  </div>
-                </router-link>
+            <!-- Center - Company Information -->
+            <div class="flex-1">
+              <h2 class="text-2xl font-bold text-gray-900 mb-6 text-center">Company Details</h2>
+              
+              <!-- About -->
+              <div v-if="company.about" class="mb-12">
+                <h3 class="text-lg font-semibold text-gray-900 mb-3 text-center">About</h3>
+                <p class="text-gray-700 leading-relaxed text-center">
+                  {{ company.about }}
+                </p>
               </div>
 
-              <div v-else class="text-center py-12">
-                <svg class="h-16 w-16 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                </svg>
-                <h3 class="text-lg font-semibold text-gray-900 mb-2">No Open Positions</h3>
-                <p class="text-gray-600">This company doesn't have any active job postings at the moment.</p>
+              <!-- Description -->
+              <div v-if="company.description" class="mb-12">
+                <h3 class="text-lg font-semibold text-gray-900 mb-3 text-center">Description</h3>
+                <p class="text-gray-700 leading-relaxed text-center">
+                  {{ company.description }}
+                </p>
               </div>
-            </BaseCard>
-          </div>
 
-          <!-- Right Sidebar -->
-          <aside class="lg:w-80 flex-shrink-0">
-            <!-- Contact Information -->
-            <BaseCard class="p-6 mb-6">
-              <h3 class="font-semibold text-gray-900 mb-4">Contact Information</h3>
+              <!-- Company Info Grid -->
+              <div class="grid md:grid-cols-2 gap-6 mt-6">
+                <!-- Founded -->
+                <div v-if="company.founded_date">
+                  <h3 class="text-sm font-semibold text-gray-900 mb-2">Founded</h3>
+                  <p class="text-gray-700">{{ formatFoundedDate(company.founded_date) }}</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right Sidebar - Contact Information -->
+            <div class="lg:w-80 flex-shrink-0">
+              <h3 class="text-lg font-semibold text-gray-900 mb-4">Contact Information</h3>
               <div class="space-y-4">
                 <div v-if="company.email" class="flex items-start gap-3">
                   <svg class="h-5 w-5 text-gray-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -288,94 +292,269 @@
                   </div>
                 </div>
               </div>
+            </div>
+          </div>
+        </BaseCard>
+      </div>
 
-              <!-- Social Media Links -->
-              <div v-if="company.linkedin || company.twitter || company.facebook || company.instagram || company.youtube" class="mt-6 pt-6 border-t border-gray-200">
-                <h3 class="text-sm font-semibold text-gray-900 mb-3">Follow Us</h3>
-                <div class="flex flex-col gap-3 items-start">
-                  <a
-                    v-if="company.linkedin" :href="company.linkedin" target="_blank" rel="noopener noreferrer" 
-                    class="flex items-center gap-2 px-3 py-2 bg-blue-700 hover:bg-blue-800 text-white rounded-lg transition-colors text-sm"
-                  >
-                    <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
-                    </svg>
-                    LinkedIn
-                  </a>
+      <!-- Jobs Section Container -->
+      <div class="container-custom py-8">
+        <!-- Jobs Section -->
+        <div>
+          <div class="flex items-center justify-between mb-6">
+            <h2 class="text-2xl font-bold text-gray-900">
+              Open Positions ({{ jobs.length }})
+            </h2>
+            <BaseButton 
+              v-if="jobs.length > 10" 
+              variant="outline" 
+              @click="viewAllJobs"
+            >
+              View All Jobs
+            </BaseButton>
+          </div>
 
-                  <a
-                    v-if="company.facebook" :href="company.facebook" target="_blank" rel="noopener noreferrer"
-                    class="flex items-center gap-2 px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors text-sm"
-                  >
-                    <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
-                    </svg>
-                    Facebook
-                  </a>
+          <!-- Jobs Loading -->
+          <div v-if="loadingJobs" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <BaseCard v-for="i in 3" :key="i" class="p-6 animate-pulse">
+              <div class="h-5 bg-gray-200 rounded w-3/4 mb-3"></div>
+              <div class="h-4 bg-gray-200 rounded w-1/2 mb-4"></div>
+              <div class="h-4 bg-gray-200 rounded w-full"></div>
+            </BaseCard>
+          </div>
 
-                  <a
-                    v-if="company.instagram" :href="company.instagram" target="_blank" rel="noopener noreferrer"
-                    class="flex items-center gap-2 px-3 py-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-lg transition-colors text-sm"
-                  >
-                    <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
-                    </svg>
-                    Instagram
-                  </a>
-
-                  <a
-                    v-if="company.youtube" :href="company.youtube" target="_blank" rel="noopener noreferrer"
-                    class="flex items-center gap-2 px-3 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors text-sm"
-                  >
-                    <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
-                    </svg>
-                    YouTube
-                  </a>
-
-                  <a
-                    v-if="company.twitter" :href="company.twitter" target="_blank" rel="noopener noreferrer"
-                    class="flex items-center gap-2 px-3 py-2 bg-black hover:bg-gray-900 text-white rounded-lg transition-colors text-sm"
-                  >
-                    <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
-                      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
-                    </svg>
-                    X
-                  </a>
+          <!-- Jobs Cards Grid -->
+          <div v-else-if="jobs.length > 0" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <BaseCard
+              v-for="job in jobs"
+              :key="job.id"
+              hoverable
+              class="p-6 group cursor-pointer"
+              @click="router.push({ name: 'job-detail', params: { id: job.id } })"
+            >
+              <!-- Job Header -->
+              <div class="mb-4">
+                <h3 class="text-lg font-semibold text-gray-900 mb-2 line-clamp-2 group-hover:text-primary-600 transition-colors">
+                  {{ job.title }}
+                </h3>
+                <div class="flex items-center gap-2 text-sm text-gray-600">
+                  <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                  </svg>
+                  <span>{{ job.location }}</span>
                 </div>
               </div>
-            </BaseCard>
 
-            <!-- Share Company -->
-            <BaseCard class="p-6">
-              <h3 class="font-semibold text-gray-900 mb-4">Share this company</h3>
-              <div class="flex gap-2">
-                <button @click="shareCompany('twitter')" class="flex-1 px-4 py-2 bg-blue-400 hover:bg-blue-500 text-white rounded-lg transition-colors">
-                  <svg class="h-5 w-5 mx-auto" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M23 3a10.9 10.9 0 01-3.14 1.53 4.48 4.48 0 00-7.86 3v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2c9 5 20 0 20-11.5a4.5 4.5 0 00-.08-.83A7.72 7.72 0 0023 3z" />
+              <!-- Job Details -->
+              <div class="space-y-2 mb-4">
+                <div class="flex items-center gap-2 text-sm text-gray-600">
+                  <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                   </svg>
-                </button>
-                <button @click="shareCompany('linkedin')" class="flex-1 px-4 py-2 bg-blue-700 hover:bg-blue-800 text-white rounded-lg transition-colors">
-                  <svg class="h-5 w-5 mx-auto" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
+                  <span>{{ formatEmploymentType(job.employment_type) }}</span>
+                </div>
+                
+                <div class="flex items-center gap-2 text-sm text-gray-600">
+                  <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
-                </button>
-                <button @click="copyCompanyLink" class="flex-1 px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-colors">
-                  <svg class="h-5 w-5 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                  <span>Posted {{ formatJobDate(job.created_at) }}</span>
+                </div>
+
+                <div v-if="job.salary_min && job.salary_max" class="flex items-center gap-2 text-sm font-semibold text-primary-600">
+                  <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
-                </button>
+                  <span>{{ formatSalary(job.salary_min, job.salary_max) }}</span>
+                </div>
+              </div>
+
+              <!-- Badges -->
+              <div class="flex flex-wrap gap-2">
+                <BaseBadge :variant="getBadgeVariant(job.experience_level)">
+                  {{ formatExperienceLevel(job.experience_level) }}
+                </BaseBadge>
+                <BaseBadge v-if="job.is_remote" variant="success">Remote</BaseBadge>
+                <BaseBadge v-if="job.category" variant="info">{{ job.category }}</BaseBadge>
               </div>
             </BaseCard>
-          </aside>
+          </div>
+
+          <!-- No Jobs -->
+          <BaseCard v-else class="p-12 text-center">
+            <svg class="h-16 w-16 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+            </svg>
+            <h3 class="text-xl font-semibold text-gray-900 mb-2">No Open Positions</h3>
+            <p class="text-gray-600">This company doesn't have any job openings at the moment. Check back later!</p>
+          </BaseCard>
+        </div>
+      </div>
+
+      <!-- Company Photos Gallery - Full Width -->
+      <div v-if="company.images && company.images.filter(img => img.type === 'gallery').length > 0" class="mb-8">
+        <div class="container-custom mb-4">
+          <h2 class="text-2xl font-bold text-gray-900 text-center">Company Photos</h2>
+        </div>
+        
+        <!-- Horizontal carousel with navigation arrows -->
+        <div class="relative group">
+          <!-- Left Arrow -->
+          <button
+            v-if="galleryImages.length > 3"
+            @click="scrollGalleryLeft"
+            class="absolute left-4 top-1/2 -translate-y-1/2 z-10 bg-white/90 hover:bg-white text-gray-800 rounded-full p-3 shadow-lg transition-all hover:scale-110 opacity-0 group-hover:opacity-100"
+          >
+            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+            </svg>
+          </button>
+
+          <!-- Gallery Container -->
+          <div 
+            ref="galleryContainer"
+            class="flex gap-4 overflow-x-auto scrollbar-hide scroll-smooth px-4"
+            style="scrollbar-width: none; -ms-overflow-style: none;"
+          >
+            <template v-for="groupIndex in Math.ceil(galleryImages.length / 3)" :key="groupIndex">
+              <!-- Large image -->
+              <div
+                v-if="galleryImages[(groupIndex - 1) * 3]"
+                class="relative flex-shrink-0 overflow-hidden rounded-lg cursor-pointer group/item bg-gray-100"
+                style="width: 480px; height: 360px;"
+                @click="openLightbox((groupIndex - 1) * 3)"
+              >
+                <img
+                  :src="getLogoUrl(galleryImages[(groupIndex - 1) * 3].path)"
+                  :alt="`Company photo ${(groupIndex - 1) * 3 + 1}`"
+                  class="w-full h-full object-cover transition-transform duration-300 group-hover/item:scale-105"
+                />
+                <div class="absolute inset-0 bg-black/0 group-hover/item:bg-black/20 transition-colors duration-300 flex items-center justify-center">
+                  <svg class="h-12 w-12 text-white opacity-0 group-hover/item:opacity-100 transition-opacity duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
+                  </svg>
+                </div>
+              </div>
+
+              <!-- 2 stacked small images -->
+              <div class="flex-shrink-0 grid grid-rows-2 gap-4" style="width: 400px;">
+                <!-- Top small image -->
+                <div
+                  v-if="galleryImages[(groupIndex - 1) * 3 + 1]"
+                  class="relative overflow-hidden rounded-lg cursor-pointer group/item bg-gray-100"
+                  style="height: 176px;"
+                  @click="openLightbox((groupIndex - 1) * 3 + 1)"
+                >
+                  <img
+                    :src="getLogoUrl(galleryImages[(groupIndex - 1) * 3 + 1].path)"
+                    :alt="`Company photo ${(groupIndex - 1) * 3 + 2}`"
+                    class="w-full h-full object-cover transition-transform duration-300 group-hover/item:scale-105"
+                  />
+                  <div class="absolute inset-0 bg-black/0 group-hover/item:bg-black/20 transition-colors duration-300 flex items-center justify-center">
+                    <svg class="h-12 w-12 text-white opacity-0 group-hover/item:opacity-100 transition-opacity duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
+                    </svg>
+                  </div>
+                </div>
+
+                <!-- Bottom small image -->
+                <div
+                  v-if="galleryImages[(groupIndex - 1) * 3 + 2]"
+                  class="relative overflow-hidden rounded-lg cursor-pointer group/item bg-gray-100"
+                  style="height: 176px;"
+                  @click="openLightbox((groupIndex - 1) * 3 + 2)"
+                >
+                  <img
+                    :src="getLogoUrl(galleryImages[(groupIndex - 1) * 3 + 2].path)"
+                    :alt="`Company photo ${(groupIndex - 1) * 3 + 3}`"
+                    class="w-full h-full object-cover transition-transform duration-300 group-hover/item:scale-105"
+                  />
+                  <div class="absolute inset-0 bg-black/0 group-hover/item:bg-black/20 transition-colors duration-300 flex items-center justify-center">
+                    <svg class="h-12 w-12 text-white opacity-0 group-hover/item:opacity-100 transition-opacity duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
+                    </svg>
+                  </div>
+                </div>
+              </div>
+            </template>
+          </div>
+
+          <!-- Right Arrow -->
+          <button
+            v-if="galleryImages.length > 3"
+            @click="scrollGalleryRight"
+            class="absolute right-4 top-1/2 -translate-y-1/2 z-10 bg-white/90 hover:bg-white text-gray-800 rounded-full p-3 shadow-lg transition-all hover:scale-110 opacity-0 group-hover:opacity-100"
+          >
+            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
         </div>
       </div>
     </div>
+    <!-- End of Company Detail Content (v-else) -->
+
+    <!-- Lightbox Modal -->
+    <Teleport to="body">
+      <Transition name="fade">
+        <div
+          v-if="showLightbox"
+          class="fixed inset-0 z-50 flex items-center justify-center bg-black/95"
+          @click="closeLightbox"
+        >
+          <!-- Close Button -->
+          <button
+            class="absolute top-4 right-4 text-white hover:text-gray-300 transition-colors z-10"
+            @click="closeLightbox"
+          >
+            <svg class="h-10 w-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+
+          <!-- Image Counter -->
+          <div class="absolute top-4 left-1/2 -translate-x-1/2 bg-black/60 text-white px-4 py-2 rounded-full text-sm z-10">
+            {{ lightboxIndex + 1 }} / {{ galleryImages.length }}
+          </div>
+
+          <!-- Previous Button -->
+          <button
+            v-if="galleryImages.length > 1"
+            class="absolute left-4 top-1/2 -translate-y-1/2 text-white hover:text-gray-300 transition-colors z-10"
+            @click.stop="previousLightboxImage"
+          >
+            <svg class="h-12 w-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+            </svg>
+          </button>
+
+          <!-- Image -->
+          <div class="max-w-7xl max-h-[90vh] mx-4" @click.stop>
+            <img
+              :src="getLogoUrl(galleryImages[lightboxIndex]?.path)"
+              :alt="`Company photo ${lightboxIndex + 1}`"
+              class="max-w-full max-h-[90vh] w-auto h-auto object-contain"
+            />
+          </div>
+
+          <!-- Next Button -->
+          <button
+            v-if="galleryImages.length > 1"
+            class="absolute right-4 top-1/2 -translate-y-1/2 text-white hover:text-gray-300 transition-colors z-10"
+            @click.stop="nextLightboxImage"
+          >
+            <svg class="h-12 w-12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+        </div>
+      </Transition>
+    </Teleport>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useCompanyStore } from '@/stores/company'
 import { useJobStore } from '@/stores/job'
@@ -394,6 +573,65 @@ const loadingJobs = ref(true)
 const company = ref<Company | null>(null)
 const jobs = ref<Job[]>([])
 
+// Gallery scroll distance constant
+const GALLERY_SCROLL_DISTANCE = 900 // Scroll by approximately one group (480 + 400 + gap)
+
+// Gallery carousel ref
+const galleryContainer = ref<HTMLElement | null>(null)
+
+// Lightbox state
+const showLightbox = ref(false)
+const lightboxIndex = ref(0)
+
+const galleryImages = computed(() => {
+  return company.value?.images?.filter(img => img.type === 'gallery') || []
+})
+
+const scrollGalleryLeft = () => {
+  if (galleryContainer.value) {
+    galleryContainer.value.scrollBy({
+      left: -GALLERY_SCROLL_DISTANCE,
+      behavior: 'smooth'
+    })
+  }
+}
+
+const scrollGalleryRight = () => {
+  if (galleryContainer.value) {
+    galleryContainer.value.scrollBy({
+      left: GALLERY_SCROLL_DISTANCE,
+      behavior: 'smooth'
+    })
+  }
+}
+
+const openLightbox = (index: number) => {
+  lightboxIndex.value = index
+  showLightbox.value = true
+  document.body.style.overflow = 'hidden'
+}
+
+const closeLightbox = () => {
+  showLightbox.value = false
+  document.body.style.overflow = ''
+}
+
+const nextLightboxImage = () => {
+  if (lightboxIndex.value < galleryImages.value.length - 1) {
+    lightboxIndex.value++
+  } else {
+    lightboxIndex.value = 0
+  }
+}
+
+const previousLightboxImage = () => {
+  if (lightboxIndex.value > 0) {
+    lightboxIndex.value--
+  } else {
+    lightboxIndex.value = galleryImages.value.length - 1
+  }
+}
+
 const formatWebsite = (url: string): string => {
   try {
     const urlObj = new URL(url)
@@ -404,6 +642,11 @@ const formatWebsite = (url: string): string => {
 }
 
 const formatDate = (dateString: string): string => {
+  const date = new Date(dateString)
+  return date.getFullYear().toString()
+}
+
+const formatFoundedDate = (dateString: string): string => {
   const date = new Date(dateString)
   return date.getFullYear().toString()
 }
@@ -566,5 +809,26 @@ onMounted(async () => {
 <style scoped>
 .prose p {
   margin-bottom: 1rem;
+}
+
+/* Lightbox fade transition */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+/* Hide scrollbar for gallery */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 </style>

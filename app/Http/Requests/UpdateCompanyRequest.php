@@ -30,6 +30,7 @@ class UpdateCompanyRequest extends FormRequest
         return [
             // Basic Information
             'name' => ['sometimes', 'string', 'max:255', 'unique:companies,name,'.$companyId],
+            'about' => ['nullable', 'string', 'max:1000'],
             'description' => ['nullable', 'string', 'max:5000'],
             'tagline' => ['nullable', 'string', 'max:255'],
 
@@ -76,9 +77,15 @@ class UpdateCompanyRequest extends FormRequest
 
             // Status
             'is_hiring' => ['nullable', 'boolean'],
+            'is_active' => ['nullable', 'boolean'],
 
             // Image Upload (accepts both file uploads and base64 strings)
             'logo' => ['nullable', function ($attribute, $value, $fail) {
+                // Skip validation if value is null or empty string
+                if ($value === null || $value === '') {
+                    return;
+                }
+
                 // If it's a file upload
                 if ($value instanceof \Illuminate\Http\UploadedFile) {
                     if (! in_array($value->getMimeType(), ['image/jpeg', 'image/png', 'image/jpg', 'image/gif', 'image/svg+xml'])) {
@@ -95,11 +102,16 @@ class UpdateCompanyRequest extends FormRequest
                     if ($size > 2048 * 1024) {
                         $fail('The logo size must not exceed 2MB.');
                     }
-                } elseif (! empty($value)) {
+                } else {
                     $fail('The logo must be a valid image file or base64 encoded image.');
                 }
             }],
             'cover' => ['nullable', function ($attribute, $value, $fail) {
+                // Skip validation if value is null or empty string
+                if ($value === null || $value === '') {
+                    return;
+                }
+
                 // If it's a file upload
                 if ($value instanceof \Illuminate\Http\UploadedFile) {
                     if (! in_array($value->getMimeType(), ['image/jpeg', 'image/png', 'image/jpg', 'image/gif', 'image/svg+xml'])) {
@@ -116,7 +128,7 @@ class UpdateCompanyRequest extends FormRequest
                     if ($size > 2048 * 1024) {
                         $fail('The cover size must not exceed 2MB.');
                     }
-                } elseif (! empty($value)) {
+                } else {
                     $fail('The cover must be a valid image file or base64 encoded image.');
                 }
             }],
