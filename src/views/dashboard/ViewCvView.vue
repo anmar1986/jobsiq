@@ -647,12 +647,11 @@ onMounted(async () => {
     font-size: 1rem !important; /* text-base */
   }
 
-  /* Reduce bottom padding for list items in print */
-  #print-cv-pdf :global(.pb-3) {
-    padding-bottom: 0.5rem !important;
-  }
-
-  #print-cv-pdf :global(.pb-2) {
+  /* Reduce bottom padding for list items in print - consolidated to 0.5rem for pb-2 and pb-3 */
+  #print-cv-pdf :global(.pb-2),
+  #print-cv-pdf :global(.pb-3),
+  #print-cv-pdf div.pb-2,
+  #print-cv-pdf div.pb-3 {
     padding-bottom: 0.5rem !important;
   }
 
@@ -687,15 +686,7 @@ onMounted(async () => {
     margin-top: 0.5rem !important;
   }
 
-  /* Force reduced padding on bordered items */
-  #print-cv-pdf div.pb-3 {
-    padding-bottom: 0.5rem !important;
-  }
-
-  #print-cv-pdf div.pb-2 {
-    padding-bottom: 0.5rem !important;
-  }
-
+  /* Ensure border styling on bordered items */
   #print-cv-pdf div.border-b {
     border-bottom: 1px solid #e5e7eb !important;
   }

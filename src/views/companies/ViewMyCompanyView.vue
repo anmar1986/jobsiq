@@ -766,7 +766,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed, watch, nextTick } from 'vue'
+import { ref, onMounted, onBeforeUnmount, computed, watch, nextTick } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { companyService } from '@/services/cv.service'
 import { jobService } from '@/services/job.service'
@@ -802,6 +802,7 @@ const galleryImages = computed(() => {
 
 // Gallery carousel ref
 const galleryContainer = ref<HTMLElement | null>(null)
+let scrollHandler: ((e: Event) => void) | null = null
 
 // Mouse drag handling
 const isDragging = ref(false)
@@ -1168,7 +1169,7 @@ onMounted(async () => {
       galleryContainer.value.scrollLeft = imageWidth
       
       // Add scroll event listener for infinite loop
-      const handleScroll = () => {
+      scrollHandler = () => {
         if (!galleryContainer.value) return
         
         const scrollLeft = galleryContainer.value.scrollLeft
@@ -1185,9 +1186,16 @@ onMounted(async () => {
         }
       }
       
-      galleryContainer.value.addEventListener('scroll', handleScroll)
+      galleryContainer.value.addEventListener('scroll', scrollHandler)
     }
   })
+})
+
+onBeforeUnmount(() => {
+  // Clean up scroll event listener to prevent memory leak
+  if (galleryContainer.value && scrollHandler) {
+    galleryContainer.value.removeEventListener('scroll', scrollHandler)
+  }
 })
 
 // Watch for route changes to refresh company data
