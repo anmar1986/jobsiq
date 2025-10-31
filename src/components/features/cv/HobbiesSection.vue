@@ -1,6 +1,6 @@
 <template>
-  <div class="mb-8">
-    <h3 class="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+  <div class="mb-5">
+    <h3 class="text-base font-semibold text-gray-900 mb-3 flex items-center gap-2">
       <svg class="w-5 h-5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
       </svg>

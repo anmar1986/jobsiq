@@ -168,3 +168,45 @@ h4 {
 .animation-delay-400 {
   animation-delay: 400ms;
 }
+
+/* Print Styles */
+@media print {
+  /* Compact spacing for CV sections when printing */
+  #print-cv-pdf .space-y-3 > * + * {
+    margin-top: 0.75rem !important;
+  }
+
+  #print-cv-pdf .pb-3 {
+    padding-bottom: 0.75rem !important;
+  }
+
+  #print-cv-pdf .mb-3 {
+    margin-bottom: 0.75rem !important;
+  }
+
+  #print-cv-pdf .mb-6 {
+    margin-bottom: 1.5rem !important;
+  }
+
+  /* Ensure section titles are compact */
+  #print-cv-pdf h3 {
+    font-size: 1.125rem !important;
+    margin-bottom: 0.75rem !important;
+  }
+
+  /* Override responsive heading sizes in print */
+  h1, h2, h3, h4 {
+    page-break-after: avoid;
+  }
+
+  /* Prevent orphans and widows */
+  p {
+    orphans: 3;
+    widows: 3;
+  }
+
+  /* Ensure items don't break across pages */
+  .pb-3 {
+    page-break-inside: avoid;
+  }
+}

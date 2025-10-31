@@ -375,7 +375,7 @@
         <div class="relative group">
           <!-- Left Arrow -->
           <button
-            v-if="galleryImages.length > 3"
+            v-if="galleryImages.length > 1"
             @click="scrollGalleryLeft"
             class="absolute left-4 top-1/2 -translate-y-1/2 z-10 bg-white/90 hover:bg-white text-gray-800 rounded-full p-3 shadow-lg transition-all hover:scale-110 opacity-0 group-hover:opacity-100"
           >
@@ -387,75 +387,105 @@
           <!-- Gallery Container -->
           <div 
             ref="galleryContainer"
-            class="flex gap-4 overflow-x-auto scrollbar-hide scroll-smooth px-4"
-            style="scrollbar-width: none; -ms-overflow-style: none;"
+            class="flex gap-6 overflow-x-auto scrollbar-hide scroll-smooth px-4 py-2"
+            style="scrollbar-width: none; -ms-overflow-style: none; height: 370px; cursor: grab; user-select: none;"
+            @mousedown="handleMouseDown"
+            @mousemove="handleMouseMove"
+            @mouseup="handleMouseUp"
+            @mouseleave="handleMouseLeave"
+            @touchstart="handleTouchStart"
+            @touchmove="handleTouchMove"
+            @touchend="handleTouchEnd"
           >
-            <template v-for="groupIndex in Math.ceil(galleryImages.length / 3)" :key="groupIndex">
-              <!-- Large image -->
-              <div
-                v-if="galleryImages[(groupIndex - 1) * 3]"
-                class="relative flex-shrink-0 overflow-hidden rounded-lg cursor-pointer group/item bg-gray-100"
-                style="width: 480px; height: 360px;"
-                @click="openLightbox((groupIndex - 1) * 3)"
-              >
-                <img
-                  :src="getLogoUrl(galleryImages[(groupIndex - 1) * 3].path)"
-                  :alt="`Company photo ${(groupIndex - 1) * 3 + 1}`"
-                  class="w-full h-full object-cover transition-transform duration-300 group-hover/item:scale-105"
-                />
-                <div class="absolute inset-0 bg-black/0 group-hover/item:bg-black/20 transition-colors duration-300 flex items-center justify-center">
-                  <svg class="h-12 w-12 text-white opacity-0 group-hover/item:opacity-100 transition-opacity duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
-                  </svg>
-                </div>
-              </div>
-
-              <!-- 2 stacked small images -->
-              <div class="flex-shrink-0 grid grid-rows-2 gap-4" style="width: 400px;">
-                <!-- Top small image -->
-                <div
-                  v-if="galleryImages[(groupIndex - 1) * 3 + 1]"
-                  class="relative overflow-hidden rounded-lg cursor-pointer group/item bg-gray-100"
-                  style="height: 176px;"
-                  @click="openLightbox((groupIndex - 1) * 3 + 1)"
-                >
-                  <img
-                    :src="getLogoUrl(galleryImages[(groupIndex - 1) * 3 + 1].path)"
-                    :alt="`Company photo ${(groupIndex - 1) * 3 + 2}`"
-                    class="w-full h-full object-cover transition-transform duration-300 group-hover/item:scale-105"
-                  />
-                  <div class="absolute inset-0 bg-black/0 group-hover/item:bg-black/20 transition-colors duration-300 flex items-center justify-center">
-                    <svg class="h-12 w-12 text-white opacity-0 group-hover/item:opacity-100 transition-opacity duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
-                    </svg>
-                  </div>
-                </div>
-
-                <!-- Bottom small image -->
-                <div
-                  v-if="galleryImages[(groupIndex - 1) * 3 + 2]"
-                  class="relative overflow-hidden rounded-lg cursor-pointer group/item bg-gray-100"
-                  style="height: 176px;"
-                  @click="openLightbox((groupIndex - 1) * 3 + 2)"
-                >
-                  <img
-                    :src="getLogoUrl(galleryImages[(groupIndex - 1) * 3 + 2].path)"
-                    :alt="`Company photo ${(groupIndex - 1) * 3 + 3}`"
-                    class="w-full h-full object-cover transition-transform duration-300 group-hover/item:scale-105"
-                  />
-                  <div class="absolute inset-0 bg-black/0 group-hover/item:bg-black/20 transition-colors duration-300 flex items-center justify-center">
-                    <svg class="h-12 w-12 text-white opacity-0 group-hover/item:opacity-100 transition-opacity duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <!-- Duplicate images at start for infinite loop -->
+            <div
+              v-for="(image, index) in galleryImages"
+              :key="`clone-start-${index}`"
+              class="relative flex-shrink-0 overflow-hidden rounded-xl cursor-pointer group/item shadow-lg hover:shadow-2xl transition-all duration-300"
+              style="height: 350px; width: auto;"
+              @click="openLightbox(index)"
+            >
+              <img
+                :src="getLogoUrl(image.path)"
+                :alt="`Company photo ${index + 1}`"
+                class="h-full w-auto object-contain transition-transform duration-300 group-hover/item:scale-105"
+                style="display: block;"
+              />
+              <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover/item:opacity-100 transition-opacity duration-300">
+                <div class="absolute inset-0 flex items-center justify-center">
+                  <div class="bg-white/20 backdrop-blur-sm rounded-full p-3">
+                    <svg class="h-8 w-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
                     </svg>
                   </div>
                 </div>
               </div>
-            </template>
+              <div class="absolute top-3 right-3 bg-black/60 backdrop-blur-sm text-white text-xs px-2.5 py-1 rounded-full font-medium">
+                {{ index + 1 }} / {{ galleryImages.length }}
+              </div>
+            </div>
+
+            <!-- Original images -->
+            <div
+              v-for="(image, index) in galleryImages"
+              :key="`original-${index}`"
+              class="relative flex-shrink-0 overflow-hidden rounded-xl cursor-pointer group/item shadow-lg hover:shadow-2xl transition-all duration-300"
+              style="height: 350px; width: auto;"
+              @click="openLightbox(index)"
+            >
+              <img
+                :src="getLogoUrl(image.path)"
+                :alt="`Company photo ${index + 1}`"
+                class="h-full w-auto object-contain transition-transform duration-300 group-hover/item:scale-105"
+                style="display: block;"
+              />
+              <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover/item:opacity-100 transition-opacity duration-300">
+                <div class="absolute inset-0 flex items-center justify-center">
+                  <div class="bg-white/20 backdrop-blur-sm rounded-full p-3">
+                    <svg class="h-8 w-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
+                    </svg>
+                  </div>
+                </div>
+              </div>
+              <div class="absolute top-3 right-3 bg-black/60 backdrop-blur-sm text-white text-xs px-2.5 py-1 rounded-full font-medium">
+                {{ index + 1 }} / {{ galleryImages.length }}
+              </div>
+            </div>
+
+            <!-- Duplicate images at end for infinite loop -->
+            <div
+              v-for="(image, index) in galleryImages"
+              :key="`clone-end-${index}`"
+              class="relative flex-shrink-0 overflow-hidden rounded-xl cursor-pointer group/item shadow-lg hover:shadow-2xl transition-all duration-300"
+              style="height: 350px; width: auto;"
+              @click="openLightbox(index)"
+            >
+              <img
+                :src="getLogoUrl(image.path)"
+                :alt="`Company photo ${index + 1}`"
+                class="h-full w-auto object-contain transition-transform duration-300 group-hover/item:scale-105"
+                style="display: block;"
+              />
+              <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover/item:opacity-100 transition-opacity duration-300">
+                <div class="absolute inset-0 flex items-center justify-center">
+                  <div class="bg-white/20 backdrop-blur-sm rounded-full p-3">
+                    <svg class="h-8 w-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
+                    </svg>
+                  </div>
+                </div>
+              </div>
+              <!-- Image counter badge -->
+              <div class="absolute top-3 right-3 bg-black/60 backdrop-blur-sm text-white text-xs px-2.5 py-1 rounded-full font-medium">
+                {{ index + 1 }} / {{ galleryImages.length }}
+              </div>
+            </div>
           </div>
 
           <!-- Right Arrow -->
           <button
-            v-if="galleryImages.length > 3"
+            v-if="galleryImages.length > 1"
             @click="scrollGalleryRight"
             class="absolute right-4 top-1/2 -translate-y-1/2 z-10 bg-white/90 hover:bg-white text-gray-800 rounded-full p-3 shadow-lg transition-all hover:scale-110 opacity-0 group-hover:opacity-100"
           >
@@ -736,7 +766,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed, watch } from 'vue'
+import { ref, onMounted, onBeforeUnmount, computed, watch, nextTick } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { companyService } from '@/services/cv.service'
 import { jobService } from '@/services/job.service'
@@ -762,26 +792,81 @@ const deletingJob = ref(false)
 const showDeleteCompanyModal = ref(false)
 const deletingCompany = ref(false)
 
-// Gallery scroll distance constant
-const GALLERY_SCROLL_DISTANCE = 900 // Scroll by approximately one group (480 + 400 + gap)
-
-// Carousel state
-const currentSlide = ref(0)
-const galleryImages = computed(() => {
-  return company.value?.images?.filter(img => img.type === 'gallery') || []
-})
-
 // Lightbox state
 const showLightbox = ref(false)
 const lightboxIndex = ref(0)
 
+const galleryImages = computed(() => {
+  return company.value?.images?.filter(img => img.type === 'gallery') || []
+})
+
 // Gallery carousel ref
 const galleryContainer = ref<HTMLElement | null>(null)
+let scrollHandler: ((e: Event) => void) | null = null
+
+// Mouse drag handling
+const isDragging = ref(false)
+const startX = ref(0)
+const scrollLeft = ref(0)
+
+const handleMouseDown = (e: MouseEvent) => {
+  if (!galleryContainer.value) return
+  isDragging.value = true
+  startX.value = e.pageX - galleryContainer.value.offsetLeft
+  scrollLeft.value = galleryContainer.value.scrollLeft
+  galleryContainer.value.style.cursor = 'grabbing'
+}
+
+const handleMouseMove = (e: MouseEvent) => {
+  if (!isDragging.value || !galleryContainer.value) return
+  e.preventDefault()
+  const x = e.pageX - galleryContainer.value.offsetLeft
+  const walk = (x - startX.value) * 2 // Scroll speed multiplier
+  galleryContainer.value.scrollLeft = scrollLeft.value - walk
+}
+
+const handleMouseUp = () => {
+  isDragging.value = false
+  if (galleryContainer.value) {
+    galleryContainer.value.style.cursor = 'grab'
+  }
+}
+
+const handleMouseLeave = () => {
+  if (isDragging.value) {
+    isDragging.value = false
+    if (galleryContainer.value) {
+      galleryContainer.value.style.cursor = 'grab'
+    }
+  }
+}
+
+// Touch handling for swipe
+const touchStartX = ref(0)
+const touchEndX = ref(0)
+
+const handleTouchStart = (e: TouchEvent) => {
+  touchStartX.value = e.touches[0].clientX
+}
+
+const handleTouchMove = (e: TouchEvent) => {
+  touchEndX.value = e.touches[0].clientX
+}
+
+const handleTouchEnd = () => {
+  if (touchStartX.value - touchEndX.value > 50) {
+    // Swipe left - scroll right
+    scrollGalleryRight()
+  } else if (touchEndX.value - touchStartX.value > 50) {
+    // Swipe right - scroll left
+    scrollGalleryLeft()
+  }
+}
 
 const scrollGalleryLeft = () => {
   if (galleryContainer.value) {
     galleryContainer.value.scrollBy({
-      left: -GALLERY_SCROLL_DISTANCE,
+      left: -500, // Scroll smoothly through images
       behavior: 'smooth'
     })
   }
@@ -790,7 +875,7 @@ const scrollGalleryLeft = () => {
 const scrollGalleryRight = () => {
   if (galleryContainer.value) {
     galleryContainer.value.scrollBy({
-      left: GALLERY_SCROLL_DISTANCE,
+      left: 500, // Scroll smoothly through images
       behavior: 'smooth'
     })
   }
@@ -801,44 +886,38 @@ const openLightbox = (index: number) => {
   showLightbox.value = true
   // Prevent body scroll when lightbox is open
   document.body.style.overflow = 'hidden'
+  // Add keyboard event listener
+  window.addEventListener('keydown', handleLightboxKeyboard)
 }
 
 const closeLightbox = () => {
   showLightbox.value = false
   // Restore body scroll
   document.body.style.overflow = ''
+  // Remove keyboard event listener
+  window.removeEventListener('keydown', handleLightboxKeyboard)
+}
+
+const handleLightboxKeyboard = (event: KeyboardEvent) => {
+  if (event.key === 'ArrowRight') {
+    nextLightboxImage()
+  } else if (event.key === 'ArrowLeft') {
+    previousLightboxImage()
+  } else if (event.key === 'Escape') {
+    closeLightbox()
+  }
 }
 
 const nextLightboxImage = () => {
-  if (lightboxIndex.value < galleryImages.value.length - 1) {
-    lightboxIndex.value++
-  } else {
-    lightboxIndex.value = 0
-  }
+  // Infinite loop - go to first when at last
+  lightboxIndex.value = (lightboxIndex.value + 1) % galleryImages.value.length
 }
 
 const previousLightboxImage = () => {
-  if (lightboxIndex.value > 0) {
-    lightboxIndex.value--
-  } else {
-    lightboxIndex.value = galleryImages.value.length - 1
-  }
-}
-
-const nextSlide = () => {
-  if (currentSlide.value < galleryImages.value.length - 1) {
-    currentSlide.value++
-  } else {
-    currentSlide.value = 0
-  }
-}
-
-const previousSlide = () => {
-  if (currentSlide.value > 0) {
-    currentSlide.value--
-  } else {
-    currentSlide.value = galleryImages.value.length - 1
-  }
+  // Infinite loop - go to last when at first
+  lightboxIndex.value = lightboxIndex.value === 0 
+    ? galleryImages.value.length - 1 
+    : lightboxIndex.value - 1
 }
 
 const formatWebsite = (url: string): string => {
@@ -1080,6 +1159,43 @@ onMounted(async () => {
   // Ensure body can scroll
   document.body.style.overflow = ''
   await fetchCompanyDetail()
+  
+  // Setup infinite carousel
+  nextTick(() => {
+    if (galleryContainer.value && galleryImages.value.length > 0) {
+      // Calculate the width of one image set
+      const imageWidth = galleryContainer.value.scrollWidth / 3 // We have 3 sets of images
+      // Start at the middle set (original images)
+      galleryContainer.value.scrollLeft = imageWidth
+      
+      // Add scroll event listener for infinite loop
+      scrollHandler = () => {
+        if (!galleryContainer.value) return
+        
+        const scrollLeft = galleryContainer.value.scrollLeft
+        const scrollWidth = galleryContainer.value.scrollWidth
+        const imageSetWidth = scrollWidth / 3
+        
+        // If scrolled past the end of original images, jump to start of original images
+        if (scrollLeft >= imageSetWidth * 2) {
+          galleryContainer.value.scrollLeft = imageSetWidth + (scrollLeft - imageSetWidth * 2)
+        }
+        // If scrolled before the start of original images, jump to end of original images
+        else if (scrollLeft <= 0) {
+          galleryContainer.value.scrollLeft = imageSetWidth + scrollLeft
+        }
+      }
+      
+      galleryContainer.value.addEventListener('scroll', scrollHandler)
+    }
+  })
+})
+
+onBeforeUnmount(() => {
+  // Clean up scroll event listener to prevent memory leak
+  if (galleryContainer.value && scrollHandler) {
+    galleryContainer.value.removeEventListener('scroll', scrollHandler)
+  }
 })
 
 // Watch for route changes to refresh company data

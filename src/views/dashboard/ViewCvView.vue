@@ -59,7 +59,7 @@
     <div v-else-if="cv" id="cv-content" class="max-w-4xl mx-auto border-2 border-gray-300 rounded-lg p-6 bg-white shadow-lg">
       <div id="print-cv-pdf">
         <!-- Header Section -->
-        <div class="mb-6 pb-6 border-b border-gray-200">
+        <div class="mb-1 pb-1 border-b border-gray-200">
           <div class="flex items-start gap-6 mb-4">
             <!-- Profile Image -->
             <div class="w-32 h-40 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0 flex items-center justify-center ring-4 ring-gray-200">
@@ -133,22 +133,22 @@
 
         <!-- Education -->
         <div v-if="educationEntries.length > 0" class="mb-6">
-          <h3 class="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-            <svg class="w-6 h-6 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <h3 class="text-base font-bold text-gray-900 mb-2 flex items-center gap-2">
+            <svg class="w-5 h-5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
             </svg>
             Education
           </h3>
-          <div class="space-y-6">
+          <div class="space-y-2">
             <div
               v-for="(edu, index) in educationEntries"
               :key="index"
-              class="pb-6 border-b border-gray-200 last:border-0 last:pb-0"
+              class="pb-2 border-b border-gray-200 last:border-0 last:pb-0"
             >
               <!-- Two Column Layout: Degree Left, Institution Right -->
               <div class="flex justify-between items-start mb-2">
                 <div class="flex-1">
-                  <h4 class="text-lg font-bold text-gray-900">{{ edu.degree }}</h4>
+                  <h4 class="text-base font-bold text-gray-900">{{ edu.degree }}</h4>
                   <p class="text-gray-700 font-medium">{{ edu.field }}</p>
                   <div class="flex items-center gap-1 text-sm text-gray-600 mt-1">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -177,42 +177,42 @@
 
         <!-- Work Experience -->
         <div v-if="workExperiences.length > 0" class="mb-6">
-          <h3 class="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-            <svg class="w-6 h-6 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <h3 class="text-base font-bold text-gray-900 mb-2 flex items-center gap-2">
+            <svg class="w-5 h-5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
             </svg>
             Work Experience
           </h3>
-          <div class="space-y-6">
+          <div class="space-y-2">
             <div
-              v-for="(exp, index) in workExperiences"
+              v-for="(work, index) in workExperiences"
               :key="index"
-              class="pb-6 border-b border-gray-200 last:border-0 last:pb-0"
+              class="pb-2 border-b border-gray-200 last:border-0 last:pb-0"
             >
-              <!-- Two Column Layout: Title Left, Company Right -->
+              <!-- Two Column Layout: Position Left, Company Right -->
               <div class="flex justify-between items-start mb-2">
                 <div class="flex-1">
-                  <h4 class="text-lg font-bold text-gray-900">{{ exp.position }}</h4>
+                  <h4 class="text-base font-bold text-gray-900">{{ work.position }}</h4>
                   <div class="flex items-center gap-1 text-sm text-gray-600 mt-1">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                     </svg>
-                    {{ formatWorkDate(exp) }}
+                    {{ formatWorkDate(work) }}
                   </div>
                 </div>
                 <div class="flex-1 pl-cv-section">
-                  <p class="text-primary-600 font-semibold">{{ exp.company }}</p>
-                  <p v-if="exp.location" class="text-sm text-gray-600 flex items-start gap-1 mt-1">
+                  <p class="text-primary-600 font-semibold">{{ work.company }}</p>
+                  <p v-if="work.location" class="text-sm text-gray-600 flex items-start gap-1 mt-1">
                     <svg class="w-4 h-4 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                     </svg>
-                    <span>{{ exp.location }}</span>
+                    <span>{{ work.location }}</span>
                   </p>
                 </div>
               </div>
-              <div v-if="exp.description" class="w-1/2 pr-4">
-                <p class="text-gray-700 whitespace-pre-line mt-3">{{ exp.description }}</p>
+              <div v-if="work.description" class="w-1/2 pr-4">
+                <p class="text-gray-700 whitespace-pre-line mt-3">{{ work.description }}</p>
               </div>
             </div>
           </div>
@@ -220,22 +220,22 @@
 
         <!-- Certifications -->
         <div v-if="certifications.length > 0" class="mb-6">
-          <h3 class="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-            <svg class="w-6 h-6 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <h3 class="text-base font-bold text-gray-900 mb-2 flex items-center gap-2">
+            <svg class="w-5 h-5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
             </svg>
             Certifications
           </h3>
-          <div class="space-y-6">
+          <div class="space-y-2">
             <div
               v-for="(cert, index) in certifications"
               :key="index"
-              class="pb-6 border-b border-gray-200 last:border-0 last:pb-0"
+              class="pb-2 border-b border-gray-200 last:border-0 last:pb-0"
             >
               <!-- Two Column Layout: Certification Left, Issuer Right -->
               <div class="flex justify-between items-start mb-2">
                 <div class="flex-1">
-                  <h4 class="text-lg font-bold text-gray-900">{{ cert.name }}</h4>
+                  <h4 class="text-base font-bold text-gray-900">{{ cert.name }}</h4>
                   <div class="flex items-center gap-1 text-sm text-gray-600 mt-1">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
@@ -270,35 +270,35 @@
 
         <!-- Volunteer Work -->
         <div v-if="volunteerWork.length > 0" class="mb-6">
-          <h3 class="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-            <svg class="w-6 h-6 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <h3 class="text-base font-bold text-gray-900 mb-2 flex items-center gap-2">
+            <svg class="w-5 h-5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
             </svg>
             Volunteer Experience
           </h3>
-          <div class="space-y-6">
+          <div class="space-y-2">
             <div
-              v-for="(vol, index) in volunteerWork"
+              v-for="(volunteer, index) in volunteerWork"
               :key="index"
-              class="pb-6 border-b border-gray-200 last:border-0 last:pb-0"
+              class="pb-2 border-b border-gray-200 last:border-0 last:pb-0"
             >
               <!-- Two Column Layout: Role Left, Organization Right -->
               <div class="flex justify-between items-start mb-2">
                 <div class="flex-1">
-                  <h4 class="text-lg font-bold text-gray-900">{{ vol.role }}</h4>
-                  <div v-if="vol.start_date || vol.end_date" class="flex items-center gap-1 text-sm text-gray-600 mt-1">
+                  <h4 class="text-base font-bold text-gray-900">{{ volunteer.role }}</h4>
+                  <div v-if="volunteer.start_date || volunteer.end_date" class="flex items-center gap-1 text-sm text-gray-600 mt-1">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                     </svg>
-                    {{ formatVolunteerDate(vol) }}
+                    {{ formatVolunteerDate(volunteer) }}
                   </div>
                 </div>
                 <div class="flex-1 pl-cv-section">
-                  <p class="text-primary-600 font-semibold">{{ vol.organization }}</p>
+                  <p class="text-primary-600 font-semibold">{{ volunteer.organization }}</p>
                 </div>
               </div>
-              <div v-if="vol.description" class="w-1/2 pr-4">
-                <p class="text-gray-700 whitespace-pre-line mt-3">{{ vol.description }}</p>
+              <div v-if="volunteer.description" class="w-1/2 pr-4">
+                <p class="text-gray-700 whitespace-pre-line mt-3">{{ volunteer.description }}</p>
               </div>
             </div>
           </div>
@@ -306,22 +306,22 @@
 
         <!-- References -->
         <div v-if="references.length > 0" class="mb-6">
-          <h3 class="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-            <svg class="w-6 h-6 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <h3 class="text-base font-bold text-gray-900 mb-2 flex items-center gap-2">
+            <svg class="w-5 h-5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
             </svg>
             References
           </h3>
-          <div class="space-y-6">
+          <div class="space-y-2">
             <div
               v-for="(reference, index) in references"
               :key="index"
-              class="pb-6 border-b border-gray-200 last:border-0 last:pb-0"
+              class="pb-2 border-b border-gray-200 last:border-0 last:pb-0"
             >
               <!-- Two Column Layout: Name/Position Left, Company/Contact Right -->
               <div class="flex justify-between items-start mb-2">
                 <div class="flex-1">
-                  <h4 class="text-lg font-bold text-gray-900">{{ reference.name }}</h4>
+                  <h4 class="text-base font-bold text-gray-900">{{ reference.name }}</h4>
                   <p class="text-gray-700 font-medium mt-1">{{ reference.position }}</p>
                   <p v-if="reference.relationship" class="text-sm text-gray-600 mt-1">{{ reference.relationship }}</p>
                 </div>
@@ -349,8 +349,8 @@
 
         <!-- Skills -->
         <div v-if="displaySkills.length > 0" class="mb-6">
-          <h3 class="text-2xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-            <svg class="w-6 h-6 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <h3 class="text-base font-bold text-gray-900 mb-2 flex items-center gap-2">
+            <svg class="w-5 h-5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
             </svg>
             Skills
@@ -368,8 +368,8 @@
 
         <!-- Languages -->
         <div v-if="languages.length > 0" class="mb-6">
-          <h3 class="text-2xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-            <svg class="w-6 h-6 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <h3 class="text-base font-bold text-gray-900 mb-2 flex items-center gap-2">
+            <svg class="w-5 h-5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" />
             </svg>
             Languages
@@ -387,40 +387,9 @@
         </div>
 
         <!-- Hobbies & Interests -->
-
-        <!-- References -->
-        <div v-if="references.length > 0" class="mb-6">
-          <h3 class="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-2">
-            <svg class="w-6 h-6 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-            </svg>
-            References
-          </h3>
-          <div class="grid md:grid-cols-2 gap-4">
-            <div
-              v-for="(reference, index) in references"
-              :key="index"
-              class="p-4 bg-green-50 border border-green-200 rounded-lg"
-            >
-              <h4 class="font-bold text-gray-900 mb-1">{{ reference.name }}</h4>
-              <p class="text-sm text-gray-600 mb-2">{{ reference.position }} at {{ reference.company }}</p>
-              <p v-if="reference.relationship" class="text-xs text-gray-500 mb-2">{{ reference.relationship }}</p>
-              <div class="space-y-1">
-                <a v-if="reference.email" :href="`mailto:${reference.email}`" class="text-xs text-primary-600 hover:text-primary-700 block">
-                  {{ reference.email }}
-                </a>
-                <a v-if="reference.phone" :href="`tel:${reference.phone}`" class="text-xs text-primary-600 hover:text-primary-700 block">
-                  {{ reference.phone }}
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Hobbies & Interests -->
         <div v-if="hobbies.length > 0" class="mb-6">
-          <h3 class="text-2xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-            <svg class="w-6 h-6 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <h3 class="text-base font-bold text-gray-900 mb-2 flex items-center gap-2">
+            <svg class="w-5 h-5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
             Hobbies & Interests
@@ -484,7 +453,9 @@ const profileImageUrl = computed(() => {
   if (!cv.value) return null
   const profileImage = cv.value.profileImage || cv.value.profile_image
   if (profileImage?.path) {
-    return `/storage/${profileImage.path}`
+    // Add cache busting using updated_at timestamp
+    const timestamp = cv.value.updated_at ? new Date(cv.value.updated_at).getTime() : Date.now()
+    return `/storage/${profileImage.path}?v=${timestamp}`
   }
   return null
 })
@@ -659,6 +630,65 @@ onMounted(async () => {
   :global(.grid.md\:grid-cols-3) {
     display: grid !important;
     grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+
+  /* Reduce spacing between section items in print */
+  #print-cv-pdf :global(.space-y-3 > * + *) {
+    margin-top: 0.75rem !important;
+  }
+
+  /* Ensure section titles are compact in print */
+  #print-cv-pdf h3 {
+    font-size: 1rem !important; /* text-base */
+    margin-bottom: 0.5rem !important; /* mb-2 */
+  }
+
+  #print-cv-pdf h4 {
+    font-size: 1rem !important; /* text-base */
+  }
+
+  /* Reduce bottom padding for list items in print - consolidated to 0.5rem for pb-2 and pb-3 */
+  #print-cv-pdf :global(.pb-2),
+  #print-cv-pdf :global(.pb-3),
+  #print-cv-pdf div.pb-2,
+  #print-cv-pdf div.pb-3 {
+    padding-bottom: 0.5rem !important;
+  }
+
+  #print-cv-pdf :global(.pb-4) {
+    padding-bottom: 1rem !important;
+  }
+
+  /* Ensure section spacing is consistent in print */
+  #print-cv-pdf :global(.mb-6) {
+    margin-bottom: 1.5rem !important;
+  }
+
+  #print-cv-pdf :global(.mb-4) {
+    margin-bottom: 1rem !important;
+  }
+
+  /* Force spacing on divs with space-y-3 class */
+  #print-cv-pdf div.space-y-3 > div {
+    margin-top: 0 !important;
+  }
+
+  #print-cv-pdf div.space-y-3 > div + div {
+    margin-top: 0.5rem !important;
+  }
+
+  /* Force spacing on divs with space-y-2 class */
+  #print-cv-pdf div.space-y-2 > div {
+    margin-top: 0 !important;
+  }
+
+  #print-cv-pdf div.space-y-2 > div + div {
+    margin-top: 0.5rem !important;
+  }
+
+  /* Ensure border styling on bordered items */
+  #print-cv-pdf div.border-b {
+    border-bottom: 1px solid #e5e7eb !important;
   }
 }
 </style>
