@@ -29,9 +29,9 @@ class JobApplicationSubmitted extends Mailable
     {
         /** @var \App\Models\Job $job */
         $job = $this->application->job;
-        
+
         return new Envelope(
-            subject: 'New Job Application Received - ' . $job->title,
+            subject: 'New Job Application Received - '.$job->title,
         );
     }
 
@@ -56,11 +56,11 @@ class JobApplicationSubmitted extends Mailable
         $company = $job->company;
         /** @var \App\Models\User $applicant */
         $applicant = $this->application->user;
-        $profileUrl = config('app.url') . '/job-seeker/' . $applicant->id;
+        $profileUrl = config('app.url').'/job-seeker/'.$applicant->id;
         $appliedAt = $this->application->applied_at->format('F d, Y \a\t h:i A');
         $currentYear = date('Y');
         $appUrl = config('app.url');
-        
+
         return <<<HTML
 <!DOCTYPE html>
 <html lang="en">
@@ -145,13 +145,14 @@ HTML;
     private function renderCvStatus(): string
     {
         if ($this->application->cv) {
-            return <<<HTML
+            return <<<'HTML'
                 <div style="margin-bottom: 12px;">
                     <span style="font-weight: 600; color: #4b5563; display: inline-block; min-width: 120px;">CV Attached:</span>
                     <span style="color: #1f2937;">✓ Yes</span>
                 </div>
 HTML;
         }
+
         return '';
     }
 
@@ -161,13 +162,14 @@ HTML;
     private function renderCoverLetterStatus(): string
     {
         if ($this->application->cover_letter) {
-            return <<<HTML
+            return <<<'HTML'
                 <div style="margin-bottom: 12px;">
                     <span style="font-weight: 600; color: #4b5563; display: inline-block; min-width: 120px;">Cover Letter:</span>
                     <span style="color: #1f2937;">✓ Included</span>
                 </div>
 HTML;
         }
+
         return '';
     }
 

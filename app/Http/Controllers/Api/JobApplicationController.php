@@ -23,10 +23,10 @@ class JobApplicationController extends Controller
     {
         try {
             $userId = Auth::id();
-            
+
             // Debug log
             Log::info('Fetching applications for user', ['user_id' => $userId]);
-            
+
             $query = JobApplication::with(['job.company.logo', 'cv'])
                 ->where('user_id', $userId)
                 ->latest('applied_at');
@@ -50,10 +50,10 @@ class JobApplicationController extends Controller
             }
 
             $applications = $query->paginate($request->get('per_page', 15));
-            
+
             Log::info('Applications retrieved', [
                 'count' => $applications->count(),
-                'total' => $applications->total()
+                'total' => $applications->total(),
             ]);
 
             return response()->json([
@@ -63,13 +63,13 @@ class JobApplicationController extends Controller
         } catch (\Exception $e) {
             Log::error('Error fetching applications', [
                 'error' => $e->getMessage(),
-                'trace' => $e->getTraceAsString()
+                'trace' => $e->getTraceAsString(),
             ]);
-            
+
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to fetch applications',
-                'error' => $e->getMessage()
+                'error' => $e->getMessage(),
             ], 500);
         }
     }
@@ -111,7 +111,7 @@ class JobApplicationController extends Controller
             }
         } catch (\Exception $e) {
             // Log the error but don't fail the application submission
-            Log::error('Failed to send job application email: ' . $e->getMessage());
+            Log::error('Failed to send job application email: '.$e->getMessage());
         }
 
         return response()->json([

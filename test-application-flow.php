@@ -2,7 +2,7 @@
 
 /**
  * Test Job Application Flow
- * 
+ *
  * This script tests the job application submission and retrieval process
  * Run with: php test-application-flow.php
  */
@@ -12,9 +12,9 @@ require __DIR__.'/vendor/autoload.php';
 $app = require_once __DIR__.'/bootstrap/app.php';
 $app->make(\Illuminate\Contracts\Console\Kernel::class)->bootstrap();
 
-use App\Models\User;
 use App\Models\Job;
 use App\Models\JobApplication;
+use App\Models\User;
 use Illuminate\Support\Facades\DB;
 
 echo "========================================\n";
@@ -26,7 +26,7 @@ try {
     DB::connection()->getPdo();
     echo "✓ Database connected successfully\n\n";
 } catch (\Exception $e) {
-    echo "✗ Database connection failed: " . $e->getMessage() . "\n";
+    echo '✗ Database connection failed: '.$e->getMessage()."\n";
     exit(1);
 }
 
@@ -42,9 +42,9 @@ echo "✓ job_applications table exists\n\n";
 // Show table structure
 echo "Table Structure:\n";
 echo "----------------\n";
-$columns = DB::select("DESCRIBE job_applications");
+$columns = DB::select('DESCRIBE job_applications');
 foreach ($columns as $column) {
-    echo "  - {$column->Field} ({$column->Type}) " . ($column->Null === 'YES' ? 'NULL' : 'NOT NULL') . "\n";
+    echo "  - {$column->Field} ({$column->Type}) ".($column->Null === 'YES' ? 'NULL' : 'NOT NULL')."\n";
 }
 echo "\n";
 
@@ -54,7 +54,7 @@ echo "Total Applications: $totalApplications\n\n";
 
 // Get a sample user (job seeker)
 $jobSeeker = User::where('user_type', 'job_seeker')->first();
-if (!$jobSeeker) {
+if (! $jobSeeker) {
     echo "✗ No job seeker found in database\n";
     echo "Create a job seeker account first\n";
     exit(1);
@@ -81,7 +81,7 @@ if ($userApplications->count() > 0) {
 
 // Get a sample job
 $job = Job::with('company')->first();
-if (!$job) {
+if (! $job) {
     echo "✗ No jobs found in database\n";
     echo "Create a job first\n";
     exit(1);
@@ -100,16 +100,16 @@ if ($existingApp) {
     echo "  Applied: {$existingApp->applied_at->format('Y-m-d H:i:s')}\n\n";
 } else {
     echo "ℹ User has NOT applied to this job yet\n\n";
-    
-    echo "Would you like to create a test application? (yes/no): ";
-    $handle = fopen("php://stdin", "r");
+
+    echo 'Would you like to create a test application? (yes/no): ';
+    $handle = fopen('php://stdin', 'r');
     $line = fgets($handle);
     $answer = trim(strtolower($line));
     fclose($handle);
-    
+
     if ($answer === 'yes' || $answer === 'y') {
         echo "\nCreating test application...\n";
-        
+
         try {
             $application = JobApplication::create([
                 'user_id' => $jobSeeker->id,
@@ -119,21 +119,21 @@ if ($existingApp) {
                 'status' => 'pending',
                 'applied_at' => now(),
             ]);
-            
+
             echo "✓ Application created successfully!\n";
             echo "  Application ID: {$application->id}\n";
             echo "  Status: {$application->status}\n\n";
-            
+
             // Test retrieval
             $retrieved = JobApplication::with(['job.company.logo', 'cv'])
                 ->where('user_id', $jobSeeker->id)
                 ->latest('applied_at')
                 ->get();
-            
+
             echo "✓ Retrieved {$retrieved->count()} applications for user\n";
-            
+
         } catch (\Exception $e) {
-            echo "✗ Failed to create application: " . $e->getMessage() . "\n";
+            echo '✗ Failed to create application: '.$e->getMessage()."\n";
         }
     }
 }
@@ -149,7 +149,7 @@ echo "To apply for a job:\n";
 echo "POST /api/jobs/{job-slug}/apply\n";
 echo "Authorization: Bearer {your-token}\n";
 echo "Content-Type: application/json\n\n";
-echo '{"cv_id": null, "cover_letter": "Your cover letter here"}' . "\n\n";
+echo '{"cv_id": null, "cover_letter": "Your cover letter here"}'."\n\n";
 
 echo "========================================\n";
 echo "Test completed!\n";
