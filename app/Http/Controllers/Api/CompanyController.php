@@ -186,6 +186,33 @@ class CompanyController extends Controller
     }
 
     /**
+     * Display the specified owned company by slug (authenticated).
+     */
+    public function showMyCompanyBySlug(string $slug): JsonResponse
+    {
+        $company = request()->user()
+            ->ownedCompanies()
+            ->where('slug', $slug)
+            ->with(['logo', 'cover', 'images', 'jobs' => function ($query) {
+                $query->active()->published()->latest('published_at');
+            }, 'owners'])
+            ->withCount('jobs')
+            ->first();
+
+        if (! $company) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Company not found or you do not have permission to view it.',
+            ], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => $company,
+        ]);
+    }
+
+    /**
      * Update the specified company.
      */
     public function update(UpdateCompanyRequest $request, Company $company): JsonResponse

@@ -88,9 +88,36 @@ class Company extends Model
 
         static::creating(function ($company) {
             if (empty($company->slug)) {
-                $company->slug = Str::slug($company->name);
+                $company->slug = static::generateUniqueSlug($company->name);
             }
         });
+
+        static::updating(function ($company) {
+            // Update slug if name changes
+            if ($company->isDirty('name')) {
+                $company->slug = static::generateUniqueSlug($company->name, $company->id);
+            }
+        });
+    }
+
+    /**
+     * Generate a unique slug from the company name.
+     */
+    protected static function generateUniqueSlug(string $name, ?int $ignoreId = null): string
+    {
+        $slug = Str::slug($name);
+        $originalSlug = $slug;
+        $counter = 1;
+
+        // Check if slug exists, if so, append counter
+        while (static::where('slug', $slug)
+            ->when($ignoreId, fn($query) => $query->where('id', '!=', $ignoreId))
+            ->exists()) {
+            $slug = $originalSlug . '-' . $counter;
+            $counter++;
+        }
+
+        return $slug;
     }
 
     /**

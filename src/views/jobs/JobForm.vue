@@ -1,15 +1,13 @@
 <template>
   <form @submit.prevent="handleSubmit" class="space-y-6">
-    <!-- Company Selection -->
-    <div class="bg-white p-6 rounded-lg border border-gray-200">
-      <h3 class="text-lg font-semibold text-gray-900 mb-4">Company *</h3>
-      
-      <div v-if="!userCompanies || userCompanies.length === 0" class="text-center py-8">
+    <!-- No Company Warning -->
+    <div v-if="!userCompanies || userCompanies.length === 0" class="bg-white p-6 rounded-lg border border-gray-200">
+      <div class="text-center py-8">
         <svg class="h-16 w-16 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
         </svg>
-        <h4 class="text-lg font-semibold text-gray-900 mb-2">No Companies Yet</h4>
-        <p class="text-gray-600 mb-4">You need to create a company before posting a job.</p>
+        <h4 class="text-lg font-semibold text-gray-900 mb-2">No Company Profile Yet</h4>
+        <p class="text-gray-600 mb-4">You need to create your company profile before posting a job.</p>
         <router-link to="/companies/create" class="inline-block">
           <BaseButton
             type="button"
@@ -18,28 +16,6 @@
             Create Your Company
           </BaseButton>
         </router-link>
-      </div>
-
-      <div v-else>
-        <label class="block text-sm font-medium text-gray-700 mb-2">
-          Select Company *
-        </label>
-        <select
-          v-model="formData.company_id"
-          class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-          :class="{ 'border-red-500': errors.company_id }"
-          required
-        >
-          <option value="">Choose a company</option>
-          <option
-            v-for="company in userCompanies"
-            :key="company.id"
-            :value="company.id"
-          >
-            {{ company.name }}
-          </option>
-        </select>
-        <p v-if="errors.company_id" class="text-red-600 text-sm mt-1">{{ errors.company_id }}</p>
       </div>
     </div>
 
@@ -84,6 +60,19 @@
             placeholder="List the required qualifications, experience, and skills..."
           />
           <p v-if="errors.requirements" class="text-red-600 text-sm mt-1">{{ errors.requirements }}</p>
+        </div>
+
+        <div class="md:col-span-2">
+          <label class="block text-sm font-medium text-gray-700 mb-1">
+            Benefits
+          </label>
+          <textarea
+            v-model="formData.benefits"
+            rows="4"
+            class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+            placeholder="List job benefits (e.g., health insurance, flexible hours, remote work options...)"
+          />
+          <p v-if="errors.benefits" class="text-red-600 text-sm mt-1">{{ errors.benefits }}</p>
         </div>
 
         <div>
@@ -133,11 +122,9 @@
             class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
           >
             <option value="">Select level</option>
-            <option value="entry">Entry Level</option>
-            <option value="junior">Junior</option>
-            <option value="mid">Mid-level</option>
-            <option value="senior">Senior</option>
-            <option value="lead">Lead</option>
+            <option v-for="level in EXPERIENCE_LEVELS" :key="level.value" :value="level.value">
+              {{ level.label }}
+            </option>
           </select>
         </div>
       </div>
@@ -218,12 +205,8 @@
             v-model="formData.salary_currency"
             class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
           >
-            <option value="USD">USD - US Dollar</option>
-            <option value="EUR">EUR - Euro</option>
-            <option value="GBP">GBP - British Pound</option>
-            <option value="CAD">CAD - Canadian Dollar</option>
-            <option value="AUD">AUD - Australian Dollar</option>
             <option value="IQD">IQD - Iraqi Dinar</option>
+            <option value="USD">USD - US Dollar</option>
           </select>
         </div>
 
@@ -340,7 +323,7 @@ import type { Job, Company } from '@/types'
 import BaseInput from '@/components/base/BaseInput.vue'
 import BaseButton from '@/components/base/BaseButton.vue'
 import BaseAutocomplete from '@/components/base/BaseAutocomplete.vue'
-import { JOB_CATEGORIES } from '@/config/constants'
+import { JOB_CATEGORIES, EXPERIENCE_LEVELS } from '@/config/constants'
 import { iraqCities } from '@/config/iraqCities'
 
 interface Props {
@@ -371,6 +354,7 @@ const formData = reactive({
   title: '',
   description: '',
   requirements: '',
+  benefits: '',
   street: '',
   city: '',
   country: 'Iraq',
@@ -379,8 +363,8 @@ const formData = reactive({
   category: '',
   salary_min: '',
   salary_max: '',
-  salary_currency: 'USD',
-  salary_period: 'yearly',
+  salary_currency: 'IQD',
+  salary_period: 'monthly',
   is_remote: false,
   is_featured: false,
   is_active: true,
@@ -389,6 +373,13 @@ const formData = reactive({
 })
 
 const errors = reactive<Record<string, string>>({})
+
+// Auto-select company if only one exists (company owner can only have one company)
+watch(() => props.userCompanies, (companies) => {
+  if (companies && companies.length > 0 && !formData.company_id) {
+    formData.company_id = companies[0].id.toString()
+  }
+}, { immediate: true })
 
 // Initialize form with existing job data if editing
 watch(() => props.job, (job) => {
@@ -402,6 +393,7 @@ watch(() => props.job, (job) => {
       title: job.title || '',
       description: job.description || '',
       requirements: job.requirements || '',
+      benefits: job.benefits || '',
       street: job.location || '', // Use location as street for backward compatibility
       city: job.city || '',
       country: job.country || 'Iraq',
@@ -479,6 +471,7 @@ const handleSubmit = () => {
     title: formData.title,
     description: formData.description,
     requirements: formData.requirements || undefined,
+    benefits: formData.benefits || undefined,
     location: location || formData.city, // Use combined street + city, or just city
     city: formData.city,
     country: formData.country,

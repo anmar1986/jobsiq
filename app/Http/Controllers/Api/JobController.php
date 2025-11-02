@@ -42,6 +42,7 @@ class JobController extends Controller
             $query = Job::with(['company:id,name,slug', 'company.logo'])
                 ->select([
                     'id', 'company_id', 'title', 'slug', 'description', 'requirements',
+                    'benefits',
                     'location', 'city', 'country', 'employment_type', 'experience_level',
                     'category', 'skills', 'salary_min', 'salary_max', 'salary_currency',
                     'salary_period', 'is_remote', 'is_featured', 'published_at',
@@ -265,7 +266,8 @@ class JobController extends Controller
         $jobs = Cache::remember("featured_jobs_{$limit}", 3600, function () use ($limit) {
             return Job::with(['company:id,name,slug', 'company.logo'])
                 ->select([
-                    'id', 'company_id', 'title', 'slug', 'location', 'city', 'country',
+                    'id', 'company_id', 'title', 'slug', 'description', 'requirements',
+                    'benefits', 'location', 'city', 'country',
                     'employment_type', 'experience_level', 'category', 'salary_min', 'salary_max',
                     'salary_currency', 'salary_period', 'is_remote', 'is_featured',
                     'published_at', 'created_at',

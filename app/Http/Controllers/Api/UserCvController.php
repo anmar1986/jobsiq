@@ -70,10 +70,18 @@ class UserCvController extends Controller
     }
 
     /**
-     * Get authenticated user's CVs
+     * Get all CVs for authenticated user
      */
     public function myCvs()
     {
+        // Company owners cannot create or manage CVs
+        if (Auth::user()->user_type === 'company_owner') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Company owners cannot create CVs. Only job seekers can create and manage CVs.',
+            ], 403);
+        }
+
         $cvs = UserCv::where('user_id', Auth::id())
             ->latest('updated_at')
             ->get()
@@ -145,6 +153,14 @@ class UserCvController extends Controller
     {
         try {
             $user = Auth::user();
+
+            // Company owners cannot create CVs
+            if ($user->user_type === 'company_owner') {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Company owners cannot create CVs. Only job seekers can create and manage CVs.',
+                ], 403);
+            }
 
             // Check if user has reached the maximum number of CVs (6)
             $cvCount = UserCv::where('user_id', $user->id)->count();
@@ -280,6 +296,14 @@ class UserCvController extends Controller
      */
     public function update(UpdateCvRequest $request, $id)
     {
+        // Company owners cannot update CVs
+        if (Auth::user()->user_type === 'company_owner') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Company owners cannot update CVs. Only job seekers can create and manage CVs.',
+            ], 403);
+        }
+
         $cv = UserCv::findOrFail($id);
 
         // Check ownership
@@ -356,10 +380,18 @@ class UserCvController extends Controller
     }
 
     /**
-     * Delete CV
+     * Delete a CV
      */
     public function destroy($id)
     {
+        // Company owners cannot delete CVs
+        if (Auth::user()->user_type === 'company_owner') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Company owners cannot delete CVs. Only job seekers can create and manage CVs.',
+            ], 403);
+        }
+
         $cv = UserCv::findOrFail($id);
 
         // Check ownership
@@ -389,6 +421,14 @@ class UserCvController extends Controller
      */
     public function setPrimary($id)
     {
+        // Company owners cannot set primary CVs
+        if (Auth::user()->user_type === 'company_owner') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Company owners cannot manage CVs. Only job seekers can create and manage CVs.',
+            ], 403);
+        }
+
         $cv = UserCv::findOrFail($id);
 
         // Check authorization

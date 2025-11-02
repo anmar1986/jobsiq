@@ -48,7 +48,7 @@ const loadCompanies = async () => {
       if (companies.value.length > 0) {
         router.replace({ 
           name: 'view-my-company', 
-          params: { id: companies.value[0].id } 
+          params: { slug: companies.value[0].slug } 
         })
         return
       }

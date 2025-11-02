@@ -14,29 +14,8 @@
       </div>
     </div>
 
-    <!-- Error State -->
-    <div v-else-if="!job || accessDenied" class="container-custom py-16">
-      <BaseCard class="p-12 text-center">
-        <svg class="h-16 w-16 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-        </svg>
-        <h2 class="text-2xl font-bold text-gray-900 mb-2">
-          {{ accessDenied ? 'Access Denied' : 'Job Not Found' }}
-        </h2>
-        <p class="text-gray-600 mb-6">
-          {{ accessDenied 
-            ? 'You do not have permission to view this job.' 
-            : 'The job you are looking for does not exist.' 
-          }}
-        </p>
-        <BaseButton variant="primary" @click="goBack">
-          Back to Company
-        </BaseButton>
-      </BaseCard>
-    </div>
-
     <!-- Job Detail Content -->
-    <div v-else>
+    <div v-else-if="job">
       <!-- Header -->
       <div class="bg-white border-b border-gray-200">
         <div class="container-custom py-6">
@@ -272,7 +251,6 @@ const toast = useToast()
 const loading = ref(true)
 const job = ref<Job | null>(null)
 const company = ref<Company | null>(null)
-const accessDenied = ref(false)
 const showDeleteModal = ref(false)
 const deleting = ref(false)
 
@@ -386,7 +364,6 @@ const handleDelete = async () => {
 
 const fetchJobAndCompany = async () => {
   loading.value = true
-  accessDenied.value = false
   
   try {
     const companyId = route.params.companyId as string
@@ -408,20 +385,19 @@ const fetchJobAndCompany = async () => {
           
           // Verify job belongs to this company
           if (job.value.company_id !== foundCompany.id) {
-            accessDenied.value = true
-            toast.error('This job does not belong to the selected company')
+            router.push({ name: 'not-found' })
+            return
           }
         }
       } else {
-        accessDenied.value = true
-        toast.error('You do not have permission to view this company')
+        router.push({ name: 'not-found' })
+        return
       }
     }
   } catch (error) {
     console.error('Failed to fetch job:', error)
-    const err = error as { response?: { data?: { message?: string } } }
-    toast.error(err.response?.data?.message || 'Failed to load job details')
-    job.value = null
+    router.push({ name: 'not-found' })
+    return
   } finally {
     loading.value = false
   }

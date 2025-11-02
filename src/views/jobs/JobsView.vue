@@ -1,8 +1,8 @@
 <template>
   <div class="bg-gray-50 min-h-screen">
     <!-- Search & Filters Bar -->
-    <div class="bg-white border-b-2 border-gray-300 sticky top-0 z-30">
-      <div class="mx-auto px-4 py-4 max-w-[1200px]">
+    <div class="bg-white border-b-2 border-gray-300 z-30">
+      <div class="mx-auto px-4 py-4 w-full max-w-[900px]">
         <!-- Search Row -->
         <div class="flex flex-col sm:flex-row gap-3 mb-3">
           <div class="flex-1">
@@ -168,8 +168,10 @@
               :key="job.id"
               @click="selectJob(job)"
               :class="[
-                'p-4 cursor-pointer transition-colors border-b-2 border-gray-300',
-                selectedJob?.id === job.id ? 'bg-primary-50 border-l-4 border-l-primary-600' : 'hover:bg-gray-50'
+                'p-4 cursor-pointer transition-all duration-200 border-b-2 border-gray-300 border-l-4',
+                selectedJob?.id === job.id 
+                  ? 'bg-primary-50 border-l-primary-600' 
+                  : 'border-l-transparent hover:bg-gray-50 hover:border-l-primary-400'
               ]"
             >
               <div class="flex gap-3">
@@ -292,7 +294,13 @@
                 </div>
 
                 <div class="flex flex-wrap gap-3">
-                  <BaseButton variant="primary" size="lg" class="flex-1 sm:flex-initial" @click="applyForJob(selectedJob)">
+                  <BaseButton 
+                    v-if="authStore.user?.user_type !== 'company_owner'" 
+                    variant="primary" 
+                    size="lg" 
+                    class="flex-1 sm:flex-initial" 
+                    @click="applyForJob(selectedJob)"
+                  >
                     <template #icon-left>
                       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -387,7 +395,7 @@
                   </div>
 
                   <BaseButton 
-                    v-if="!isOwnJob(selectedJob)"
+                    v-if="!isOwnJob(selectedJob) && authStore.user?.user_type !== 'company_owner'"
                     variant="outline" 
                     size="lg" 
                     @click="saveJob(selectedJob)"
@@ -436,6 +444,13 @@
               <h2 class="text-xl font-bold text-gray-900 mb-4">Requirements</h2>
               <!-- eslint-disable-next-line vue/no-v-html -->
               <div v-html="selectedJob.requirements" class="text-gray-600"></div>
+            </div>
+
+            <!-- Benefits -->
+            <div v-if="selectedJob.benefits" class="prose prose-sm max-w-none mb-8">
+              <h2 class="text-xl font-bold text-gray-900 mb-4">Benefits</h2>
+              <!-- eslint-disable-next-line vue/no-v-html -->
+              <div v-html="selectedJob.benefits" class="text-gray-600"></div>
             </div>
 
             <!-- Skills -->

@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory, type RouteRecordRaw, type NavigationGuardNext, type RouteLocationNormalized } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import { FEATURES } from '@/config/features'
 
 const routes: RouteRecordRaw[] = [
   {
@@ -24,19 +25,19 @@ const routes: RouteRecordRaw[] = [
     path: '/application/:slug',
     name: 'apply-job',
     component: () => import('@/views/jobs/ApplyJobView.vue'),
-    meta: { title: 'Apply for Job', requiresAuth: true },
+    meta: { title: 'Apply for Job', requiresAuth: true, requiresJobSeeker: true },
   },
   {
     path: '/my-applications',
     name: 'my-applications',
     component: () => import('@/views/jobs/MyApplicationsView.vue'),
-    meta: { title: 'My Applications', requiresAuth: true },
+    meta: { title: 'My Applications', requiresAuth: true, requiresJobSeeker: true },
   },
   {
     path: '/saved-jobs',
     name: 'saved-jobs',
     component: () => import('@/views/jobs/SavedJobsView.vue'),
-    meta: { title: 'Saved Jobs', requiresAuth: true },
+    meta: { title: 'Saved Jobs', requiresAuth: true, requiresJobSeeker: true },
   },
   {
     path: '/companies',
@@ -56,18 +57,31 @@ const routes: RouteRecordRaw[] = [
     component: () => import('@/views/companies/CompanyDetailView.vue'),
     meta: { title: 'Company Details' },
   },
-  {
-    path: '/cvs',
-    name: 'cvs',
-    component: () => import('@/views/free-cvs/FreeCvsView.vue'),
-    meta: { title: 'Browse CVs', requiresAuth: true, requiresCompany: true },
-  },
-  {
-    path: '/cvs/:slug',
-    name: 'cv-detail',
-    component: () => import('@/views/free-cvs/FreeCvDetailView.vue'),
-    meta: { title: 'CV Details', requiresAuth: true, requiresCompany: true },
-  },
+  // Free CVs routes - conditionally added based on feature flag
+  ...(FEATURES.FREE_CVS_ENABLED ? [
+    {
+      path: '/cvs',
+      name: 'cvs',
+      component: () => import('@/views/free-cvs/FreeCvsView.vue'),
+      meta: { title: 'Browse CVs', requiresAuth: true, requiresCompany: true },
+    },
+    {
+      path: '/cvs/:slug',
+      name: 'cv-detail',
+      component: () => import('@/views/free-cvs/FreeCvDetailView.vue'),
+      meta: { title: 'CV Details', requiresAuth: true, requiresCompany: true },
+    },
+  ] : [
+    // If feature is disabled, redirect to dashboard
+    {
+      path: '/cvs',
+      redirect: '/dashboard',
+    },
+    {
+      path: '/cvs/:slug',
+      redirect: '/dashboard',
+    },
+  ]),
   {
     path: '/login',
     name: 'login',
@@ -99,7 +113,7 @@ const routes: RouteRecordRaw[] = [
     meta: { title: 'My Companies', requiresAuth: true, requiresCompany: true },
   },
   {
-    path: '/my-companies/:id',
+    path: '/my-companies/:slug',
     name: 'view-my-company',
     component: () => import('@/views/companies/ViewMyCompanyView.vue'),
     meta: { title: 'View Company', requiresAuth: true, requiresCompany: true },
@@ -138,25 +152,25 @@ const routes: RouteRecordRaw[] = [
     path: '/my-cvs',
     name: 'my-cvs',
     component: () => import('@/views/dashboard/MyCvsView.vue'),
-    meta: { title: 'My CVs', requiresAuth: true },
+    meta: { title: 'My CVs', requiresAuth: true, requiresJobSeeker: true },
   },
   {
     path: '/my-cvs/create',
     name: 'create-cv',
     component: () => import('@/views/dashboard/CreateCvView.vue'),
-    meta: { title: 'Create CV', requiresAuth: true },
+    meta: { title: 'Create CV', requiresAuth: true, requiresJobSeeker: true },
   },
   {
     path: '/my-cvs/edit/:id',
     name: 'edit-cv',
     component: () => import('@/views/dashboard/CreateCvView.vue'),
-    meta: { title: 'Edit CV', requiresAuth: true },
+    meta: { title: 'Edit CV', requiresAuth: true, requiresJobSeeker: true },
   },
   {
     path: '/my-cvs/view/:id',
     name: 'view-cv',
     component: () => import('@/views/dashboard/ViewCvView.vue'),
-    meta: { title: 'View CV', requiresAuth: true },
+    meta: { title: 'View CV', requiresAuth: true, requiresJobSeeker: true },
   },
   {
     path: '/about',
@@ -201,6 +215,7 @@ router.beforeEach((to: RouteLocationNormalized, _from: RouteLocationNormalized, 
   const requiresAuth = to.matched.some((record) => record.meta.requiresAuth)
   const isGuestRoute = to.matched.some((record) => record.meta.guest)
   const requiresCompany = to.matched.some((record) => record.meta.requiresCompany)
+  const requiresJobSeeker = to.matched.some((record) => record.meta.requiresJobSeeker)
 
   // Set page title
   document.title = to.meta.title ? `${to.meta.title} | JobsIQ` : 'JobsIQ'
@@ -213,6 +228,9 @@ router.beforeEach((to: RouteLocationNormalized, _from: RouteLocationNormalized, 
     next({ name: 'dashboard' })
   } else if (requiresCompany && authStore.user?.user_type !== 'company_owner') {
     // Redirect to dashboard if route requires company owner role
+    next({ name: 'dashboard' })
+  } else if (requiresJobSeeker && authStore.user?.user_type !== 'job_seeker') {
+    // Redirect to dashboard if route requires job seeker role (company owners cannot access CV features)
     next({ name: 'dashboard' })
   } else {
     next()

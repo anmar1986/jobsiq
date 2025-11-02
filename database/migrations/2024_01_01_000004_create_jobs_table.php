@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('slug')->unique();
             $table->text('description');
             $table->text('requirements')->nullable();
+            $table->text('benefits')->nullable();
             $table->string('location');
             $table->string('city')->nullable();
             $table->string('country')->nullable();

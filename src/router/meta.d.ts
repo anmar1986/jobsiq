@@ -6,5 +6,6 @@ declare module 'vue-router' {
     requiresAuth?: boolean
     guest?: boolean
     requiresCompany?: boolean
+    requiresJobSeeker?: boolean
   }
 }

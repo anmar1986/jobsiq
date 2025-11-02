@@ -14,27 +14,6 @@
       </div>
     </div>
 
-    <!-- Company Not Found or Access Denied -->
-    <div v-else-if="!company || accessDenied" class="container-custom py-16">
-      <BaseCard class="p-12 text-center">
-        <svg class="h-16 w-16 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-        </svg>
-        <h2 class="text-2xl font-bold text-gray-900 mb-2">
-          {{ accessDenied ? 'Access Denied' : 'Company Not Found' }}
-        </h2>
-        <p class="text-gray-600 mb-6">
-          {{ accessDenied 
-            ? 'You do not have permission to view this company.' 
-            : 'The company you are looking for does not exist.' 
-          }}
-        </p>
-        <BaseButton variant="primary" @click="router.push({ name: 'dashboard' })">
-          Back to Dashboard
-        </BaseButton>
-      </BaseCard>
-    </div>
-
     <!-- Company Detail Content -->
     <div v-else-if="company">
       <!-- Cover Image Hero Section -->
@@ -785,7 +764,6 @@ const loading = ref(true)
 const loadingJobs = ref(false)
 const company = ref<Company | null>(null)
 const jobs = ref<Job[]>([])
-const accessDenied = ref(false)
 const showDeleteJobModal = ref(false)
 const selectedJob = ref<Job | null>(null)
 const deletingJob = ref(false)
@@ -1103,35 +1081,32 @@ const handleDeleteCompany = async () => {
 
 const fetchCompanyDetail = async () => {
   loading.value = true
-  accessDenied.value = false
   
   try {
-    const companyId = route.params.id as string
+    const companySlug = route.params.slug as string
     
-    // Fetch all user's companies to verify ownership
-    const response = await companyService.getMyCompanies()
+    // Fetch the specific company by slug
+    const response = await companyService.getCompanyBySlug(companySlug)
     
     if (response.success && response.data) {
-      // Find the company with matching ID
-      const foundCompany = response.data.find((c: Company) => c.id.toString() === companyId)
+      company.value = response.data
       
-      if (foundCompany) {
-        company.value = foundCompany
-        
-        // Load jobs if available
-        if (foundCompany.jobs && foundCompany.jobs.length > 0) {
-          jobs.value = foundCompany.jobs
-        }
-      } else {
-        // Company not found in user's companies - access denied
-        accessDenied.value = true
-        toast.error('You do not have permission to view this company')
+      // Load jobs if available
+      if (response.data.jobs && response.data.jobs.length > 0) {
+        jobs.value = response.data.jobs
       }
     }
   } catch (error) {
     console.error('Failed to fetch company:', error)
-    const err = error as { response?: { data?: { message?: string } } }
-    toast.error(err.response?.data?.message || 'Failed to load company details')
+    const err = error as { response?: { status?: number; data?: { message?: string } } }
+    
+    if (err.response?.status === 404 || err.response?.status === 403) {
+      // Redirect to 404 page instead of showing custom error
+      router.push({ name: 'not-found' })
+      return
+    } else {
+      toast.error(err.response?.data?.message || 'Failed to load company details')
+    }
     company.value = null
   } finally {
     loading.value = false
@@ -1199,8 +1174,8 @@ onBeforeUnmount(() => {
 })
 
 // Watch for route changes to refresh company data
-watch(() => route.params.id, async (newId, oldId) => {
-  if (newId && newId !== oldId) {
+watch(() => route.params.slug, async (newSlug, oldSlug) => {
+  if (newSlug && newSlug !== oldSlug) {
     await fetchCompanyDetail()
   }
 })
