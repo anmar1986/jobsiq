@@ -157,7 +157,10 @@ class CompanyController extends Controller
         $company = Company::where('slug', $slug)
             ->where('is_active', true)
             ->with(['logo', 'cover', 'images', 'owners', 'jobs' => function ($query) {
-                $query->active()->published()->latest('published_at');
+                $query->select('id', 'company_id', 'title', 'slug', 'description', 'location', 'city', 'country', 'employment_type', 'experience_level', 'category', 'salary_min', 'salary_max', 'salary_currency', 'is_remote', 'created_at')
+                    ->active()
+                    ->published()
+                    ->latest('published_at');
             }])
             ->withCount('jobs')
             ->firstOrFail();
@@ -194,7 +197,10 @@ class CompanyController extends Controller
             ->ownedCompanies()
             ->where('slug', $slug)
             ->with(['logo', 'cover', 'images', 'jobs' => function ($query) {
-                $query->active()->published()->latest('published_at');
+                $query->select('id', 'company_id', 'title', 'slug', 'description', 'location', 'city', 'country', 'employment_type', 'experience_level', 'category', 'salary_min', 'salary_max', 'salary_currency', 'is_remote', 'created_at')
+                    ->active()
+                    ->published()
+                    ->latest('published_at');
             }, 'owners'])
             ->withCount('jobs')
             ->first();
