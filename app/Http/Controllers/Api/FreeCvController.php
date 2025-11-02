@@ -19,12 +19,11 @@ class FreeCvController extends Controller
     public function index(Request $request)
     {
         // Check if feature is enabled
-        if (!config('features.free_cvs_enabled')) {
+        if (! config('features.free_cvs_enabled')) {
             return response()->json([
-                'message' => 'This feature is currently unavailable.'
+                'message' => 'This feature is currently unavailable.',
             ], 503);
         }
-
 
         $query = UserCv::with(['user', 'workExperiences', 'educationEntries', 'certifications', 'languages']);
 
@@ -248,9 +247,9 @@ class FreeCvController extends Controller
     public function show($identifier)
     {
         // Check if feature is enabled
-        if (!config('features.free_cvs_enabled')) {
+        if (! config('features.free_cvs_enabled')) {
             return response()->json([
-                'message' => 'This feature is currently unavailable.'
+                'message' => 'This feature is currently unavailable.',
             ], 503);
         }
 
