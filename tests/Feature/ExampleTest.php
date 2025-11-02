@@ -12,7 +12,7 @@ class ExampleTest extends TestCase
     public function test_returns_a_successful_response()
     {
         // Test a public API endpoint that doesn't require authentication
-        $response = $this->get('/api/cvs');
+        $response = $this->get('/api/jobs');
 
         $response->assertStatus(200);
     }
