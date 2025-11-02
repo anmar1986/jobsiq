@@ -75,10 +75,12 @@ const routes: RouteRecordRaw[] = [
     // If feature is disabled, redirect to dashboard
     {
       path: '/cvs',
+      name: 'cvs-disabled-redirect',
       redirect: '/dashboard',
     },
     {
       path: '/cvs/:slug',
+      name: 'cv-detail-disabled-redirect',
       redirect: '/dashboard',
     },
   ]),

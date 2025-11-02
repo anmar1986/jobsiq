@@ -374,9 +374,9 @@ const formData = reactive({
 
 const errors = reactive<Record<string, string>>({})
 
-// Auto-select company if only one exists (company owner can only have one company)
+// Auto-select company if only one exists
 watch(() => props.userCompanies, (companies) => {
-  if (companies && companies.length > 0 && !formData.company_id) {
+  if (companies && companies.length === 1 && !formData.company_id) {
     formData.company_id = companies[0].id.toString()
   }
 }, { immediate: true })

@@ -188,9 +188,9 @@ class CompanyController extends Controller
     /**
      * Display the specified owned company by slug (authenticated).
      */
-    public function showMyCompanyBySlug(string $slug): JsonResponse
+    public function showMyCompanyBySlug(Request $request, string $slug): JsonResponse
     {
-        $company = request()->user()
+        $company = $request->user()
             ->ownedCompanies()
             ->where('slug', $slug)
             ->with(['logo', 'cover', 'images', 'jobs' => function ($query) {

@@ -25,6 +25,7 @@ class UpdateJobRequest extends FormRequest
     {
         $jobCategories = config('job.categories');
         $iraqCities = config('company.iraq_cities');
+        $allowedCurrencies = config('job.currencies');
 
         return [
             'title' => ['sometimes', 'string', 'max:255'],
@@ -39,7 +40,7 @@ class UpdateJobRequest extends FormRequest
             'category' => ['sometimes', 'string', 'in:'.implode(',', $jobCategories)],
             'salary_min' => ['nullable', 'numeric', 'min:0'],
             'salary_max' => ['nullable', 'numeric', 'min:0', 'gte:salary_min'],
-            'salary_currency' => ['nullable', 'string', 'in:IQD,USD'],
+            'salary_currency' => ['nullable', 'string', 'in:'.implode(',', $allowedCurrencies)],
             'salary_period' => ['nullable', 'in:hourly,monthly,yearly'],
             'is_remote' => ['boolean'],
             'is_featured' => ['boolean'],

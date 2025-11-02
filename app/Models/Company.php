@@ -107,17 +107,35 @@ class Company extends Model
     {
         $slug = Str::slug($name);
         $originalSlug = $slug;
-        $counter = 1;
 
-        // Check if slug exists, if so, append counter
-        while (static::where('slug', $slug)
-            ->when($ignoreId, fn ($query) => $query->where('id', '!=', $ignoreId))
-            ->exists()) {
-            $slug = $originalSlug.'-'.$counter;
-            $counter++;
+        // Get all slugs that start with the original slug
+        $query = static::where(function ($q) use ($originalSlug) {
+            $q->where('slug', $originalSlug)
+                ->orWhere('slug', 'LIKE', $originalSlug.'-%');
+        });
+
+        if ($ignoreId) {
+            $query->where('id', '!=', $ignoreId);
         }
 
-        return $slug;
+        $existingSlugs = $query->pluck('slug')->toArray();
+
+        if (! in_array($originalSlug, $existingSlugs)) {
+            return $originalSlug;
+        }
+
+        // Find the max counter suffix
+        $max = 0;
+        foreach ($existingSlugs as $existingSlug) {
+            if (preg_match('/^'.preg_quote($originalSlug, '/').'-(\d+)$/', $existingSlug, $matches)) {
+                $num = intval($matches[1]);
+                if ($num > $max) {
+                    $max = $num;
+                }
+            }
+        }
+
+        return $originalSlug.'-'.($max + 1);
     }
 
     /**
