@@ -38,17 +38,12 @@ const handleSubmit = async (formData: FormData) => {
     
     if (response.success && response.data) {
       toast.success('Company created successfully!')
-      // Redirect to the company profile instead of my-companies list
-      router.push({ name: 'view-my-company', params: { id: response.data.id } })
+      // Redirect to the company profile using the slug
+      router.push({ name: 'view-my-company', params: { slug: response.data.slug } })
     }
   } catch (error) {
-    console.error('=== COMPANY CREATION ERROR ===')
-    console.error('Error object:', error)
-    const err = error as { response?: { data?: { message?: string }; status?: number } }
-    console.error('Response:', err.response)
-    console.error('Response data:', err.response?.data)
-    console.error('Response status:', err.response?.status)
-    
+    console.error('Failed to create company:', error)
+    const err = error as { response?: { data?: { message?: string } } }
     toast.error(err.response?.data?.message || 'Failed to create company')
   } finally {
     submitting.value = false

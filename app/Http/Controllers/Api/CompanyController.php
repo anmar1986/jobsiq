@@ -156,7 +156,7 @@ class CompanyController extends Controller
     {
         $company = Company::where('slug', $slug)
             ->where('is_active', true)
-            ->with(['logo', 'cover', 'images', 'jobs' => function ($query) {
+            ->with(['logo', 'cover', 'images', 'owners', 'jobs' => function ($query) {
                 $query->active()->published()->latest('published_at');
             }])
             ->withCount('jobs')

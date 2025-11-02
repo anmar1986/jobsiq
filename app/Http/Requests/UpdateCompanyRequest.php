@@ -88,6 +88,11 @@ class UpdateCompanyRequest extends FormRequest
 
                 // If it's a file upload
                 if ($value instanceof \Illuminate\Http\UploadedFile) {
+                    // Check if the file path is valid and not empty
+                    if (! $value->isValid() || empty($value->getPathname())) {
+                        return; // Skip validation for invalid/empty files
+                    }
+
                     if (! in_array($value->getMimeType(), ['image/jpeg', 'image/png', 'image/jpg', 'image/gif', 'image/svg+xml'])) {
                         $fail('The logo must be an image file.');
                     }
@@ -114,6 +119,11 @@ class UpdateCompanyRequest extends FormRequest
 
                 // If it's a file upload
                 if ($value instanceof \Illuminate\Http\UploadedFile) {
+                    // Check if the file path is valid and not empty
+                    if (! $value->isValid() || empty($value->getPathname())) {
+                        return; // Skip validation for invalid/empty files
+                    }
+
                     if (! in_array($value->getMimeType(), ['image/jpeg', 'image/png', 'image/jpg', 'image/gif', 'image/svg+xml'])) {
                         $fail('The cover must be an image file.');
                     }
