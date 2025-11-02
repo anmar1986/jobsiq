@@ -829,7 +829,6 @@ const getBadgeVariant = (level: string): 'primary' | 'secondary' | 'success' | '
 }
 
 const navigateToJob = (slug: string) => {
-  console.log('Navigating to job with slug:', slug)
   router.push({ name: 'job-detail', params: { slug } })
 }
 
@@ -860,7 +859,6 @@ const fetchCompanyJobs = async () => {
     // Use company.jobs if available from API response
     if (company.value.jobs && company.value.jobs.length > 0) {
       jobs.value = company.value.jobs.slice(0, 10)
-      console.log('Jobs loaded from company:', jobs.value)
     } else {
       // Otherwise fetch all jobs and filter client-side
       await jobStore.fetchJobs({
@@ -869,7 +867,6 @@ const fetchCompanyJobs = async () => {
       jobs.value = jobStore.jobs
         .filter(job => job.company_id === company.value?.id)
         .slice(0, 10)
-      console.log('Jobs loaded from store:', jobs.value)
     }
   } catch (error) {
     console.error('Failed to fetch company jobs:', error)
@@ -897,12 +894,6 @@ onMounted(async () => {
       // Start at the middle set (original images)
       galleryContainer.value.scrollLeft = imageSetWidth
       
-      console.log('Gallery initialized:', {
-        scrollWidth: scrollWidth,
-        imageSetWidth: imageSetWidth,
-        initialScrollLeft: galleryContainer.value.scrollLeft
-      })
-      
       // Add scroll event listener for infinite loop
       scrollHandler = () => {
         if (!galleryContainer.value) return
@@ -914,13 +905,11 @@ onMounted(async () => {
         if (currentScrollLeft >= maxScroll - 10) {
           const newPosition = imageSetWidth + (currentScrollLeft - maxScroll)
           galleryContainer.value.scrollLeft = newPosition
-          console.log('Jumped from right end:', { from: currentScrollLeft, to: newPosition })
         }
         // If scrolled to the very beginning (first set), jump forward to middle set
         else if (currentScrollLeft <= 10) {
           const newPosition = imageSetWidth + currentScrollLeft
           galleryContainer.value.scrollLeft = newPosition
-          console.log('Jumped from left end:', { from: currentScrollLeft, to: newPosition })
         }
       }
       
