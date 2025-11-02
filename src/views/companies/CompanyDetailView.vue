@@ -297,100 +297,6 @@
         </BaseCard>
       </div>
 
-      <!-- Jobs Section Container -->
-      <div class="container-custom py-8">
-        <!-- Jobs Section -->
-        <div>
-          <div class="flex items-center justify-between mb-6">
-            <h2 class="text-2xl font-bold text-gray-900">
-              Open Positions ({{ jobs.length }})
-            </h2>
-            <BaseButton 
-              v-if="jobs.length > 10" 
-              variant="outline" 
-              @click="viewAllJobs"
-            >
-              View All Jobs
-            </BaseButton>
-          </div>
-
-          <!-- Jobs Loading -->
-          <div v-if="loadingJobs" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <BaseCard v-for="i in 3" :key="i" class="p-6 animate-pulse">
-              <div class="h-5 bg-gray-200 rounded w-3/4 mb-3"></div>
-              <div class="h-4 bg-gray-200 rounded w-1/2 mb-4"></div>
-              <div class="h-4 bg-gray-200 rounded w-full"></div>
-            </BaseCard>
-          </div>
-
-          <!-- Jobs Cards Grid -->
-          <div v-else-if="jobs.length > 0" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <BaseCard
-              v-for="job in jobs"
-              :key="job.id"
-              hoverable
-              class="p-6 group cursor-pointer"
-              @click="router.push({ name: 'job-detail', params: { id: job.id } })"
-            >
-              <!-- Job Header -->
-              <div class="mb-4">
-                <h3 class="text-lg font-semibold text-gray-900 mb-2 line-clamp-2 group-hover:text-primary-600 transition-colors">
-                  {{ job.title }}
-                </h3>
-                <div class="flex items-center gap-2 text-sm text-gray-600">
-                  <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                  </svg>
-                  <span>{{ job.location }}</span>
-                </div>
-              </div>
-
-              <!-- Job Details -->
-              <div class="space-y-2 mb-4">
-                <div class="flex items-center gap-2 text-sm text-gray-600">
-                  <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                  </svg>
-                  <span>{{ formatEmploymentType(job.employment_type) }}</span>
-                </div>
-                
-                <div class="flex items-center gap-2 text-sm text-gray-600">
-                  <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                  <span>Posted {{ formatJobDate(job.created_at) }}</span>
-                </div>
-
-                <div v-if="job.salary_min && job.salary_max" class="flex items-center gap-2 text-sm font-semibold text-primary-600">
-                  <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                  <span>{{ formatSalary(job.salary_min, job.salary_max) }}</span>
-                </div>
-              </div>
-
-              <!-- Badges -->
-              <div class="flex flex-wrap gap-2">
-                <BaseBadge :variant="getBadgeVariant(job.experience_level)">
-                  {{ formatExperienceLevel(job.experience_level) }}
-                </BaseBadge>
-                <BaseBadge v-if="job.is_remote" variant="success">Remote</BaseBadge>
-                <BaseBadge v-if="job.category" variant="info">{{ job.category }}</BaseBadge>
-              </div>
-            </BaseCard>
-          </div>
-
-          <!-- No Jobs -->
-          <BaseCard v-else class="p-12 text-center">
-            <svg class="h-16 w-16 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-            </svg>
-            <h3 class="text-xl font-semibold text-gray-900 mb-2">No Open Positions</h3>
-            <p class="text-gray-600">This company doesn't have any job openings at the moment. Check back later!</p>
-          </BaseCard>
-        </div>
-      </div>
-
       <!-- Company Photos Gallery - Full Width -->
       <div v-if="company.images && company.images.filter(img => img.type === 'gallery').length > 0" class="mb-8">
         <div class="container-custom mb-4">
@@ -413,8 +319,8 @@
           <!-- Gallery Container -->
           <div 
             ref="galleryContainer"
-            class="flex gap-6 overflow-x-auto scrollbar-hide scroll-smooth px-4 py-2"
-            style="scrollbar-width: none; -ms-overflow-style: none; height: 370px; cursor: grab; user-select: none;"
+            class="flex gap-6 overflow-x-auto scrollbar-hide px-4 py-2"
+            style="scrollbar-width: none; -ms-overflow-style: none; height: 370px; cursor: grab; user-select: none; scroll-behavior: auto;"
             @mousedown="handleMouseDown"
             @mousemove="handleMouseMove"
             @mouseup="handleMouseUp"
@@ -519,6 +425,100 @@
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
             </svg>
           </button>
+        </div>
+      </div>
+
+      <!-- Jobs Section Container -->
+      <div class="container-custom py-8">
+        <!-- Jobs Section -->
+        <div>
+          <div class="flex items-center justify-between mb-6">
+            <h2 class="text-2xl font-bold text-gray-900">
+              Open Positions ({{ jobs.length }})
+            </h2>
+            <BaseButton 
+              v-if="jobs.length > 10" 
+              variant="outline" 
+              @click="viewAllJobs"
+            >
+              View All Jobs
+            </BaseButton>
+          </div>
+
+          <!-- Jobs Loading -->
+          <div v-if="loadingJobs" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <BaseCard v-for="i in 3" :key="i" class="p-6 animate-pulse">
+              <div class="h-5 bg-gray-200 rounded w-3/4 mb-3"></div>
+              <div class="h-4 bg-gray-200 rounded w-1/2 mb-4"></div>
+              <div class="h-4 bg-gray-200 rounded w-full"></div>
+            </BaseCard>
+          </div>
+
+          <!-- Jobs Cards Grid -->
+          <div v-else-if="jobs.length > 0" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <BaseCard
+              v-for="job in jobs"
+              :key="job.id"
+              hoverable
+              class="p-6 group cursor-pointer"
+              @click="router.push({ name: 'job-detail', params: { id: job.id } })"
+            >
+              <!-- Job Header -->
+              <div class="mb-4">
+                <h3 class="text-lg font-semibold text-gray-900 mb-2 line-clamp-2 group-hover:text-primary-600 transition-colors">
+                  {{ job.title }}
+                </h3>
+                <div class="flex items-center gap-2 text-sm text-gray-600">
+                  <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                  </svg>
+                  <span>{{ job.location }}</span>
+                </div>
+              </div>
+
+              <!-- Job Details -->
+              <div class="space-y-2 mb-4">
+                <div class="flex items-center gap-2 text-sm text-gray-600">
+                  <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                  </svg>
+                  <span>{{ formatEmploymentType(job.employment_type) }}</span>
+                </div>
+                
+                <div class="flex items-center gap-2 text-sm text-gray-600">
+                  <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <span>Posted {{ formatJobDate(job.created_at) }}</span>
+                </div>
+
+                <div v-if="job.salary_min && job.salary_max" class="flex items-center gap-2 text-sm font-semibold text-primary-600">
+                  <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <span>{{ formatSalary(job.salary_min, job.salary_max) }}</span>
+                </div>
+              </div>
+
+              <!-- Badges -->
+              <div class="flex flex-wrap gap-2">
+                <BaseBadge :variant="getBadgeVariant(job.experience_level)">
+                  {{ formatExperienceLevel(job.experience_level) }}
+                </BaseBadge>
+                <BaseBadge v-if="job.is_remote" variant="success">Remote</BaseBadge>
+                <BaseBadge v-if="job.category" variant="info">{{ job.category }}</BaseBadge>
+              </div>
+            </BaseCard>
+          </div>
+
+          <!-- No Jobs -->
+          <BaseCard v-else class="p-12 text-center">
+            <svg class="h-16 w-16 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+            </svg>
+            <h3 class="text-xl font-semibold text-gray-900 mb-2">No Open Positions</h3>
+            <p class="text-gray-600">This company doesn't have any job openings at the moment. Check back later!</p>
+          </BaseCard>
         </div>
       </div>
     </div>
@@ -876,35 +876,49 @@ onMounted(async () => {
     await fetchCompanyJobs()
   }
   
-  // Setup infinite carousel
-  nextTick(() => {
+  // Setup infinite carousel - wait for DOM to fully render
+  await nextTick()
+  
+  // Add a small delay to ensure images are loaded
+  setTimeout(() => {
     if (galleryContainer.value && galleryImages.value.length > 0) {
       // Calculate the width of one image set
-      const imageWidth = galleryContainer.value.scrollWidth / 3 // We have 3 sets of images
+      const scrollWidth = galleryContainer.value.scrollWidth
+      const imageSetWidth = scrollWidth / 3 // We have 3 sets of images
+      
       // Start at the middle set (original images)
-      galleryContainer.value.scrollLeft = imageWidth
+      galleryContainer.value.scrollLeft = imageSetWidth
+      
+      console.log('Gallery initialized:', {
+        scrollWidth: scrollWidth,
+        imageSetWidth: imageSetWidth,
+        initialScrollLeft: galleryContainer.value.scrollLeft
+      })
       
       // Add scroll event listener for infinite loop
       scrollHandler = () => {
         if (!galleryContainer.value) return
         
-        const scrollLeft = galleryContainer.value.scrollLeft
-        const scrollWidth = galleryContainer.value.scrollWidth
-        const imageSetWidth = scrollWidth / 3
+        const currentScrollLeft = galleryContainer.value.scrollLeft
+        const maxScroll = galleryContainer.value.scrollWidth - galleryContainer.value.clientWidth
         
-        // If scrolled past the end of original images, jump to start of original images
-        if (scrollLeft >= imageSetWidth * 2) {
-          galleryContainer.value.scrollLeft = imageSetWidth + (scrollLeft - imageSetWidth * 2)
+        // If scrolled to the very end (third set), jump back to middle set
+        if (currentScrollLeft >= maxScroll - 10) {
+          const newPosition = imageSetWidth + (currentScrollLeft - maxScroll)
+          galleryContainer.value.scrollLeft = newPosition
+          console.log('Jumped from right end:', { from: currentScrollLeft, to: newPosition })
         }
-        // If scrolled before the start of original images, jump to end of original images
-        else if (scrollLeft <= 0) {
-          galleryContainer.value.scrollLeft = imageSetWidth + scrollLeft
+        // If scrolled to the very beginning (first set), jump forward to middle set
+        else if (currentScrollLeft <= 10) {
+          const newPosition = imageSetWidth + currentScrollLeft
+          galleryContainer.value.scrollLeft = newPosition
+          console.log('Jumped from left end:', { from: currentScrollLeft, to: newPosition })
         }
       }
       
       galleryContainer.value.addEventListener('scroll', scrollHandler)
     }
-  })
+  }, 100)
 })
 
 onBeforeUnmount(() => {
