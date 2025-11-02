@@ -27,9 +27,9 @@ class ExampleTest extends TestCase
                 'success',
                 'data' => [
                     'data' => [
-                        '*' => ['id', 'title', 'company_id']
-                    ]
-                ]
+                        '*' => ['id', 'title', 'company_id'],
+                    ],
+                ],
             ]);
     }
 }
