@@ -4,12 +4,15 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreJobApplicationRequest;
+use App\Mail\JobApplicationSubmitted;
 use App\Models\Company;
 use App\Models\Job;
 use App\Models\JobApplication;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 class JobApplicationController extends Controller
 {
@@ -18,32 +21,57 @@ class JobApplicationController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
-        $query = JobApplication::with(['job.company.logo', 'cv'])
-            ->where('user_id', Auth::id())
-            ->latest('applied_at');
+        try {
+            $userId = Auth::id();
+            
+            // Debug log
+            Log::info('Fetching applications for user', ['user_id' => $userId]);
+            
+            $query = JobApplication::with(['job.company.logo', 'cv'])
+                ->where('user_id', $userId)
+                ->latest('applied_at');
 
-        // Filter by status
-        if ($request->has('status')) {
-            $query->where('status', $request->status);
+            // Filter by status
+            if ($request->has('status') && $request->status) {
+                $query->where('status', $request->status);
+                Log::info('Filtering by status', ['status' => $request->status]);
+            }
+
+            // Search by job title or company name
+            if ($request->has('search') && $request->search) {
+                $search = $request->search;
+                $query->whereHas('job', function ($q) use ($search) {
+                    $q->where('title', 'like', "%{$search}%")
+                        ->orWhereHas('company', function ($cq) use ($search) {
+                            $cq->where('name', 'like', "%{$search}%");
+                        });
+                });
+                Log::info('Searching', ['search' => $search]);
+            }
+
+            $applications = $query->paginate($request->get('per_page', 15));
+            
+            Log::info('Applications retrieved', [
+                'count' => $applications->count(),
+                'total' => $applications->total()
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'data' => $applications,
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error fetching applications', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to fetch applications',
+                'error' => $e->getMessage()
+            ], 500);
         }
-
-        // Search by job title or company name
-        if ($request->has('search')) {
-            $search = $request->search;
-            $query->whereHas('job', function ($q) use ($search) {
-                $q->where('title', 'like', "%{$search}%")
-                    ->orWhereHas('company', function ($cq) use ($search) {
-                        $cq->where('name', 'like', "%{$search}%");
-                    });
-            });
-        }
-
-        $applications = $query->paginate($request->get('per_page', 15));
-
-        return response()->json([
-            'success' => true,
-            'data' => $applications,
-        ]);
     }
 
     /**
@@ -68,10 +96,23 @@ class JobApplicationController extends Controller
             'job_id' => $job->id,
             'cv_id' => $request->cv_id,
             'cover_letter' => $request->cover_letter,
+            'status' => 'pending',
             'applied_at' => now(),
         ]);
 
-        $application->load(['job.company', 'cv']);
+        $application->load(['job.company.logo', 'cv', 'user']);
+
+        // Send email notification to the company
+        try {
+            /** @var \App\Models\Company|null $company */
+            $company = $job->company;
+            if ($company && $company->email) {
+                Mail::to($company->email)->send(new JobApplicationSubmitted($application));
+            }
+        } catch (\Exception $e) {
+            // Log the error but don't fail the application submission
+            Log::error('Failed to send job application email: ' . $e->getMessage());
+        }
 
         return response()->json([
             'success' => true,

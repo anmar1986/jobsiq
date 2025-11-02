@@ -40,7 +40,7 @@
             Back to Jobs
           </button>
 
-          <div class="flex flex-col lg:flex-row gap-8">
+          <div class="flex flex-col lg:flex-row gap-8 lg:relative">
             <!-- Job Info -->
             <div class="flex-1">
               <div class="flex items-start gap-4 mb-6">
@@ -64,46 +64,44 @@
                   </router-link>
                   
                   <!-- Meta Info -->
-                  <div class="flex flex-wrap gap-4 text-gray-600">
-                    <span class="flex items-center gap-1.5">
-                      <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div class="flex flex-wrap gap-3 mb-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
+                    <div class="flex items-center gap-2 px-3 py-1.5 bg-white rounded-md border border-gray-200">
+                      <svg class="w-4 h-4 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                       </svg>
-                      {{ job.location }}
-                    </span>
-                    <span class="flex items-center gap-1.5">
-                      <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                      </svg>
-                      {{ formatEmploymentType(job.employment_type) }}
-                    </span>
-                    <span class="flex items-center gap-1.5">
-                      <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <span class="text-sm font-medium text-gray-900">{{ job.location }}</span>
+                    </div>
+                    <div class="flex items-center gap-2 px-3 py-1.5 bg-white rounded-md border border-gray-200">
+                      <svg class="w-4 h-4 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
-                      {{ formatDate(job.created_at) }}
-                    </span>
+                      <span class="text-sm font-medium text-gray-900">{{ formatEmploymentType(job.employment_type) }}</span>
+                    </div>
+                    <div class="flex items-center gap-2 px-3 py-1.5 bg-white rounded-md border border-gray-200">
+                      <svg class="w-4 h-4 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                      </svg>
+                      <span class="text-sm font-medium text-gray-900">{{ formatExperienceLevel(job.experience_level) }}</span>
+                    </div>
+                    <div v-if="job.is_remote" class="flex items-center gap-2 px-3 py-1.5 bg-green-50 rounded-md border border-green-200">
+                      <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                      </svg>
+                      <span class="text-sm font-medium text-green-700">Remote</span>
+                    </div>
+                    <div v-if="job.category" class="flex items-center gap-2 px-3 py-1.5 bg-purple-50 rounded-md border border-purple-200">
+                      <svg class="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                      </svg>
+                      <span class="text-sm font-medium text-purple-700">{{ job.category }}</span>
+                    </div>
                   </div>
                 </div>
-              </div>
-
-              <!-- Key Info Badges -->
-              <div class="flex flex-wrap gap-3">
-                <BaseBadge :variant="getBadgeVariant(job.experience_level)">
-                  {{ formatExperienceLevel(job.experience_level) }}
-                </BaseBadge>
-                <BaseBadge v-if="job.is_remote" variant="success">
-                  <svg class="h-4 w-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                  Remote
-                </BaseBadge>
-                <BaseBadge v-if="job.category" variant="info">{{ job.category }}</BaseBadge>
               </div>
             </div>
 
             <!-- Salary & Apply Card -->
-            <div class="lg:w-80 flex-shrink-0">
+            <div class="hidden lg:block lg:w-80 lg:absolute lg:right-0 lg:top-0">
               <BaseCard class="p-6 sticky top-24">
                 <div class="mb-6">
                   <p class="text-sm text-gray-600 mb-1">Salary Range</p>
@@ -274,102 +272,75 @@
 
       <!-- Job Details Content -->
       <div class="container-custom py-8">
-        <div class="flex flex-col lg:flex-row gap-8">
-          <!-- Main Content -->
-          <div class="flex-1">
-            <BaseCard class="p-8 mb-8">
-              <!-- Job Description -->
-              <section class="mb-8">
-                <h2 class="text-2xl font-bold text-gray-900 mb-4">Job Description</h2>
-                <!-- eslint-disable-next-line vue/no-v-html -->
-                <div class="prose prose-gray max-w-none" v-html="job.description"></div>
-              </section>
+        <!-- Main Content -->
+        <div class="max-w-4xl mx-auto">
+          <BaseCard class="p-8 mb-8">
+            <!-- Job Description -->
+            <section class="mb-8">
+              <h2 class="text-2xl font-bold text-gray-900 mb-4">Job Description</h2>
+              <!-- eslint-disable-next-line vue/no-v-html -->
+              <div class="prose prose-gray max-w-none" v-html="job.description"></div>
+            </section>
 
-              <!-- Requirements -->
-              <section v-if="job.requirements" class="mb-8 pb-8 border-t border-gray-200 pt-8">
-                <h2 class="text-2xl font-bold text-gray-900 mb-4">Requirements</h2>
-                <!-- eslint-disable-next-line vue/no-v-html -->
-                <div class="prose prose-gray max-w-none" v-html="job.requirements"></div>
-              </section>
+            <!-- Requirements -->
+            <section v-if="job.requirements" class="mb-8 pb-8 border-t border-gray-200 pt-8">
+              <h2 class="text-2xl font-bold text-gray-900 mb-4">Requirements</h2>
+              <!-- eslint-disable-next-line vue/no-v-html -->
+              <div class="prose prose-gray max-w-none" v-html="job.requirements"></div>
+            </section>
 
-              <!-- Responsibilities -->
-              <section v-if="job.responsibilities" class="mb-8 pb-8 border-t border-gray-200 pt-8">
-                <h2 class="text-2xl font-bold text-gray-900 mb-4">Responsibilities</h2>
-                <!-- eslint-disable-next-line vue/no-v-html -->
-                <div class="prose prose-gray max-w-none" v-html="job.responsibilities"></div>
-              </section>
+            <!-- Responsibilities -->
+            <section v-if="job.responsibilities" class="mb-8 pb-8 border-t border-gray-200 pt-8">
+              <h2 class="text-2xl font-bold text-gray-900 mb-4">Responsibilities</h2>
+              <!-- eslint-disable-next-line vue/no-v-html -->
+              <div class="prose prose-gray max-w-none" v-html="job.responsibilities"></div>
+            </section>
 
-              <!-- Benefits -->
-              <section v-if="job.benefits" class="mb-8 pb-8 border-t border-gray-200 pt-8">
-                <h2 class="text-2xl font-bold text-gray-900 mb-4">Benefits</h2>
-                <!-- eslint-disable-next-line vue/no-v-html -->
-                <div class="prose prose-gray max-w-none" v-html="job.benefits"></div>
-              </section>
-            </BaseCard>
+            <!-- Benefits -->
+            <section v-if="job.benefits" class="mb-8 pb-8 border-t border-gray-200 pt-8">
+              <h2 class="text-2xl font-bold text-gray-900 mb-4">Benefits</h2>
+              <!-- eslint-disable-next-line vue/no-v-html -->
+              <div class="prose prose-gray max-w-none" v-html="job.benefits"></div>
+            </section>
+          </BaseCard>
 
-            <!-- About Company -->
-            <BaseCard v-if="job.company" class="p-8">
-              <h2 class="text-2xl font-bold text-gray-900 mb-6">About {{ job.company.name }}</h2>
-              <div class="flex items-start gap-6">
-                <div class="w-20 h-20 rounded-xl bg-gradient-to-br from-primary-500 to-secondary-500 flex items-center justify-center text-white text-2xl font-bold flex-shrink-0">
-                  {{ job.company.name.charAt(0) }}
-                </div>
-                <div class="flex-1">
-                  <p class="text-gray-700 mb-4 leading-relaxed">{{ job.company.description || 'No description available.' }}</p>
-                  <div class="flex flex-wrap gap-4 text-sm text-gray-600">
-                    <span v-if="job.company.city" class="flex items-center gap-1.5">
-                      <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                      </svg>
-                      {{ job.company.city }}, {{ job.company.country }}
-                    </span>
-                    <span v-if="job.company.website" class="flex items-center gap-1.5">
-                      <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
-                      </svg>
-                      <a :href="job.company.website" target="_blank" class="text-primary-600 hover:text-primary-700">
-                        Website
-                      </a>
-                    </span>
-                    <span v-if="job.company.jobs_count" class="flex items-center gap-1.5">
-                      <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                      </svg>
-                      {{ job.company.jobs_count }} open positions
-                    </span>
-                  </div>
-                  <BaseButton variant="outline" size="sm" class="mt-4" @click="router.push(`/companies/${job.company?.slug}`)">
-                    View Company Profile
-                  </BaseButton>
-                </div>
+          <!-- About Company -->
+          <BaseCard v-if="job.company" class="p-8">
+            <h2 class="text-2xl font-bold text-gray-900 mb-6">About {{ job.company.name }}</h2>
+            <div class="flex items-start gap-6">
+              <div class="w-20 h-20 rounded-xl bg-gradient-to-br from-primary-500 to-secondary-500 flex items-center justify-center text-white text-2xl font-bold flex-shrink-0">
+                {{ job.company.name.charAt(0) }}
               </div>
-            </BaseCard>
-          </div>
-
-          <!-- Sidebar -->
-          <aside class="lg:w-80 flex-shrink-0">
-            <!-- Similar Jobs -->
-            <BaseCard v-if="similarJobs.length > 0" class="p-6">
-              <h3 class="font-semibold text-gray-900 mb-4">Similar Jobs</h3>
-              <div class="space-y-4">
-                <router-link
-                  v-for="similarJob in similarJobs"
-                  :key="similarJob.id"
-                  :to="`/jobs/${similarJob.slug}`"
-                  class="block group"
-                >
-                  <h4 class="font-medium text-gray-900 group-hover:text-primary-600 transition-colors mb-1">
-                    {{ similarJob.title }}
-                  </h4>
-                  <p class="text-sm text-gray-600">{{ similarJob.company?.name }}</p>
-                  <p class="text-sm text-gray-500">{{ similarJob.location }}</p>
-                  <p v-if="similarJob.salary_min && similarJob.salary_max" class="text-sm font-medium text-primary-600 mt-1">
-                    {{ formatSalary(similarJob.salary_min || 0, similarJob.salary_max || 0) }}
-                  </p>
-                </router-link>
+              <div class="flex-1">
+                <p class="text-gray-700 mb-4 leading-relaxed">{{ job.company.description || 'No description available.' }}</p>
+                <div class="flex flex-wrap gap-4 text-sm text-gray-600">
+                  <span v-if="job.company.city" class="flex items-center gap-1.5">
+                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                    </svg>
+                    {{ job.company.city }}, {{ job.company.country }}
+                  </span>
+                  <span v-if="job.company.website" class="flex items-center gap-1.5">
+                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
+                    </svg>
+                    <a :href="job.company.website" target="_blank" class="text-primary-600 hover:text-primary-700">
+                      Website
+                    </a>
+                  </span>
+                  <span v-if="job.company.jobs_count" class="flex items-center gap-1.5">
+                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                    </svg>
+                    {{ job.company.jobs_count }} open positions
+                  </span>
+                </div>
+                <BaseButton variant="outline" size="sm" class="mt-4" @click="router.push(`/companies/${job.company?.slug}`)">
+                  View Company Profile
+                </BaseButton>
               </div>
-            </BaseCard>
-          </aside>
+            </div>
+          </BaseCard>
         </div>
       </div>
     </div>
@@ -464,7 +435,6 @@ import { stripAndTruncate } from '@/utils/html'
 import BaseCard from '@/components/base/BaseCard.vue'
 import BaseButton from '@/components/base/BaseButton.vue'
 import BaseInput from '@/components/base/BaseInput.vue'
-import BaseBadge from '@/components/base/BaseBadge.vue'
 import BaseModal from '@/components/base/BaseModal.vue'
 import type { Job } from '@/types'
 
@@ -477,7 +447,6 @@ const toast = useToast()
 
 const loading = ref(true)
 const job = ref<Job | null>(null)
-const similarJobs = ref<Job[]>([])
 const isSaved = ref(false)
 const hasApplied = ref(false)
 const showApplyModal = ref(false)
@@ -575,17 +544,6 @@ const formatSalary = (min: number, max: number): string => {
   if (min) return `From $${formatNumber(min)}`
   if (max) return `Up to $${formatNumber(max)}`
   return 'Competitive'
-}
-
-const getBadgeVariant = (level: string): 'primary' | 'secondary' | 'success' | 'warning' | 'danger' | 'info' => {
-  const variants: Record<string, 'primary' | 'secondary' | 'success' | 'warning' | 'danger' | 'info'> = {
-    'entry': 'success',
-    'mid': 'info',
-    'senior': 'warning',
-    'lead': 'secondary',
-    'executive': 'primary',
-  }
-  return variants[level] || 'info'
 }
 
 const handleApply = () => {
@@ -741,15 +699,6 @@ const fetchJobDetail = async () => {
         await savedJobStore.fetchSavedJobsCount()
       }
       isSaved.value = savedJobStore.savedJobIds.has(job.value.id)
-    }
-    
-    // Fetch similar jobs if category exists
-    if (job.value && job.value.category) {
-      await jobStore.fetchJobs({
-        category: job.value.category || '',
-        per_page: 3,
-      })
-      similarJobs.value = jobStore.jobs.filter((j: Job) => j.id !== job.value?.id).slice(0, 3)
     }
   } catch (error) {
     console.error('Failed to fetch job:', error)
