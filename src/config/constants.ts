@@ -37,16 +37,17 @@ export const EMPLOYMENT_TYPES = [
   { value: 'internship', label: 'Internship' },
 ] as const
 
-// Experience Levels
+// Experience Levels - Must match backend validation
 export const EXPERIENCE_LEVELS = [
   { value: 'entry', label: 'Entry Level' },
+  { value: 'junior', label: 'Junior' },
   { value: 'mid', label: 'Mid Level' },
   { value: 'senior', label: 'Senior' },
   { value: 'lead', label: 'Lead' },
   { value: 'executive', label: 'Executive' },
 ] as const
 
-// Categories
+// Categories - Must match exactly with config/job.php
 export const JOB_CATEGORIES = [
   'Information Technology (IT) & Software',
   'Engineering & Technical',

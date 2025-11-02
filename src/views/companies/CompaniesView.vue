@@ -10,7 +10,7 @@
 
     <!-- Search Bar -->
     <div class="bg-white border-b border-gray-200">
-      <div class="container-custom py-4">
+      <div class="mx-auto px-4 py-4 w-full max-w-[900px]">
         <div class="flex flex-col sm:flex-row gap-3 sm:gap-4">
           <BaseInput
             v-model="searchQuery"

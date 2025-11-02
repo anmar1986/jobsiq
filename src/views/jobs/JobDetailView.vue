@@ -113,7 +113,9 @@
                   <p v-if="job.salary_currency !== 'USD'" class="text-sm text-gray-500">{{ job.salary_currency }}</p>
                 </div>
 
+                <!-- Apply Button - Only for Job Seekers -->
                 <BaseButton
+                  v-if="authStore.isJobSeeker"
                   variant="primary"
                   size="lg"
                   class="w-full mb-3"
@@ -126,6 +128,22 @@
                     </svg>
                   </template>
                   {{ hasApplied ? 'Already Applied' : 'Apply Now' }}
+                </BaseButton>
+
+                <!-- Login prompt for non-authenticated users -->
+                <BaseButton
+                  v-else-if="!authStore.isAuthenticated"
+                  variant="primary"
+                  size="lg"
+                  class="w-full mb-3"
+                  @click="handleApply"
+                >
+                  <template #icon-left>
+                    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </template>
+                  Apply Now
                 </BaseButton>
 
                 <!-- Share Job Button with Dropdown -->
@@ -215,8 +233,9 @@
                   </Transition>
                 </div>
 
+                <!-- Save Job Button - Only for Job Seekers -->
                 <BaseButton
-                  v-if="!isOwnJob"
+                  v-if="!isOwnJob && authStore.isJobSeeker"
                   variant="outline"
                   size="lg"
                   class="w-full"
@@ -281,7 +300,7 @@
               </section>
 
               <!-- Benefits -->
-              <section v-if="job.benefits" class="pb-8 border-t border-gray-200 pt-8">
+              <section v-if="job.benefits" class="mb-8 pb-8 border-t border-gray-200 pt-8">
                 <h2 class="text-2xl font-bold text-gray-900 mb-4">Benefits</h2>
                 <!-- eslint-disable-next-line vue/no-v-html -->
                 <div class="prose prose-gray max-w-none" v-html="job.benefits"></div>
@@ -574,6 +593,13 @@ const handleApply = () => {
     router.push(`/login?redirect=/jobs/${route.params.slug}`)
     return
   }
+
+  // Prevent company owners from applying to jobs
+  if (authStore.isCompanyOwner) {
+    toast.error('Company owners cannot apply to jobs. Only job seekers can apply.')
+    return
+  }
+
   // Open application page in a new tab
   window.open(`/application/${route.params.slug}`, '_blank')
 }
@@ -581,6 +607,12 @@ const handleApply = () => {
 const toggleSave = async () => {
   if (!authStore.isAuthenticated) {
     router.push(`/login?redirect=/jobs/${route.params.slug}`)
+    return
+  }
+
+  // Prevent company owners from saving jobs
+  if (authStore.isCompanyOwner) {
+    toast.error('Company owners cannot save jobs. Only job seekers can save jobs.')
     return
   }
   

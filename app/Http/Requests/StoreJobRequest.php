@@ -36,24 +36,27 @@ class StoreJobRequest extends FormRequest
     {
         $jobCategories = config('job.categories');
         $iraqCities = config('company.iraq_cities');
+        $allowedCurrencies = config('job.currencies');
 
         return [
             'company_id' => ['required', 'exists:companies,id'],
             'title' => ['required', 'string', 'max:255'],
             'description' => ['required', 'string', 'max:10000'],
             'requirements' => ['nullable', 'string', 'max:10000'],
+            'benefits' => ['nullable', 'string', 'max:10000'],
             'location' => ['required', 'string', 'max:255'],
             'city' => ['required', 'string', 'in:'.implode(',', $iraqCities)],
             'country' => ['required', 'string', 'in:Iraq'],
             'employment_type' => ['required', 'in:full-time,part-time,contract,freelance,internship'],
-            'experience_level' => ['nullable', 'in:entry,junior,mid,senior,lead'],
+            'experience_level' => ['nullable', 'in:entry,junior,mid,senior,lead,executive'],
             'category' => ['required', 'string', 'in:'.implode(',', $jobCategories)],
             'salary_min' => ['nullable', 'numeric', 'min:0'],
             'salary_max' => ['nullable', 'numeric', 'min:0', 'gte:salary_min'],
-            'salary_currency' => ['nullable', 'string', 'size:3'],
+            'salary_currency' => ['nullable', 'string', 'in:'.implode(',', $allowedCurrencies)],
             'salary_period' => ['nullable', 'in:hourly,monthly,yearly'],
             'is_remote' => ['boolean'],
             'is_featured' => ['boolean'],
+            'is_active' => ['boolean'],
             'skills' => ['nullable', 'array'],
             'skills.*' => ['string', 'max:100'],
             'expires_at' => ['nullable', 'date', 'after_or_equal:today'],

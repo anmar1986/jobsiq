@@ -88,9 +88,54 @@ class Company extends Model
 
         static::creating(function ($company) {
             if (empty($company->slug)) {
-                $company->slug = Str::slug($company->name);
+                $company->slug = static::generateUniqueSlug($company->name);
             }
         });
+
+        static::updating(function ($company) {
+            // Update slug if name changes
+            if ($company->isDirty('name')) {
+                $company->slug = static::generateUniqueSlug($company->name, $company->id);
+            }
+        });
+    }
+
+    /**
+     * Generate a unique slug from the company name.
+     */
+    protected static function generateUniqueSlug(string $name, ?int $ignoreId = null): string
+    {
+        $slug = Str::slug($name);
+        $originalSlug = $slug;
+
+        // Get all slugs that start with the original slug
+        $query = static::where(function ($q) use ($originalSlug) {
+            $q->where('slug', $originalSlug)
+                ->orWhere('slug', 'LIKE', $originalSlug.'-%');
+        });
+
+        if ($ignoreId) {
+            $query->where('id', '!=', $ignoreId);
+        }
+
+        $existingSlugs = $query->pluck('slug')->toArray();
+
+        if (! in_array($originalSlug, $existingSlugs)) {
+            return $originalSlug;
+        }
+
+        // Find the max counter suffix
+        $max = 0;
+        foreach ($existingSlugs as $existingSlug) {
+            if (preg_match('/^'.preg_quote($originalSlug, '/').'-(\d+)$/', $existingSlug, $matches)) {
+                $num = intval($matches[1]);
+                if ($num > $max) {
+                    $max = $num;
+                }
+            }
+        }
+
+        return $originalSlug.'-'.($max + 1);
     }
 
     /**

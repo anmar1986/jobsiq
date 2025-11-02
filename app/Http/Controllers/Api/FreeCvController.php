@@ -18,6 +18,13 @@ class FreeCvController extends Controller
      */
     public function index(Request $request)
     {
+        // Check if feature is enabled
+        if (! config('features.free_cvs_enabled')) {
+            return response()->json([
+                'message' => 'This feature is currently unavailable.',
+            ], 503);
+        }
+
         $query = UserCv::with(['user', 'workExperiences', 'educationEntries', 'certifications', 'languages']);
 
         // If not authenticated, only show public CVs
@@ -239,6 +246,13 @@ class FreeCvController extends Controller
      */
     public function show($identifier)
     {
+        // Check if feature is enabled
+        if (! config('features.free_cvs_enabled')) {
+            return response()->json([
+                'message' => 'This feature is currently unavailable.',
+            ], 503);
+        }
+
         $query = UserCv::with(['user', 'workExperiences', 'educationEntries', 'certifications', 'languages']);
 
         // Check if identifier is numeric (ID) or string (slug)

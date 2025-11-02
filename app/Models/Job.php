@@ -18,6 +18,7 @@ class Job extends Model
         'slug',
         'description',
         'requirements',
+        'benefits',
         'location',
         'city',
         'country',

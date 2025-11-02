@@ -159,7 +159,7 @@
 
       <!-- Free CVs Card - Company Owners Only -->
       <router-link
-        v-if="authStore.isCompanyOwner"
+        v-if="FEATURES.FREE_CVS_ENABLED && authStore.isCompanyOwner"
         to="/cvs"
         class="block p-4 sm:p-6 bg-white border border-gray-200 rounded-lg hover:shadow-lg hover:border-primary-500 transition-all group"
       >
@@ -185,6 +185,7 @@ import { onMounted, computed } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import { useSavedJobStore } from '@/stores/savedJob'
 import { useCompanyStore } from '@/stores/company'
+import { FEATURES } from '@/config/features'
 
 const authStore = useAuthStore()
 const savedJobStore = useSavedJobStore()
@@ -193,7 +194,7 @@ const companyStore = useCompanyStore()
 // Compute the my companies link - goes directly to company profile if exists
 const myCompaniesLink = computed(() => {
   if (companyStore.myCompanies.length > 0) {
-    return `/my-companies/${companyStore.myCompanies[0].id}`
+    return `/my-companies/${companyStore.myCompanies[0].slug}`
   }
   return '/my-companies'
 })

@@ -37,6 +37,7 @@ class JobFactory extends Factory
             'slug' => Str::slug($title.'-'.Str::random(6)),
             'description' => fake()->paragraphs(5, true),
             'requirements' => fake()->paragraphs(3, true),
+            'benefits' => fake()->optional(0.7)->paragraphs(2, true), // 70% chance of having benefits
             'location' => $city.', Iraq',
             'city' => $city,
             'country' => 'Iraq',

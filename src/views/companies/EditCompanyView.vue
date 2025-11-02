@@ -53,6 +53,7 @@ const company = ref<Company | null>(null)
 
 const loadCompany = async () => {
   const id = route.params.id
+  console.log('Loading company with ID:', id)
   if (!id) {
     router.push({ name: 'dashboard' })
     return
@@ -61,13 +62,18 @@ const loadCompany = async () => {
   loading.value = true
   try {
     const response = await companyService.getCompany(id as string)
+    console.log('Company response:', response)
     if (response.success && response.data) {
       company.value = response.data
+      console.log('Company loaded successfully:', company.value)
+    } else {
+      console.error('Response not successful:', response)
+      toast.error('Failed to load company details')
     }
   } catch (error) {
     console.error('Failed to load company:', error)
     const err = error as { response?: { data?: { message?: string } } }
-    toast.error(err.response?.data?.message || 'Failed to load company')
+    toast.error(err.response?.data?.message || 'Failed to load company details')
   } finally {
     loading.value = false
   }
@@ -79,10 +85,13 @@ const handleSubmit = async (formData: FormData) => {
   submitting.value = true
   try {
     const response = await companyService.updateCompany(company.value.id, formData)
-    if (response.success) {
+    
+    if (response.success && response.data) {
       toast.success('Company updated successfully!')
-      // Redirect back to the company profile
-      router.push({ name: 'view-my-company', params: { id: company.value.id } })
+      // Update the local company data with the response
+      company.value = response.data
+      // Redirect back to the company profile using the updated slug
+      router.push({ name: 'view-my-company', params: { slug: response.data.slug } })
     }
   } catch (error) {
     console.error('Failed to update company:', error)
@@ -96,7 +105,7 @@ const handleSubmit = async (formData: FormData) => {
 const handleCancel = () => {
   // Go back to the company profile if we have a company, otherwise to dashboard
   if (company.value) {
-    router.push({ name: 'view-my-company', params: { id: company.value.id } })
+    router.push({ name: 'view-my-company', params: { slug: company.value.slug } })
   } else {
     router.push({ name: 'dashboard' })
   }

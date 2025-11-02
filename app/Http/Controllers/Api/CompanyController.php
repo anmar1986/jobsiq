@@ -156,7 +156,7 @@ class CompanyController extends Controller
     {
         $company = Company::where('slug', $slug)
             ->where('is_active', true)
-            ->with(['logo', 'cover', 'images', 'jobs' => function ($query) {
+            ->with(['logo', 'cover', 'images', 'owners', 'jobs' => function ($query) {
                 $query->active()->published()->latest('published_at');
             }])
             ->withCount('jobs')
@@ -178,6 +178,33 @@ class CompanyController extends Controller
         }, 'owners']);
 
         $company->loadCount('jobs');
+
+        return response()->json([
+            'success' => true,
+            'data' => $company,
+        ]);
+    }
+
+    /**
+     * Display the specified owned company by slug (authenticated).
+     */
+    public function showMyCompanyBySlug(Request $request, string $slug): JsonResponse
+    {
+        $company = $request->user()
+            ->ownedCompanies()
+            ->where('slug', $slug)
+            ->with(['logo', 'cover', 'images', 'jobs' => function ($query) {
+                $query->active()->published()->latest('published_at');
+            }, 'owners'])
+            ->withCount('jobs')
+            ->first();
+
+        if (! $company) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Company not found or you do not have permission to view it.',
+            ], 404);
+        }
 
         return response()->json([
             'success' => true,

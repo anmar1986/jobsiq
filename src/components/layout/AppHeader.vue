@@ -32,17 +32,16 @@
             <router-link
               v-if="authStore.isCompanyOwner"
               to="/my-companies"
-              class="hidden md:inline-flex btn-primary text-sm"
+              class="hidden md:inline-flex text-gray-700 hover:text-primary-600 font-medium transition-all relative pb-1 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-primary-600 after:transition-all after:duration-300 hover:after:w-full"
+              :class="{ 'text-primary-600 after:!w-full': isMyCompaniesActive }"
             >
-              <svg class="h-4 w-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-              </svg>
               For Companies
             </router-link>
             
             <router-link
               to="/dashboard"
-              class="hidden md:inline-flex btn-ghost text-sm"
+              class="hidden md:inline-flex text-gray-700 hover:text-primary-600 font-medium transition-all relative pb-1 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-primary-600 after:transition-all after:duration-300 hover:after:w-full"
+              active-class="text-primary-600 after:!w-full"
             >
               Dashboard
             </router-link>
@@ -229,16 +228,23 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, h, computed } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import BaseAvatar from '@/components/base/BaseAvatar.vue'
+import { FEATURES } from '@/config/features'
 
 const router = useRouter()
+const route = useRoute()
 const authStore = useAuthStore()
 
 const isMobileMenuOpen = ref(false)
 const isUserMenuOpen = ref(false)
 const userMenuRef = ref<HTMLElement | null>(null)
+
+// Check if current route is within /my-companies section
+const isMyCompaniesActive = computed(() => {
+  return route.path.startsWith('/my-companies')
+})
 
 const navLinks = computed(() => {
   const links = [
@@ -247,8 +253,8 @@ const navLinks = computed(() => {
     { path: '/about', label: 'About Us' },
   ]
   
-  // Only show CVs link to company owners
-  if (authStore.user?.user_type === 'company_owner') {
+  // Only show CVs link to company owners if feature is enabled
+  if (FEATURES.FREE_CVS_ENABLED && authStore.user?.user_type === 'company_owner') {
     links.push({ path: '/cvs', label: 'Free CVs' })
   }
   
