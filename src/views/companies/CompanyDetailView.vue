@@ -460,8 +460,9 @@
               v-for="job in jobs"
               :key="job.id"
               hoverable
-              class="p-6 group cursor-pointer"
-              @click="router.push({ name: 'job-detail', params: { id: job.id } })"
+              clickable
+              class="p-6 group"
+              @click="navigateToJob(job.slug)"
             >
               <!-- Job Header -->
               <div class="mb-4">
@@ -827,6 +828,11 @@ const getBadgeVariant = (level: string): 'primary' | 'secondary' | 'success' | '
   return variants[level] || 'info'
 }
 
+const navigateToJob = (slug: string) => {
+  console.log('Navigating to job with slug:', slug)
+  router.push({ name: 'job-detail', params: { slug } })
+}
+
 const viewAllJobs = () => {
   router.push(`/jobs?company=${company.value?.slug}`)
 }
@@ -854,6 +860,7 @@ const fetchCompanyJobs = async () => {
     // Use company.jobs if available from API response
     if (company.value.jobs && company.value.jobs.length > 0) {
       jobs.value = company.value.jobs.slice(0, 10)
+      console.log('Jobs loaded from company:', jobs.value)
     } else {
       // Otherwise fetch all jobs and filter client-side
       await jobStore.fetchJobs({
@@ -862,6 +869,7 @@ const fetchCompanyJobs = async () => {
       jobs.value = jobStore.jobs
         .filter(job => job.company_id === company.value?.id)
         .slice(0, 10)
+      console.log('Jobs loaded from store:', jobs.value)
     }
   } catch (error) {
     console.error('Failed to fetch company jobs:', error)
