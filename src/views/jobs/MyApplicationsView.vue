@@ -1,14 +1,14 @@
 <template>
-  <div class="bg-gray-50 min-h-screen py-8">
-    <div class="container-custom">
-      <div class="mb-8">
-        <h1 class="text-3xl font-bold text-gray-900 mb-2">My Applications</h1>
-        <p class="text-gray-600">Track and manage your job applications</p>
+  <div class="bg-gray-50 min-h-screen py-4 sm:py-8">
+    <div class="container-custom px-4 sm:px-6 lg:px-8">
+      <div class="mb-6 sm:mb-8">
+        <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">My Applications</h1>
+        <p class="text-sm sm:text-base text-gray-600">Track and manage your job applications</p>
       </div>
 
       <!-- Filters -->
-      <BaseCard class="p-6 mb-6">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <BaseCard class="p-4 sm:p-6 mb-4 sm:mb-6">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4">
           <!-- Search -->
           <div class="md:col-span-2">
             <BaseInput
@@ -30,7 +30,7 @@
             <select
               v-model="filters.status"
               @change="handleFilterChange"
-              class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+              class="w-full px-3 sm:px-4 py-2 sm:py-2.5 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
             >
               <option value="">All Status</option>
               <option value="pending">Pending</option>
@@ -43,12 +43,12 @@
       </BaseCard>
 
       <!-- Loading State -->
-      <div v-if="loading" class="space-y-4">
-        <BaseCard v-for="i in 3" :key="i" class="p-6">
-          <div class="animate-pulse flex gap-4">
-            <div class="w-16 h-16 bg-gray-200 rounded-lg"></div>
+      <div v-if="loading" class="space-y-3 sm:space-y-4">
+        <BaseCard v-for="i in 3" :key="i" class="p-4 sm:p-6">
+          <div class="animate-pulse flex gap-3 sm:gap-4">
+            <div class="w-12 h-12 sm:w-16 sm:h-16 bg-gray-200 rounded-lg flex-shrink-0"></div>
             <div class="flex-1">
-              <div class="h-6 bg-gray-200 rounded w-1/2 mb-3"></div>
+              <div class="h-5 sm:h-6 bg-gray-200 rounded w-1/2 mb-2 sm:mb-3"></div>
               <div class="h-4 bg-gray-200 rounded w-1/3 mb-2"></div>
               <div class="h-4 bg-gray-200 rounded w-1/4"></div>
             </div>
@@ -57,13 +57,13 @@
       </div>
 
       <!-- No Applications -->
-      <div v-else-if="applications.length === 0" class="text-center py-16">
-        <BaseCard class="p-12">
-          <svg class="h-16 w-16 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <div v-else-if="applications.length === 0" class="text-center py-12 sm:py-16">
+        <BaseCard class="p-8 sm:p-12">
+          <svg class="h-12 w-12 sm:h-16 sm:w-16 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
           </svg>
-          <h2 class="text-2xl font-bold text-gray-900 mb-2">No Applications Yet</h2>
-          <p class="text-gray-600 mb-6">
+          <h2 class="text-xl sm:text-2xl font-bold text-gray-900 mb-2">No Applications Yet</h2>
+          <p class="text-sm sm:text-base text-gray-600 mb-6">
             {{ filters.search || filters.status ? 'No applications match your filters.' : "You haven't applied to any jobs yet." }}
           </p>
           <BaseButton variant="primary" @click="router.push('/jobs')">
@@ -73,37 +73,37 @@
       </div>
 
       <!-- Applications List -->
-      <div v-else class="space-y-4">
-        <BaseCard v-for="application in applications" :key="application.id" hoverable class="p-6">
-          <div class="flex items-start gap-4">
+      <div v-else class="space-y-3 sm:space-y-4">
+        <BaseCard v-for="application in applications" :key="application.id" hoverable class="p-4 sm:p-6">
+          <div class="flex items-start gap-3 sm:gap-4">
             <!-- Company Logo -->
             <div 
-              class="w-16 h-16 flex-shrink-0 bg-gradient-to-br from-primary-100 to-secondary-100 rounded-lg flex items-center justify-center cursor-pointer"
+              class="w-12 h-12 sm:w-16 sm:h-16 flex-shrink-0 bg-gradient-to-br from-primary-100 to-secondary-100 rounded-lg flex items-center justify-center cursor-pointer"
               @click="router.push(`/jobs/${application.job?.slug}`)"
             >
               <img 
                 v-if="application.job?.company?.logo?.path" 
                 :src="getLogoUrl(application.job.company.logo.path)" 
                 :alt="application.job.company.name"
-                class="w-full h-full object-contain rounded-lg"
+                class="w-full h-full object-contain rounded-lg p-1"
               />
-              <span v-else class="text-2xl font-bold text-primary-600">
+              <span v-else class="text-lg sm:text-2xl font-bold text-primary-600">
                 {{ application.job?.company?.name?.[0] || '?' }}
               </span>
             </div>
 
             <!-- Application Details -->
             <div class="flex-1 min-w-0">
-              <div class="flex items-start justify-between gap-4 mb-2">
+              <div class="flex items-start justify-between gap-2 sm:gap-4 mb-2">
                 <div class="flex-1 min-w-0">
                   <h3 
-                    class="text-xl font-bold text-gray-900 hover:text-primary-600 cursor-pointer mb-1 truncate"
+                    class="text-base sm:text-xl font-bold text-gray-900 hover:text-primary-600 cursor-pointer mb-1 line-clamp-2"
                     @click="router.push(`/jobs/${application.job?.slug}`)"
                   >
                     {{ application.job?.title }}
                   </h3>
                   <p 
-                    class="text-gray-600 hover:text-primary-600 cursor-pointer mb-2"
+                    class="text-sm sm:text-base text-gray-600 hover:text-primary-600 cursor-pointer mb-2 truncate"
                     @click="router.push(`/companies/${application.job?.company?.slug}`)"
                   >
                     {{ application.job?.company?.name }}
@@ -111,46 +111,49 @@
                 </div>
 
                 <!-- Status Badge -->
-                <BaseBadge :variant="getStatusVariant(application.status)">
-                  {{ formatStatus(application.status) }}
-                </BaseBadge>
+                <div class="flex-shrink-0">
+                  <BaseBadge :variant="getStatusVariant(application.status)">
+                    <span class="text-xs sm:text-sm">{{ formatStatus(application.status) }}</span>
+                  </BaseBadge>
+                </div>
               </div>
 
               <!-- Job Meta -->
-              <div class="flex flex-wrap gap-3 text-sm text-gray-600 mb-4">
-                <span class="flex items-center gap-1">
-                  <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div class="flex flex-wrap gap-2 sm:gap-3 text-xs sm:text-sm text-gray-600 mb-3 sm:mb-4">
+                <span class="flex items-center gap-1 whitespace-nowrap">
+                  <svg class="h-3.5 w-3.5 sm:h-4 sm:w-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                   </svg>
-                  {{ application.job?.location }}
+                  <span class="truncate">{{ application.job?.location }}</span>
                 </span>
-                <span class="flex items-center gap-1">
-                  <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <span class="flex items-center gap-1 whitespace-nowrap">
+                  <svg class="h-3.5 w-3.5 sm:h-4 sm:w-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                   </svg>
-                  {{ application.job?.employment_type }}
+                  <span class="truncate">{{ application.job?.employment_type }}</span>
                 </span>
-                <span class="flex items-center gap-1">
-                  <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <span class="flex items-center gap-1 whitespace-nowrap">
+                  <svg class="h-3.5 w-3.5 sm:h-4 sm:w-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                   </svg>
-                  Applied {{ formatDate(application.applied_at) }}
+                  <span class="truncate">Applied {{ formatDate(application.applied_at) }}</span>
                 </span>
               </div>
 
               <!-- Cover Letter Preview -->
-              <div v-if="application.cover_letter" class="bg-gray-50 rounded-lg p-3 mb-4">
-                <p class="text-sm text-gray-700 line-clamp-2">
+              <div v-if="application.cover_letter" class="bg-gray-50 rounded-lg p-2.5 sm:p-3 mb-3 sm:mb-4">
+                <p class="text-xs sm:text-sm text-gray-700 line-clamp-2">
                   {{ application.cover_letter }}
                 </p>
               </div>
 
               <!-- Actions -->
-              <div class="flex gap-3">
+              <div class="flex flex-wrap gap-2 sm:gap-3">
                 <BaseButton
                   variant="outline"
                   size="sm"
                   @click="router.push(`/jobs/${application.job?.slug}`)"
+                  class="text-xs sm:text-sm"
                 >
                   View Job
                 </BaseButton>
@@ -160,6 +163,7 @@
                   variant="outline"
                   size="sm"
                   @click="router.push(`/my-cvs/view/${application.cv.id}`)"
+                  class="text-xs sm:text-sm"
                 >
                   View CV
                 </BaseButton>
@@ -170,6 +174,7 @@
                   size="sm"
                   @click="confirmWithdraw(application)"
                   :disabled="withdrawing === application.id"
+                  class="text-xs sm:text-sm"
                 >
                   <span v-if="withdrawing === application.id" class="flex items-center gap-2">
                     <svg class="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
@@ -187,15 +192,17 @@
       </div>
 
       <!-- Pagination -->
-      <div v-if="pagination && pagination.last_page > 1" class="mt-8 flex justify-center">
-        <nav class="flex items-center gap-2">
+      <div v-if="pagination && pagination.last_page > 1" class="mt-6 sm:mt-8 flex justify-center">
+        <nav class="flex items-center gap-1 sm:gap-2 flex-wrap justify-center">
           <BaseButton
             variant="outline"
             size="sm"
             :disabled="pagination.current_page === 1"
             @click="goToPage(pagination.current_page - 1)"
+            class="text-xs sm:text-sm"
           >
-            Previous
+            <span class="hidden sm:inline">Previous</span>
+            <span class="sm:hidden">Prev</span>
           </BaseButton>
 
           <template v-for="page in getPageNumbers()" :key="page">
@@ -204,10 +211,11 @@
               :variant="pagination.current_page === page ? 'primary' : 'outline'"
               size="sm"
               @click="goToPage(page as number)"
+              class="text-xs sm:text-sm min-w-[2rem] sm:min-w-[2.5rem]"
             >
               {{ page }}
             </BaseButton>
-            <span v-else class="px-2 text-gray-500">...</span>
+            <span v-else class="px-1 sm:px-2 text-gray-500">...</span>
           </template>
 
           <BaseButton
@@ -215,6 +223,7 @@
             size="sm"
             :disabled="pagination.current_page === pagination.last_page"
             @click="goToPage(pagination.current_page + 1)"
+            class="text-xs sm:text-sm"
           >
             Next
           </BaseButton>
@@ -253,7 +262,21 @@ const filters = ref({
 const fetchApplications = async () => {
   loading.value = true
   try {
-    const response = await jobApplicationService.getMyApplications(filters.value)
+    // Filter out empty values to ensure "All Status" works correctly
+    const params: Record<string, string | number> = {
+      page: filters.value.page,
+      per_page: filters.value.per_page,
+    }
+    
+    if (filters.value.search) {
+      params.search = filters.value.search
+    }
+    
+    if (filters.value.status) {
+      params.status = filters.value.status
+    }
+    
+    const response = await jobApplicationService.getMyApplications(params)
     if (response.success && response.data) {
       applications.value = response.data.data
       pagination.value = response.data

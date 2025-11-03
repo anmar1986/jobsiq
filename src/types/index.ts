@@ -311,6 +311,7 @@ export interface JobFilters {
   category?: string
   per_page?: number
   page?: number
+  seed?: number // Random seed for consistent pagination
 }
 
 export interface CompanyFilters {

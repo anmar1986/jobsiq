@@ -299,8 +299,8 @@
 
       <!-- Company Photos Gallery - Full Width -->
       <div v-if="company.images && company.images.filter(img => img.type === 'gallery').length > 0" class="mb-8">
-        <div class="container-custom mb-4">
-          <h2 class="text-2xl font-bold text-gray-900 text-center">Company Photos</h2>
+        <div class="container-custom mb-4 px-4 sm:px-6 lg:px-8">
+          <h2 class="text-xl sm:text-2xl font-bold text-gray-900 text-center">Company Photos</h2>
         </div>
         
         <!-- Horizontal carousel with navigation arrows -->
@@ -309,9 +309,9 @@
           <button
             v-if="galleryImages.length > 1"
             @click="scrollGalleryLeft"
-            class="absolute left-4 top-1/2 -translate-y-1/2 z-10 bg-white/90 hover:bg-white text-gray-800 rounded-full p-3 shadow-lg transition-all hover:scale-110 opacity-0 group-hover:opacity-100"
+            class="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-10 bg-white/90 hover:bg-white text-gray-800 rounded-full p-2 sm:p-3 shadow-lg transition-all hover:scale-110 opacity-0 group-hover:opacity-100"
           >
-            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="h-5 w-5 sm:h-6 sm:w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
             </svg>
           </button>
@@ -319,8 +319,9 @@
           <!-- Gallery Container -->
           <div 
             ref="galleryContainer"
-            class="flex gap-6 overflow-x-auto scrollbar-hide px-4 py-2"
-            style="scrollbar-width: none; -ms-overflow-style: none; height: 370px; cursor: grab; user-select: none; scroll-behavior: auto;"
+            class="flex gap-3 sm:gap-6 overflow-x-auto scrollbar-hide px-3 sm:px-4 py-2"
+            style="scrollbar-width: none; -ms-overflow-style: none; cursor: grab; user-select: none; scroll-behavior: auto;"
+            :style="{ height: isMobile ? '220px' : '370px' }"
             @mousedown="handleMouseDown"
             @mousemove="handleMouseMove"
             @mouseup="handleMouseUp"
@@ -333,8 +334,8 @@
             <div
               v-for="(image, index) in galleryImages"
               :key="`clone-start-${index}`"
-              class="relative flex-shrink-0 overflow-hidden rounded-xl cursor-pointer group/item shadow-lg hover:shadow-2xl transition-all duration-300"
-              style="height: 350px; width: auto;"
+              class="relative flex-shrink-0 overflow-hidden rounded-lg sm:rounded-xl cursor-pointer group/item shadow-lg hover:shadow-2xl transition-all duration-300"
+              :style="{ height: isMobile ? '200px' : '350px', width: 'auto' }"
               @click="openLightbox(index)"
             >
               <img
@@ -345,14 +346,14 @@
               />
               <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover/item:opacity-100 transition-opacity duration-300">
                 <div class="absolute inset-0 flex items-center justify-center">
-                  <div class="bg-white/20 backdrop-blur-sm rounded-full p-3">
-                    <svg class="h-8 w-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div class="bg-white/20 backdrop-blur-sm rounded-full p-2 sm:p-3">
+                    <svg class="h-6 w-6 sm:h-8 sm:w-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
                     </svg>
                   </div>
                 </div>
               </div>
-              <div class="absolute top-3 right-3 bg-black/60 backdrop-blur-sm text-white text-xs px-2.5 py-1 rounded-full font-medium">
+              <div class="absolute top-2 right-2 sm:top-3 sm:right-3 bg-black/60 backdrop-blur-sm text-white text-xs px-2 sm:px-2.5 py-1 rounded-full font-medium">
                 {{ index + 1 }} / {{ galleryImages.length }}
               </div>
             </div>
@@ -361,8 +362,8 @@
             <div
               v-for="(image, index) in galleryImages"
               :key="`original-${index}`"
-              class="relative flex-shrink-0 overflow-hidden rounded-xl cursor-pointer group/item shadow-lg hover:shadow-2xl transition-all duration-300"
-              style="height: 350px; width: auto;"
+              class="relative flex-shrink-0 overflow-hidden rounded-lg sm:rounded-xl cursor-pointer group/item shadow-lg hover:shadow-2xl transition-all duration-300"
+              :style="{ height: isMobile ? '200px' : '350px', width: 'auto' }"
               @click="openLightbox(index)"
             >
               <img
@@ -373,14 +374,14 @@
               />
               <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover/item:opacity-100 transition-opacity duration-300">
                 <div class="absolute inset-0 flex items-center justify-center">
-                  <div class="bg-white/20 backdrop-blur-sm rounded-full p-3">
-                    <svg class="h-8 w-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div class="bg-white/20 backdrop-blur-sm rounded-full p-2 sm:p-3">
+                    <svg class="h-6 w-6 sm:h-8 sm:w-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
                     </svg>
                   </div>
                 </div>
               </div>
-              <div class="absolute top-3 right-3 bg-black/60 backdrop-blur-sm text-white text-xs px-2.5 py-1 rounded-full font-medium">
+              <div class="absolute top-2 right-2 sm:top-3 sm:right-3 bg-black/60 backdrop-blur-sm text-white text-xs px-2 sm:px-2.5 py-1 rounded-full font-medium">
                 {{ index + 1 }} / {{ galleryImages.length }}
               </div>
             </div>
@@ -389,8 +390,8 @@
             <div
               v-for="(image, index) in galleryImages"
               :key="`clone-end-${index}`"
-              class="relative flex-shrink-0 overflow-hidden rounded-xl cursor-pointer group/item shadow-lg hover:shadow-2xl transition-all duration-300"
-              style="height: 350px; width: auto;"
+              class="relative flex-shrink-0 overflow-hidden rounded-lg sm:rounded-xl cursor-pointer group/item shadow-lg hover:shadow-2xl transition-all duration-300"
+              :style="{ height: isMobile ? '200px' : '350px', width: 'auto' }"
               @click="openLightbox(index)"
             >
               <img
@@ -419,9 +420,9 @@
           <button
             v-if="galleryImages.length > 1"
             @click="scrollGalleryRight"
-            class="absolute right-4 top-1/2 -translate-y-1/2 z-10 bg-white/90 hover:bg-white text-gray-800 rounded-full p-3 shadow-lg transition-all hover:scale-110 opacity-0 group-hover:opacity-100"
+            class="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-10 bg-white/90 hover:bg-white text-gray-800 rounded-full p-2 sm:p-3 shadow-lg transition-all hover:scale-110 opacity-0 group-hover:opacity-100"
           >
-            <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg class="h-5 w-5 sm:h-6 sm:w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
             </svg>
           </button>
@@ -432,8 +433,8 @@
       <div class="container-custom py-8">
         <!-- Jobs Section -->
         <div>
-          <div class="flex items-center justify-between mb-6">
-            <h2 class="text-2xl font-bold text-gray-900">
+          <div class="flex flex-col items-center justify-center mb-6 gap-3">
+            <h2 class="text-xl sm:text-2xl font-bold text-gray-900 text-center">
               Open Positions ({{ jobs.length }})
             </h2>
             <BaseButton 
@@ -497,7 +498,7 @@
                   <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
-                  <span>{{ formatSalary(job.salary_min, job.salary_max) }}</span>
+                  <span>{{ formatSalary(job.salary_min, job.salary_max) }}{{ job.salary_period ? '/' + formatSalaryPeriod(job.salary_period) : '' }}</span>
                 </div>
               </div>
 
@@ -603,6 +604,9 @@ const loading = ref(true)
 const loadingJobs = ref(true)
 const company = ref<Company | null>(null)
 const jobs = ref<Job[]>([])
+
+// Mobile detection
+const isMobile = ref(window.innerWidth < 640)
 
 // Gallery carousel ref
 const galleryContainer = ref<HTMLElement | null>(null)
@@ -800,6 +804,17 @@ const formatSalary = (min: number, max: number): string => {
   return 'Competitive'
 }
 
+const formatSalaryPeriod = (period: string): string => {
+  const periods: Record<string, string> = {
+    'hourly': 'hour',
+    'daily': 'day',
+    'weekly': 'week',
+    'monthly': 'month',
+    'yearly': 'year',
+  }
+  return periods[period] || period
+}
+
 const getLogoUrl = (path: string): string => {
   if (!path) return ''
   
@@ -875,11 +890,19 @@ const fetchCompanyJobs = async () => {
   }
 }
 
+// Window resize handler for mobile detection
+const handleResize = () => {
+  isMobile.value = window.innerWidth < 640
+}
+
 onMounted(async () => {
   await fetchCompanyDetail()
   if (company.value) {
     await fetchCompanyJobs()
   }
+  
+  // Add resize listener
+  window.addEventListener('resize', handleResize)
   
   // Setup infinite carousel - wait for DOM to fully render
   await nextTick()
@@ -923,6 +946,9 @@ onBeforeUnmount(() => {
   if (galleryContainer.value && scrollHandler) {
     galleryContainer.value.removeEventListener('scroll', scrollHandler)
   }
+  
+  // Clean up resize listener
+  window.removeEventListener('resize', handleResize)
 })
 </script>
 

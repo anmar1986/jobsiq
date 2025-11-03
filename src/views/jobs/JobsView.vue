@@ -79,7 +79,7 @@
             <select
               v-model="filters.employment_type"
               @change="searchJobs"
-              class="px-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-primary-500 focus:border-primary-500 bg-white flex-shrink-0"
+              class="px-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-primary-500 focus:border-primary-500 bg-white flex-shrink-0 cursor-pointer hover:border-gray-400 hover:bg-gray-50 transition-colors"
             >
               <option value="">Employment Type</option>
               <option value="full-time">Full-time</option>
@@ -93,7 +93,7 @@
             <select
               v-model="filters.experience_level"
               @change="searchJobs"
-              class="px-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-primary-500 focus:border-primary-500 bg-white flex-shrink-0"
+              class="px-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-primary-500 focus:border-primary-500 bg-white flex-shrink-0 cursor-pointer hover:border-gray-400 hover:bg-gray-50 transition-colors"
             >
               <option value="">Experience Level</option>
               <option value="entry">Entry Level</option>
@@ -107,7 +107,7 @@
             <select
               v-model="filters.salary_min"
               @change="searchJobs"
-              class="px-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-primary-500 focus:border-primary-500 bg-white flex-shrink-0"
+              class="px-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-primary-500 focus:border-primary-500 bg-white flex-shrink-0 cursor-pointer hover:border-gray-400 hover:bg-gray-50 transition-colors"
             >
               <option value="">Salary</option>
               <option value="250">From $250</option>
@@ -117,11 +117,11 @@
             </select>
 
             <!-- Remote Only Checkbox -->
-            <label class="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg text-sm bg-white cursor-pointer hover:bg-gray-50 flex-shrink-0 whitespace-nowrap">
+            <label class="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg text-sm bg-white cursor-pointer hover:bg-gray-50 hover:border-gray-400 flex-shrink-0 whitespace-nowrap transition-colors">
               <input
                 v-model="filters.is_remote"
                 type="checkbox"
-                class="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
+                class="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded cursor-pointer"
                 @change="searchJobs"
               />
               <span class="font-medium text-gray-700">Remote Only</span>
@@ -131,7 +131,7 @@
           <!-- Clear Filters -->
           <button
             @click="clearFilters"
-            class="px-4 py-2 text-sm text-gray-600 hover:text-gray-900 font-medium flex-shrink-0"
+            class="px-4 py-2 text-sm text-gray-600 hover:text-gray-900 font-medium flex-shrink-0 cursor-pointer transition-colors"
           >
             Clear all
           </button>
@@ -308,14 +308,15 @@
                     variant="primary" 
                     size="lg" 
                     class="flex-1 sm:flex-initial" 
+                    :disabled="hasApplied(selectedJob.id)"
                     @click="applyForJob(selectedJob)"
                   >
                     <template #icon-left>
-                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <svg v-if="!hasApplied(selectedJob.id)" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
                     </template>
-                    Apply Now
+                    {{ hasApplied(selectedJob.id) ? 'Already Applied' : 'Apply Now' }}
                   </BaseButton>
                   <BaseButton variant="outline" size="lg" class="flex-1 sm:flex-initial" @click="goToJobDetail(selectedJob)">
                     View Details
@@ -431,7 +432,7 @@
               <div>
                 <p class="text-sm font-medium text-gray-700 mb-2">Salary Range</p>
                 <p class="text-2xl font-bold text-gray-900">
-                  ${{ formatSalary(selectedJob.salary_min) }} - ${{ formatSalary(selectedJob.salary_max) }}
+                  ${{ formatSalary(selectedJob.salary_min) }} - ${{ formatSalary(selectedJob.salary_max) }}{{ selectedJob.salary_period ? '/' + formatSalaryPeriod(selectedJob.salary_period) : '' }}
                 </p>
                 <p class="text-sm font-medium text-gray-600 mt-1">{{ selectedJob.salary_currency }}</p>
               </div>
@@ -502,6 +503,7 @@ import { useAuthStore } from '@/stores/auth'
 import { useSavedJobStore } from '@/stores/savedJob'
 import { useToast } from '@/composables/useToast'
 import { copyToClipboard } from '@/utils/clipboard'
+import { jobApplicationService } from '@/services/jobApplication.service'
 import BaseInput from '@/components/base/BaseInput.vue'
 import BaseButton from '@/components/base/BaseButton.vue'
 import type { Job, JobFilters } from '@/types'
@@ -602,6 +604,8 @@ const loadingMore = ref(false)
 const selectedJob = ref<Job | null>(null)
 const showShareMenu = ref(false)
 const shareMenuRef = ref<HTMLElement | null>(null)
+const appliedJobIds = ref<Set<number>>(new Set())
+const randomSeed = ref<number | null>(null)
 
 const filters = reactive({
   search: '',
@@ -624,8 +628,9 @@ const hasMoreJobs = computed(() => currentPage.value < totalPages.value)
 const searchJobs = async () => {
   loading.value = true
   try {
-    // Reset to page 1 when searching
+    // Reset to page 1 and clear seed when searching (creates new random order)
     filters.page = 1
+    randomSeed.value = null
     
     // Clean filters: remove empty strings and zero values
     const cleanFilters = Object.entries(filters).reduce((acc, [key, value]) => {
@@ -640,6 +645,11 @@ const searchJobs = async () => {
     }, {} as JobFilters)
     
     await jobStore.fetchJobs(cleanFilters, false)
+    
+    // Store the seed from the response for pagination consistency
+    if (jobStore.pagination && 'seed' in jobStore.pagination) {
+      randomSeed.value = (jobStore.pagination as typeof jobStore.pagination & { seed: number }).seed
+    }
   } catch (error) {
     console.error('Failed to fetch jobs:', error)
   } finally {
@@ -655,7 +665,7 @@ const loadMoreJobs = async () => {
     // Increment page
     filters.page += 1
     
-    // Clean filters
+    // Clean filters and include seed for pagination consistency
     const cleanFilters = Object.entries(filters).reduce((acc, [key, value]) => {
       if (value !== '' && value !== 0 && value !== false && value !== undefined && value !== null) {
         acc[key as keyof JobFilters] = value as never
@@ -665,6 +675,11 @@ const loadMoreJobs = async () => {
       }
       return acc
     }, {} as JobFilters)
+    
+    // Add seed to maintain same random order during pagination
+    if (randomSeed.value) {
+      (cleanFilters as JobFilters & { seed: number }).seed = randomSeed.value
+    }
     
     await jobStore.loadMoreJobs(cleanFilters)
   } catch (error) {
@@ -684,6 +699,7 @@ const clearFilters = () => {
   filters.is_remote = false
   filters.page = 1
   selectedJob.value = null
+  randomSeed.value = null // Reset seed to get new random order
   searchJobs()
 }
 
@@ -717,6 +733,13 @@ const applyForJob = (job: Job) => {
     })
     return
   }
+  
+  // Check if already applied
+  if (hasApplied(job.id)) {
+    toast.info('You have already applied to this job')
+    return
+  }
+  
   // Open application page in a new tab
   window.open(`/application/${job.slug}`, '_blank')
 }
@@ -854,6 +877,28 @@ const fetchSavedJobs = async () => {
   }
 }
 
+const fetchAppliedJobs = async () => {
+  if (!authStore.isAuthenticated) return
+  
+  try {
+    const response = await jobApplicationService.getMyApplications({
+      per_page: 1000, // Get all applications to check against
+    })
+    
+    if (response.data) {
+      // Create a Set of job IDs that the user has applied to
+      const jobIds = response.data.data.map(application => application.job_id)
+      appliedJobIds.value = new Set(jobIds)
+    }
+  } catch (error) {
+    console.error('Failed to fetch applied jobs:', error)
+  }
+}
+
+const hasApplied = (jobId: number): boolean => {
+  return appliedJobIds.value.has(jobId)
+}
+
 onMounted(() => {
   // Load filters from URL query params
   if (route.query.search) filters.search = route.query.search as string
@@ -864,6 +909,7 @@ onMounted(() => {
   if (route.query.company) filters.company = route.query.company as string
   
   fetchSavedJobs()
+  fetchAppliedJobs()
   searchJobs()
   
   // Add click-outside listener for share menu
