@@ -890,16 +890,18 @@ const fetchCompanyJobs = async () => {
   }
 }
 
+// Window resize handler for mobile detection
+const handleResize = () => {
+  isMobile.value = window.innerWidth < 640
+}
+
 onMounted(async () => {
   await fetchCompanyDetail()
   if (company.value) {
     await fetchCompanyJobs()
   }
   
-  // Window resize handler for mobile detection
-  const handleResize = () => {
-    isMobile.value = window.innerWidth < 640
-  }
+  // Add resize listener
   window.addEventListener('resize', handleResize)
   
   // Setup infinite carousel - wait for DOM to fully render
@@ -946,9 +948,7 @@ onBeforeUnmount(() => {
   }
   
   // Clean up resize listener
-  window.removeEventListener('resize', () => {
-    isMobile.value = window.innerWidth < 640
-  })
+  window.removeEventListener('resize', handleResize)
 })
 </script>
 

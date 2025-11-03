@@ -649,7 +649,6 @@ const searchJobs = async () => {
     // Store the seed from the response for pagination consistency
     if (jobStore.pagination && 'seed' in jobStore.pagination) {
       randomSeed.value = (jobStore.pagination as typeof jobStore.pagination & { seed: number }).seed
-      console.log('Stored seed for pagination:', randomSeed.value)
     }
   } catch (error) {
     console.error('Failed to fetch jobs:', error)
@@ -680,7 +679,6 @@ const loadMoreJobs = async () => {
     // Add seed to maintain same random order during pagination
     if (randomSeed.value) {
       (cleanFilters as JobFilters & { seed: number }).seed = randomSeed.value
-      console.log('Loading page', filters.page, 'with seed:', randomSeed.value)
     }
     
     await jobStore.loadMoreJobs(cleanFilters)
