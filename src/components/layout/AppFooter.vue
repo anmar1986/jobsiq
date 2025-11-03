@@ -47,7 +47,6 @@
         <div>
           <h3 class="text-white font-semibold mb-3 sm:mb-4 text-sm sm:text-base">For Employers</h3>
           <ul class="space-y-1.5 sm:space-y-2">
-            <li><router-link to="/cvs" class="text-xs sm:text-sm hover:text-primary-500 transition-colors">Browse CVs</router-link></li>
             <li><router-link to="/my-companies" class="text-xs sm:text-sm hover:text-primary-500 transition-colors">For Companies</router-link></li>
             <li><router-link to="/my-companies" class="text-xs sm:text-sm hover:text-primary-500 transition-colors">Post a Job</router-link></li>
             <li><a href="#" class="text-xs sm:text-sm hover:text-primary-500 transition-colors">Pricing</a></li>

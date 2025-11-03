@@ -117,7 +117,7 @@
                 <div v-if="job.salary_min && job.salary_max">
                   <p class="text-sm text-gray-600 mb-1">Salary Range</p>
                   <p class="text-lg font-semibold text-primary-600">
-                    {{ formatSalary(job.salary_min, job.salary_max) }}
+                    {{ formatSalary(job.salary_min, job.salary_max) }}{{ job.salary_period ? '/' + formatSalaryPeriod(job.salary_period) : '' }}
                   </p>
                   <p class="text-xs text-gray-500">{{ job.salary_currency }}</p>
                 </div>
@@ -303,6 +303,17 @@ const formatSalary = (min: number, max: number): string => {
   if (min) return `From $${formatNumber(min)}`
   if (max) return `Up to $${formatNumber(max)}`
   return 'Competitive'
+}
+
+const formatSalaryPeriod = (period: string): string => {
+  const periods: Record<string, string> = {
+    'hourly': 'hour',
+    'daily': 'day',
+    'weekly': 'week',
+    'monthly': 'month',
+    'yearly': 'year',
+  }
+  return periods[period] || period
 }
 
 const getBadgeVariant = (level: string): 'primary' | 'secondary' | 'success' | 'warning' | 'danger' | 'info' => {

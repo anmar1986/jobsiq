@@ -54,22 +54,34 @@ class JobController extends Controller
             // Apply filters
             $query = $this->applyFilters($query, $request);
 
+            // Initialize seed for random ordering
+            $seed = null;
+
             // Sort: Random order with featured jobs having priority
             if ($request->get('sort') === 'oldest') {
                 $query->orderBy('published_at', 'asc');
             } elseif ($request->get('sort') === 'newest') {
-                // Optional: keep newest sorting as an option
                 $query->orderByDesc('is_featured')
                     ->orderByDesc('published_at');
             } else {
-                // Default: Featured first, then random
+                // Default: Random order with featured jobs at the top
+                // Use seed from request (frontend can pass it) or generate a new one
+                // This allows: new seed on page load = new order, same seed during pagination = consistent order
+                $seed = $request->get('seed', rand(1, 999999));
+
                 $query->orderByDesc('is_featured')
-                    ->inRandomOrder();
+                    ->inRandomOrder($seed);
             }
 
             // Paginate results
             $jobs = $query->paginate($perPage);
             $total = $jobs->total();
+
+            // Add seed to response so frontend can use it for pagination
+            $response = $jobs->toArray();
+            if ($seed !== null) {
+                $response['seed'] = $seed;
+            }
 
             // Log search history if search or filters are used
             if ($request->hasAny(self::SEARCHABLE_FILTERS)) {
@@ -78,7 +90,7 @@ class JobController extends Controller
 
             return response()->json([
                 'success' => true,
-                'data' => $jobs,
+                'data' => $response,
                 'message' => "Found {$total} job".($total !== 1 ? 's' : ''),
             ]);
         } catch (\Exception $e) {
