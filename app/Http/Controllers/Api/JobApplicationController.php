@@ -32,13 +32,13 @@ class JobApplicationController extends Controller
                 ->latest('applied_at');
 
             // Filter by status
-            if ($request->has('status') && $request->status) {
+            if ($request->has('status')) {
                 $query->where('status', $request->status);
                 Log::info('Filtering by status', ['status' => $request->status]);
             }
 
             // Search by job title or company name
-            if ($request->has('search') && $request->search) {
+            if ($request->has('search')) {
                 $search = $request->search;
                 $query->whereHas('job', function ($q) use ($search) {
                     $q->where('title', 'like', "%{$search}%")
@@ -106,7 +106,7 @@ class JobApplicationController extends Controller
         try {
             /** @var \App\Models\Company|null $company */
             $company = $job->company;
-            if ($company && $company->email) {
+            if ($company && $company->email && filter_var($company->email, FILTER_VALIDATE_EMAIL)) {
                 Mail::to($company->email)->send(new JobApplicationSubmitted($application));
             }
         } catch (\Exception $e) {

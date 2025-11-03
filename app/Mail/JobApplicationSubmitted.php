@@ -27,8 +27,12 @@ class JobApplicationSubmitted extends Mailable
      */
     public function envelope(): Envelope
     {
-        /** @var \App\Models\Job $job */
+        /** @var \App\Models\Job|null $job */
         $job = $this->application->job;
+
+        if (! $job) {
+            throw new \RuntimeException('Job application must have an associated job');
+        }
 
         return new Envelope(
             subject: 'New Job Application Received - '.$job->title,
@@ -50,12 +54,23 @@ class JobApplicationSubmitted extends Mailable
      */
     private function buildHtmlContent(): string
     {
-        /** @var \App\Models\Job $job */
+        /** @var \App\Models\Job|null $job */
         $job = $this->application->job;
-        /** @var \App\Models\Company $company */
-        $company = $job->company;
-        /** @var \App\Models\User $applicant */
+        /** @var \App\Models\Company|null $company */
+        $company = $job?->company;
+        /** @var \App\Models\User|null $applicant */
         $applicant = $this->application->user;
+
+        if (! $job || ! $company || ! $applicant) {
+            throw new \RuntimeException('Job application must have job, company, and user loaded');
+        }
+
+        // Escape HTML to prevent XSS
+        $companyName = e($company->name);
+        $jobTitle = e($job->title);
+        $applicantName = e($applicant->name);
+        $companySlug = urlencode($company->slug);
+
         $profileUrl = config('app.url').'/job-seeker/'.$applicant->id;
         $appliedAt = $this->application->applied_at->format('F d, Y \a\t h:i A');
         $currentYear = date('Y');
@@ -79,7 +94,7 @@ class JobApplicationSubmitted extends Mailable
         <h1 style="color: #1f2937; font-size: 24px; margin-bottom: 20px;">🎉 New Job Application Received!</h1>
 
         <div style="font-size: 16px; margin-bottom: 20px;">
-            <strong>Dear {$company->name},</strong>
+            <strong>Dear {$companyName},</strong>
         </div>
 
         <div style="margin-bottom: 30px;">
@@ -90,12 +105,12 @@ class JobApplicationSubmitted extends Mailable
                 
                 <div style="margin-bottom: 12px;">
                     <span style="font-weight: 600; color: #4b5563; display: inline-block; min-width: 120px;">Job Position:</span>
-                    <span style="color: #1f2937;">{$job->title}</span>
+                    <span style="color: #1f2937;">{$jobTitle}</span>
                 </div>
                 
                 <div style="margin-bottom: 12px;">
                     <span style="font-weight: 600; color: #4b5563; display: inline-block; min-width: 120px;">Applicant Name:</span>
-                    <span style="color: #1f2937;">{$applicant->name}</span>
+                    <span style="color: #1f2937;">{$applicantName}</span>
                 </div>
                 
                 <div style="margin-bottom: 12px;">
@@ -130,7 +145,7 @@ class JobApplicationSubmitted extends Mailable
             </p>
             <div style="margin-top: 10px;">
                 <a href="{$appUrl}" style="color: #4f46e5; text-decoration: none; margin: 0 10px;">Visit JobsIQ</a>
-                <a href="{$appUrl}/companies/{$company->slug}" style="color: #4f46e5; text-decoration: none; margin: 0 10px;">Your Company Profile</a>
+                <a href="{$appUrl}/companies/{$companySlug}" style="color: #4f46e5; text-decoration: none; margin: 0 10px;">Your Company Profile</a>
             </div>
         </div>
     </div>
