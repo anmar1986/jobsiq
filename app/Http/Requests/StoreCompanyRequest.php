@@ -53,7 +53,12 @@ class StoreCompanyRequest extends FormRequest
             'country' => ['required', 'in:Iraq'],
 
             // Business Information
-            'industry' => ['required', 'string', 'in:'.implode(',', $companyCategories)],
+            'industry' => ['required', 'string', function ($attribute, $value, $fail) {
+                $companyCategories = config('company.categories');
+                if (!in_array($value, $companyCategories, true)) {
+                    $fail('Please select a valid company category.');
+                }
+            }],
             'company_size' => ['nullable', 'string', 'max:50'],
             'company_type' => ['nullable', 'in:startup,small_business,mid_market,enterprise,nonprofit,government,agency'],
             'founded_date' => ['nullable', 'date', 'before:today'],

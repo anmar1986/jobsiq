@@ -37,7 +37,12 @@ class UpdateJobRequest extends FormRequest
             'country' => ['sometimes', 'string', 'in:Iraq'],
             'employment_type' => ['sometimes', 'in:full-time,part-time,contract,freelance,internship'],
             'experience_level' => ['nullable', 'in:entry,junior,mid,senior,lead,executive'],
-            'category' => ['sometimes', 'string', 'in:'.implode(',', $jobCategories)],
+            'category' => ['sometimes', 'string', function ($attribute, $value, $fail) {
+                $jobCategories = config('job.categories');
+                if (!in_array($value, $jobCategories, true)) {
+                    $fail('Please select a valid job category.');
+                }
+            }],
             'salary_min' => ['nullable', 'numeric', 'min:0'],
             'salary_max' => ['nullable', 'numeric', 'min:0', 'gte:salary_min'],
             'salary_currency' => ['nullable', 'string', 'in:'.implode(',', $allowedCurrencies)],

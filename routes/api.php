@@ -56,9 +56,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::post('/logout-all', [AuthController::class, 'logoutAll']);
     Route::put('/profile', [AuthController::class, 'updateProfile']);
+    Route::post('/profile', [AuthController::class, 'updateProfile']); // For file uploads
+    Route::delete('/profile', [AuthController::class, 'deleteProfile']);
     Route::put('/change-password', [AuthController::class, 'changePassword']);
 
     // Job management
+    Route::get('/my-jobs', [JobController::class, 'myJobs']); // Get all jobs posted by user
     Route::get('/my-jobs/{job}', [JobController::class, 'show']); // Get owned job by ID
     Route::post('/jobs', [JobController::class, 'store']);
     Route::put('/jobs/{job:id}', [JobController::class, 'update']);

@@ -111,9 +111,8 @@
                     Salary Range{{ job.salary_period ? ' (' + formatSalaryPeriod(job.salary_period) + ')' : '' }}
                   </p>
                   <p class="text-xl sm:text-2xl font-bold text-gray-900">
-                    {{ formatSalaryOnly(job.salary_min || 0, job.salary_max || 0) }}
+                    {{ formatSalaryRange(job.salary_min || 0, job.salary_max || 0, job.salary_currency, job.salary_period) }}
                   </p>
-                  <p v-if="job.salary_currency !== 'USD'" class="text-xs sm:text-sm text-gray-500">{{ job.salary_currency }}</p>
                 </div>
 
                 <!-- Apply Button - Only for Job Seekers -->
@@ -280,9 +279,8 @@
                     Salary Range{{ job.salary_period ? ' (' + formatSalaryPeriod(job.salary_period) + ')' : '' }}
                   </p>
                   <p class="text-2xl font-bold text-gray-900">
-                    {{ formatSalaryOnly(job.salary_min || 0, job.salary_max || 0) }}
+                    {{ formatSalaryRange(job.salary_min || 0, job.salary_max || 0, job.salary_currency, job.salary_period) }}
                   </p>
-                  <p v-if="job.salary_currency !== 'USD'" class="text-sm text-gray-500">{{ job.salary_currency }}</p>
                 </div>
 
                 <!-- Apply Button - Only for Job Seekers -->
@@ -620,6 +618,7 @@ import { jobApplicationService } from '@/services/jobApplication.service'
 import { useToast } from '@/composables/useToast'
 import { copyToClipboard } from '@/utils/clipboard'
 import { stripAndTruncate } from '@/utils/html'
+import { formatSalaryRange } from '@/utils/currency'
 import BaseCard from '@/components/base/BaseCard.vue'
 import BaseButton from '@/components/base/BaseButton.vue'
 import BaseInput from '@/components/base/BaseInput.vue'

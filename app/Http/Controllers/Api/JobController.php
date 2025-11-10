@@ -299,6 +299,58 @@ class JobController extends Controller
     }
 
     /**
+     * Get all jobs posted by the authenticated user's companies.
+     */
+    public function myJobs(Request $request): JsonResponse
+    {
+        try {
+            $user = $request->user();
+            
+            if ($user->user_type !== 'company_owner') {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Only company owners can access this endpoint',
+                ], 403);
+            }
+
+            // Get all company IDs owned by the user
+            $companyIds = $user->ownedCompanies->pluck('id');
+
+            // If no companies, return empty array
+            if ($companyIds->isEmpty()) {
+                return response()->json([
+                    'success' => true,
+                    'data' => [],
+                    'message' => 'No jobs found',
+                ]);
+            }
+
+            // Get all jobs from those companies
+            $jobs = Job::with(['company:id,name,slug', 'company.logo'])
+                ->whereIn('company_id', $companyIds)
+                ->withCount('applications')
+                ->latest('published_at')
+                ->get();
+
+            return response()->json([
+                'success' => true,
+                'data' => $jobs,
+                'message' => "Found {$jobs->count()} job".($jobs->count() !== 1 ? 's' : ''),
+            ]);
+        } catch (\Exception $e) {
+            Log::error('My jobs error: '.$e->getMessage(), [
+                'trace' => $e->getTraceAsString(),
+                'user_id' => $request->user()?->id,
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to fetch your jobs',
+            ], 500);
+        }
+    }
+
+    /**
      * Log search history asynchronously.
      */
     protected function logSearch(Request $request, int $resultsCount): void

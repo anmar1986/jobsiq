@@ -21,6 +21,11 @@ export const jobService = {
     return response.data
   },
 
+  async getMyJobs(): Promise<ApiResponse<Job[]>> {
+    const response = await apiClient.get<ApiResponse<Job[]>>('/my-jobs')
+    return response.data
+  },
+
   async getFeaturedJobs(limit = 6): Promise<ApiResponse<Job[]>> {
     const response = await apiClient.get<ApiResponse<Job[]>>('/jobs/featured', {
       params: { limit },

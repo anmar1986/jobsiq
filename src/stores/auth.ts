@@ -105,6 +105,57 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
+  async function updateProfile(data: FormData) {
+    try {
+      loading.value = true
+      error.value = null
+      const response = await authService.updateProfile(data)
+      
+      if (response.success && response.data) {
+        user.value = response.data
+        localStorage.setItem(STORAGE_KEYS.USER, JSON.stringify(response.data))
+      }
+      
+      return response
+    } catch (err: unknown) {
+      const errorMessage = err && typeof err === 'object' && 'response' in err
+        ? (err as { response?: { data?: { message?: string } } }).response?.data?.message
+        : undefined
+      error.value = errorMessage || 'Profile update failed'
+      throw err
+    } finally {
+      loading.value = false
+    }
+  }
+
+  async function deleteProfile() {
+    try {
+      loading.value = true
+      error.value = null
+      await authService.deleteProfile()
+      
+      // Clear all user data
+      token.value = null
+      user.value = null
+      localStorage.removeItem(STORAGE_KEYS.AUTH_TOKEN)
+      localStorage.removeItem(STORAGE_KEYS.USER)
+      
+      // Reset saved job store
+      const savedJobStore = useSavedJobStore()
+      savedJobStore.resetCount()
+      
+      return { success: true }
+    } catch (err: unknown) {
+      const errorMessage = err && typeof err === 'object' && 'response' in err
+        ? (err as { response?: { data?: { message?: string } } }).response?.data?.message
+        : undefined
+      error.value = errorMessage || 'Profile deletion failed'
+      throw err
+    } finally {
+      loading.value = false
+    }
+  }
+
   function initializeAuth() {
     const storedUser = localStorage.getItem(STORAGE_KEYS.USER)
     if (storedUser && token.value) {
@@ -132,6 +183,8 @@ export const useAuthStore = defineStore('auth', () => {
     register,
     logout,
     fetchUser,
+    updateProfile,
+    deleteProfile,
     initializeAuth,
   }
 })

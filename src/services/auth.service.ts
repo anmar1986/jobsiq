@@ -35,8 +35,15 @@ export const authService = {
     return response.data
   },
 
-  async updateProfile(data: ProfileUpdateForm): Promise<ApiResponse<User>> {
-    const response = await apiClient.put<ApiResponse<User>>('/profile', data)
+  async updateProfile(data: ProfileUpdateForm | FormData): Promise<ApiResponse<User>> {
+    const response = await apiClient.post<ApiResponse<User>>('/profile', data, {
+      headers: data instanceof FormData ? { 'Content-Type': 'multipart/form-data' } : {}
+    })
+    return response.data
+  },
+
+  async deleteProfile(): Promise<ApiResponse> {
+    const response = await apiClient.delete<ApiResponse>('/profile')
     return response.data
   },
 

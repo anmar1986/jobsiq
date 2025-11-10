@@ -213,7 +213,7 @@
                   
                   <div v-if="job.salary_min && job.salary_max">
                     <span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-gray-100 text-gray-800">
-                      ${{ formatSalary(job.salary_min) }} - ${{ formatSalary(job.salary_max) }}{{ job.salary_period ? '/' + formatSalaryPeriod(job.salary_period) : '' }}
+                      {{ formatSalaryRange(job.salary_min, job.salary_max, job.salary_currency, job.salary_period ? formatSalaryPeriod(job.salary_period) : undefined) }}
                     </span>
                   </div>
                 </div>
@@ -432,9 +432,8 @@
               <div>
                 <p class="text-sm font-medium text-gray-700 mb-2">Salary Range</p>
                 <p class="text-2xl font-bold text-gray-900">
-                  ${{ formatSalary(selectedJob.salary_min) }} - ${{ formatSalary(selectedJob.salary_max) }}{{ selectedJob.salary_period ? '/' + formatSalaryPeriod(selectedJob.salary_period) : '' }}
+                  {{ formatSalaryRange(selectedJob.salary_min, selectedJob.salary_max, selectedJob.salary_currency, selectedJob.salary_period ? formatSalaryPeriod(selectedJob.salary_period) : undefined) }}
                 </p>
-                <p class="text-sm font-medium text-gray-600 mt-1">{{ selectedJob.salary_currency }}</p>
               </div>
               <div>
                 <p class="text-sm font-medium text-gray-700 mb-2">Experience Level</p>
@@ -503,6 +502,7 @@ import { useAuthStore } from '@/stores/auth'
 import { useSavedJobStore } from '@/stores/savedJob'
 import { useToast } from '@/composables/useToast'
 import { copyToClipboard } from '@/utils/clipboard'
+import { formatSalaryRange } from '@/utils/currency'
 import { jobApplicationService } from '@/services/jobApplication.service'
 import BaseInput from '@/components/base/BaseInput.vue'
 import BaseButton from '@/components/base/BaseButton.vue'

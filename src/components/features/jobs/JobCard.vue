@@ -73,7 +73,7 @@
         <div class="flex items-center justify-between pt-4 border-t border-gray-100">
           <div>
             <span v-if="job.salary_min && job.salary_max" class="text-lg font-bold text-gray-900">
-              ${{ formatNumber(job.salary_min) }} - ${{ formatNumber(job.salary_max) }}
+              {{ formatSalaryRange(job.salary_min, job.salary_max, job.salary_currency, job.salary_period) }}
             </span>
             <span v-else class="text-sm text-gray-500">Salary not disclosed</span>
           </div>
@@ -101,6 +101,7 @@
 import BaseCard from '@/components/base/BaseCard.vue'
 import BaseBadge from '@/components/base/BaseBadge.vue'
 import type { Job } from '@/types'
+import { formatSalaryRange } from '@/utils/currency'
 
 interface Props {
   jobs: Job[]

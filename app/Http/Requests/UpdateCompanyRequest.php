@@ -45,7 +45,12 @@ class UpdateCompanyRequest extends FormRequest
             'country' => ['nullable', 'string', 'max:100', 'in:Iraq'],
 
             // Business Information
-            'industry' => ['sometimes', 'required', 'string', 'in:'.implode(',', $companyCategories)],
+            'industry' => ['sometimes', 'required', 'string', function ($attribute, $value, $fail) {
+                $companyCategories = config('company.categories');
+                if (!in_array($value, $companyCategories, true)) {
+                    $fail('Please select a valid company category.');
+                }
+            }],
             'company_size' => ['nullable', 'string', 'max:50'],
             'company_type' => ['nullable', 'in:startup,small_business,mid_market,enterprise,nonprofit,government,agency'],
             'founded_date' => ['nullable', 'date', 'before:today'],
