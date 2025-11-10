@@ -18,6 +18,19 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->enum('user_type', ['job_seeker', 'company_owner'])->default('job_seeker');
+
+            // Profile fields
+            $table->string('profile_photo')->nullable();
+            $table->string('headline')->nullable();
+            $table->enum('gender', ['male', 'female', 'other'])->nullable();
+            $table->date('date_of_birth')->nullable();
+            $table->string('nationality')->nullable();
+            $table->string('city')->nullable();
+            $table->string('country')->default('Iraq');
+            $table->string('address')->nullable();
+            $table->string('phone_number')->nullable();
+            $table->string('linkedin_url')->nullable();
+
             $table->rememberToken();
             $table->timestamps();
 

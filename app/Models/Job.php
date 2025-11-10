@@ -84,6 +84,14 @@ class Job extends Model
     }
 
     /**
+     * Get all applications for this job.
+     */
+    public function applications()
+    {
+        return $this->hasMany(JobApplication::class);
+    }
+
+    /**
      * Scope a query to only include active jobs.
      */
     public function scopeActive($query)

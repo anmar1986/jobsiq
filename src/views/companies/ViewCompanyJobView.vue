@@ -117,9 +117,8 @@
                 <div v-if="job.salary_min && job.salary_max">
                   <p class="text-sm text-gray-600 mb-1">Salary Range</p>
                   <p class="text-lg font-semibold text-primary-600">
-                    {{ formatSalary(job.salary_min, job.salary_max) }}{{ job.salary_period ? '/' + formatSalaryPeriod(job.salary_period) : '' }}
+                    {{ formatSalaryRange(job.salary_min, job.salary_max, job.salary_currency, job.salary_period) }}
                   </p>
-                  <p class="text-xs text-gray-500">{{ job.salary_currency }}</p>
                 </div>
 
                 <div>
@@ -238,6 +237,7 @@ import { useRouter, useRoute } from 'vue-router'
 import { companyService } from '@/services/cv.service'
 import { jobService } from '@/services/job.service'
 import { useToast } from '@/composables/useToast'
+import { formatSalaryRange } from '@/utils/currency'
 import BaseCard from '@/components/base/BaseCard.vue'
 import BaseButton from '@/components/base/BaseButton.vue'
 import BaseBadge from '@/components/base/BaseBadge.vue'
@@ -295,7 +295,7 @@ const formatNumber = (num: number): string => {
   return num.toString()
 }
 
-const formatSalary = (min: number, max: number): string => {
+const _formatSalary = (min: number, max: number): string => {
   if (!min && !max) return 'Competitive'
   if (min && max) {
     return `$${formatNumber(min)} - $${formatNumber(max)}`
@@ -305,7 +305,7 @@ const formatSalary = (min: number, max: number): string => {
   return 'Competitive'
 }
 
-const formatSalaryPeriod = (period: string): string => {
+const _formatSalaryPeriod = (period: string): string => {
   const periods: Record<string, string> = {
     'hourly': 'hour',
     'daily': 'day',

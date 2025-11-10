@@ -12,30 +12,19 @@
           </span>
         </router-link>
 
-        <!-- Desktop Navigation -->
-        <div class="hidden md:flex items-center gap-6">
-          <router-link
-            v-for="link in navLinks"
-            :key="link.path"
-            :to="link.path"
-            class="text-gray-700 hover:text-primary-600 font-medium transition-all relative pb-1 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-primary-600 after:transition-all after:duration-300 hover:after:w-full"
-            active-class="text-primary-600 after:!w-full"
-          >
-            {{ link.label }}
-          </router-link>
-        </div>
-
         <!-- Right Side Actions -->
-        <div class="flex items-center gap-3">
+        <div class="flex items-center gap-6">
           <!-- Authenticated User -->
           <template v-if="authStore.isAuthenticated && authStore.user">
+            <!-- Navigation Links -->
             <router-link
-              v-if="authStore.isCompanyOwner"
-              to="/my-companies"
+              v-for="link in navLinks"
+              :key="link.path"
+              :to="link.path"
               class="hidden md:inline-flex text-gray-700 hover:text-primary-600 font-medium transition-all relative pb-1 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-primary-600 after:transition-all after:duration-300 hover:after:w-full"
-              :class="{ 'text-primary-600 after:!w-full': isMyCompaniesActive }"
+              active-class="text-primary-600 after:!w-full"
             >
-              For Companies
+              {{ link.label }}
             </router-link>
             
             <router-link
@@ -50,17 +39,23 @@
             <div class="relative" ref="userMenuRef">
               <button
                 @click="toggleUserMenu"
-                class="flex items-center gap-2 p-1 rounded-lg hover:bg-gray-100 transition-colors"
+                class="flex items-center gap-2 p-1 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
               >
+                <div v-if="authStore.user.profile_photo" class="relative">
+                  <img 
+                    :src="getProfilePhotoUrl(authStore.user.profile_photo)"
+                    :alt="authStore.user.name"
+                    class="w-10 h-10 rounded-full object-cover border-2 border-gray-200"
+                  />
+                  <div class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full"></div>
+                </div>
                 <BaseAvatar
+                  v-else
                   :name="authStore.user.name"
                   size="sm"
                   show-status
                   status="online"
                 />
-                <svg class="hidden md:block h-4 w-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-                </svg>
               </button>
 
               <!-- Dropdown Menu -->
@@ -94,6 +89,15 @@
                   
                   <div class="border-t border-gray-200 mt-1">
                     <button
+                      @click="handleDeleteProfile"
+                      class="flex items-center gap-3 px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors w-full"
+                    >
+                      <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                      </svg>
+                      Delete Profile
+                    </button>
+                    <button
                       @click="handleLogout"
                       class="flex items-center gap-3 px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors w-full"
                     >
@@ -110,6 +114,17 @@
 
           <!-- Guest User -->
           <template v-else>
+            <!-- Navigation Links -->
+            <router-link
+              v-for="link in navLinks"
+              :key="link.path"
+              :to="link.path"
+              class="hidden md:inline-flex text-gray-700 hover:text-primary-600 font-medium transition-all relative pb-1 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-primary-600 after:transition-all after:duration-300 hover:after:w-full"
+              active-class="text-primary-600 after:!w-full"
+            >
+              {{ link.label }}
+            </router-link>
+            
             <router-link to="/login" class="hidden md:inline-flex btn-ghost text-sm">
               Login
             </router-link>
@@ -223,6 +238,37 @@
         </div>
       </Transition>
     </nav>
+
+    <!-- Delete Profile Confirmation Modal -->
+    <BaseModal
+      v-model="showDeleteProfileModal"
+      title="Delete Profile"
+      size="sm"
+    >
+      <div class="p-6">
+        <p class="text-gray-700 mb-6">
+          Are you sure you want to delete your profile <strong>{{ authStore.user?.name }}</strong>? 
+          This action cannot be undone and will permanently delete your account, all your CVs, job applications, and personal data.
+        </p>
+        <div class="flex items-center justify-end gap-3">
+          <BaseButton
+            variant="outline"
+            @click="showDeleteProfileModal = false"
+            :disabled="deletingProfile"
+          >
+            Cancel
+          </BaseButton>
+          <BaseButton
+            variant="primary"
+            @click="confirmDeleteProfile"
+            :loading="deletingProfile"
+            class="bg-red-600 hover:bg-red-700"
+          >
+            Delete Profile
+          </BaseButton>
+        </div>
+      </div>
+    </BaseModal>
   </header>
 </template>
 
@@ -230,19 +276,32 @@
 import { ref, onMounted, onUnmounted, h, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import { useToast } from '@/composables/useToast'
 import BaseAvatar from '@/components/base/BaseAvatar.vue'
+import BaseModal from '@/components/base/BaseModal.vue'
+import BaseButton from '@/components/base/BaseButton.vue'
 import { FEATURES } from '@/config/features'
+import { API_BASE_URL } from '@/config/constants'
 
 const router = useRouter()
 const route = useRoute()
 const authStore = useAuthStore()
+const toast = useToast()
 
 const isMobileMenuOpen = ref(false)
 const isUserMenuOpen = ref(false)
 const userMenuRef = ref<HTMLElement | null>(null)
+const showDeleteProfileModal = ref(false)
+const deletingProfile = ref(false)
+
+const getProfilePhotoUrl = (path: string) => {
+  if (!path) return ''
+  if (path.startsWith('http')) return path
+  return `${API_BASE_URL}/storage/${path}`
+}
 
 // Check if current route is within /my-companies section
-const isMyCompaniesActive = computed(() => {
+const _isMyCompaniesActive = computed(() => {
   return route.path.startsWith('/my-companies')
 })
 
@@ -261,23 +320,14 @@ const navLinks = computed(() => {
   return links
 })
 
+interface MenuItem {
+  path: string
+  label: string
+  icon?: () => ReturnType<typeof h>
+}
+
 const userMenuItems = computed(() => {
-  const baseItems = [
-    {
-      path: '/dashboard',
-      label: 'Dashboard',
-      icon: () => h('svg', { fill: 'none', stroke: 'currentColor', viewBox: '0 0 24 24', class: 'h-4 w-4' }, [
-        h('path', { 'stroke-linecap': 'round', 'stroke-linejoin': 'round', 'stroke-width': '2', d: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6' })
-      ])
-    },
-    {
-      path: '/profile',
-      label: 'Profile',
-      icon: () => h('svg', { fill: 'none', stroke: 'currentColor', viewBox: '0 0 24 24', class: 'h-4 w-4' }, [
-        h('path', { 'stroke-linecap': 'round', 'stroke-linejoin': 'round', 'stroke-width': '2', d: 'M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z' })
-      ])
-    },
-  ]
+  const baseItems: MenuItem[] = []
 
   // Add role-specific menu items
   if (authStore.user?.user_type === 'company_owner') {
@@ -288,24 +338,6 @@ const userMenuItems = computed(() => {
         h('path', { 'stroke-linecap': 'round', 'stroke-linejoin': 'round', 'stroke-width': '2', d: 'M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4' })
       ])
     })
-  } else {
-    // Job seeker menu items
-    baseItems.push(
-      {
-        path: '/my-cvs',
-        label: 'My CVs',
-        icon: () => h('svg', { fill: 'none', stroke: 'currentColor', viewBox: '0 0 24 24', class: 'h-4 w-4' }, [
-          h('path', { 'stroke-linecap': 'round', 'stroke-linejoin': 'round', 'stroke-width': '2', d: 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z' })
-        ])
-      },
-      {
-        path: '/my-applications',
-        label: 'My Applications',
-        icon: () => h('svg', { fill: 'none', stroke: 'currentColor', viewBox: '0 0 24 24', class: 'h-4 w-4' }, [
-          h('path', { 'stroke-linecap': 'round', 'stroke-linejoin': 'round', 'stroke-width': '2', d: 'M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01' })
-        ])
-      }
-    )
   }
 
   return baseItems
@@ -338,6 +370,28 @@ const handleLogout = async () => {
   closeUserMenu()
   closeMobileMenu()
   router.push('/login')
+}
+
+const handleDeleteProfile = () => {
+  showDeleteProfileModal.value = true
+  closeUserMenu()
+}
+
+const confirmDeleteProfile = async () => {
+  deletingProfile.value = true
+  try {
+    await authStore.deleteProfile()
+    showDeleteProfileModal.value = false
+    closeMobileMenu()
+    toast.success('Profile deleted successfully')
+    router.push('/')
+  } catch (error) {
+    console.error('Failed to delete profile:', error)
+    const err = error as { response?: { data?: { message?: string } } }
+    toast.error(err.response?.data?.message || 'Failed to delete profile. Please try again.')
+  } finally {
+    deletingProfile.value = false
+  }
 }
 
 // Close menus when clicking outside

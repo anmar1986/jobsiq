@@ -498,7 +498,7 @@
                   <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
-                  <span>{{ formatSalary(job.salary_min, job.salary_max) }}{{ job.salary_period ? '/' + formatSalaryPeriod(job.salary_period) : '' }}</span>
+                  <span>{{ formatSalaryRange(job.salary_min, job.salary_max, job.salary_currency, job.salary_period) }}</span>
                 </div>
               </div>
 
@@ -590,6 +590,7 @@ import { ref, onMounted, onBeforeUnmount, computed, nextTick } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useCompanyStore } from '@/stores/company'
 import { useJobStore } from '@/stores/job'
+import { formatSalaryRange } from '@/utils/currency'
 import BaseCard from '@/components/base/BaseCard.vue'
 import BaseButton from '@/components/base/BaseButton.vue'
 import BaseBadge from '@/components/base/BaseBadge.vue'
@@ -794,7 +795,7 @@ const formatNumber = (num: number): string => {
   return num.toString()
 }
 
-const formatSalary = (min: number, max: number): string => {
+const _formatSalary = (min: number, max: number): string => {
   if (!min && !max) return 'Competitive'
   if (min && max) {
     return `$${formatNumber(min)} - $${formatNumber(max)}`
@@ -804,7 +805,7 @@ const formatSalary = (min: number, max: number): string => {
   return 'Competitive'
 }
 
-const formatSalaryPeriod = (period: string): string => {
+const _formatSalaryPeriod = (period: string): string => {
   const periods: Record<string, string> = {
     'hourly': 'hour',
     'daily': 'day',

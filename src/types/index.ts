@@ -23,6 +23,16 @@ export interface User {
   email: string
   email_verified_at: string | null
   user_type: 'job_seeker' | 'company_owner'
+  profile_photo?: string | null
+  headline?: string | null
+  gender?: 'male' | 'female' | 'other' | null
+  date_of_birth?: string | null
+  nationality?: string | null
+  city?: string | null
+  country?: string | null
+  address?: string | null
+  phone_number?: string | null
+  linkedin_url?: string | null
   created_at: string
   updated_at: string
 }
@@ -62,6 +72,7 @@ export interface Job {
   skills: string[] | null
   application_url: string | null
   application_email: string | null
+  applications_count?: number
   expires_at: string | null
   published_at: string | null
   created_at: string
@@ -342,6 +353,16 @@ export interface RegisterForm {
 export interface ProfileUpdateForm {
   name: string
   email: string
+  profile_photo?: File | null
+  headline?: string
+  gender?: 'male' | 'female' | 'other'
+  date_of_birth?: string
+  nationality?: string
+  city?: string
+  country?: string
+  address?: string
+  phone_number?: string
+  linkedin_url?: string
 }
 
 export interface PasswordChangeForm {

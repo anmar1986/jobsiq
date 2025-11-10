@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Storage;
 use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
@@ -26,6 +27,16 @@ class User extends Authenticatable
         'email',
         'password',
         'user_type',
+        'profile_photo',
+        'headline',
+        'gender',
+        'date_of_birth',
+        'nationality',
+        'city',
+        'country',
+        'address',
+        'phone_number',
+        'linkedin_url',
     ];
 
     /**
@@ -48,7 +59,70 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'date_of_birth' => 'date',
         ];
+    }
+
+    /**
+     * Boot the model.
+     */
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::deleting(function ($user) {
+            // Delete profile photo if exists
+            if ($user->profile_photo) {
+                Storage::disk('public')->delete($user->profile_photo);
+            }
+
+            // For company owners: Handle company and related data deletion
+            if ($user->user_type === 'company_owner') {
+                // Load companies with their relationships
+                $companies = $user->ownedCompanies()->with('images')->get();
+
+                foreach ($companies as $company) {
+                    // Check if this user is the only owner
+                    $ownerCount = $company->owners()->count();
+
+                    if ($ownerCount === 1) {
+                        // First, delete all company images from storage
+                        foreach ($company->images as $image) {
+                            if ($image->path) {
+                                Storage::disk('public')->delete($image->path);
+                            }
+                            $image->delete();
+                        }
+
+                        // Then delete the company (this will cascade delete jobs, job_applications, etc.)
+                        $company->delete();
+                    }
+                    // If there are multiple owners, the pivot table entry will be
+                    // automatically deleted by the cascade constraint when user is deleted
+                }
+            }
+
+            // For job seekers: Delete CVs and associated files
+            if ($user->user_type === 'job_seeker') {
+                foreach ($user->cvs as $cv) {
+                    if ($cv->profile_image_path) {
+                        Storage::disk('public')->delete($cv->profile_image_path);
+                    }
+                    // CV deletion will cascade delete related CV entries
+                    $cv->delete();
+                }
+            }
+
+            // Delete user's authentication tokens
+            $user->tokens()->delete();
+
+            // Note: The following will be automatically cascade deleted by database constraints:
+            // - company_owners entries
+            // - job_applications
+            // - saved_jobs
+            // - search_history
+            // - user_cvs (if not already deleted above)
+        });
     }
 
     /**

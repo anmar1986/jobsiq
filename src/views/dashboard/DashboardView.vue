@@ -12,7 +12,7 @@
     </div>
 
     <!-- Quick Actions Grid -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
       <!-- My Companies Card - Company Owners Only -->
       <router-link
         v-if="authStore.isCompanyOwner"
@@ -37,6 +37,46 @@
         </p>
       </router-link>
 
+      <!-- My Jobs Card - Company Owners Only -->
+      <router-link
+        v-if="authStore.isCompanyOwner"
+        to="/my-jobs"
+        class="block p-4 sm:p-6 bg-white border border-gray-200 rounded-lg hover:shadow-lg hover:border-primary-500 transition-all group"
+      >
+        <div class="flex items-start justify-between mb-3 sm:mb-4">
+          <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center group-hover:bg-blue-200 transition-colors">
+            <svg class="h-6 w-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+            </svg>
+          </div>
+          <svg class="h-5 w-5 text-gray-400 group-hover:text-primary-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+          </svg>
+        </div>
+        <h3 class="text-lg sm:text-xl font-semibold text-gray-900 mb-2 group-hover:text-primary-600 transition-colors">My Jobs</h3>
+        <p class="text-gray-600 text-xs sm:text-sm">View and manage posted jobs</p>
+      </router-link>
+
+      <!-- My Profile Card - Job Seekers Only -->
+      <router-link
+        v-if="authStore.isJobSeeker"
+        to="/profile"
+        class="block p-4 sm:p-6 bg-white border border-gray-200 rounded-lg hover:shadow-lg hover:border-primary-500 transition-all group"
+      >
+        <div class="flex items-start justify-between mb-3 sm:mb-4">
+          <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center group-hover:bg-green-200 transition-colors">
+            <svg class="h-6 w-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+            </svg>
+          </div>
+          <svg class="h-5 w-5 text-gray-400 group-hover:text-primary-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+          </svg>
+        </div>
+        <h3 class="text-lg sm:text-xl font-semibold text-gray-900 mb-2 group-hover:text-primary-600 transition-colors">My Profile</h3>
+        <p class="text-gray-600 text-xs sm:text-sm">Update your personal information</p>
+      </router-link>
+
       <!-- My CVs Card - Job Seekers Only -->
       <router-link
         v-if="authStore.isJobSeeker"
@@ -55,26 +95,6 @@
         </div>
         <h3 class="text-lg sm:text-xl font-semibold text-gray-900 mb-2 group-hover:text-primary-600 transition-colors">My CVs</h3>
         <p class="text-gray-600 text-xs sm:text-sm">Create and manage your resumes</p>
-      </router-link>
-
-      <!-- My Applications Card - Job Seekers Only -->
-      <router-link
-        v-if="authStore.isJobSeeker"
-        to="/my-applications"
-        class="block p-4 sm:p-6 bg-white border border-gray-200 rounded-lg hover:shadow-lg hover:border-primary-500 transition-all group"
-      >
-        <div class="flex items-start justify-between mb-3 sm:mb-4">
-          <div class="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center group-hover:bg-indigo-200 transition-colors">
-            <svg class="h-6 w-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
-            </svg>
-          </div>
-          <svg class="h-5 w-5 text-gray-400 group-hover:text-primary-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-          </svg>
-        </div>
-        <h3 class="text-lg sm:text-xl font-semibold text-gray-900 mb-2 group-hover:text-primary-600 transition-colors">My Applications</h3>
-        <p class="text-gray-600 text-xs sm:text-sm">Track your job applications</p>
       </router-link>
 
       <!-- Saved Jobs Card - Job Seekers Only -->
@@ -100,61 +120,24 @@
         <p class="text-gray-600 text-xs sm:text-sm">View jobs you've bookmarked</p>
       </router-link>
 
-      <!-- Profile Card -->
+      <!-- My Applications Card - Job Seekers Only -->
       <router-link
-        to="/profile"
+        v-if="authStore.isJobSeeker"
+        to="/my-applications"
         class="block p-4 sm:p-6 bg-white border border-gray-200 rounded-lg hover:shadow-lg hover:border-primary-500 transition-all group"
       >
         <div class="flex items-start justify-between mb-3 sm:mb-4">
-          <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center group-hover:bg-green-200 transition-colors">
-            <svg class="h-6 w-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+          <div class="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center group-hover:bg-indigo-200 transition-colors">
+            <svg class="h-6 w-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
             </svg>
           </div>
           <svg class="h-5 w-5 text-gray-400 group-hover:text-primary-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
           </svg>
         </div>
-        <h3 class="text-lg sm:text-xl font-semibold text-gray-900 mb-2 group-hover:text-primary-600 transition-colors">My Profile</h3>
-        <p class="text-gray-600 text-xs sm:text-sm">Update your personal information</p>
-      </router-link>
-
-      <!-- Browse Jobs Card -->
-      <router-link
-        to="/jobs"
-        class="block p-4 sm:p-6 bg-white border border-gray-200 rounded-lg hover:shadow-lg hover:border-primary-500 transition-all group"
-      >
-        <div class="flex items-start justify-between mb-3 sm:mb-4">
-          <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center group-hover:bg-blue-200 transition-colors">
-            <svg class="h-6 w-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-            </svg>
-          </div>
-          <svg class="h-5 w-5 text-gray-400 group-hover:text-primary-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-          </svg>
-        </div>
-        <h3 class="text-lg sm:text-xl font-semibold text-gray-900 mb-2 group-hover:text-primary-600 transition-colors">Browse Jobs</h3>
-        <p class="text-gray-600 text-xs sm:text-sm">Find your next opportunity</p>
-      </router-link>
-
-      <!-- Browse Companies Card -->
-      <router-link
-        to="/companies"
-        class="block p-4 sm:p-6 bg-white border border-gray-200 rounded-lg hover:shadow-lg hover:border-primary-500 transition-all group"
-      >
-        <div class="flex items-start justify-between mb-3 sm:mb-4">
-          <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center group-hover:bg-purple-200 transition-colors">
-            <svg class="h-6 w-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-            </svg>
-          </div>
-          <svg class="h-5 w-5 text-gray-400 group-hover:text-primary-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-          </svg>
-        </div>
-        <h3 class="text-lg sm:text-xl font-semibold text-gray-900 mb-2 group-hover:text-primary-600 transition-colors">Browse Companies</h3>
-        <p class="text-gray-600 text-xs sm:text-sm">Explore companies hiring now</p>
+        <h3 class="text-lg sm:text-xl font-semibold text-gray-900 mb-2 group-hover:text-primary-600 transition-colors">My Applications</h3>
+        <p class="text-gray-600 text-xs sm:text-sm">Track your job applications</p>
       </router-link>
 
       <!-- Free CVs Card - Company Owners Only -->

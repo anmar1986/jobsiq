@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rules\Password;
 use Illuminate\Validation\ValidationException;
 
@@ -169,18 +170,121 @@ class AuthController extends Controller
     {
         $user = $request->user();
 
-        $request->validate([
-            'name' => ['sometimes', 'string', 'max:255'],
-            'email' => ['sometimes', 'string', 'email', 'max:255', 'unique:users,email,'.$user->id],
-        ]);
+        try {
+            $validated = $request->validate([
+                'name' => ['required', 'string', 'max:255'],
+                'email' => ['sometimes', 'string', 'email', 'max:255', 'unique:users,email,'.$user->id],
+                'profile_photo' => ['nullable', 'image', 'mimes:jpeg,jpg,png,gif', 'max:2048'], // 2MB max
+                'headline' => ['nullable', 'string', 'max:255'],
+                'gender' => ['nullable', 'in:male,female,other,'],
+                'date_of_birth' => ['nullable', 'date', 'before:today'],
+                'nationality' => ['nullable', 'string', 'max:100'],
+                'city' => ['nullable', 'string', 'max:100'],
+                'country' => ['nullable', 'string', 'max:100'],
+                'address' => ['nullable', 'string', 'max:500'],
+                'phone_number' => ['nullable', 'string', 'max:20'],
+                'linkedin_url' => ['nullable', 'url', 'max:255'],
+            ]);
 
-        $user->update($request->only(['name', 'email']));
+            // Convert empty strings to null for nullable fields
+            foreach (['headline', 'gender', 'date_of_birth', 'nationality', 'city', 'country', 'address', 'phone_number', 'linkedin_url'] as $field) {
+                if (isset($validated[$field]) && $validated[$field] === '') {
+                    $validated[$field] = null;
+                }
+            }
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Profile updated successfully',
-            'data' => $user->fresh(),
-        ]);
+            // Handle profile photo upload
+            if ($request->hasFile('profile_photo')) {
+                $file = $request->file('profile_photo');
+
+                if ($file->isValid()) {
+                    // Delete old profile photo if exists
+                    if ($user->profile_photo) {
+                        Storage::disk('public')->delete($user->profile_photo);
+                    }
+
+                    $path = $file->store('profile-photos', 'public');
+                    $validated['profile_photo'] = $path;
+                } else {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Invalid file upload',
+                        'errors' => ['profile_photo' => ['The uploaded file is not valid']],
+                    ], 422);
+                }
+            }
+
+            // Remove profile_photo from validated if it wasn't set
+            if (! isset($validated['profile_photo'])) {
+                unset($validated['profile_photo']);
+            }
+
+            // Log the update for debugging
+            Log::info('Updating user profile', [
+                'user_id' => $user->id,
+                'fields' => array_keys($validated),
+                'date_of_birth' => $validated['date_of_birth'] ?? 'not set',
+            ]);
+
+            $user->update($validated);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Profile updated successfully',
+                'data' => $user->fresh(),
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation failed',
+                'errors' => $e->errors(),
+            ], 422);
+        } catch (\Exception $e) {
+            Log::error('Profile update failed', [
+                'error' => $e->getMessage(),
+                'user_id' => $user->id,
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to update profile: '.$e->getMessage(),
+            ], 500);
+        }
+    }
+
+    /**
+     * Delete user profile.
+     */
+    public function deleteProfile(Request $request): JsonResponse
+    {
+        $user = $request->user();
+
+        try {
+            DB::beginTransaction();
+
+            // Delete the user (this will trigger the deleting event in User model
+            // which handles all cleanup: profile photo, companies, CVs, tokens, etc.)
+            $user->delete();
+
+            DB::commit();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Profile deleted successfully',
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Profile deletion failed', [
+                'error' => $e->getMessage(),
+                'user_id' => $user->id,
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to delete profile. Please try again.',
+            ], 500);
+        }
     }
 
     /**
