@@ -18,11 +18,12 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->enum('user_type', ['job_seeker', 'company_owner'])->default('job_seeker');
+            $table->boolean('is_admin')->default(false);
 
             // Profile fields
             $table->string('profile_photo')->nullable();
             $table->string('headline')->nullable();
-            $table->enum('gender', ['male', 'female', 'other'])->nullable();
+            $table->enum('gender', ['male', 'female'])->nullable();
             $table->date('date_of_birth')->nullable();
             $table->string('nationality')->nullable();
             $table->string('city')->nullable();

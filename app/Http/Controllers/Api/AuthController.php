@@ -115,6 +115,9 @@ class AuthController extends Controller
         // Create new token
         $token = $user->createToken('auth_token')->plainTextToken;
 
+        // Determine redirect path based on user role
+        $redirectTo = $user->is_admin ? '/admin' : '/dashboard';
+
         return response()->json([
             'success' => true,
             'message' => 'Login successful',
@@ -122,6 +125,7 @@ class AuthController extends Controller
                 'user' => $user,
                 'token' => $token,
                 'token_type' => 'Bearer',
+                'redirect_to' => $redirectTo,
             ],
         ]);
     }

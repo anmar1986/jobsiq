@@ -103,6 +103,48 @@ const routes: RouteRecordRaw[] = [
     meta: { title: 'Dashboard', requiresAuth: true },
   },
   {
+    path: '/admin',
+    name: 'admin',
+    component: () => import('@/views/admin/AdminDashboard.vue'),
+    meta: { title: 'Admin Dashboard', requiresAuth: true, requiresAdmin: true },
+  },
+  {
+    path: '/admin/users',
+    name: 'admin-users',
+    component: () => import('@/views/admin/UsersManagement.vue'),
+    meta: { title: 'Users Management', requiresAuth: true, requiresAdmin: true },
+  },
+  {
+    path: '/admin/companies',
+    name: 'admin-companies',
+    component: () => import('@/views/admin/CompaniesManagement.vue'),
+    meta: { title: 'Companies Management', requiresAuth: true, requiresAdmin: true },
+  },
+  {
+    path: '/admin/jobs',
+    name: 'admin-jobs',
+    component: () => import('@/views/admin/JobsManagement.vue'),
+    meta: { title: 'Jobs Management', requiresAuth: true, requiresAdmin: true },
+  },
+  {
+    path: '/admin/applications',
+    name: 'admin-applications',
+    component: () => import('@/views/admin/ApplicationsManagement.vue'),
+    meta: { title: 'Applications Management', requiresAuth: true, requiresAdmin: true },
+  },
+  {
+    path: '/admin/cvs',
+    name: 'admin-cvs',
+    component: () => import('@/views/admin/CvsManagement.vue'),
+    meta: { title: 'Free CVs Management', requiresAuth: true, requiresAdmin: true },
+  },
+  {
+    path: '/admin/cvs/:slug',
+    name: 'admin-cv-detail',
+    component: () => import('@/views/admin/CvDetailView.vue'),
+    meta: { title: 'CV Details', requiresAuth: true, requiresAdmin: true },
+  },
+  {
     path: '/my-jobs',
     name: 'my-jobs',
     component: () => import('@/views/dashboard/MyJobsView.vue'),
@@ -224,6 +266,7 @@ router.beforeEach((to: RouteLocationNormalized, _from: RouteLocationNormalized, 
   const isGuestRoute = to.matched.some((record) => record.meta.guest)
   const requiresCompany = to.matched.some((record) => record.meta.requiresCompany)
   const requiresJobSeeker = to.matched.some((record) => record.meta.requiresJobSeeker)
+  const requiresAdmin = to.matched.some((record) => record.meta.requiresAdmin)
 
   // Set page title
   document.title = to.meta.title ? `${to.meta.title} | JobsIQ` : 'JobsIQ'
@@ -233,6 +276,9 @@ router.beforeEach((to: RouteLocationNormalized, _from: RouteLocationNormalized, 
     next({ name: 'login', query: { redirect: to.fullPath } })
   } else if (isGuestRoute && authStore.isAuthenticated) {
     // Redirect to dashboard if user is already authenticated
+    next({ name: 'dashboard' })
+  } else if (requiresAdmin && !authStore.user?.is_admin) {
+    // Redirect to dashboard if route requires admin role and user is not admin
     next({ name: 'dashboard' })
   } else if (requiresCompany && authStore.user?.user_type !== 'company_owner') {
     // Redirect to dashboard if route requires company owner role

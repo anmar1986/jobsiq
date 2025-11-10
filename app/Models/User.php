@@ -27,6 +27,7 @@ class User extends Authenticatable
         'email',
         'password',
         'user_type',
+        'is_admin',
         'profile_photo',
         'headline',
         'gender',
@@ -60,6 +61,7 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'date_of_birth' => 'date',
+            'is_admin' => 'boolean',
         ];
     }
 

@@ -16,6 +16,7 @@ return Application::configure(basePath: dirname(__DIR__))
         // Register optional authentication middleware
         $middleware->alias([
             'optional.auth' => \App\Http\Middleware\OptionalAuthentication::class,
+            'admin' => \App\Http\Middleware\IsAdmin::class,
         ]);
 
         // Configure API authentication to return JSON instead of redirecting
