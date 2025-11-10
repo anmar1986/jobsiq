@@ -196,13 +196,13 @@ class AuthController extends Controller
             // Handle profile photo upload
             if ($request->hasFile('profile_photo')) {
                 $file = $request->file('profile_photo');
-                
+
                 if ($file->isValid()) {
                     // Delete old profile photo if exists
                     if ($user->profile_photo) {
                         Storage::disk('public')->delete($user->profile_photo);
                     }
-                    
+
                     $path = $file->store('profile-photos', 'public');
                     $validated['profile_photo'] = $path;
                 } else {
@@ -215,7 +215,7 @@ class AuthController extends Controller
             }
 
             // Remove profile_photo from validated if it wasn't set
-            if (!isset($validated['profile_photo'])) {
+            if (! isset($validated['profile_photo'])) {
                 unset($validated['profile_photo']);
             }
 
@@ -223,7 +223,7 @@ class AuthController extends Controller
             Log::info('Updating user profile', [
                 'user_id' => $user->id,
                 'fields' => array_keys($validated),
-                'date_of_birth' => $validated['date_of_birth'] ?? 'not set'
+                'date_of_birth' => $validated['date_of_birth'] ?? 'not set',
             ]);
 
             $user->update($validated);
@@ -247,7 +247,7 @@ class AuthController extends Controller
 
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to update profile: ' . $e->getMessage(),
+                'message' => 'Failed to update profile: '.$e->getMessage(),
             ], 500);
         }
     }

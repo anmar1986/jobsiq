@@ -23,203 +23,203 @@
         </div>
       </div>
 
-    <!-- Loading State -->
-    <div v-if="loading" class="flex justify-center items-center py-12">
-      <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
-    </div>
+      <!-- Loading State -->
+      <div v-if="loading" class="flex justify-center items-center py-12">
+        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+      </div>
 
-    <!-- Error State -->
-    <div v-else-if="error" class="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
-      <div class="flex items-start">
-        <svg class="h-5 w-5 text-red-600 mt-0.5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-        </svg>
-        <div>
-          <h3 class="text-sm font-medium text-red-800">Error loading jobs</h3>
-          <p class="text-sm text-red-700 mt-1">{{ error }}</p>
+      <!-- Error State -->
+      <div v-else-if="error" class="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+        <div class="flex items-start">
+          <svg class="h-5 w-5 text-red-600 mt-0.5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <div>
+            <h3 class="text-sm font-medium text-red-800">Error loading jobs</h3>
+            <p class="text-sm text-red-700 mt-1">{{ error }}</p>
+          </div>
         </div>
       </div>
-    </div>
 
-    <!-- No Company State -->
-    <div v-else-if="!hasCompany" class="text-center py-12">
-      <svg class="mx-auto h-16 w-16 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-      </svg>
-      <h3 class="text-lg font-semibold text-gray-900 mb-2">No Company Profile</h3>
-      <p class="text-gray-600 mb-6">You need to create a company profile before posting jobs.</p>
-      <router-link
-        to="/my-companies"
-        class="inline-flex items-center px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
-      >
-        Create Company Profile
-      </router-link>
-    </div>
-
-    <!-- Empty State -->
-    <div v-else-if="jobs.length === 0" class="text-center py-12">
-      <svg class="mx-auto h-16 w-16 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-      </svg>
-      <h3 class="text-lg font-semibold text-gray-900 mb-2">No Jobs Posted Yet</h3>
-      <p class="text-gray-600 mb-6">Start posting jobs to find the perfect candidates.</p>
-      <router-link
-        to="/post-job"
-        class="inline-flex items-center px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
-      >
-        <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+      <!-- No Company State -->
+      <div v-else-if="!hasCompany" class="text-center py-12">
+        <svg class="mx-auto h-16 w-16 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
         </svg>
-        Post Your First Job
-      </router-link>
-    </div>
+        <h3 class="text-lg font-semibold text-gray-900 mb-2">No Company Profile</h3>
+        <p class="text-gray-600 mb-6">You need to create a company profile before posting jobs.</p>
+        <router-link
+          to="/my-companies"
+          class="inline-flex items-center px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
+        >
+          Create Company Profile
+        </router-link>
+      </div>
 
-    <!-- Jobs List -->
-    <div v-else class="grid gap-4">
-      <div
-        v-for="job in jobs"
-        :key="job.id"
-        class="bg-white border-2 border-gray-300 rounded-lg p-6 hover:shadow-lg transition-all duration-200 hover:border-primary-400"
-      >
-        <div class="flex gap-4">
-          <!-- Company Logo -->
-          <router-link
-            :to="`/companies/${job.company.slug}`"
-            class="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center flex-shrink-0 hover:bg-gray-200 transition-colors"
-          >
-            <img
-              v-if="job.company?.logo?.url"
-              :src="job.company.logo.url"
-              :alt="job.company.name"
-              class="w-full h-full object-contain p-2 rounded-lg"
-            />
-            <svg v-else class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-            </svg>
-          </router-link>
+      <!-- Empty State -->
+      <div v-else-if="jobs.length === 0" class="text-center py-12">
+        <svg class="mx-auto h-16 w-16 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+        </svg>
+        <h3 class="text-lg font-semibold text-gray-900 mb-2">No Jobs Posted Yet</h3>
+        <p class="text-gray-600 mb-6">Start posting jobs to find the perfect candidates.</p>
+        <router-link
+          to="/post-job"
+          class="inline-flex items-center px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
+        >
+          <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+          </svg>
+          Post Your First Job
+        </router-link>
+      </div>
 
-          <!-- Job Info -->
-          <div class="flex-1 min-w-0">
-            <div class="flex items-start justify-between gap-3 mb-3">
-              <div class="flex-1 min-w-0">
-                <router-link
-                  :to="`/jobs/${job.slug}`"
-                  class="block"
-                >
-                  <h3 class="text-xl font-bold text-gray-900 hover:text-primary-600 transition-colors mb-1">
-                    {{ job.title }}
-                  </h3>
-                </router-link>
-                <router-link
-                  :to="`/companies/${job.company.slug}`"
-                  class="text-base text-gray-600 hover:text-gray-900 transition-colors"
-                >
-                  {{ job.company.name }}
-                </router-link>
-              </div>
+      <!-- Jobs List -->
+      <div v-else class="grid gap-4">
+        <div
+          v-for="job in jobs"
+          :key="job.id"
+          class="bg-white border-2 border-gray-300 rounded-lg p-6 hover:shadow-lg transition-all duration-200 hover:border-primary-400"
+        >
+          <div class="flex gap-4">
+            <!-- Company Logo -->
+            <router-link
+              :to="`/companies/${job.company.slug}`"
+              class="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center flex-shrink-0 hover:bg-gray-200 transition-colors"
+            >
+              <img
+                v-if="job.company?.logo?.url"
+                :src="job.company.logo.url"
+                :alt="job.company.name"
+                class="w-full h-full object-contain p-2 rounded-lg"
+              />
+              <svg v-else class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+              </svg>
+            </router-link>
+
+            <!-- Job Info -->
+            <div class="flex-1 min-w-0">
+              <div class="flex items-start justify-between gap-3 mb-3">
+                <div class="flex-1 min-w-0">
+                  <router-link
+                    :to="`/jobs/${job.slug}`"
+                    class="block"
+                  >
+                    <h3 class="text-xl font-bold text-gray-900 hover:text-primary-600 transition-colors mb-1">
+                      {{ job.title }}
+                    </h3>
+                  </router-link>
+                  <router-link
+                    :to="`/companies/${job.company.slug}`"
+                    class="text-base text-gray-600 hover:text-gray-900 transition-colors"
+                  >
+                    {{ job.company.name }}
+                  </router-link>
+                </div>
               
-              <!-- Status Badges -->
-              <div class="flex items-center gap-2 flex-shrink-0">
-                <span
-                  v-if="job.is_featured"
-                  class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold bg-yellow-100 text-yellow-800"
-                >
-                  ⭐ Featured
+                <!-- Status Badges -->
+                <div class="flex items-center gap-2 flex-shrink-0">
+                  <span
+                    v-if="job.is_featured"
+                    class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold bg-yellow-100 text-yellow-800"
+                  >
+                    ⭐ Featured
+                  </span>
+                  <span
+                    :class="[
+                      'inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold',
+                      job.is_active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+                    ]"
+                  >
+                    {{ job.is_active ? '● Active' : '○ Inactive' }}
+                  </span>
+                </div>
+              </div>
+
+              <!-- Tags -->
+              <div class="flex flex-wrap gap-2 mb-4">
+                <span class="inline-flex items-center px-3 py-1 rounded-md text-xs font-medium bg-gray-100 text-gray-800">
+                  <svg class="w-3.5 h-3.5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                  </svg>
+                  {{ job.city }}, {{ job.country }}
                 </span>
-                <span
-                  :class="[
-                    'inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold',
-                    job.is_active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
-                  ]"
-                >
-                  {{ job.is_active ? '● Active' : '○ Inactive' }}
+                <span v-if="job.employment_type" class="inline-flex items-center px-3 py-1 rounded-md text-xs font-medium bg-blue-100 text-blue-800">
+                  {{ formatEmploymentType(job.employment_type) }}
+                </span>
+                <span v-if="job.is_remote" class="inline-flex items-center px-3 py-1 rounded-md text-xs font-medium bg-green-100 text-green-800">
+                  🌐 Remote
+                </span>
+                <span v-if="job.category" class="inline-flex items-center px-3 py-1 rounded-md text-xs font-medium bg-purple-100 text-purple-800">
+                  {{ job.category }}
                 </span>
               </div>
-            </div>
 
-            <!-- Tags -->
-            <div class="flex flex-wrap gap-2 mb-4">
-              <span class="inline-flex items-center px-3 py-1 rounded-md text-xs font-medium bg-gray-100 text-gray-800">
-                <svg class="w-3.5 h-3.5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                </svg>
-                {{ job.city }}, {{ job.country }}
-              </span>
-              <span v-if="job.employment_type" class="inline-flex items-center px-3 py-1 rounded-md text-xs font-medium bg-blue-100 text-blue-800">
-                {{ formatEmploymentType(job.employment_type) }}
-              </span>
-              <span v-if="job.is_remote" class="inline-flex items-center px-3 py-1 rounded-md text-xs font-medium bg-green-100 text-green-800">
-                🌐 Remote
-              </span>
-              <span v-if="job.category" class="inline-flex items-center px-3 py-1 rounded-md text-xs font-medium bg-purple-100 text-purple-800">
-                {{ job.category }}
-              </span>
-            </div>
-
-            <!-- Salary Display -->
-            <div v-if="job.salary_min && job.salary_max">
-              <div class="flex items-center text-base">
-                <svg class="w-5 h-5 mr-2 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                <span class="font-semibold text-primary-600">{{ formatSalaryRange(job.salary_min, job.salary_max, job.salary_currency, job.salary_period) }}</span>
-              </div>
-            </div>
-
-            <!-- Stats and Actions Row -->
-            <div class="flex items-center justify-between gap-4 pt-4 border-t-2 border-gray-200">
-              <div class="flex items-center gap-6 text-sm">
-                <span class="flex items-center text-gray-600">
+              <!-- Salary Display -->
+              <div v-if="job.salary_min && job.salary_max">
+                <div class="flex items-center text-base">
                   <svg class="w-5 h-5 mr-2 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
-                  <span class="font-semibold text-gray-900">{{ job.applications_count || 0 }}</span>
-                  <span class="ml-1">{{ job.applications_count === 1 ? 'Application' : 'Applications' }}</span>
-                </span>
-                <span class="text-gray-500">
-                  Posted on {{ formatActualDate(job.published_at || job.created_at) }}
-                </span>
-                <span v-if="job.expires_at" class="text-gray-500">
-                  Expires on {{ formatActualDate(job.expires_at) }}
-                </span>
+                  <span class="font-semibold text-primary-600">{{ formatSalaryRange(job.salary_min, job.salary_max, job.salary_currency, job.salary_period) }}</span>
+                </div>
               </div>
 
-              <!-- Action Buttons -->
-              <div class="flex gap-2">
-                <router-link
-                  :to="`/my-companies/${job.company_id}/jobs/${job.id}/view`"
-                  class="inline-flex items-center px-4 py-2 bg-white border-2 border-gray-300 rounded-lg text-sm font-semibold text-gray-700 hover:bg-gray-50 hover:border-primary-400 transition-all"
-                >
-                  <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                  </svg>
-                  View Details
-                </router-link>
-                <router-link
-                  :to="`/my-companies/${job.company_id}/jobs/${job.id}/edit`"
-                  class="inline-flex items-center px-4 py-2 bg-primary-600 text-white rounded-lg text-sm font-semibold hover:bg-primary-700 transition-colors"
-                >
-                  <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                  </svg>
-                  Edit Job
-                </router-link>
-                <button
-                  @click="confirmDeleteJob(job)"
-                  class="inline-flex items-center px-4 py-2 bg-white border-2 border-red-300 rounded-lg text-sm font-semibold text-red-700 hover:bg-red-50 hover:border-red-500 transition-all cursor-pointer"
-                >
-                  <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                  </svg>
-                  Delete
-                </button>
+              <!-- Stats and Actions Row -->
+              <div class="flex items-center justify-between gap-4 pt-4 border-t-2 border-gray-200">
+                <div class="flex items-center gap-6 text-sm">
+                  <span class="flex items-center text-gray-600">
+                    <svg class="w-5 h-5 mr-2 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>
+                    <span class="font-semibold text-gray-900">{{ job.applications_count || 0 }}</span>
+                    <span class="ml-1">{{ job.applications_count === 1 ? 'Application' : 'Applications' }}</span>
+                  </span>
+                  <span class="text-gray-500">
+                    Posted on {{ formatActualDate(job.published_at || job.created_at) }}
+                  </span>
+                  <span v-if="job.expires_at" class="text-gray-500">
+                    Expires on {{ formatActualDate(job.expires_at) }}
+                  </span>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex gap-2">
+                  <router-link
+                    :to="`/my-companies/${job.company_id}/jobs/${job.id}/view`"
+                    class="inline-flex items-center px-4 py-2 bg-white border-2 border-gray-300 rounded-lg text-sm font-semibold text-gray-700 hover:bg-gray-50 hover:border-primary-400 transition-all"
+                  >
+                    <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    </svg>
+                    View Details
+                  </router-link>
+                  <router-link
+                    :to="`/my-companies/${job.company_id}/jobs/${job.id}/edit`"
+                    class="inline-flex items-center px-4 py-2 bg-primary-600 text-white rounded-lg text-sm font-semibold hover:bg-primary-700 transition-colors"
+                  >
+                    <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                    </svg>
+                    Edit Job
+                  </router-link>
+                  <button
+                    @click="confirmDeleteJob(job)"
+                    class="inline-flex items-center px-4 py-2 bg-white border-2 border-red-300 rounded-lg text-sm font-semibold text-red-700 hover:bg-red-50 hover:border-red-500 transition-all cursor-pointer"
+                  >
+                    <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                    Delete
+                  </button>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
     </div>
 
     <!-- Delete Job Confirmation Modal -->
@@ -266,8 +266,8 @@ import type { Job } from '@/types'
 import BaseButton from '@/components/base/BaseButton.vue'
 import BaseModal from '@/components/base/BaseModal.vue'
 
-const router = useRouter()
-const authStore = useAuthStore()
+const _router = useRouter()
+const _authStore = useAuthStore()
 const companyStore = useCompanyStore()
 
 const jobs = ref<Job[]>([])
@@ -289,10 +289,11 @@ const fetchJobs = async () => {
     
     console.log('Jobs response:', response)
     jobs.value = response.data || []
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error('Error fetching jobs:', err)
-    console.error('Error response:', err.response)
-    error.value = err.response?.data?.message || err.message || 'Failed to load jobs'
+    const errorObj = err as { response?: { data?: { message?: string } }; message?: string }
+    console.error('Error response:', errorObj.response)
+    error.value = errorObj.response?.data?.message || errorObj.message || 'Failed to load jobs'
   } finally {
     loading.value = false
   }
@@ -315,9 +316,10 @@ const handleDeleteJob = async () => {
     
     showDeleteJobModal.value = false
     jobToDelete.value = null
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error('Error deleting job:', err)
-    alert(err.response?.data?.message || 'Failed to delete job')
+    const error = err as { response?: { data?: { message?: string } }; message?: string }
+    alert(error.response?.data?.message || error.message || 'Failed to delete job')
   } finally {
     deletingJob.value = false
   }
@@ -342,7 +344,7 @@ const formatActualDate = (dateString: string) => {
   return `${day}.${month}.${year}`
 }
 
-const formatPostedDate = (dateString: string) => {
+const _formatPostedDate = (dateString: string) => {
   const date = new Date(dateString)
   const now = new Date()
   const diffTime = now.getTime() - date.getTime()
@@ -361,7 +363,7 @@ const formatPostedDate = (dateString: string) => {
   })
 }
 
-const formatExpiryDate = (dateString: string) => {
+const _formatExpiryDate = (dateString: string) => {
   const date = new Date(dateString)
   const now = new Date()
   const diffTime = date.getTime() - now.getTime()
@@ -384,7 +386,7 @@ const formatExpiryDate = (dateString: string) => {
   })
 }
 
-const formatDate = (dateString: string) => {
+const _formatDate = (dateString: string) => {
   const date = new Date(dateString)
   const now = new Date()
   const diffTime = now.getTime() - date.getTime()

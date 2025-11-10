@@ -795,7 +795,7 @@ const formatNumber = (num: number): string => {
   return num.toString()
 }
 
-const formatSalary = (min: number, max: number): string => {
+const _formatSalary = (min: number, max: number): string => {
   if (!min && !max) return 'Competitive'
   if (min && max) {
     return `$${formatNumber(min)} - $${formatNumber(max)}`
@@ -805,7 +805,7 @@ const formatSalary = (min: number, max: number): string => {
   return 'Competitive'
 }
 
-const formatSalaryPeriod = (period: string): string => {
+const _formatSalaryPeriod = (period: string): string => {
   const periods: Record<string, string> = {
     'hourly': 'hour',
     'daily': 'day',

@@ -18,7 +18,7 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->enum('user_type', ['job_seeker', 'company_owner'])->default('job_seeker');
-            
+
             // Profile fields
             $table->string('profile_photo')->nullable();
             $table->string('headline')->nullable();
@@ -30,7 +30,7 @@ return new class extends Migration
             $table->string('address')->nullable();
             $table->string('phone_number')->nullable();
             $table->string('linkedin_url')->nullable();
-            
+
             $table->rememberToken();
             $table->timestamps();
 

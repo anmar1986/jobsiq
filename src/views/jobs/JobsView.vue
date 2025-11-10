@@ -854,7 +854,7 @@ const formatExperienceLevel = (level: string): string => {
   return levels[level] || level
 }
 
-const formatSalary = (amount: number): string => {
+const _formatSalary = (amount: number): string => {
   if (amount >= 1000) {
     return (amount / 1000).toFixed(0) + 'k'
   }

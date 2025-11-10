@@ -80,11 +80,11 @@ class User extends Authenticatable
             if ($user->user_type === 'company_owner') {
                 // Load companies with their relationships
                 $companies = $user->ownedCompanies()->with('images')->get();
-                
+
                 foreach ($companies as $company) {
                     // Check if this user is the only owner
                     $ownerCount = $company->owners()->count();
-                    
+
                     if ($ownerCount === 1) {
                         // First, delete all company images from storage
                         foreach ($company->images as $image) {
@@ -93,7 +93,7 @@ class User extends Authenticatable
                             }
                             $image->delete();
                         }
-                        
+
                         // Then delete the company (this will cascade delete jobs, job_applications, etc.)
                         $company->delete();
                     }
@@ -115,7 +115,7 @@ class User extends Authenticatable
 
             // Delete user's authentication tokens
             $user->tokens()->delete();
-            
+
             // Note: The following will be automatically cascade deleted by database constraints:
             // - company_owners entries
             // - job_applications

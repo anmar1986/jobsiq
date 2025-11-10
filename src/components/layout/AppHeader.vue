@@ -301,7 +301,7 @@ const getProfilePhotoUrl = (path: string) => {
 }
 
 // Check if current route is within /my-companies section
-const isMyCompaniesActive = computed(() => {
+const _isMyCompaniesActive = computed(() => {
   return route.path.startsWith('/my-companies')
 })
 
@@ -320,8 +320,14 @@ const navLinks = computed(() => {
   return links
 })
 
+interface MenuItem {
+  path: string
+  label: string
+  icon?: () => ReturnType<typeof h>
+}
+
 const userMenuItems = computed(() => {
-  const baseItems: any[] = []
+  const baseItems: MenuItem[] = []
 
   // Add role-specific menu items
   if (authStore.user?.user_type === 'company_owner') {

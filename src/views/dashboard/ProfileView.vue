@@ -22,254 +22,254 @@
         </div>
       </div>
 
-    <!-- View Mode -->
-    <div v-if="!isEditMode">
-      <div class="bg-white rounded-lg shadow-md p-6 space-y-6">
-        <!-- Profile Photo & Basic Info -->
-        <div class="border-b border-gray-200 pb-6">
-          <div class="flex items-start gap-6">
-            <div class="relative">
-              <div v-if="authStore.user?.profile_photo" class="w-32 h-32 rounded-full overflow-hidden border-4 border-gray-200">
-                <img 
-                  :src="getProfilePhotoUrl(authStore.user?.profile_photo || '')" 
-                  alt="Profile" 
-                  class="w-full h-full object-cover"
+      <!-- View Mode -->
+      <div v-if="!isEditMode">
+        <div class="bg-white rounded-lg shadow-md p-6 space-y-6">
+          <!-- Profile Photo & Basic Info -->
+          <div class="border-b border-gray-200 pb-6">
+            <div class="flex items-start gap-6">
+              <div class="relative">
+                <div v-if="authStore.user?.profile_photo" class="w-32 h-32 rounded-full overflow-hidden border-4 border-gray-200">
+                  <img 
+                    :src="getProfilePhotoUrl(authStore.user?.profile_photo || '')" 
+                    alt="Profile" 
+                    class="w-full h-full object-cover"
+                  />
+                </div>
+                <BaseAvatar 
+                  v-else
+                  :name="authStore.user?.name || 'User'" 
+                  size="xl" 
+                  class="w-32 h-32"
                 />
               </div>
-              <BaseAvatar 
-                v-else
-                :name="authStore.user?.name || 'User'" 
-                size="xl" 
-                class="w-32 h-32"
-              />
-            </div>
-            <div class="flex-1">
-              <h2 class="text-2xl font-bold text-gray-900 mb-1">{{ authStore.user?.name }}</h2>
-              <p v-if="authStore.user?.headline" class="text-lg text-gray-600 mb-2">{{ authStore.user.headline }}</p>
-              <p class="text-gray-500">{{ authStore.user?.email }}</p>
+              <div class="flex-1">
+                <h2 class="text-2xl font-bold text-gray-900 mb-1">{{ authStore.user?.name }}</h2>
+                <p v-if="authStore.user?.headline" class="text-lg text-gray-600 mb-2">{{ authStore.user.headline }}</p>
+                <p class="text-gray-500">{{ authStore.user?.email }}</p>
+              </div>
             </div>
           </div>
-        </div>
 
-        <!-- Personal Information -->
-        <div class="border-b border-gray-200 pb-6">
-          <h3 class="text-xl font-semibold text-gray-900 mb-4">Personal Information</h3>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div v-if="authStore.user?.gender">
-              <p class="text-sm font-semibold text-gray-500">Gender</p>
-              <p class="text-gray-900 capitalize">{{ authStore.user.gender }}</p>
+          <!-- Personal Information -->
+          <div class="border-b border-gray-200 pb-6">
+            <h3 class="text-xl font-semibold text-gray-900 mb-4">Personal Information</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div v-if="authStore.user?.gender">
+                <p class="text-sm font-semibold text-gray-500">Gender</p>
+                <p class="text-gray-900 capitalize">{{ authStore.user.gender }}</p>
+              </div>
+              <div v-if="authStore.user?.date_of_birth">
+                <p class="text-sm font-semibold text-gray-500">Date of Birth</p>
+                <p class="text-gray-900">{{ formatDate(authStore.user.date_of_birth) }}</p>
+              </div>
+              <div v-if="authStore.user?.nationality">
+                <p class="text-sm font-semibold text-gray-500">Nationality</p>
+                <p class="text-gray-900">{{ authStore.user.nationality }}</p>
+              </div>
+              <div v-if="authStore.user?.phone_number">
+                <p class="text-sm font-semibold text-gray-500">Phone Number</p>
+                <p class="text-gray-900">{{ authStore.user.phone_number }}</p>
+              </div>
+              <div v-if="authStore.user?.city">
+                <p class="text-sm font-semibold text-gray-500">City</p>
+                <p class="text-gray-900">{{ authStore.user.city }}</p>
+              </div>
+              <div v-if="authStore.user?.country">
+                <p class="text-sm font-semibold text-gray-500">Country</p>
+                <p class="text-gray-900">{{ authStore.user.country }}</p>
+              </div>
+              <div v-if="authStore.user?.address" class="md:col-span-2">
+                <p class="text-sm font-semibold text-gray-500">Address</p>
+                <p class="text-gray-900">{{ authStore.user.address }}</p>
+              </div>
             </div>
-            <div v-if="authStore.user?.date_of_birth">
-              <p class="text-sm font-semibold text-gray-500">Date of Birth</p>
-              <p class="text-gray-900">{{ formatDate(authStore.user.date_of_birth) }}</p>
-            </div>
-            <div v-if="authStore.user?.nationality">
-              <p class="text-sm font-semibold text-gray-500">Nationality</p>
-              <p class="text-gray-900">{{ authStore.user.nationality }}</p>
-            </div>
-            <div v-if="authStore.user?.phone_number">
-              <p class="text-sm font-semibold text-gray-500">Phone Number</p>
-              <p class="text-gray-900">{{ authStore.user.phone_number }}</p>
-            </div>
-            <div v-if="authStore.user?.city">
-              <p class="text-sm font-semibold text-gray-500">City</p>
-              <p class="text-gray-900">{{ authStore.user.city }}</p>
-            </div>
-            <div v-if="authStore.user?.country">
-              <p class="text-sm font-semibold text-gray-500">Country</p>
-              <p class="text-gray-900">{{ authStore.user.country }}</p>
-            </div>
-            <div v-if="authStore.user?.address" class="md:col-span-2">
-              <p class="text-sm font-semibold text-gray-500">Address</p>
-              <p class="text-gray-900">{{ authStore.user.address }}</p>
+            <div v-if="!authStore.user?.gender && !authStore.user?.date_of_birth && !authStore.user?.nationality && !authStore.user?.phone_number && !authStore.user?.city && !authStore.user?.country && !authStore.user?.address" class="text-gray-500 italic">
+              No personal information added yet.
             </div>
           </div>
-          <div v-if="!authStore.user?.gender && !authStore.user?.date_of_birth && !authStore.user?.nationality && !authStore.user?.phone_number && !authStore.user?.city && !authStore.user?.country && !authStore.user?.address" class="text-gray-500 italic">
-            No personal information added yet.
-          </div>
-        </div>
 
-        <!-- Social Links -->
-        <div v-if="authStore.user?.linkedin_url">
-          <h3 class="text-xl font-semibold text-gray-900 mb-4">Social Links</h3>
-          <div>
-            <a 
-              :href="authStore.user.linkedin_url" 
-              target="_blank" 
-              class="flex items-center gap-2 text-primary-600 hover:text-primary-700"
-            >
-              <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
-              </svg>
-              LinkedIn Profile
-            </a>
+          <!-- Social Links -->
+          <div v-if="authStore.user?.linkedin_url">
+            <h3 class="text-xl font-semibold text-gray-900 mb-4">Social Links</h3>
+            <div>
+              <a 
+                :href="authStore.user.linkedin_url" 
+                target="_blank" 
+                class="flex items-center gap-2 text-primary-600 hover:text-primary-700"
+              >
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
+                </svg>
+                LinkedIn Profile
+              </a>
+            </div>
           </div>
         </div>
       </div>
-    </div>
 
-    <!-- Edit Mode -->
-    <div v-else>
-      <form @submit.prevent="handleSubmit" class="bg-white rounded-lg shadow-md p-6 space-y-6">
-        <!-- Profile Photo Section -->
-        <div class="border-b border-gray-200 pb-6">
-          <h2 class="text-xl font-semibold text-gray-900 mb-4">Profile Photo</h2>
-          <div class="flex items-center gap-6">
-            <div class="relative">
-              <div v-if="profilePhotoPreview || authStore.user?.profile_photo" class="w-32 h-32 rounded-full overflow-hidden border-4 border-gray-200">
-                <img 
-                  :src="profilePhotoPreview || getProfilePhotoUrl(authStore.user?.profile_photo || '')" 
-                  alt="Profile" 
-                  class="w-full h-full object-cover"
+      <!-- Edit Mode -->
+      <div v-else>
+        <form @submit.prevent="handleSubmit" class="bg-white rounded-lg shadow-md p-6 space-y-6">
+          <!-- Profile Photo Section -->
+          <div class="border-b border-gray-200 pb-6">
+            <h2 class="text-xl font-semibold text-gray-900 mb-4">Profile Photo</h2>
+            <div class="flex items-center gap-6">
+              <div class="relative">
+                <div v-if="profilePhotoPreview || authStore.user?.profile_photo" class="w-32 h-32 rounded-full overflow-hidden border-4 border-gray-200">
+                  <img 
+                    :src="profilePhotoPreview || getProfilePhotoUrl(authStore.user?.profile_photo || '')" 
+                    alt="Profile" 
+                    class="w-full h-full object-cover"
+                  />
+                </div>
+                <BaseAvatar 
+                  v-else
+                  :name="formData.name || 'User'" 
+                  size="xl" 
+                  class="w-32 h-32"
                 />
               </div>
-              <BaseAvatar 
-                v-else
-                :name="formData.name || 'User'" 
-                size="xl" 
-                class="w-32 h-32"
+              <div class="flex-1">
+                <input
+                  type="file"
+                  ref="photoInput"
+                  accept="image/*"
+                  @change="handlePhotoChange"
+                  class="hidden"
+                />
+                <BaseButton
+                  type="button"
+                  variant="outline"
+                  @click="photoInput?.click()"
+                  class="mb-2"
+                >
+                  Choose Photo
+                </BaseButton>
+                <p class="text-sm text-gray-500">JPG, PNG or GIF. Max size 2MB.</p>
+                <button
+                  v-if="profilePhotoPreview || authStore.user?.profile_photo"
+                  type="button"
+                  @click="removePhoto"
+                  class="text-sm text-red-600 hover:text-red-700 mt-2"
+                >
+                  Remove Photo
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Basic Information -->
+          <div class="border-b border-gray-200 pb-6">
+            <h2 class="text-xl font-semibold text-gray-900 mb-4">Basic Information</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <BaseInput
+                v-model="formData.name"
+                label="Full Name"
+                placeholder="Enter your full name"
+                required
+              />
+              <BaseInput
+                v-model="formData.email"
+                type="email"
+                label="Email"
+                placeholder="Enter your email"
+                required
+              />
+              <BaseInput
+                v-model="formData.headline"
+                label="Headline/Title"
+                placeholder="e.g., Software Engineer"
+                class="md:col-span-2"
               />
             </div>
-            <div class="flex-1">
-              <input
-                type="file"
-                ref="photoInput"
-                accept="image/*"
-                @change="handlePhotoChange"
-                class="hidden"
+          </div>
+
+          <!-- Personal Information -->
+          <div class="border-b border-gray-200 pb-6">
+            <h2 class="text-xl font-semibold text-gray-900 mb-4">Personal Information</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">Gender</label>
+                <select
+                  v-model="formData.gender"
+                  class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                >
+                  <option value="">Select gender</option>
+                  <option value="male">Male</option>
+                  <option value="female">Female</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+              <BaseInput
+                v-model="formData.date_of_birth"
+                type="date"
+                label="Date of Birth"
+                :max="maxDate"
               />
-              <BaseButton
-                type="button"
-                variant="outline"
-                @click="photoInput?.click()"
-                class="mb-2"
-              >
-                Choose Photo
-              </BaseButton>
-              <p class="text-sm text-gray-500">JPG, PNG or GIF. Max size 2MB.</p>
-              <button
-                v-if="profilePhotoPreview || authStore.user?.profile_photo"
-                type="button"
-                @click="removePhoto"
-                class="text-sm text-red-600 hover:text-red-700 mt-2"
-              >
-                Remove Photo
-              </button>
+              <BaseInput
+                v-model="formData.nationality"
+                label="Nationality"
+                placeholder="e.g., Iraqi"
+              />
+              <BaseInput
+                v-model="formData.phone_number"
+                type="tel"
+                label="Phone Number"
+                placeholder="+964 XXX XXX XXXX"
+              />
+              <BaseInput
+                v-model="formData.city"
+                label="City"
+                placeholder="e.g., Baghdad"
+              />
+              <BaseInput
+                v-model="formData.country"
+                label="Country"
+                placeholder="Iraq"
+                readonly
+              />
+              <BaseInput
+                v-model="formData.address"
+                label="Street Address"
+                placeholder="Enter your street address"
+                class="md:col-span-2"
+              />
             </div>
           </div>
-        </div>
 
-        <!-- Basic Information -->
-        <div class="border-b border-gray-200 pb-6">
-          <h2 class="text-xl font-semibold text-gray-900 mb-4">Basic Information</h2>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- Social Links -->
+          <div class="pb-6">
+            <h2 class="text-xl font-semibold text-gray-900 mb-4">Social Links</h2>
             <BaseInput
-              v-model="formData.name"
-              label="Full Name"
-              placeholder="Enter your full name"
-              required
-            />
-            <BaseInput
-              v-model="formData.email"
-              type="email"
-              label="Email"
-              placeholder="Enter your email"
-              required
-            />
-            <BaseInput
-              v-model="formData.headline"
-              label="Headline/Title"
-              placeholder="e.g., Software Engineer"
-              class="md:col-span-2"
+              v-model="formData.linkedin_url"
+              type="url"
+              label="LinkedIn URL"
+              placeholder="https://www.linkedin.com/in/your-profile"
             />
           </div>
-        </div>
 
-        <!-- Personal Information -->
-        <div class="border-b border-gray-200 pb-6">
-          <h2 class="text-xl font-semibold text-gray-900 mb-4">Personal Information</h2>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <label class="block text-sm font-semibold text-gray-700 mb-2">Gender</label>
-              <select
-                v-model="formData.gender"
-                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-              >
-                <option value="">Select gender</option>
-                <option value="male">Male</option>
-                <option value="female">Female</option>
-                <option value="other">Other</option>
-              </select>
-            </div>
-            <BaseInput
-              v-model="formData.date_of_birth"
-              type="date"
-              label="Date of Birth"
-              :max="maxDate"
-            />
-            <BaseInput
-              v-model="formData.nationality"
-              label="Nationality"
-              placeholder="e.g., Iraqi"
-            />
-            <BaseInput
-              v-model="formData.phone_number"
-              type="tel"
-              label="Phone Number"
-              placeholder="+964 XXX XXX XXXX"
-            />
-            <BaseInput
-              v-model="formData.city"
-              label="City"
-              placeholder="e.g., Baghdad"
-            />
-            <BaseInput
-              v-model="formData.country"
-              label="Country"
-              placeholder="Iraq"
-              readonly
-            />
-            <BaseInput
-              v-model="formData.address"
-              label="Street Address"
-              placeholder="Enter your street address"
-              class="md:col-span-2"
-            />
+          <!-- Action Buttons -->
+          <div class="flex gap-4 pt-6 border-t border-gray-200">
+            <BaseButton
+              type="submit"
+              variant="primary"
+              :loading="loading"
+              class="flex-1 md:flex-none"
+            >
+              Save Changes
+            </BaseButton>
+            <BaseButton
+              type="button"
+              variant="outline"
+              @click="cancelEdit"
+              :disabled="loading"
+            >
+              Cancel
+            </BaseButton>
           </div>
-        </div>
-
-        <!-- Social Links -->
-        <div class="pb-6">
-          <h2 class="text-xl font-semibold text-gray-900 mb-4">Social Links</h2>
-          <BaseInput
-            v-model="formData.linkedin_url"
-            type="url"
-            label="LinkedIn URL"
-            placeholder="https://www.linkedin.com/in/your-profile"
-          />
-        </div>
-
-        <!-- Action Buttons -->
-        <div class="flex gap-4 pt-6 border-t border-gray-200">
-          <BaseButton
-            type="submit"
-            variant="primary"
-            :loading="loading"
-            class="flex-1 md:flex-none"
-          >
-            Save Changes
-          </BaseButton>
-          <BaseButton
-            type="button"
-            variant="outline"
-            @click="cancelEdit"
-            :disabled="loading"
-          >
-            Cancel
-          </BaseButton>
-        </div>
-      </form>
-    </div>
+        </form>
+      </div>
     </div>
   </div>
 </template>
@@ -363,7 +363,7 @@ const loadProfile = () => {
   }
 }
 
-const resetForm = () => {
+const _resetForm = () => {
   loadProfile()
   removePhoto()
 }
@@ -416,11 +416,12 @@ const handleSubmit = async () => {
     // Reload form with fresh data and exit edit mode
     loadProfile()
     isEditMode.value = false
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Failed to update profile:', error)
-    const errorMsg = error?.response?.data?.errors 
-      ? Object.values(error.response.data.errors).flat().join(', ')
-      : error?.response?.data?.message || 'Failed to update profile'
+    const errorObj = error as { response?: { data?: { errors?: Record<string, string[]>; message?: string } }; message?: string }
+    const errorMsg = errorObj?.response?.data?.errors 
+      ? Object.values(errorObj.response.data.errors).flat().join(', ')
+      : errorObj?.response?.data?.message || 'Failed to update profile'
     toast.error(errorMsg)
   } finally {
     loading.value = false

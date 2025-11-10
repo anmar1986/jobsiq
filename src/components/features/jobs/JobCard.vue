@@ -149,7 +149,7 @@ const formatDate = (date: string) => {
   return `${Math.floor(diffDays / 30)} months ago`
 }
 
-const formatNumber = (num: number) => {
+const _formatNumber = (num: number) => {
   return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
 }
 

@@ -47,7 +47,7 @@ class UpdateCompanyRequest extends FormRequest
             // Business Information
             'industry' => ['sometimes', 'required', 'string', function ($attribute, $value, $fail) {
                 $companyCategories = config('company.categories');
-                if (!in_array($value, $companyCategories, true)) {
+                if (! in_array($value, $companyCategories, true)) {
                     $fail('Please select a valid company category.');
                 }
             }],

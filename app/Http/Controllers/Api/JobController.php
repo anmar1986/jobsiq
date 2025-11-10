@@ -305,7 +305,7 @@ class JobController extends Controller
     {
         try {
             $user = $request->user();
-            
+
             if ($user->user_type !== 'company_owner') {
                 return response()->json([
                     'success' => false,

@@ -51,7 +51,7 @@ class StoreJobRequest extends FormRequest
             'experience_level' => ['nullable', 'in:entry,junior,mid,senior,lead,executive'],
             'category' => ['required', 'string', function ($attribute, $value, $fail) {
                 $jobCategories = config('job.categories');
-                if (!in_array($value, $jobCategories, true)) {
+                if (! in_array($value, $jobCategories, true)) {
                     $fail('Please select a valid job category.');
                 }
             }],
