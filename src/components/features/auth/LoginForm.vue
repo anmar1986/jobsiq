@@ -171,8 +171,15 @@ const handleSubmit = async () => {
   error.value = ''
   
   try {
-    await authStore.login(formData)
-    router.push('/dashboard')
+    const response = await authStore.login(formData)
+    
+    // Check if there's a redirect query parameter
+    const redirectPath = router.currentRoute.value.query.redirect as string
+    
+    // Use redirect_to from API response, or fall back to query param or default
+    const destination = response?.data?.redirect_to || redirectPath || '/dashboard'
+    
+    router.push(destination)
   } catch (err: unknown) {
     const errorMessage = err && typeof err === 'object' && 'response' in err
       ? (err as { response?: { data?: { message?: string } } }).response?.data?.message

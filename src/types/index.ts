@@ -23,6 +23,7 @@ export interface User {
   email: string
   email_verified_at: string | null
   user_type: 'job_seeker' | 'company_owner'
+  is_admin?: boolean
   profile_photo?: string | null
   headline?: string | null
   gender?: 'male' | 'female' | 'other' | null
@@ -41,6 +42,7 @@ export interface AuthResponse {
   user: User
   token: string
   token_type: string
+  redirect_to?: string
 }
 
 // Job Types

@@ -1,8 +1,13 @@
 <?php
 
+use App\Http\Controllers\Api\Admin\CompanyAdminController;
+use App\Http\Controllers\Api\Admin\CvAdminController;
+use App\Http\Controllers\Api\Admin\DashboardController;
+use App\Http\Controllers\Api\Admin\JobAdminController;
+use App\Http\Controllers\Api\Admin\JobApplicationAdminController;
+use App\Http\Controllers\Api\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CompanyController;
-use App\Http\Controllers\Api\FreeCvController;
 use App\Http\Controllers\Api\HomeController;
 use App\Http\Controllers\Api\JobApplicationController;
 use App\Http\Controllers\Api\JobController;
@@ -44,10 +49,6 @@ Route::middleware([CacheResponse::class.':180'])->group(function () {
 Route::middleware([CacheResponse::class.':600'])->group(function () {
     Route::get('/companies/{slug}', [CompanyController::class, 'showBySlug'])->where('slug', '[a-z0-9-]+');
 });
-
-// Public CV routes (for companies to view public CVs)
-Route::get('/cvs', [FreeCvController::class, 'index']);
-Route::get('/cvs/{slug}', [FreeCvController::class, 'show']);
 
 // Authenticated routes
 Route::middleware('auth:sanctum')->group(function () {
@@ -100,4 +101,58 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/jobs/{job}/save', [SavedJobController::class, 'store']);
     Route::delete('/jobs/{job}/save', [SavedJobController::class, 'destroy']);
     Route::get('/jobs/{job}/saved', [SavedJobController::class, 'check']);
+});
+
+/*
+|--------------------------------------------------------------------------
+| Admin API Routes
+|--------------------------------------------------------------------------
+|
+| These routes are protected by the 'auth:sanctum' and 'admin' middleware.
+| Only users with is_admin = true can access these endpoints.
+|
+*/
+
+Route::middleware(['auth:sanctum', 'admin'])->prefix('admin')->group(function () {
+    // Dashboard
+    Route::get('/dashboard', [DashboardController::class, 'index']);
+
+    // User Management
+    Route::get('/users', [AdminUserController::class, 'index']);
+    Route::post('/users', [AdminUserController::class, 'store']);
+    Route::get('/users/statistics', [AdminUserController::class, 'statistics']);
+    Route::get('/users/{user}', [AdminUserController::class, 'show']);
+    Route::put('/users/{user}', [AdminUserController::class, 'update']);
+    Route::delete('/users/{user}', [AdminUserController::class, 'destroy']);
+
+    // Company Management
+    Route::get('/companies', [CompanyAdminController::class, 'index']);
+    Route::post('/companies', [CompanyAdminController::class, 'store']);
+    Route::get('/companies/statistics', [CompanyAdminController::class, 'statistics']);
+    Route::get('/companies/{company}', [CompanyAdminController::class, 'show']);
+    Route::put('/companies/{company}', [CompanyAdminController::class, 'update']);
+    Route::delete('/companies/{company}', [CompanyAdminController::class, 'destroy']);
+
+    // Job Management
+    Route::get('/jobs', [JobAdminController::class, 'index']);
+    Route::post('/jobs', [JobAdminController::class, 'store']);
+    Route::get('/jobs/statistics', [JobAdminController::class, 'statistics']);
+    Route::get('/jobs/{job}', [JobAdminController::class, 'show']);
+    Route::put('/jobs/{job}', [JobAdminController::class, 'update']);
+    Route::delete('/jobs/{job}', [JobAdminController::class, 'destroy']);
+    Route::post('/jobs/{job}/toggle-featured', [JobAdminController::class, 'toggleFeatured']);
+
+    // Job Application Management
+    Route::get('/applications', [JobApplicationAdminController::class, 'index']);
+    Route::get('/applications/statistics', [JobApplicationAdminController::class, 'statistics']);
+    Route::get('/applications/{application}', [JobApplicationAdminController::class, 'show']);
+    Route::put('/applications/{application}/status', [JobApplicationAdminController::class, 'updateStatus']);
+    Route::delete('/applications/{application}', [JobApplicationAdminController::class, 'destroy']);
+
+    // CV Management
+    Route::get('/cvs', [CvAdminController::class, 'index']);
+    Route::get('/cvs/statistics', [CvAdminController::class, 'statistics']);
+    Route::get('/cvs/{identifier}', [CvAdminController::class, 'show']);
+    Route::delete('/cvs/{id}', [CvAdminController::class, 'destroy']);
+    Route::post('/cvs/{id}/toggle-visibility', [CvAdminController::class, 'toggleVisibility']);
 });

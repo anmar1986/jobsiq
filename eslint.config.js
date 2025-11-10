@@ -53,7 +53,7 @@ export default tseslint.config(
       'vue/attributes-order': 'off',
       
       // TypeScript rules
-      '@typescript-eslint/no-explicit-any': 'warn',
+      '@typescript-eslint/no-explicit-any': 'off', // Allow 'any' type for flexibility with API responses
       '@typescript-eslint/no-unused-vars': ['warn', { 
         argsIgnorePattern: '^_',
         varsIgnorePattern: '^_'

@@ -21,6 +21,6 @@ return [
     | job seekers. When disabled, the entire feature is hidden and inaccessible.
     |
     */
-    'free_cvs_enabled' => env('FEATURE_FREE_CVS', false),
+    'free_cvs_enabled' => env('FEATURE_FREE_CVS', true),
 
 ];
