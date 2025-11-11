@@ -37,23 +37,29 @@ apiClient.interceptors.request.use(
   }
 )
 
+// Flag to prevent multiple simultaneous 401 redirects
+let isRedirecting = false
+
 // Response interceptor
 apiClient.interceptors.response.use(
   (response) => response,
   async (error: AxiosError) => {
-    if (error.response?.status === 401) {
+    if (error.response?.status === 401 && !isRedirecting) {
       // Unauthorized - clear auth data
+      isRedirecting = true
       localStorage.removeItem(STORAGE_KEYS.AUTH_TOKEN)
       localStorage.removeItem(STORAGE_KEYS.USER)
       
       // Instead of using window.location.href, let Vue Router handle navigation
       // This prevents full page reloads and maintains SPA behavior
-      // The router guard will handle the redirect to login
       if (typeof window !== 'undefined' && window.location.pathname !== '/login') {
         // Use dynamic import to avoid circular dependency
         const router = (await import('@/router')).default
-        router.push({ name: 'login', query: { redirect: window.location.pathname } })
+        await router.push({ name: 'login', query: { redirect: window.location.pathname } })
       }
+      
+      // Reset flag after a short delay to allow for legitimate re-authentication
+      setTimeout(() => { isRedirecting = false }, 1000)
     }
     return Promise.reject(error)
   }
