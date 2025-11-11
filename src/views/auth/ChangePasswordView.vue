@@ -168,7 +168,7 @@
 
         <div class="text-center">
           <router-link
-            to="/profile"
+            :to="{ name: 'profile' }"
             class="font-medium text-blue-600 hover:text-blue-500"
           >
             Back to Profile
