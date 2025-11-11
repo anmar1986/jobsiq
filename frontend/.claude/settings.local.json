@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(flutter analyze:*)",
+      "Bash(flutter pub outdated:*)",
+      "Bash(flutter pub get:*)",
+      "WebFetch(domain:fonts.google.com)",
+      "Bash(dart run:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
