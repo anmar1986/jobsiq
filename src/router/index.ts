@@ -69,6 +69,12 @@ const routes: RouteRecordRaw[] = [
     meta: { title: 'Register', guest: true },
   },
   {
+    path: '/change-password',
+    name: 'change-password',
+    component: () => import('@/views/auth/ChangePasswordView.vue'),
+    meta: { title: 'Change Password', requiresAuth: true },
+  },
+  {
     path: '/dashboard',
     name: 'dashboard',
     component: () => import('@/views/dashboard/DashboardView.vue'),
