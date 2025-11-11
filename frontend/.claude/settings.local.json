@@ -5,7 +5,9 @@
       "Bash(flutter pub outdated:*)",
       "Bash(flutter pub get:*)",
       "WebFetch(domain:fonts.google.com)",
-      "Bash(dart run:*)"
+      "Bash(dart run:*)",
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$(cat <<''EOF''\nRestore Flutter mobile app files\n\nRestored all Flutter project files that were accidentally deleted.\nThe app includes:\n- Complete Clean Architecture structure\n- Authentication system with BLoC\n- Main navigation with 4 tabs (Jobs, Saved, CV, Profile)\n- Theme system (light/dark mode)\n- API integration setup\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")"
     ],
     "deny": [],
     "ask": []
