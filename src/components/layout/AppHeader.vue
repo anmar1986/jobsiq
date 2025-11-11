@@ -125,11 +125,8 @@
               {{ link.label }}
             </router-link>
             
-            <router-link to="/login" class="hidden md:inline-flex btn-ghost text-sm">
+            <router-link to="/login" class="btn-primary text-sm">
               Login
-            </router-link>
-            <router-link to="/register" class="btn-primary text-sm">
-              Get Started
             </router-link>
           </template>
 
@@ -221,17 +218,10 @@
               <div class="border-t border-gray-200 my-2"></div>
               <router-link
                 to="/login"
-                class="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg font-medium transition-colors"
-                @click="closeMobileMenu"
-              >
-                Login
-              </router-link>
-              <router-link
-                to="/register"
                 class="px-4 py-2 bg-primary-600 text-white hover:bg-primary-700 rounded-lg font-medium transition-colors text-center"
                 @click="closeMobileMenu"
               >
-                Get Started
+                Login
               </router-link>
             </template>
           </div>
@@ -280,7 +270,6 @@ import { useToast } from '@/composables/useToast'
 import BaseAvatar from '@/components/base/BaseAvatar.vue'
 import BaseModal from '@/components/base/BaseModal.vue'
 import BaseButton from '@/components/base/BaseButton.vue'
-import { FEATURES } from '@/config/features'
 import { API_BASE_URL } from '@/config/constants'
 
 const router = useRouter()
@@ -311,11 +300,6 @@ const navLinks = computed(() => {
     { path: '/companies', label: 'Companies' },
     { path: '/about', label: 'About Us' },
   ]
-  
-  // Only show CVs link to company owners if feature is enabled
-  if (FEATURES.FREE_CVS_ENABLED && authStore.user?.user_type === 'company_owner') {
-    links.push({ path: '/cvs', label: 'Free CVs' })
-  }
   
   return links
 })

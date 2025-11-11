@@ -68,7 +68,7 @@
           @sort="handleSort"
           @page-change="handlePageChange"
         >
-          <template #cell-name="{ item }">
+          <template #cell-name="{ item, index }">
             <div class="flex items-center">
               <div v-if="item.logo_url" class="flex-shrink-0 h-10 w-10">
                 <img :src="item.logo_url" :alt="item.name" class="h-10 w-10 rounded-full object-cover" />
@@ -76,7 +76,7 @@
               <div v-else class="flex-shrink-0 h-10 w-10">
                 <div class="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
                   <span class="text-sm font-medium text-blue-700">
-                    {{ item.name.charAt(0).toUpperCase() }}
+                    {{ getCompanyNumber(index) }}
                   </span>
                 </div>
               </div>
@@ -327,6 +327,13 @@ const deleteCompany = async () => {
   } finally {
     deleting.value = false
   }
+}
+
+const getCompanyNumber = (index: number) => {
+  // Calculate the actual company number based on pagination
+  const currentPage = pagination.value?.current_page || 1
+  const perPage = filters.per_page
+  return (currentPage - 1) * perPage + index + 1
 }
 
 onMounted(() => {

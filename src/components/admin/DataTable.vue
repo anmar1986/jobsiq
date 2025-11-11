@@ -55,12 +55,12 @@
           </tr>
           <tr v-else v-for="(item, index) in data" :key="index" class="hover:bg-gray-50">
             <td v-for="column in columns" :key="column.key" class="px-6 py-4 whitespace-nowrap">
-              <slot :name="`cell-${column.key}`" :item="item" :value="getNestedValue(item, column.key)">
+              <slot :name="`cell-${column.key}`" :item="item" :value="getNestedValue(item, column.key)" :index="index">
                 <span class="text-sm text-gray-900">{{ formatValue(item, column) }}</span>
               </slot>
             </td>
             <td v-if="actions" class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-              <slot name="actions" :item="item"></slot>
+              <slot name="actions" :item="item" :index="index"></slot>
             </td>
           </tr>
         </tbody>

@@ -33,7 +33,7 @@ class DashboardController extends Controller
             'companies' => [
                 'total' => Company::count(),
                 'with_active_jobs' => Company::whereHas('jobs', function ($q) {
-                    $q->where('status', 'active');
+                    $q->where('is_active', true);
                 })->count(),
                 'new_this_month' => Company::whereMonth('created_at', now()->month)->count(),
                 'new_today' => Company::whereDate('created_at', now())->count(),
@@ -42,9 +42,8 @@ class DashboardController extends Controller
             // Job statistics
             'jobs' => [
                 'total' => Job::count(),
-                'active' => Job::where('status', 'active')->count(),
-                'closed' => Job::where('status', 'closed')->count(),
-                'draft' => Job::where('status', 'draft')->count(),
+                'active' => Job::where('is_active', true)->count(),
+                'inactive' => Job::where('is_active', false)->count(),
                 'featured' => Job::where('is_featured', true)->count(),
                 'new_this_month' => Job::whereMonth('created_at', now()->month)->count(),
                 'new_today' => Job::whereDate('created_at', now())->count(),
@@ -81,13 +80,14 @@ class DashboardController extends Controller
             'top' => [
                 'industries' => Company::select('industry')
                     ->selectRaw('count(*) as count')
+                    ->whereNotNull('industry')
                     ->groupBy('industry')
                     ->orderByDesc('count')
                     ->limit(5)
                     ->get(),
-                'job_types' => Job::select('job_type')
+                'employment_types' => Job::select('employment_type')
                     ->selectRaw('count(*) as count')
-                    ->groupBy('job_type')
+                    ->groupBy('employment_type')
                     ->orderByDesc('count')
                     ->limit(5)
                     ->get(),
