@@ -103,13 +103,13 @@
                 'inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium'
               ]"
             >
-              {{ value.charAt(0).toUpperCase() + value.slice(1) }}
+              {{ value ? value.charAt(0).toUpperCase() + value.slice(1) : 'N/A' }}
             </span>
           </template>
 
           <template #cell-job_type="{ value }">
             <span class="text-sm text-gray-900">
-              {{ value.split('-').map((w: string) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') }}
+              {{ value ? value.split('-').map((w: string) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') : 'N/A' }}
             </span>
           </template>
 

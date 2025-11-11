@@ -1,6 +1,5 @@
 import { createRouter, createWebHistory, type RouteRecordRaw, type NavigationGuardNext, type RouteLocationNormalized } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
-import { FEATURES } from '@/config/features'
 
 const routes: RouteRecordRaw[] = [
   {
@@ -57,33 +56,6 @@ const routes: RouteRecordRaw[] = [
     component: () => import('@/views/companies/CompanyDetailView.vue'),
     meta: { title: 'Company Details' },
   },
-  // Free CVs routes - conditionally added based on feature flag
-  ...(FEATURES.FREE_CVS_ENABLED ? [
-    {
-      path: '/cvs',
-      name: 'cvs',
-      component: () => import('@/views/free-cvs/FreeCvsView.vue'),
-      meta: { title: 'Browse CVs', requiresAuth: true, requiresCompany: true },
-    },
-    {
-      path: '/cvs/:slug',
-      name: 'cv-detail',
-      component: () => import('@/views/free-cvs/FreeCvDetailView.vue'),
-      meta: { title: 'CV Details', requiresAuth: true, requiresCompany: true },
-    },
-  ] : [
-    // If feature is disabled, redirect to dashboard
-    {
-      path: '/cvs',
-      name: 'cvs-disabled-redirect',
-      redirect: '/dashboard',
-    },
-    {
-      path: '/cvs/:slug',
-      name: 'cv-detail-disabled-redirect',
-      redirect: '/dashboard',
-    },
-  ]),
   {
     path: '/login',
     name: 'login',
@@ -135,13 +107,13 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/admin/cvs',
     name: 'admin-cvs',
-    component: () => import('@/views/admin/CvsManagement.vue'),
+    component: () => import('@/views/admin/FreeCvsView.vue'),
     meta: { title: 'Free CVs Management', requiresAuth: true, requiresAdmin: true },
   },
   {
     path: '/admin/cvs/:slug',
     name: 'admin-cv-detail',
-    component: () => import('@/views/admin/CvDetailView.vue'),
+    component: () => import('@/views/admin/FreeCvDetailView.vue'),
     meta: { title: 'CV Details', requiresAuth: true, requiresAdmin: true },
   },
   {

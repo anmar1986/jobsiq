@@ -81,12 +81,12 @@
           @sort="handleSort"
           @page-change="handlePageChange"
         >
-          <template #cell-name="{ item }">
+          <template #cell-name="{ item, index }">
             <div class="flex items-center">
               <div class="flex-shrink-0 h-10 w-10">
                 <div class="h-10 w-10 rounded-full bg-indigo-100 flex items-center justify-center">
                   <span class="text-sm font-medium text-indigo-700">
-                    {{ item.name.charAt(0).toUpperCase() }}
+                    {{ getUserNumber(index) }}
                   </span>
                 </div>
               </div>
@@ -422,6 +422,13 @@ const deleteUser = async () => {
   } finally {
     deleting.value = false
   }
+}
+
+const getUserNumber = (index: number) => {
+  // Calculate the actual user number based on pagination
+  const currentPage = pagination.value?.current_page || 1
+  const perPage = filters.per_page
+  return (currentPage - 1) * perPage + index + 1
 }
 
 const formatDate = (date: string) => {

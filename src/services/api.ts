@@ -1,6 +1,5 @@
 import axios, { type AxiosInstance, type AxiosError } from 'axios'
 import { API_URL, STORAGE_KEYS } from '@/config/constants'
-import { useAuthStore } from '@/stores/auth'
 
 // Create axios instance
 const apiClient: AxiosInstance = axios.create({
@@ -41,12 +40,20 @@ apiClient.interceptors.request.use(
 // Response interceptor
 apiClient.interceptors.response.use(
   (response) => response,
-  (error: AxiosError) => {
+  async (error: AxiosError) => {
     if (error.response?.status === 401) {
-      // Unauthorized - clear auth and redirect to login
-      const authStore = useAuthStore()
-      authStore.logout()
-      window.location.href = '/login'
+      // Unauthorized - clear auth data
+      localStorage.removeItem(STORAGE_KEYS.AUTH_TOKEN)
+      localStorage.removeItem(STORAGE_KEYS.USER)
+      
+      // Instead of using window.location.href, let Vue Router handle navigation
+      // This prevents full page reloads and maintains SPA behavior
+      // The router guard will handle the redirect to login
+      if (typeof window !== 'undefined' && window.location.pathname !== '/login') {
+        // Use dynamic import to avoid circular dependency
+        const router = (await import('@/router')).default
+        router.push({ name: 'login', query: { redirect: window.location.pathname } })
+      }
     }
     return Promise.reject(error)
   }
