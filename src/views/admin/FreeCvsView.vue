@@ -3,8 +3,8 @@
     <div class="bg-gray-50 min-h-screen">
       <!-- Search Bar -->
       <div class="bg-white border-b border-gray-200">
-        <div class="container-custom py-4">
-          <div class="flex gap-4 max-w-[1200px] mx-auto">
+        <div class="px-4 sm:px-6 lg:px-8 py-4">
+          <div class="flex flex-col sm:flex-row gap-4 max-w-[1200px] mx-auto">
             <BaseInput
               v-model="searchQuery"
               type="text"
@@ -20,7 +20,7 @@
                 </svg>
               </template>
             </BaseInput>
-            <BaseButton variant="primary" size="md" @click="handleSearch" :disabled="loading">
+            <BaseButton variant="primary" size="md" @click="handleSearch" :disabled="loading" class="w-full sm:w-auto touch-manipulation">
               {{ loading ? 'Searching...' : 'Search' }}
             </BaseButton>
           </div>
@@ -28,28 +28,28 @@
       </div>
 
       <!-- CVs Grid -->
-      <div class="container-custom py-8">
+      <div class="px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
         <!-- Loading State -->
         <div v-if="loading" class="text-center py-12">
-          <p class="text-gray-600">Loading CVs...</p>
+          <p class="text-sm sm:text-base text-gray-600">Loading CVs...</p>
         </div>
 
         <!-- Error State -->
         <div v-else-if="error" class="text-center py-12">
-          <p class="text-red-600">{{ error }}</p>
-          <BaseButton variant="primary" size="md" class="mt-4" @click="fetchCvs">
+          <p class="text-sm sm:text-base text-red-600">{{ error }}</p>
+          <BaseButton variant="primary" size="md" class="mt-4 touch-manipulation" @click="fetchCvs">
             Try Again
           </BaseButton>
         </div>
 
         <!-- Empty State -->
         <div v-else-if="cvs.length === 0" class="text-center py-12">
-          <p class="text-gray-600 text-lg mb-2">No public CVs found</p>
-          <p class="text-gray-500 text-sm">Be the first to create a public CV!</p>
+          <p class="text-base sm:text-lg text-gray-600 mb-2">No public CVs found</p>
+          <p class="text-sm text-gray-500">Be the first to create a public CV!</p>
         </div>
 
         <!-- CVs Grid -->
-        <div v-else class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           <BaseCard
             v-for="cv in cvs"
             :key="cv.id"
@@ -58,12 +58,12 @@
             class="group h-full flex flex-col border-2 border-gray-200 hover:border-primary-500 hover:shadow-lg transition-all duration-300"
             @click="$router.push(`/admin/cvs/${cv.slug}`)"
           >
-            <div class="p-6 flex flex-col h-full">
+            <div class="p-4 sm:p-6 flex flex-col h-full">
               <!-- Profile Image & Name Section -->
               <div class="mb-4 flex-shrink-0">
-                <div class="flex items-start gap-4 mb-3">
+                <div class="flex items-start gap-3 sm:gap-4 mb-3">
                   <!-- Profile Image -->
-                  <div class="w-20 h-24 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0 flex items-center justify-center ring-2 ring-gray-200 group-hover:ring-primary-300 transition-all duration-300">
+                  <div class="w-16 h-20 sm:w-20 sm:h-24 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0 flex items-center justify-center ring-2 ring-gray-200 group-hover:ring-primary-300 transition-all duration-300">
                     <img
                       v-if="cv.profile_image_url"
                       :src="cv.profile_image_url"

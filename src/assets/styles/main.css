@@ -169,6 +169,39 @@ h4 {
   animation-delay: 400ms;
 }
 
+/* Mobile Touch Optimizations */
+.touch-manipulation {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Improved mobile button sizing */
+@media (max-width: 768px) {
+  button, 
+  a.inline-flex,
+  input[type="button"],
+  input[type="submit"] {
+    min-height: 44px; /* Apple's recommended minimum touch target size */
+  }
+  
+  select,
+  input[type="text"],
+  input[type="email"],
+  input[type="password"],
+  input[type="search"],
+  textarea {
+    font-size: 16px; /* Prevents auto-zoom on iOS */
+  }
+}
+
+/* Smooth scrolling for admin panel */
+@media (max-width: 1024px) {
+  .overflow-y-auto {
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+  }
+}
+
 /* Print Styles */
 @media print {
   /* Compact spacing for CV sections when printing */

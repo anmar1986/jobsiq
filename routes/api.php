@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\Admin\CvAdminController;
 use App\Http\Controllers\Api\Admin\DashboardController;
 use App\Http\Controllers\Api\Admin\JobAdminController;
 use App\Http\Controllers\Api\Admin\JobApplicationAdminController;
+use App\Http\Controllers\Api\Admin\SearchHistoryAdminController;
 use App\Http\Controllers\Api\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CompanyController;
@@ -155,4 +156,10 @@ Route::middleware(['auth:sanctum', 'admin'])->prefix('admin')->group(function ()
     Route::get('/cvs/{identifier}', [CvAdminController::class, 'show']);
     Route::delete('/cvs/{id}', [CvAdminController::class, 'destroy']);
     Route::post('/cvs/{id}/toggle-visibility', [CvAdminController::class, 'toggleVisibility']);
+
+    // Search History Management
+    Route::get('/search-history', [SearchHistoryAdminController::class, 'index']);
+    Route::get('/search-history/statistics', [SearchHistoryAdminController::class, 'statistics']);
+    Route::delete('/search-history/{searchHistory}', [SearchHistoryAdminController::class, 'destroy']);
+    Route::post('/search-history/clear', [SearchHistoryAdminController::class, 'clear']);
 });

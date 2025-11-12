@@ -1,21 +1,21 @@
 <template>
   <BaseCard class="hover:shadow-lg transition-shadow">
-    <div class="p-6">
-      <div class="flex items-center justify-between mb-4">
-        <h3 class="text-sm font-medium text-gray-600">{{ title }}</h3>
+    <div class="p-4 sm:p-6">
+      <div class="flex items-center justify-between mb-3 sm:mb-4">
+        <h3 class="text-xs sm:text-sm font-medium text-gray-600">{{ title }}</h3>
         <div :class="[`bg-${color}-100 p-2 rounded-lg`]">
-          <component :is="iconComponent" :class="[`h-6 w-6 text-${color}-600`]" />
+          <component :is="iconComponent" :class="[`h-5 w-5 sm:h-6 sm:w-6 text-${color}-600`]" />
         </div>
       </div>
       
       <div v-if="loading" class="animate-pulse">
-        <div class="h-8 bg-gray-200 rounded w-24 mb-2"></div>
-        <div class="h-4 bg-gray-200 rounded w-32"></div>
+        <div class="h-6 sm:h-8 bg-gray-200 rounded w-20 sm:w-24 mb-2"></div>
+        <div class="h-3 sm:h-4 bg-gray-200 rounded w-24 sm:w-32"></div>
       </div>
       
-      <div v-else class="flex items-baseline gap-2">
-        <p class="text-3xl font-bold text-gray-900">{{ formattedValue }}</p>
-        <span class="text-sm text-gray-600">{{ change }}</span>
+      <div v-else class="flex flex-col gap-1 sm:gap-2">
+        <p class="text-2xl sm:text-3xl font-bold text-gray-900">{{ formattedValue }}</p>
+        <span class="text-xs sm:text-sm text-gray-600">{{ change }}</span>
       </div>
     </div>
   </BaseCard>

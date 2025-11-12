@@ -180,7 +180,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from 'vue'
+import { ref, reactive, onBeforeUnmount } from 'vue'
 import { useRouter } from 'vue-router'
 import { authService } from '@/services/auth.service'
 import type { PasswordChangeForm } from '@/types'
@@ -196,6 +196,7 @@ const form = reactive<PasswordChangeForm>({
 const loading = ref(false)
 const error = ref('')
 const success = ref('')
+const redirectTimeoutId = ref<number | null>(null)
 
 const handleSubmit = async () => {
   error.value = ''
@@ -229,7 +230,7 @@ const handleSubmit = async () => {
     form.password_confirmation = ''
 
     // Redirect to login after 2 seconds
-    setTimeout(() => {
+    redirectTimeoutId.value = window.setTimeout(() => {
       router.push({ name: 'login', query: { message: 'Please login with your new password' } })
     }, 2000)
   } catch (err: any) {
@@ -238,4 +239,11 @@ const handleSubmit = async () => {
     loading.value = false
   }
 }
+
+// Clean up timeout when component is unmounted
+onBeforeUnmount(() => {
+  if (redirectTimeoutId.value !== null) {
+    clearTimeout(redirectTimeoutId.value)
+  }
+})
 </script>

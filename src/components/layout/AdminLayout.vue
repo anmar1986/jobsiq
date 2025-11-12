@@ -1,10 +1,28 @@
 <template>
   <div class="flex h-screen bg-gray-100 overflow-hidden">
+    <!-- Mobile overlay -->
+    <transition
+      enter-active-class="transition-opacity duration-300"
+      enter-from-class="opacity-0"
+      enter-to-class="opacity-100"
+      leave-active-class="transition-opacity duration-300"
+      leave-from-class="opacity-100"
+      leave-to-class="opacity-0"
+    >
+      <div
+        v-if="sidebarOpen"
+        class="fixed inset-0 bg-gray-900 bg-opacity-50 z-20 lg:hidden"
+        @click="sidebarOpen = false"
+      ></div>
+    </transition>
+
     <!-- Sidebar -->
     <aside 
       :class="[
         'bg-gray-900 text-white transition-all duration-300 flex flex-col',
-        sidebarOpen ? 'w-64' : 'w-20'
+        'fixed lg:static inset-y-0 left-0',
+        'z-30 lg:z-auto',
+        sidebarOpen ? 'w-64 translate-x-0' : 'w-64 -translate-x-full lg:w-64 lg:translate-x-0'
       ]"
     >
       <!-- Logo -->
@@ -13,14 +31,15 @@
           <div class="h-10 w-10 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-lg flex items-center justify-center flex-shrink-0">
             <span class="text-white font-bold text-xl">J</span>
           </div>
-          <span v-if="sidebarOpen" class="text-lg font-bold whitespace-nowrap">JobsIQ Admin</span>
+          <span class="text-lg font-bold whitespace-nowrap">JobsIQ Admin</span>
         </router-link>
         <button
           @click="sidebarOpen = !sidebarOpen"
-          class="text-gray-400 hover:text-white lg:hidden"
+          class="text-gray-400 hover:text-white lg:hidden p-2 -mr-2"
+          aria-label="Close menu"
         >
           <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>
       </div>
@@ -37,9 +56,10 @@
               ? 'bg-primary-600 text-white'
               : 'text-gray-300 hover:bg-gray-800 hover:text-white'
           ]"
+          @click="closeSidebarOnMobile"
         >
           <component :is="item.icon" class="h-5 w-5 flex-shrink-0" />
-          <span v-if="sidebarOpen" class="whitespace-nowrap">{{ item.name }}</span>
+          <span class="whitespace-nowrap">{{ item.name }}</span>
         </router-link>
       </nav>
     </aside>
@@ -47,18 +67,19 @@
     <!-- Main Content -->
     <div class="flex-1 flex flex-col overflow-hidden">
       <!-- Top Header -->
-      <header class="bg-white shadow-sm border-b border-gray-200 h-16">
+      <header class="bg-white shadow-sm border-b border-gray-200 h-16 relative z-10">
         <div class="h-full px-4 sm:px-6 lg:px-8 flex items-center justify-between">
           <div class="flex items-center gap-4">
             <button
               @click="sidebarOpen = !sidebarOpen"
-              class="text-gray-500 hover:text-gray-700 lg:hidden"
+              class="text-gray-500 hover:text-gray-700 p-2 -ml-2 touch-manipulation"
+              aria-label="Toggle menu"
             >
               <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
               </svg>
             </button>
-            <h1 class="text-xl font-semibold text-gray-900">{{ pageTitle }}</h1>
+            <h1 class="text-lg sm:text-xl font-semibold text-gray-900 truncate">{{ pageTitle }}</h1>
           </div>
         </div>
       </header>
@@ -80,7 +101,7 @@ const router = useRouter()
 const route = useRoute()
 const authStore = useAuthStore()
 
-const sidebarOpen = ref(true)
+const sidebarOpen = ref(false)
 const _userMenuOpen = ref(false)
 
 const initials = computed(() => {
@@ -91,6 +112,13 @@ const initials = computed(() => {
 const pageTitle = computed(() => {
   return route.meta.title as string || 'Admin'
 })
+
+const closeSidebarOnMobile = () => {
+  // Close sidebar on mobile after navigation
+  if (window.innerWidth < 1024) {
+    sidebarOpen.value = false
+  }
+}
 
 // Navigation Items
 const navigation = [
@@ -127,6 +155,13 @@ const navigation = [
     path: '/admin/applications',
     icon: h('svg', { class: 'h-5 w-5', fill: 'none', stroke: 'currentColor', viewBox: '0 0 24 24' }, [
       h('path', { 'stroke-linecap': 'round', 'stroke-linejoin': 'round', 'stroke-width': '2', d: 'M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z' })
+    ])
+  },
+  {
+    name: 'Search History',
+    path: '/admin/search-history',
+    icon: h('svg', { class: 'h-5 w-5', fill: 'none', stroke: 'currentColor', viewBox: '0 0 24 24' }, [
+      h('path', { 'stroke-linecap': 'round', 'stroke-linejoin': 'round', 'stroke-width': '2', d: 'M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7' })
     ])
   },
   {

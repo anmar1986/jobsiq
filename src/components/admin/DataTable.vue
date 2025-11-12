@@ -1,7 +1,7 @@
 <template>
   <div class="overflow-hidden">
-    <!-- Table -->
-    <div class="overflow-x-auto">
+    <!-- Desktop Table View -->
+    <div class="hidden md:block overflow-x-auto">
       <table class="min-w-full divide-y divide-gray-200">
         <thead class="bg-gray-50">
           <tr>
@@ -67,25 +67,54 @@
       </table>
     </div>
 
+    <!-- Mobile Card View -->
+    <div class="md:hidden space-y-4">
+      <div v-if="loading" class="flex justify-center py-12">
+        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+      </div>
+      <div v-else-if="data.length === 0" class="text-center text-gray-500 py-12">
+        {{ emptyMessage || 'No data available' }}
+      </div>
+      <div v-else v-for="(item, index) in data" :key="index" class="bg-white rounded-lg shadow p-4 space-y-3">
+        <div v-for="column in columns" :key="column.key">
+          <slot :name="`cell-${column.key}`" :item="item" :value="getNestedValue(item, column.key)" :index="index">
+            <div class="flex justify-between items-start">
+              <span class="text-xs font-medium text-gray-500 uppercase">{{ column.label }}</span>
+              <span class="text-sm text-gray-900 text-right ml-2">{{ formatValue(item, column) }}</span>
+            </div>
+          </slot>
+        </div>
+        <div v-if="actions" class="pt-3 border-t border-gray-200 flex justify-end space-x-2">
+          <slot name="actions" :item="item" :index="index"></slot>
+        </div>
+      </div>
+    </div>
+
     <!-- Pagination -->
     <div v-if="pagination && !loading" class="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
-      <div class="flex-1 flex justify-between sm:hidden">
+      <!-- Mobile Pagination -->
+      <div class="flex-1 flex justify-between md:hidden">
         <button
           @click="handlePageChange(pagination.current_page - 1)"
           :disabled="pagination.current_page === 1"
-          class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+          class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation"
         >
           Previous
         </button>
+        <span class="text-sm text-gray-700 flex items-center px-2">
+          {{ pagination.current_page }} / {{ pagination.last_page }}
+        </span>
         <button
           @click="handlePageChange(pagination.current_page + 1)"
           :disabled="pagination.current_page === pagination.last_page"
-          class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+          class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation"
         >
           Next
         </button>
       </div>
-      <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+      
+      <!-- Desktop Pagination -->
+      <div class="hidden md:flex md:flex-1 md:items-center md:justify-between">
         <div>
           <p class="text-sm text-gray-700">
             Showing

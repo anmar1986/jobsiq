@@ -1,7 +1,7 @@
 <template>
   <AdminLayout>
     <!-- Main Stats Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 mb-6 lg:mb-8">
       <StatsCard
         title="Total Users"
         :value="stats?.users?.total || 0"
@@ -37,15 +37,15 @@
     </div>
 
     <!-- Detailed User Breakdown -->
-    <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-8">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 mb-6 lg:mb-8">
       <BaseCard>
-        <div class="p-6">
-          <h3 class="text-lg font-semibold text-gray-900 mb-4">User Breakdown</h3>
+        <div class="p-4 sm:p-6">
+          <h3 class="text-base sm:text-lg font-semibold text-gray-900 mb-4">User Breakdown</h3>
           <div class="space-y-4">
             <div>
               <div class="flex items-center justify-between mb-2">
-                <span class="text-sm font-medium text-gray-700">Job Seekers</span>
-                <span class="text-sm font-semibold text-gray-900">
+                <span class="text-xs sm:text-sm font-medium text-gray-700">Job Seekers</span>
+                <span class="text-xs sm:text-sm font-semibold text-gray-900">
                   {{ stats?.users?.job_seekers || 0 }} ({{ getUserPercentage('job_seekers') }}%)
                 </span>
               </div>
@@ -58,8 +58,8 @@
             </div>
             <div>
               <div class="flex items-center justify-between mb-2">
-                <span class="text-sm font-medium text-gray-700">Company Owners</span>
-                <span class="text-sm font-semibold text-gray-900">
+                <span class="text-xs sm:text-sm font-medium text-gray-700">Company Owners</span>
+                <span class="text-xs sm:text-sm font-semibold text-gray-900">
                   {{ stats?.users?.company_owners || 0 }} ({{ getUserPercentage('company_owners') }}%)
                 </span>
               </div>
@@ -72,8 +72,8 @@
             </div>
             <div>
               <div class="flex items-center justify-between mb-2">
-                <span class="text-sm font-medium text-gray-700">Administrators</span>
-                <span class="text-sm font-semibold text-gray-900">
+                <span class="text-xs sm:text-sm font-medium text-gray-700">Administrators</span>
+                <span class="text-xs sm:text-sm font-semibold text-gray-900">
                   {{ stats?.users?.admins || 0 }} ({{ getUserPercentage('admins') }}%)
                 </span>
               </div>
@@ -95,42 +95,42 @@
       </BaseCard>
 
       <BaseCard>
-        <div class="p-6">
-          <h3 class="text-lg font-semibold text-gray-900 mb-4">Job Statistics</h3>
+        <div class="p-4 sm:p-6">
+          <h3 class="text-base sm:text-lg font-semibold text-gray-900 mb-4">Job Statistics</h3>
           <div class="space-y-4">
             <div class="flex items-center justify-between">
               <div class="flex items-center space-x-2">
                 <div class="w-3 h-3 bg-green-500 rounded-full"></div>
-                <span class="text-sm text-gray-700">Active</span>
+                <span class="text-xs sm:text-sm text-gray-700">Active</span>
               </div>
-              <span class="text-sm font-semibold text-gray-900">
+              <span class="text-xs sm:text-sm font-semibold text-gray-900">
                 {{ stats?.jobs?.active || 0 }} ({{ getJobPercentage('active') }}%)
               </span>
             </div>
             <div class="flex items-center justify-between">
               <div class="flex items-center space-x-2">
                 <div class="w-3 h-3 bg-red-500 rounded-full"></div>
-                <span class="text-sm text-gray-700">Closed</span>
+                <span class="text-xs sm:text-sm text-gray-700">Closed</span>
               </div>
-              <span class="text-sm font-semibold text-gray-900">
+              <span class="text-xs sm:text-sm font-semibold text-gray-900">
                 {{ stats?.jobs?.closed || 0 }} ({{ getJobPercentage('closed') }}%)
               </span>
             </div>
             <div class="flex items-center justify-between">
               <div class="flex items-center space-x-2">
                 <div class="w-3 h-3 bg-gray-500 rounded-full"></div>
-                <span class="text-sm text-gray-700">Draft</span>
+                <span class="text-xs sm:text-sm text-gray-700">Draft</span>
               </div>
-              <span class="text-sm font-semibold text-gray-900">
+              <span class="text-xs sm:text-sm font-semibold text-gray-900">
                 {{ stats?.jobs?.draft || 0 }} ({{ getJobPercentage('draft') }}%)
               </span>
             </div>
             <div class="flex items-center justify-between">
               <div class="flex items-center space-x-2">
                 <div class="w-3 h-3 bg-yellow-500 rounded-full"></div>
-                <span class="text-sm text-gray-700">Featured</span>
+                <span class="text-xs sm:text-sm text-gray-700">Featured</span>
               </div>
-              <span class="text-sm font-semibold text-gray-900">
+              <span class="text-xs sm:text-sm font-semibold text-gray-900">
                 {{ stats?.jobs?.featured || 0 }} ({{ getJobPercentage('featured') }}%)
               </span>
             </div>
@@ -145,22 +145,22 @@
       </BaseCard>
 
       <BaseCard>
-        <div class="p-6">
-          <h3 class="text-lg font-semibold text-gray-900 mb-4">Company Insights</h3>
+        <div class="p-4 sm:p-6">
+          <h3 class="text-base sm:text-lg font-semibold text-gray-900 mb-4">Company Insights</h3>
           <div class="space-y-4">
             <div class="flex items-center justify-between">
-              <span class="text-sm text-gray-700">Total Companies</span>
-              <span class="text-2xl font-bold text-gray-900">{{ stats?.companies?.total || 0 }}</span>
+              <span class="text-xs sm:text-sm text-gray-700">Total Companies</span>
+              <span class="text-xl sm:text-2xl font-bold text-gray-900">{{ stats?.companies?.total || 0 }}</span>
             </div>
             <div class="flex items-center justify-between">
-              <span class="text-sm text-gray-700">With Active Jobs</span>
-              <span class="text-lg font-semibold text-green-600">
+              <span class="text-xs sm:text-sm text-gray-700">With Active Jobs</span>
+              <span class="text-base sm:text-lg font-semibold text-green-600">
                 {{ stats?.companies?.with_active_jobs || 0 }}
               </span>
             </div>
             <div class="flex items-center justify-between">
-              <span class="text-sm text-gray-700">Activity Rate</span>
-              <span class="text-lg font-semibold text-blue-600">
+              <span class="text-xs sm:text-sm text-gray-700">Activity Rate</span>
+              <span class="text-base sm:text-lg font-semibold text-blue-600">
                 {{ getCompanyActivityRate }}%
               </span>
             </div>
@@ -175,22 +175,22 @@
       </BaseCard>
 
       <BaseCard>
-        <div class="p-6">
-          <h3 class="text-lg font-semibold text-gray-900 mb-4">CV Statistics</h3>
+        <div class="p-4 sm:p-6">
+          <h3 class="text-base sm:text-lg font-semibold text-gray-900 mb-4">CV Statistics</h3>
           <div class="space-y-4">
             <div class="flex items-center justify-between">
-              <span class="text-sm text-gray-700">Total CVs</span>
-              <span class="text-2xl font-bold text-gray-900">{{ stats?.cvs?.total || 0 }}</span>
+              <span class="text-xs sm:text-sm text-gray-700">Total CVs</span>
+              <span class="text-xl sm:text-2xl font-bold text-gray-900">{{ stats?.cvs?.total || 0 }}</span>
             </div>
             <div class="flex items-center justify-between">
-              <span class="text-sm text-gray-700">Public CVs</span>
-              <span class="text-lg font-semibold text-blue-600">
+              <span class="text-xs sm:text-sm text-gray-700">Public CVs</span>
+              <span class="text-base sm:text-lg font-semibold text-blue-600">
                 {{ stats?.cvs?.public || 0 }}
               </span>
             </div>
             <div class="flex items-center justify-between">
-              <span class="text-sm text-gray-700">Visibility Rate</span>
-              <span class="text-lg font-semibold text-green-600">
+              <span class="text-xs sm:text-sm text-gray-700">Visibility Rate</span>
+              <span class="text-base sm:text-lg font-semibold text-green-600">
                 {{ getCvPublicRate }}%
               </span>
             </div>
@@ -205,25 +205,25 @@
       </BaseCard>
     </div>
 
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6 mb-6 lg:mb-8">
       <!-- Recent Activity Chart -->
       <BaseCard class="lg:col-span-2">
-        <div class="p-6">
-          <h3 class="text-lg font-semibold text-gray-900 mb-4">Activity Overview (Last 7 Days)</h3>
+        <div class="p-4 sm:p-6">
+          <h3 class="text-base sm:text-lg font-semibold text-gray-900 mb-4">Activity Overview (Last 7 Days)</h3>
           <ActivityChart :data="activityData" :loading="loading" />
         </div>
       </BaseCard>
 
       <!-- Application Status Distribution -->
       <BaseCard>
-        <div class="p-6">
-          <h3 class="text-lg font-semibold text-gray-900 mb-4">Application Pipeline</h3>
+        <div class="p-4 sm:p-6">
+          <h3 class="text-base sm:text-lg font-semibold text-gray-900 mb-4">Application Pipeline</h3>
           <div class="space-y-3">
             <div v-for="status in applicationStatuses" :key="status.label" class="flex items-center">
               <div class="flex-1">
                 <div class="flex items-center justify-between mb-1">
-                  <span class="text-sm font-medium text-gray-700">{{ status.label }}</span>
-                  <span class="text-sm text-gray-600">{{ status.count }}</span>
+                  <span class="text-xs sm:text-sm font-medium text-gray-700">{{ status.label }}</span>
+                  <span class="text-xs sm:text-sm text-gray-600">{{ status.count }}</span>
                 </div>
                 <div class="w-full bg-gray-200 rounded-full h-2">
                   <div
@@ -240,11 +240,11 @@
     </div>
 
     <!-- Additional Statistics -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
       <!-- Top Industries -->
       <BaseCard>
-        <div class="p-6">
-          <h3 class="text-lg font-semibold text-gray-900 mb-4">Top Industries</h3>
+        <div class="p-4 sm:p-6">
+          <h3 class="text-base sm:text-lg font-semibold text-gray-900 mb-4">Top Industries</h3>
           <div class="space-y-3">
             <div
               v-for="(industry, index) in topIndustries"
@@ -253,11 +253,11 @@
             >
               <div class="flex items-center space-x-2">
                 <span class="text-xs font-medium text-gray-500">#{index + 1}</span>
-                <span class="text-sm text-gray-700">{{ industry.industry || 'Other' }}</span>
+                <span class="text-xs sm:text-sm text-gray-700">{{ industry.industry || 'Other' }}</span>
               </div>
-              <span class="text-sm font-semibold text-gray-900">{{ industry.count }}</span>
+              <span class="text-xs sm:text-sm font-semibold text-gray-900">{{ industry.count }}</span>
             </div>
-            <div v-if="topIndustries.length === 0 && !loading" class="text-center text-sm text-gray-500 py-8">
+            <div v-if="topIndustries.length === 0 && !loading" class="text-center text-xs sm:text-sm text-gray-500 py-8">
               No data available
             </div>
           </div>
@@ -266,8 +266,8 @@
 
       <!-- Top Job Types -->
       <BaseCard>
-        <div class="p-6">
-          <h3 class="text-lg font-semibold text-gray-900 mb-4">Popular Job Types</h3>
+        <div class="p-4 sm:p-6">
+          <h3 class="text-base sm:text-lg font-semibold text-gray-900 mb-4">Popular Job Types</h3>
           <div class="space-y-3">
             <div
               v-for="(jobType, index) in topJobTypes"
@@ -276,11 +276,11 @@
             >
               <div class="flex items-center space-x-2">
                 <span class="text-xs font-medium text-gray-500">#{index + 1}</span>
-                <span class="text-sm text-gray-700 capitalize">{{ formatJobType(jobType.job_type) }}</span>
+                <span class="text-xs sm:text-sm text-gray-700 capitalize">{{ formatJobType(jobType.job_type) }}</span>
               </div>
-              <span class="text-sm font-semibold text-gray-900">{{ jobType.count }}</span>
+              <span class="text-xs sm:text-sm font-semibold text-gray-900">{{ jobType.count }}</span>
             </div>
-            <div v-if="topJobTypes.length === 0 && !loading" class="text-center text-sm text-gray-500 py-8">
+            <div v-if="topJobTypes.length === 0 && !loading" class="text-center text-xs sm:text-sm text-gray-500 py-8">
               No data available
             </div>
           </div>
@@ -289,8 +289,8 @@
 
       <!-- Top Companies by Jobs -->
       <BaseCard>
-        <div class="p-6">
-          <h3 class="text-lg font-semibold text-gray-900 mb-4">Most Active Companies</h3>
+        <div class="p-4 sm:p-6">
+          <h3 class="text-base sm:text-lg font-semibold text-gray-900 mb-4">Most Active Companies</h3>
           <div class="space-y-3">
             <div
               v-for="company in topCompaniesByJobs"
@@ -299,13 +299,13 @@
             >
               <div class="flex items-center space-x-2 flex-1 min-w-0">
                 <span class="text-xs font-medium text-gray-500">#{index + 1}</span>
-                <span class="text-sm text-gray-700 truncate">{{ company.name }}</span>
+                <span class="text-xs sm:text-sm text-gray-700 truncate">{{ company.name }}</span>
               </div>
-              <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+              <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 whitespace-nowrap ml-2">
                 {{ company.jobs_count }} jobs
               </span>
             </div>
-            <div v-if="topCompaniesByJobs.length === 0 && !loading" class="text-center text-sm text-gray-500 py-8">
+            <div v-if="topCompaniesByJobs.length === 0 && !loading" class="text-center text-xs sm:text-sm text-gray-500 py-8">
               No data available
             </div>
           </div>
