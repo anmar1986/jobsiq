@@ -75,9 +75,9 @@ export const searchHistoryAdminService = {
     user_id?: number
     before_date?: string
   }): Promise<ApiResponse<{ count: number }>> {
-    const response = await apiClient.post<ApiResponse<{ count: number }>>(
+    const response = await apiClient.delete<ApiResponse<{ count: number }>>(
       '/admin/search-history/clear',
-      params
+      { data: params }
     )
     return response.data
   },

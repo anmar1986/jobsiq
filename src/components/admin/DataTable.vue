@@ -101,7 +101,7 @@
         >
           Previous
         </button>
-        <span class="text-sm text-gray-700 flex items-center px-2">
+        <span class="text-sm text-gray-700 flex items-center mx-2">
           {{ pagination.current_page }} / {{ pagination.last_page }}
         </span>
         <button

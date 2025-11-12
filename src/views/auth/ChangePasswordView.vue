@@ -187,6 +187,9 @@ import type { PasswordChangeForm } from '@/types'
 
 const router = useRouter()
 
+// Redirect delay after successful password change
+const REDIRECT_DELAY_MS = 2000
+
 const form = reactive<PasswordChangeForm>({
   current_password: '',
   password: '',
@@ -229,10 +232,10 @@ const handleSubmit = async () => {
     form.password = ''
     form.password_confirmation = ''
 
-    // Redirect to login after 2 seconds
-    redirectTimeoutId.value = window.setTimeout(() => {
+    // Redirect to login after specified delay
+    redirectTimeoutId.value = setTimeout(() => {
       router.push({ name: 'login', query: { message: 'Please login with your new password' } })
-    }, 2000)
+    }, REDIRECT_DELAY_MS)
   } catch (err: any) {
     error.value = err.response?.data?.message || 'Failed to change password. Please try again.'
   } finally {

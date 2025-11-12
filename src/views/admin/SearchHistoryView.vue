@@ -148,34 +148,34 @@
               />
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Location</label>
+              <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">Location</label>
               <input
                 v-model="filters.location"
                 type="text"
                 placeholder="Filter by location..."
-                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 touch-manipulation"
               />
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">From Date</label>
+              <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">From Date</label>
               <input
                 v-model="filters.from_date"
                 type="date"
-                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 touch-manipulation"
               />
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">To Date</label>
+              <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">To Date</label>
               <input
                 v-model="filters.to_date"
                 type="date"
-                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+                class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 touch-manipulation"
               />
             </div>
           </div>
           <div class="mt-4 flex gap-3">
-            <BaseButton variant="primary" @click="() => fetchSearchHistory()">Apply Filters</BaseButton>
-            <BaseButton variant="outline" @click="clearFilters">Clear</BaseButton>
+            <BaseButton variant="primary" @click="() => fetchSearchHistory()" class="touch-manipulation">Apply Filters</BaseButton>
+            <BaseButton variant="outline" @click="clearFilters" class="touch-manipulation">Clear</BaseButton>
           </div>
         </div>
       </BaseCard>
@@ -241,9 +241,10 @@
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm">
                   <button
-                    @click="deleteEntry(entry.id)"
+                    @click="promptDeleteEntry(entry.id)"
                     class="text-red-600 hover:text-red-900"
                     :disabled="deleting === entry.id"
+                    :aria-label="`Delete search history entry${entry.user ? ' for ' + entry.user.name : ' for Guest'}: ${entry.search_query || 'No query'}`"
                   >
                     Delete
                   </button>
@@ -306,6 +307,23 @@
         </div>
       </div>
     </BaseModal>
+
+    <!-- Delete Entry Modal -->
+    <BaseModal v-model="showDeleteModal" title="Delete Search History Entry" size="sm">
+      <div class="p-6">
+        <p class="text-gray-700 mb-6">
+          Are you sure you want to delete this search history entry? This action cannot be undone.
+        </p>
+        <div class="flex items-center justify-end gap-3">
+          <BaseButton variant="outline" @click="showDeleteModal = false" :disabled="deleting !== null">
+            Cancel
+          </BaseButton>
+          <BaseButton variant="danger" @click="deleteEntry" :loading="deleting !== null">
+            Delete Entry
+          </BaseButton>
+        </div>
+      </div>
+    </BaseModal>
   </AdminLayout>
 </template>
 
@@ -319,6 +337,21 @@ import BaseCard from '@/components/base/BaseCard.vue'
 import BaseButton from '@/components/base/BaseButton.vue'
 import BaseModal from '@/components/base/BaseModal.vue'
 
+// Define the type for clearHistory parameters
+interface ClearHistoryParams {
+  before_date?: string
+}
+
+// Define pagination structure
+interface Pagination {
+  current_page: number
+  last_page: number
+  from: number | null
+  to: number | null
+  total: number
+  per_page: number
+}
+
 const toast = useToast()
 
 const searchHistory = ref<SearchHistoryEntry[]>([])
@@ -327,6 +360,8 @@ const loading = ref(false)
 const deleting = ref<number | null>(null)
 const clearing = ref(false)
 const showClearModal = ref(false)
+const showDeleteModal = ref(false)
+const deleteEntryId = ref<number | null>(null)
 const clearBeforeDate = ref('')
 
 const filters = ref({
@@ -336,7 +371,7 @@ const filters = ref({
   to_date: '',
 })
 
-const pagination = ref<any>(null)
+const pagination = ref<Pagination | null>(null)
 
 const fetchSearchHistory = async (page = 1) => {
   loading.value = true
@@ -348,7 +383,6 @@ const fetchSearchHistory = async (page = 1) => {
     if (filters.value.to_date) params.to_date = filters.value.to_date
 
     const response = await searchHistoryAdminService.getSearchHistory(params)
-    console.log('Search history response:', response)
     searchHistory.value = response.data
     pagination.value = {
       current_page: response.current_page,
@@ -356,10 +390,10 @@ const fetchSearchHistory = async (page = 1) => {
       from: response.from,
       to: response.to,
       total: response.total,
+      per_page: response.per_page,
     }
   } catch (error: any) {
     console.error('Failed to fetch search history:', error)
-    console.error('Error response:', error.response?.data)
     toast.error(error.response?.data?.message || 'Failed to load search history')
   } finally {
     loading.value = false
@@ -375,13 +409,20 @@ const fetchStatistics = async () => {
   }
 }
 
-const deleteEntry = async (id: number) => {
-  if (!confirm('Are you sure you want to delete this search history entry?')) return
+const promptDeleteEntry = (id: number) => {
+  deleteEntryId.value = id
+  showDeleteModal.value = true
+}
 
-  deleting.value = id
+const deleteEntry = async () => {
+  if (deleteEntryId.value === null) return
+
+  deleting.value = deleteEntryId.value
   try {
-    await searchHistoryAdminService.deleteEntry(id)
+    await searchHistoryAdminService.deleteEntry(deleteEntryId.value)
     toast.success('Search history entry deleted')
+    showDeleteModal.value = false
+    deleteEntryId.value = null
     fetchSearchHistory()
     fetchStatistics()
   } catch (error) {
@@ -395,7 +436,7 @@ const deleteEntry = async (id: number) => {
 const clearHistory = async () => {
   clearing.value = true
   try {
-    const params: any = {}
+    const params: ClearHistoryParams = {}
     if (clearBeforeDate.value) params.before_date = clearBeforeDate.value
 
     const response = await searchHistoryAdminService.clearHistory(params)

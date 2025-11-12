@@ -161,5 +161,5 @@ Route::middleware(['auth:sanctum', 'admin'])->prefix('admin')->group(function ()
     Route::get('/search-history', [SearchHistoryAdminController::class, 'index']);
     Route::get('/search-history/statistics', [SearchHistoryAdminController::class, 'statistics']);
     Route::delete('/search-history/{searchHistory}', [SearchHistoryAdminController::class, 'destroy']);
-    Route::post('/search-history/clear', [SearchHistoryAdminController::class, 'clear']);
+    Route::delete('/search-history/clear', [SearchHistoryAdminController::class, 'clear']);
 });

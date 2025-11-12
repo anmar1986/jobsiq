@@ -14,34 +14,44 @@ class SearchHistoryAdminController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
+        // Validate request parameters
+        $validated = $request->validate([
+            'user_id' => ['sometimes', 'integer', 'exists:users,id'],
+            'per_page' => ['sometimes', 'integer', 'min:1', 'max:100'],
+            'from_date' => ['sometimes', 'date'],
+            'to_date' => ['sometimes', 'date'],
+            'search' => ['sometimes', 'string', 'max:255'],
+            'location' => ['sometimes', 'string', 'max:255'],
+        ]);
+
         $query = SearchHistory::with('user:id,name,email')
             ->latest();
 
         // Filter by user
-        if ($request->has('user_id')) {
-            $query->where('user_id', $request->user_id);
+        if (isset($validated['user_id'])) {
+            $query->where('user_id', $validated['user_id']);
         }
 
         // Filter by search query
-        if ($request->has('search')) {
-            $query->where('search_query', 'like', '%'.$request->search.'%');
+        if (isset($validated['search'])) {
+            $query->where('search_query', 'like', $validated['search'].'%');
         }
 
         // Filter by date range
-        if ($request->has('from_date')) {
-            $query->whereDate('created_at', '>=', $request->from_date);
+        if (isset($validated['from_date'])) {
+            $query->whereDate('created_at', '>=', $validated['from_date']);
         }
 
-        if ($request->has('to_date')) {
-            $query->whereDate('created_at', '<=', $request->to_date);
+        if (isset($validated['to_date'])) {
+            $query->whereDate('created_at', '<=', $validated['to_date']);
         }
 
         // Filter by location
-        if ($request->has('location')) {
-            $query->where('location', 'like', '%'.$request->location.'%');
+        if (isset($validated['location'])) {
+            $query->where('location', 'like', $validated['location'].'%');
         }
 
-        $perPage = $request->get('per_page', 15);
+        $perPage = $validated['per_page'] ?? 15;
         $searches = $query->paginate($perPage);
 
         return response()->json([
@@ -113,15 +123,21 @@ class SearchHistoryAdminController extends Controller
      */
     public function clear(Request $request): JsonResponse
     {
+        // Validate input
+        $validated = $request->validate([
+            'user_id' => ['sometimes', 'integer', 'exists:users,id'],
+            'before_date' => ['sometimes', 'date'],
+        ]);
+
         $query = SearchHistory::query();
 
         // Apply filters if provided
-        if ($request->has('user_id')) {
-            $query->where('user_id', $request->user_id);
+        if (isset($validated['user_id'])) {
+            $query->where('user_id', $validated['user_id']);
         }
 
-        if ($request->has('before_date')) {
-            $query->whereDate('created_at', '<', $request->before_date);
+        if (isset($validated['before_date'])) {
+            $query->whereDate('created_at', '<', $validated['before_date']);
         }
 
         $deleted = $query->delete();

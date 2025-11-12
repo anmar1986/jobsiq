@@ -22,7 +22,7 @@
         'bg-gray-900 text-white transition-all duration-300 flex flex-col',
         'fixed lg:static inset-y-0 left-0',
         'z-30 lg:z-auto',
-        sidebarOpen ? 'w-64 translate-x-0' : 'w-64 -translate-x-full lg:w-64 lg:translate-x-0'
+        sidebarOpen ? 'w-64 translate-x-0' : '-translate-x-full lg:w-64 lg:translate-x-0'
       ]"
     >
       <!-- Logo -->
@@ -72,7 +72,7 @@
           <div class="flex items-center gap-4">
             <button
               @click="sidebarOpen = !sidebarOpen"
-              class="text-gray-500 hover:text-gray-700 p-2 -ml-2 touch-manipulation"
+              class="lg:hidden text-gray-500 hover:text-gray-700 p-2 -ml-2 touch-manipulation"
               aria-label="Toggle menu"
             >
               <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
