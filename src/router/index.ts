@@ -123,6 +123,12 @@ const routes: RouteRecordRaw[] = [
     meta: { title: 'CV Details', requiresAuth: true, requiresAdmin: true },
   },
   {
+    path: '/admin/search-history',
+    name: 'admin-search-history',
+    component: () => import('@/views/admin/SearchHistoryView.vue'),
+    meta: { title: 'Search History', requiresAuth: true, requiresAdmin: true },
+  },
+  {
     path: '/my-jobs',
     name: 'my-jobs',
     component: () => import('@/views/dashboard/MyJobsView.vue'),

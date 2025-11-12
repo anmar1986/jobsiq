@@ -1,49 +1,45 @@
 <template>
   <AdminLayout>
-    <div class="space-y-6">
-      <!-- Header -->
-      <div class="flex items-center justify-between">
-      </div>
-
+    <div class="space-y-4 sm:space-y-6">
       <!-- Filters -->
       <BaseCard>
-        <div class="p-6">
-          <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div class="p-4 sm:p-6">
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Search</label>
+              <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">Search</label>
               <input
                 v-model="filters.search"
                 type="text"
                 placeholder="Company name..."
-                class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                class="w-full px-3 py-2 text-sm rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 touch-manipulation"
                 @input="handleFilterChange"
               />
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Industry</label>
+              <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">Industry</label>
               <input
                 v-model="filters.industry"
                 type="text"
                 placeholder="Filter by industry..."
-                class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                class="w-full px-3 py-2 text-sm rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 touch-manipulation"
                 @input="handleFilterChange"
               />
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Country</label>
+              <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">Country</label>
               <input
                 v-model="filters.country"
                 type="text"
                 placeholder="Filter by country..."
-                class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                class="w-full px-3 py-2 text-sm rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 touch-manipulation"
                 @input="handleFilterChange"
               />
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Per Page</label>
+              <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">Per Page</label>
               <select
                 v-model="filters.per_page"
-                class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                class="w-full px-3 py-2 text-sm rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 touch-manipulation"
                 @change="handleFilterChange"
               >
                 <option :value="10">10</option>

@@ -1,11 +1,11 @@
 <template>
   <AdminLayout>
-    <div class="space-y-6">
+    <div class="space-y-4 sm:space-y-6">
       <!-- Header -->
-      <div class="flex items-center justify-between">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-end gap-4">
         <button
           @click="showCreateModal = true"
-          class="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          class="w-full sm:w-auto inline-flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 touch-manipulation"
         >
           <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
@@ -16,23 +16,23 @@
 
       <!-- Filters -->
       <BaseCard>
-        <div class="p-6">
-          <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div class="p-4 sm:p-6">
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Search</label>
+              <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">Search</label>
               <input
                 v-model="filters.search"
                 type="text"
                 placeholder="Name or email..."
-                class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                class="w-full px-3 py-2 text-sm rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 touch-manipulation"
                 @input="handleFilterChange"
               />
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">User Type</label>
+              <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">User Type</label>
               <select
                 v-model="filters.user_type"
-                class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                class="w-full px-3 py-2 text-sm rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 touch-manipulation"
                 @change="handleFilterChange"
               >
                 <option value="">All Types</option>
@@ -41,10 +41,10 @@
               </select>
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Admin Status</label>
+              <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">Admin Status</label>
               <select
                 v-model="filters.is_admin"
-                class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                class="w-full px-3 py-2 text-sm rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 touch-manipulation"
                 @change="handleFilterChange"
               >
                 <option value="">All Users</option>
@@ -53,10 +53,10 @@
               </select>
             </div>
             <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">Per Page</label>
+              <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">Per Page</label>
               <select
                 v-model="filters.per_page"
-                class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                class="w-full px-3 py-2 text-sm rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 touch-manipulation"
                 @change="handleFilterChange"
               >
                 <option :value="10">10</option>
