@@ -406,7 +406,8 @@ class _AddAlertDialogState extends State<AddAlertDialog> {
               ),
               SizedBox(height: 16.h),
               DropdownButtonFormField<String>(
-                initialValue: _selectedEmploymentType,
+                // ignore: deprecated_member_use
+                value: _selectedEmploymentType,
                 decoration: const InputDecoration(
                   labelText: 'Employment Type',
                   prefixIcon: Icon(Icons.work),
@@ -420,7 +421,8 @@ class _AddAlertDialogState extends State<AddAlertDialog> {
               ),
               SizedBox(height: 16.h),
               DropdownButtonFormField<String>(
-                initialValue: _selectedExperienceLevel,
+                // ignore: deprecated_member_use
+                value: _selectedExperienceLevel,
                 decoration: const InputDecoration(
                   labelText: 'Experience Level',
                   prefixIcon: Icon(Icons.school),
