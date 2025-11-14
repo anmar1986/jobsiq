@@ -215,6 +215,7 @@ class Job extends Model
             return false;
         }
 
+        /** @var \App\Models\User $user */
         return SavedJob::where('user_id', $user->id)
             ->where('job_id', $this->id)
             ->exists();
@@ -231,6 +232,7 @@ class Job extends Model
             return false;
         }
 
+        /** @var \App\Models\User $user */
         return JobApplication::where('user_id', $user->id)
             ->where('job_id', $this->id)
             ->exists();
