@@ -309,9 +309,12 @@ class _SettingsPageState extends State<SettingsPage> {
   Widget _buildLanguageOption(String language) {
     return ListTile(
       title: Text(language),
+      // ignore: deprecated_member_use
       leading: Radio<String>(
         value: language,
+        // ignore: deprecated_member_use
         groupValue: _language,
+        // ignore: deprecated_member_use
         onChanged: (value) {
           if (value != null) {
             setState(() => _language = value);
