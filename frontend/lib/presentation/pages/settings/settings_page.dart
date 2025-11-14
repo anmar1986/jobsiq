@@ -287,29 +287,14 @@ class _SettingsPageState extends State<SettingsPage> {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Select Language'),
-        content: RadioGroup<String>(
-          groupValue: _language,
-          onChanged: (value) {
-            if (value != null) {
-              setState(() => _language = value);
-              _saveSetting('language', value);
-              Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('Language changed to $value'),
-                ),
-              );
-            }
-          },
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              _buildLanguageOption('English'),
-              _buildLanguageOption('Arabic'),
-              _buildLanguageOption('French'),
-              _buildLanguageOption('Spanish'),
-            ],
-          ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _buildLanguageOption('English'),
+            _buildLanguageOption('Arabic'),
+            _buildLanguageOption('French'),
+            _buildLanguageOption('Spanish'),
+          ],
         ),
         actions: [
           TextButton(
@@ -326,6 +311,19 @@ class _SettingsPageState extends State<SettingsPage> {
       title: Text(language),
       leading: Radio<String>(
         value: language,
+        groupValue: _language,
+        onChanged: (value) {
+          if (value != null) {
+            setState(() => _language = value);
+            _saveSetting('language', value);
+            Navigator.pop(context);
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Language changed to $value'),
+              ),
+            );
+          }
+        },
       ),
       onTap: () {
         setState(() => _language = language);
