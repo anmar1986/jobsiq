@@ -80,7 +80,8 @@ class JobCard extends StatelessWidget {
                   if (job.experienceLevel != null)
                     _InfoChip(
                       icon: Icons.stars_rounded,
-                      label: _formatExperienceLevel(job.experienceLevel)!,
+                      label: _formatExperienceLevel(job.experienceLevel) ??
+                          'Unknown',
                     ),
                   if (job.isRemote)
                     const _InfoChip(

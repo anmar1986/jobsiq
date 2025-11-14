@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -48,7 +50,7 @@ class _JobsPageContentState extends State<_JobsPageContent> {
   void _onScroll() {
     if (_isBottom) {
       final state = context.read<JobsBloc>().state;
-      // Only load more if we're in JobsLoaded state and have more jobs
+      // Only load more if we're in JobsLoaded state, have more jobs, and not already loading
       if (state is JobsLoaded && state.hasMore) {
         debugPrint(
             '🔄 Loading more jobs... (Current: ${state.jobs.length}, Page: ${state.currentPage}/${state.lastPage})');
@@ -71,8 +73,28 @@ class _JobsPageContentState extends State<_JobsPageContent> {
     context.read<JobsBloc>().add(SearchJobsEvent(query));
   }
 
-  void _onRefresh() {
+  Future<void> _onRefresh() async {
+    final completer = Completer<void>();
+
+    // Listen for the next state change
+    final subscription = context.read<JobsBloc>().stream.listen((state) {
+      if (state is JobsLoaded || state is JobsError) {
+        if (!completer.isCompleted) {
+          completer.complete();
+        }
+      }
+    });
+
+    // Trigger the refresh
     context.read<JobsBloc>().add(const LoadJobsEvent(refresh: true));
+
+    // Wait for completion or timeout after 10 seconds
+    await completer.future.timeout(
+      const Duration(seconds: 10),
+      onTimeout: () {},
+    );
+
+    subscription.cancel();
   }
 
   @override
@@ -80,11 +102,7 @@ class _JobsPageContentState extends State<_JobsPageContent> {
     return Scaffold(
       body: SafeArea(
         child: RefreshIndicator(
-          onRefresh: () async {
-            _onRefresh();
-            // Wait for the state to update
-            await Future.delayed(const Duration(seconds: 1));
-          },
+          onRefresh: _onRefresh,
           child: CustomScrollView(
             controller: _scrollController,
             slivers: [

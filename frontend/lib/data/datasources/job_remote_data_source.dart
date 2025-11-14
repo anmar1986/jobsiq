@@ -163,6 +163,8 @@ class JobRemoteDataSourceImpl implements JobRemoteDataSource {
       } else {
         throw ServerException('Server error: ${response.statusCode}');
       }
+    } on ServerException {
+      rethrow;
     } catch (e) {
       throw ServerException('Failed to fetch featured jobs: $e');
     }
@@ -185,8 +187,11 @@ class JobRemoteDataSourceImpl implements JobRemoteDataSource {
       } else {
         throw ServerException('Server error: ${response.statusCode}');
       }
+    } on ServerException {
+      rethrow;
+    } on NotFoundException {
+      rethrow;
     } catch (e) {
-      if (e is NotFoundException) rethrow;
       throw ServerException('Failed to fetch job: $e');
     }
   }
@@ -207,6 +212,8 @@ class JobRemoteDataSourceImpl implements JobRemoteDataSource {
       } else {
         throw ServerException('Server error: ${response.statusCode}');
       }
+    } on ServerException {
+      rethrow;
     } catch (e) {
       throw ServerException('Failed to fetch your jobs: $e');
     }

@@ -86,6 +86,7 @@ class JobsBloc extends Bloc<JobsEvent, JobsState> {
     final currentState = state;
     if (currentState is! JobsLoaded) return;
     if (!currentState.hasMore) return;
+    if (_currentParams == null) return;
 
     emit(JobsLoadingMore(currentState.jobs));
 
