@@ -1,7 +1,6 @@
 import 'package:dartz/dartz.dart';
 import '../../core/error/failures.dart';
 import '../entities/job_entity.dart';
-import '../../data/datasources/job_remote_data_source.dart';
 
 abstract class JobRepository {
   /// Get paginated list of jobs with filters

@@ -88,3 +88,40 @@ class FeaturedJobsError extends JobsState {
   @override
   List<Object?> get props => [message];
 }
+
+class JobSaveToggled extends JobsState {
+  final int jobId;
+  final bool isSaved;
+
+  const JobSaveToggled({required this.jobId, required this.isSaved});
+
+  @override
+  List<Object?> get props => [jobId, isSaved];
+}
+
+class JobSaveError extends JobsState {
+  final String message;
+
+  const JobSaveError(this.message);
+
+  @override
+  List<Object?> get props => [message];
+}
+
+class JobApplicationSuccess extends JobsState {
+  final String message;
+
+  const JobApplicationSuccess(this.message);
+
+  @override
+  List<Object?> get props => [message];
+}
+
+class JobApplicationError extends JobsState {
+  final String message;
+
+  const JobApplicationError(this.message);
+
+  @override
+  List<Object?> get props => [message];
+}

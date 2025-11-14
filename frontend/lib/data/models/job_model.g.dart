@@ -23,14 +23,19 @@ JobModel _$JobModelFromJson(Map<String, dynamic> json) => JobModel(
       category: json['category'] as String?,
       skills:
           (json['skills'] as List<dynamic>?)?.map((e) => e as String).toList(),
-      salaryMin: (json['salary_min'] as num?)?.toDouble(),
-      salaryMax: (json['salary_max'] as num?)?.toDouble(),
+      salaryMin: JobModel._salaryFromJson(json['salary_min']),
+      salaryMax: JobModel._salaryFromJson(json['salary_max']),
       salaryCurrency: json['salary_currency'] as String?,
       salaryPeriod: json['salary_period'] as String?,
       isRemote: json['is_remote'] as bool,
       isFeatured: json['is_featured'] as bool,
-      isActive: json['is_active'] as bool,
+      isActive: json['is_active'] == null
+          ? true
+          : JobModel._boolFromJson(json['is_active']),
       isSaved: json['is_saved'] as bool?,
+      isApplied: json['is_applied'] == null
+          ? null
+          : JobModel._boolFromJson(json['is_applied']),
       expiresAt: json['expires_at'] == null
           ? null
           : DateTime.parse(json['expires_at'] as String),
@@ -59,19 +64,20 @@ Map<String, dynamic> _$JobModelToJson(JobModel instance) => <String, dynamic>{
       'experience_level': instance.experienceLevel,
       'category': instance.category,
       'skills': instance.skills,
-      'salary_min': instance.salaryMin,
-      'salary_max': instance.salaryMax,
       'salary_currency': instance.salaryCurrency,
       'salary_period': instance.salaryPeriod,
       'is_remote': instance.isRemote,
       'is_featured': instance.isFeatured,
-      'is_active': instance.isActive,
       'is_saved': instance.isSaved,
+      'is_applied': instance.isApplied,
       'expires_at': instance.expiresAt?.toIso8601String(),
       'published_at': instance.publishedAt?.toIso8601String(),
       'created_at': instance.createdAt.toIso8601String(),
       'updated_at': instance.updatedAt.toIso8601String(),
       'company': JobModel._companyToJson(instance.company),
+      'salary_min': instance.salaryMin,
+      'salary_max': instance.salaryMax,
+      'is_active': instance.isActive,
     };
 
 CompanyBriefModel _$CompanyBriefModelFromJson(Map<String, dynamic> json) =>
@@ -79,7 +85,7 @@ CompanyBriefModel _$CompanyBriefModelFromJson(Map<String, dynamic> json) =>
       id: (json['id'] as num).toInt(),
       name: json['name'] as String,
       slug: json['slug'] as String,
-      logo: json['logo'] as String?,
+      logo: CompanyBriefModel._logoFromJson(json['logo']),
       industry: json['industry'] as String?,
       companySize: json['company_size'] as String?,
     );
@@ -89,7 +95,7 @@ Map<String, dynamic> _$CompanyBriefModelToJson(CompanyBriefModel instance) =>
       'id': instance.id,
       'name': instance.name,
       'slug': instance.slug,
-      'logo': instance.logo,
       'industry': instance.industry,
       'company_size': instance.companySize,
+      'logo': instance.logo,
     };

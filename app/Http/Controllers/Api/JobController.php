@@ -46,7 +46,7 @@ class JobController extends Controller
                     'location', 'city', 'country', 'employment_type', 'experience_level',
                     'category', 'skills', 'salary_min', 'salary_max', 'salary_currency',
                     'salary_period', 'is_remote', 'is_featured', 'published_at',
-                    'expires_at', 'created_at',
+                    'expires_at', 'created_at', 'updated_at',
                 ])
                 ->active()
                 ->published();

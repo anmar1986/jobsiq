@@ -68,3 +68,27 @@ class SearchJobsEvent extends JobsEvent {
   @override
   List<Object?> get props => [query];
 }
+
+class ToggleSaveJobEvent extends JobsEvent {
+  final int jobId;
+
+  const ToggleSaveJobEvent(this.jobId);
+
+  @override
+  List<Object?> get props => [jobId];
+}
+
+class ApplyForJobEvent extends JobsEvent {
+  final String jobSlug;
+  final int? cvId;
+  final String? coverLetter;
+
+  const ApplyForJobEvent({
+    required this.jobSlug,
+    this.cvId,
+    this.coverLetter,
+  });
+
+  @override
+  List<Object?> get props => [jobSlug, cvId, coverLetter];
+}

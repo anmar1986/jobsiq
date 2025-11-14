@@ -1,5 +1,8 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../core/error/failures.dart';
+import '../../../data/datasources/saved_job_remote_data_source.dart';
+import '../../../data/datasources/job_application_remote_data_source.dart';
 import '../../../domain/usecases/jobs/get_jobs_usecase.dart';
 import '../../../domain/usecases/jobs/get_featured_jobs_usecase.dart';
 import 'jobs_event.dart';
@@ -8,6 +11,8 @@ import 'jobs_state.dart';
 class JobsBloc extends Bloc<JobsEvent, JobsState> {
   final GetJobsUseCase getJobsUseCase;
   final GetFeaturedJobsUseCase getFeaturedJobsUseCase;
+  final SavedJobRemoteDataSource savedJobDataSource;
+  final JobApplicationRemoteDataSource jobApplicationDataSource;
 
   // Store current filter parameters
   GetJobsParams? _currentParams;
@@ -16,11 +21,15 @@ class JobsBloc extends Bloc<JobsEvent, JobsState> {
   JobsBloc({
     required this.getJobsUseCase,
     required this.getFeaturedJobsUseCase,
+    required this.savedJobDataSource,
+    required this.jobApplicationDataSource,
   }) : super(JobsInitial()) {
     on<LoadJobsEvent>(_onLoadJobs);
     on<LoadMoreJobsEvent>(_onLoadMoreJobs);
     on<LoadFeaturedJobsEvent>(_onLoadFeaturedJobs);
     on<SearchJobsEvent>(_onSearchJobs);
+    on<ToggleSaveJobEvent>(_onToggleSaveJob);
+    on<ApplyForJobEvent>(_onApplyForJob);
   }
 
   Future<void> _onLoadJobs(
@@ -42,7 +51,9 @@ class JobsBloc extends Bloc<JobsEvent, JobsState> {
       salaryMin: event.salaryMin,
       company: event.company,
       sort: event.sort,
-      seed: event.refresh ? null : _currentSeed, // Use existing seed unless refreshing
+      seed: event.refresh
+          ? null
+          : _currentSeed, // Use existing seed unless refreshing
     );
 
     final result = await getJobsUseCase(_currentParams!);
@@ -52,6 +63,9 @@ class JobsBloc extends Bloc<JobsEvent, JobsState> {
       (jobsResult) {
         // Store the seed for pagination
         _currentSeed = jobsResult.seed;
+
+        debugPrint(
+            '✅ Jobs loaded: ${jobsResult.jobs.length} jobs, Page ${jobsResult.currentPage}/${jobsResult.lastPage}, Total: ${jobsResult.total}, HasMore: ${jobsResult.hasMore}');
 
         emit(JobsLoaded(
           jobs: jobsResult.jobs,
@@ -87,6 +101,9 @@ class JobsBloc extends Bloc<JobsEvent, JobsState> {
       (failure) => emit(currentState), // Revert to previous state on error
       (jobsResult) {
         final allJobs = List.of(currentState.jobs)..addAll(jobsResult.jobs);
+
+        debugPrint(
+            '📄 More jobs loaded: +${jobsResult.jobs.length} jobs, Total now: ${allJobs.length}, Page ${jobsResult.currentPage}/${jobsResult.lastPage}');
 
         emit(JobsLoaded(
           jobs: allJobs,
@@ -125,6 +142,100 @@ class JobsBloc extends Bloc<JobsEvent, JobsState> {
       refresh: true,
       search: event.query.isEmpty ? null : event.query,
     ));
+  }
+
+  Future<void> _onToggleSaveJob(
+    ToggleSaveJobEvent event,
+    Emitter<JobsState> emit,
+  ) async {
+    final currentState = state;
+
+    try {
+      final isSaved = await savedJobDataSource.toggleSaveJob(event.jobId);
+
+      debugPrint('💾 Job ${event.jobId} ${isSaved ? "saved" : "unsaved"}');
+
+      // Update the job in the current state
+      if (currentState is JobsLoaded) {
+        final updatedJobs = currentState.jobs.map((job) {
+          if (job.id == event.jobId) {
+            // Create a new job entity with updated isSaved status
+            return job.copyWith(isSaved: isSaved);
+          }
+          return job;
+        }).toList();
+
+        emit(currentState.copyWith(jobs: updatedJobs));
+      }
+
+      emit(JobSaveToggled(jobId: event.jobId, isSaved: isSaved));
+
+      // Restore the previous state if it was JobsLoaded
+      if (currentState is JobsLoaded) {
+        final updatedJobs = currentState.jobs.map((job) {
+          if (job.id == event.jobId) {
+            return job.copyWith(isSaved: isSaved);
+          }
+          return job;
+        }).toList();
+
+        emit(currentState.copyWith(jobs: updatedJobs));
+      }
+    } catch (e) {
+      debugPrint('❌ Error toggling save job: $e');
+
+      // Check if it's an authentication error
+      final errorMessage = e.toString().contains('401') ||
+              e.toString().toLowerCase().contains('unauthorized')
+          ? 'Please login to save jobs'
+          : 'Failed to save job. Please try again.';
+
+      emit(JobSaveError(errorMessage));
+
+      // Restore previous state
+      if (currentState is JobsLoaded) {
+        emit(currentState);
+      }
+    }
+  }
+
+  Future<void> _onApplyForJob(
+    ApplyForJobEvent event,
+    Emitter<JobsState> emit,
+  ) async {
+    final currentState = state;
+
+    try {
+      await jobApplicationDataSource.applyForJob(
+        event.jobSlug,
+        event.cvId,
+        event.coverLetter,
+      );
+
+      debugPrint('✅ Applied for job: ${event.jobSlug}');
+
+      emit(const JobApplicationSuccess('Application submitted successfully!'));
+
+      // Restore previous state
+      if (currentState is JobsLoaded) {
+        emit(currentState);
+      }
+    } catch (e) {
+      debugPrint('❌ Error applying for job: $e');
+
+      // Check if it's an authentication error
+      final errorMessage = e.toString().contains('401') ||
+              e.toString().toLowerCase().contains('unauthorized')
+          ? 'Please login to apply for jobs'
+          : 'Failed to submit application. Please try again.';
+
+      emit(JobApplicationError(errorMessage));
+
+      // Restore previous state
+      if (currentState is JobsLoaded) {
+        emit(currentState);
+      }
+    }
   }
 
   String _mapFailureToMessage(Failure failure) {

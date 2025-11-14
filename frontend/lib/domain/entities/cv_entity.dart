@@ -57,6 +57,30 @@ class CvEntity extends Equatable {
     required this.updatedAt,
   });
 
+  // Helper getters
+  int get experienceCount => workExperience?.length ?? 0;
+  int get educationCount => education?.length ?? 0;
+  int get skillsCount => skills?.length ?? 0;
+
+  String get formattedUpdatedDate {
+    final now = DateTime.now();
+    final difference = now.difference(updatedAt);
+
+    if (difference.inDays == 0) {
+      return 'Updated today';
+    } else if (difference.inDays == 1) {
+      return 'Updated yesterday';
+    } else if (difference.inDays < 7) {
+      return 'Updated ${difference.inDays} days ago';
+    } else if (difference.inDays < 30) {
+      return 'Updated ${(difference.inDays / 7).floor()} weeks ago';
+    } else if (difference.inDays < 365) {
+      return 'Updated ${(difference.inDays / 30).floor()} months ago';
+    } else {
+      return 'Updated ${updatedAt.day}/${updatedAt.month}/${updatedAt.year}';
+    }
+  }
+
   @override
   List<Object?> get props => [
         id,

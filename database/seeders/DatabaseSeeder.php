@@ -15,21 +15,30 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Create test users
-        $testUser = User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
+        // Create test users (or get existing)
+        $testUser = User::firstOrCreate(
+            ['email' => 'test@example.com'],
+            [
+                'name' => 'Test User',
+                'password' => bcrypt('password'),
+            ]
+        );
 
-        $john = User::factory()->create([
-            'name' => 'John Doe',
-            'email' => 'john@example.com',
-        ]);
+        $john = User::firstOrCreate(
+            ['email' => 'john@example.com'],
+            [
+                'name' => 'John Doe',
+                'password' => bcrypt('password'),
+            ]
+        );
 
-        $jane = User::factory()->create([
-            'name' => 'Jane Smith',
-            'email' => 'jane@example.com',
-        ]);
+        $jane = User::firstOrCreate(
+            ['email' => 'jane@example.com'],
+            [
+                'name' => 'Jane Smith',
+                'password' => bcrypt('password'),
+            ]
+        );
 
         // Create additional random users
         $randomUsers = User::factory(10)->create();
@@ -39,6 +48,7 @@ class DatabaseSeeder extends Seeder
         $companies = collect();
 
         foreach ($allUsers->take(8) as $user) {
+            /** @var User $user */
             $company = Company::factory()->create();
 
             // Attach user as primary owner
@@ -46,6 +56,7 @@ class DatabaseSeeder extends Seeder
 
             // Randomly add secondary owners
             if (fake()->boolean(30)) {
+                /** @var User $secondaryOwner */
                 $secondaryOwner = $allUsers->where('id', '!=', $user->id)->random();
                 $company->owners()->attach($secondaryOwner->id, ['is_primary' => false]);
             }
@@ -55,7 +66,13 @@ class DatabaseSeeder extends Seeder
 
         // Create jobs for each company
         foreach ($companies as $company) {
+            /** @var Company $company */
+            /** @var User|null $owner */
             $owner = $company->owners()->wherePivot('is_primary', true)->first();
+
+            if (!$owner) {
+                continue;
+            }
 
             // Create 3-8 jobs per company
             Job::factory()

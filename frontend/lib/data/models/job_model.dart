@@ -10,6 +10,26 @@ class JobModel extends JobEntity {
   // ignore: overridden_fields
   final CompanyBriefModel? company;
 
+  @JsonKey(fromJson: _salaryFromJson)
+  @override
+  // ignore: overridden_fields
+  final double? salaryMin;
+
+  @JsonKey(fromJson: _salaryFromJson)
+  @override
+  // ignore: overridden_fields
+  final double? salaryMax;
+
+  @JsonKey(fromJson: _boolFromJson)
+  @override
+  // ignore: overridden_fields
+  final bool isActive;
+
+  @JsonKey(fromJson: _boolFromJson)
+  @override
+  // ignore: overridden_fields
+  final bool? isApplied;
+
   const JobModel({
     required super.id,
     super.companyId,
@@ -26,20 +46,27 @@ class JobModel extends JobEntity {
     super.experienceLevel,
     super.category,
     super.skills,
-    @JsonKey(fromJson: _salaryFromJson) super.salaryMin,
-    @JsonKey(fromJson: _salaryFromJson) super.salaryMax,
+    this.salaryMin,
+    this.salaryMax,
     super.salaryCurrency,
     super.salaryPeriod,
     required super.isRemote,
     required super.isFeatured,
-    required super.isActive,
+    this.isActive = true, // Default to true since backend filters by active
     super.isSaved,
+    this.isApplied,
     super.expiresAt,
     super.publishedAt,
     required super.createdAt,
     required super.updatedAt,
     this.company,
-  }) : super(company: company);
+  }) : super(
+          company: company,
+          salaryMin: salaryMin,
+          salaryMax: salaryMax,
+          isActive: isActive,
+          isApplied: isApplied,
+        );
 
   factory JobModel.fromJson(Map<String, dynamic> json) =>
       _$JobModelFromJson(json);
@@ -62,21 +89,46 @@ class JobModel extends JobEntity {
     }
     return null;
   }
+
+  static bool _boolFromJson(dynamic value) {
+    if (value == null) return true; // Default to true for missing is_active
+    if (value is bool) return value;
+    if (value is int) return value == 1;
+    if (value is String) return value.toLowerCase() == 'true' || value == '1';
+    return true;
+  }
 }
 
 @JsonSerializable(fieldRename: FieldRename.snake)
 class CompanyBriefModel extends CompanyBriefEntity {
+  @JsonKey(fromJson: _logoFromJson)
+  @override
+  // ignore: overridden_fields
+  final String? logo;
+
   const CompanyBriefModel({
     required super.id,
     required super.name,
     required super.slug,
-    super.logo,
+    this.logo,
     super.industry,
     super.companySize,
-  });
+  }) : super(logo: logo);
 
   factory CompanyBriefModel.fromJson(Map<String, dynamic> json) =>
       _$CompanyBriefModelFromJson(json);
 
   Map<String, dynamic> toJson() => _$CompanyBriefModelToJson(this);
+
+  static String? _logoFromJson(dynamic value) {
+    if (value == null) return null;
+    if (value is String) return value;
+    if (value is Map<String, dynamic>) {
+      // Try to extract URL from the logo object
+      return value['url'] as String? ??
+          value['path'] as String? ??
+          value['logo_path'] as String?;
+    }
+    return null;
+  }
 }

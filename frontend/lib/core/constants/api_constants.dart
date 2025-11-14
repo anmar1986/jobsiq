@@ -1,7 +1,9 @@
 class ApiConstants {
   // Base URL - Update this to match your environment
-  // Use 10.0.2.2 for Android emulator to access host machine's localhost
-  // Use localhost for iOS simulator or real device with local network IP
+  // Android Emulator: Use 10.0.2.2 to access host machine's localhost
+  // iOS Simulator: Use localhost or 127.0.0.1
+  // Real Device: Use your computer's local network IP (e.g., 192.168.1.100)
+  // Web: Use localhost or 127.0.0.1
   static const String baseUrl = 'http://10.0.2.2:8000';
   static const String apiPrefix = '/api';
 

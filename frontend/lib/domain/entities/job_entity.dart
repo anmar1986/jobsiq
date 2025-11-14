@@ -24,6 +24,7 @@ class JobEntity extends Equatable {
   final bool isFeatured;
   final bool isActive;
   final bool? isSaved;
+  final bool? isApplied;
   final DateTime? expiresAt;
   final DateTime? publishedAt;
   final DateTime createdAt;
@@ -54,6 +55,7 @@ class JobEntity extends Equatable {
     required this.isFeatured,
     required this.isActive,
     this.isSaved,
+    this.isApplied,
     this.expiresAt,
     this.publishedAt,
     required this.createdAt,
@@ -71,6 +73,43 @@ class JobEntity extends Equatable {
     } else {
       return 'Up to $currency ${salaryMax!.toStringAsFixed(0)}';
     }
+  }
+
+  JobEntity copyWith({
+    bool? isSaved,
+    bool? isApplied,
+  }) {
+    return JobEntity(
+      id: id,
+      companyId: companyId,
+      userId: userId,
+      title: title,
+      slug: slug,
+      description: description,
+      requirements: requirements,
+      benefits: benefits,
+      location: location,
+      city: city,
+      country: country,
+      employmentType: employmentType,
+      experienceLevel: experienceLevel,
+      category: category,
+      skills: skills,
+      salaryMin: salaryMin,
+      salaryMax: salaryMax,
+      salaryCurrency: salaryCurrency,
+      salaryPeriod: salaryPeriod,
+      isRemote: isRemote,
+      isFeatured: isFeatured,
+      isActive: isActive,
+      isSaved: isSaved ?? this.isSaved,
+      isApplied: isApplied ?? this.isApplied,
+      expiresAt: expiresAt,
+      publishedAt: publishedAt,
+      createdAt: createdAt,
+      updatedAt: updatedAt,
+      company: company,
+    );
   }
 
   @override
@@ -98,6 +137,7 @@ class JobEntity extends Equatable {
         isFeatured,
         isActive,
         isSaved,
+        isApplied,
         expiresAt,
         publishedAt,
         createdAt,

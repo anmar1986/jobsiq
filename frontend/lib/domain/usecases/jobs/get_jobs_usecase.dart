@@ -43,7 +43,7 @@ class GetJobsParams {
 
   GetJobsParams({
     this.page = 1,
-    this.perPage = 15,
+    this.perPage = 10,
     this.search,
     this.location,
     this.employmentTypes,

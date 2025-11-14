@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import '../../../config/di/injection.dart';
+import '../../../config/routes/app_router.dart';
 import '../../bloc/jobs/jobs_bloc.dart';
 import '../../bloc/jobs/jobs_event.dart';
 import '../../bloc/jobs/jobs_state.dart';
@@ -45,7 +47,13 @@ class _JobsPageContentState extends State<_JobsPageContent> {
 
   void _onScroll() {
     if (_isBottom) {
-      context.read<JobsBloc>().add(const LoadMoreJobsEvent());
+      final state = context.read<JobsBloc>().state;
+      // Only load more if we're in JobsLoaded state and have more jobs
+      if (state is JobsLoaded && state.hasMore) {
+        debugPrint(
+            '🔄 Loading more jobs... (Current: ${state.jobs.length}, Page: ${state.currentPage}/${state.lastPage})');
+        context.read<JobsBloc>().add(const LoadMoreJobsEvent());
+      }
     }
   }
 
@@ -53,7 +61,10 @@ class _JobsPageContentState extends State<_JobsPageContent> {
     if (!_scrollController.hasClients) return false;
     final maxScroll = _scrollController.position.maxScrollExtent;
     final currentScroll = _scrollController.offset;
-    return currentScroll >= (maxScroll * 0.9);
+    // Trigger load more when user is 80% down the list (was 90%)
+    // Also check if we're near the end (within 200 pixels)
+    return currentScroll >= (maxScroll * 0.8) ||
+        (maxScroll - currentScroll) <= 200;
   }
 
   void _onSearch(String query) {
@@ -80,12 +91,31 @@ class _JobsPageContentState extends State<_JobsPageContent> {
               SliverAppBar(
                 floating: true,
                 snap: true,
-                title: Text(
-                  'Find Jobs',
-                  style: TextStyle(
-                    fontSize: 24.sp,
-                    fontWeight: FontWeight.bold,
-                  ),
+                title: BlocBuilder<JobsBloc, JobsState>(
+                  builder: (context, state) {
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          'Find Jobs',
+                          style: TextStyle(
+                            fontSize: 24.sp,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        if (state is JobsLoaded && state.total > 0)
+                          Text(
+                            '${state.total} jobs available',
+                            style: TextStyle(
+                              fontSize: 12.sp,
+                              fontWeight: FontWeight.normal,
+                              color: Colors.grey[600],
+                            ),
+                          ),
+                      ],
+                    );
+                  },
                 ),
                 actions: [
                   IconButton(
@@ -220,10 +250,16 @@ class _JobsPageContentState extends State<_JobsPageContent> {
                             return JobCard(
                               job: job,
                               onTap: () {
-                                // TODO: Navigate to job details
+                                context.push(
+                                  AppRouter.jobDetails
+                                      .replaceAll(':slug', job.slug),
+                                  extra: job,
+                                );
                               },
                               onSaveToggle: () {
-                                // TODO: Toggle save job
+                                context
+                                    .read<JobsBloc>()
+                                    .add(ToggleSaveJobEvent(job.id));
                               },
                             );
                           },
@@ -249,10 +285,16 @@ class _JobsPageContentState extends State<_JobsPageContent> {
                             return JobCard(
                               job: job,
                               onTap: () {
-                                // TODO: Navigate to job details
+                                context.push(
+                                  AppRouter.jobDetails
+                                      .replaceAll(':slug', job.slug),
+                                  extra: job,
+                                );
                               },
                               onSaveToggle: () {
-                                // TODO: Toggle save job
+                                context
+                                    .read<JobsBloc>()
+                                    .add(ToggleSaveJobEvent(job.id));
                               },
                             );
                           },

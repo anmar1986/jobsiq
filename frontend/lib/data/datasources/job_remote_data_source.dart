@@ -1,3 +1,7 @@
+import 'dart:convert';
+
+import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import '../../core/network/dio_client.dart';
 import '../../core/error/exceptions.dart';
 import '../../core/constants/api_constants.dart';
@@ -38,7 +42,7 @@ class JobRemoteDataSourceImpl implements JobRemoteDataSource {
   @override
   Future<JobsResponse> getJobs({
     int page = 1,
-    int perPage = 15,
+    int perPage = 10,
     String? search,
     String? location,
     List<String>? employmentTypes,
@@ -90,19 +94,51 @@ class JobRemoteDataSourceImpl implements JobRemoteDataSource {
       final response = await client.get(
         ApiConstants.jobs,
         queryParameters: queryParameters,
+        options: Options(
+          responseType: ResponseType.plain,
+          receiveTimeout: const Duration(seconds: 30),
+          // Add headers to prevent compression issues
+          headers: {
+            'Accept-Encoding': 'identity',
+          },
+        ),
       );
 
       if (response.statusCode == 200) {
-        final data = response.data;
-        if (data['success'] == true) {
-          return JobsResponse.fromJson(data['data']);
-        } else {
-          throw ServerException(data['message'] ?? 'Failed to fetch jobs');
+        try {
+          // Parse the raw response manually
+          final rawData = response.data as String;
+
+          // Debug: Check if response is complete
+          if (!rawData.endsWith('}')) {
+            debugPrint(
+                '⚠️ Warning: Response appears truncated. Length: ${rawData.length}');
+            debugPrint(
+                '⚠️ Last 100 chars: ${rawData.substring(rawData.length > 100 ? rawData.length - 100 : 0)}');
+          }
+
+          final data = jsonDecode(rawData);
+          if (data['success'] == true) {
+            return JobsResponse.fromJson(data['data']);
+          } else {
+            throw ServerException(data['message'] ?? 'Failed to fetch jobs');
+          }
+        } catch (e) {
+          debugPrint('❌ JSON Parse Error: $e');
+          debugPrint('📏 Response length: ${(response.data as String).length}');
+          rethrow;
         }
       } else {
         throw ServerException('Server error: ${response.statusCode}');
       }
-    } catch (e) {
+    } on ServerException {
+      rethrow;
+    } on NetworkException {
+      rethrow;
+    } catch (e, stackTrace) {
+      // Log detailed error for debugging
+      debugPrint('❌ Error fetching jobs: $e');
+      debugPrint('📍 Stack trace: $stackTrace');
       throw ServerException('Failed to fetch jobs: $e');
     }
   }
@@ -121,7 +157,8 @@ class JobRemoteDataSourceImpl implements JobRemoteDataSource {
           final List<dynamic> jobsJson = data['data'];
           return jobsJson.map((json) => JobModel.fromJson(json)).toList();
         } else {
-          throw ServerException(data['message'] ?? 'Failed to fetch featured jobs');
+          throw ServerException(
+              data['message'] ?? 'Failed to fetch featured jobs');
         }
       } else {
         throw ServerException('Server error: ${response.statusCode}');
@@ -195,6 +232,13 @@ class JobsResponse {
   });
 
   factory JobsResponse.fromJson(Map<String, dynamic> json) {
+    final seedValue = json['seed'];
+    int? parsedSeed;
+    if (seedValue != null) {
+      parsedSeed =
+          seedValue is int ? seedValue : int.tryParse(seedValue.toString());
+    }
+
     return JobsResponse(
       data: (json['data'] as List<dynamic>)
           .map((e) => JobModel.fromJson(e as Map<String, dynamic>))
@@ -203,7 +247,7 @@ class JobsResponse {
       lastPage: json['last_page'] as int,
       perPage: json['per_page'] as int,
       total: json['total'] as int,
-      seed: json['seed'] as int?,
+      seed: parsedSeed,
     );
   }
 

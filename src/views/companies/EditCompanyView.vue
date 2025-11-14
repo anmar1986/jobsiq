@@ -84,19 +84,31 @@ const handleSubmit = async (formData: FormData) => {
   
   submitting.value = true
   try {
+    console.log('Submitting company update for ID:', company.value.id)
     const response = await companyService.updateCompany(company.value.id, formData)
+    console.log('Update response received:', response)
     
     if (response.success && response.data) {
+      console.log('Update successful, showing toast and redirecting')
       toast.success('Company updated successfully!')
       // Update the local company data with the response
       company.value = response.data
       // Redirect back to the company profile using the updated slug
       router.push({ name: 'view-my-company', params: { slug: response.data.slug } })
+    } else {
+      console.log('Response not successful or no data:', response)
+      toast.error(response.message || 'Failed to update company')
     }
   } catch (error) {
     console.error('Failed to update company:', error)
-    const err = error as { response?: { data?: { message?: string } } }
-    toast.error(err.response?.data?.message || 'Failed to update company')
+    const err = error as { response?: { data?: { message?: string, errors?: Record<string, string[]> } } }
+    // Check for validation errors
+    if (err.response?.data?.errors) {
+      const firstError = Object.values(err.response.data.errors)[0]?.[0]
+      toast.error(firstError || 'Failed to update company')
+    } else {
+      toast.error(err.response?.data?.message || 'Failed to update company')
+    }
   } finally {
     submitting.value = false
   }

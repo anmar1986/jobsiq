@@ -26,6 +26,27 @@ abstract class AuthRemoteDataSource {
   Future<void> logoutAll();
 
   Future<UserModel> getCurrentUser();
+
+  Future<UserModel> updateProfile({
+    String? name,
+    String? email,
+    String? profilePhoto,
+    String? headline,
+    String? gender,
+    String? dateOfBirth,
+    String? nationality,
+    String? city,
+    String? country,
+    String? address,
+    String? phoneNumber,
+    String? linkedinUrl,
+  });
+
+  Future<void> changePassword({
+    required String currentPassword,
+    required String password,
+    required String passwordConfirmation,
+  });
 }
 
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
@@ -142,6 +163,81 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       } else {
         throw ServerException(
           response.data['message'] ?? 'Failed to get user',
+          statusCode: response.statusCode,
+        );
+      }
+    } on DioException catch (e) {
+      throw _handleDioException(e);
+    }
+  }
+
+  @override
+  Future<UserModel> updateProfile({
+    String? name,
+    String? email,
+    String? profilePhoto,
+    String? headline,
+    String? gender,
+    String? dateOfBirth,
+    String? nationality,
+    String? city,
+    String? country,
+    String? address,
+    String? phoneNumber,
+    String? linkedinUrl,
+  }) async {
+    try {
+      final data = <String, dynamic>{};
+      if (name != null) data['name'] = name;
+      if (email != null) data['email'] = email;
+      if (profilePhoto != null) data['profile_photo'] = profilePhoto;
+      if (headline != null) data['headline'] = headline;
+      if (gender != null) data['gender'] = gender;
+      if (dateOfBirth != null) data['date_of_birth'] = dateOfBirth;
+      if (nationality != null) data['nationality'] = nationality;
+      if (city != null) data['city'] = city;
+      if (country != null) data['country'] = country;
+      if (address != null) data['address'] = address;
+      if (phoneNumber != null) data['phone_number'] = phoneNumber;
+      if (linkedinUrl != null) data['linkedin_url'] = linkedinUrl;
+
+      final response = await client.put(
+        ApiConstants.profile,
+        data: data,
+      );
+
+      if (response.statusCode == 200) {
+        return UserModel.fromJson(response.data['data']);
+      } else {
+        throw ServerException(
+          response.data['message'] ?? 'Failed to update profile',
+          statusCode: response.statusCode,
+        );
+      }
+    } on DioException catch (e) {
+      throw _handleDioException(e);
+    }
+  }
+
+  @override
+  Future<void> changePassword({
+    required String currentPassword,
+    required String password,
+    required String passwordConfirmation,
+  }) async {
+    try {
+      final response = await client.put(
+        ApiConstants.changePassword,
+        data: {
+          'current_password': currentPassword,
+          'password': password,
+          'password_confirmation': passwordConfirmation,
+        },
+      );
+
+      if (response.statusCode != 200) {
+        throw ServerException(
+          response.data['message'] ?? 'Failed to change password',
           statusCode: response.statusCode,
         );
       }

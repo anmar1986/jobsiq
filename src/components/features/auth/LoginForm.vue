@@ -75,9 +75,9 @@
             />
             <span class="text-sm text-gray-700">Remember me</span>
           </label>
-          <a href="#" class="text-sm text-primary-600 hover:text-primary-700 font-medium">
+          <router-link to="/forgot-password" class="text-sm text-primary-600 hover:text-primary-700 font-medium">
             Forgot password?
-          </a>
+          </router-link>
         </div>
       </div>
 
