@@ -29,6 +29,10 @@ class DioClient {
       receiveTimeout: ApiConstants.receiveTimeout,
       responseType: ResponseType.json,
       receiveDataWhenStatusError: true,
+      validateStatus: (status) {
+        // Accept all 2xx status codes as successful
+        return status != null && status >= 200 && status < 300;
+      },
       headers: {
         'Content-Type': ApiConstants.contentType,
         'Accept': ApiConstants.accept,
@@ -92,6 +96,11 @@ class DioClient {
       'ERROR[${err.response?.statusCode}] => PATH: ${err.requestOptions.path}',
       error: err,
     );
+
+    // Log validation errors if present
+    if (err.response?.statusCode == 422 && err.response?.data != null) {
+      _logger.e('Validation errors: ${err.response?.data}');
+    }
 
     // Handle 401 Unauthorized
     if (err.response?.statusCode == 401) {

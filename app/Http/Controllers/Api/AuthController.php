@@ -69,6 +69,9 @@ class AuthController extends Controller
             // Create token
             $token = $user->createToken('auth_token')->plainTextToken;
 
+            // For mobile app, redirect to /main, for web to /dashboard
+            $redirectTo = '/main';
+
             return response()->json([
                 'success' => true,
                 'message' => 'User registered successfully',
@@ -76,6 +79,7 @@ class AuthController extends Controller
                     'user' => $user,
                     'token' => $token,
                     'token_type' => 'Bearer',
+                    'redirect_to' => $redirectTo,
                 ],
             ], 201);
         } catch (\Exception $e) {
@@ -116,8 +120,8 @@ class AuthController extends Controller
         // Create new token
         $token = $user->createToken('auth_token')->plainTextToken;
 
-        // Determine redirect path based on user role
-        $redirectTo = $user->is_admin ? '/admin' : '/dashboard';
+        // For mobile app, redirect to /main
+        $redirectTo = '/main';
 
         return response()->json([
             'success' => true,

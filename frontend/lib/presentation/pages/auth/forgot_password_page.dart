@@ -35,9 +35,6 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
         _isLoading = false;
         _emailSent = true;
       });
-
-      // TODO: Implement actual forgot password API call
-      // For now, show success message
     }
   }
 
