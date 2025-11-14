@@ -47,10 +47,10 @@ class _RegisterPageState extends State<RegisterPage> {
               password: _passwordController.text,
               passwordConfirmation: _confirmPasswordController.text,
               userType: _userType,
-              companyName: _userType == 'employer'
+              companyName: _userType == 'company_owner'
                   ? _companyNameController.text.trim()
                   : null,
-              companyEmail: _userType == 'employer'
+              companyEmail: _userType == 'company_owner'
                   ? _companyEmailController.text.trim()
                   : null,
             ),

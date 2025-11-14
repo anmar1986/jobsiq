@@ -260,14 +260,15 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         // Convert errors from Map<String, dynamic> to Map<String, List<String>>
         Map<String, List<String>>? errors;
         if (rawErrors != null && rawErrors is Map) {
-          errors = {};
+          final errorMap = <String, List<String>>{};
           rawErrors.forEach((key, value) {
             if (value is List) {
-              errors![key] = value.map((e) => e.toString()).toList();
+              errorMap[key] = value.map((e) => e.toString()).toList();
             } else if (value is String) {
-              errors![key] = [value];
+              errorMap[key] = [value];
             }
           });
+          errors = errorMap;
         }
 
         if (statusCode == 401) {
