@@ -42,7 +42,7 @@ This directory contains the CI/CD pipelines for the JobsIQ application, which in
 
 **Jobs:**
 - **php-lint**: Runs Laravel Pint for PHP code style
-- **frontend-lint**: Runs ESLint and TypeScript checks for Vue.js
+- **web-frontend-lint**: Runs ESLint and TypeScript checks for Vue.js
 
 ---
 
