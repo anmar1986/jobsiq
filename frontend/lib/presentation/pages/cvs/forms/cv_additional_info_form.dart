@@ -157,7 +157,6 @@ class _CvAdditionalInfoFormState extends State<CvAdditionalInfoForm> {
                       color: AppColors.textSecondary,
                     ),
                   ),
-                  activeThumbColor: AppColors.primary,
                   secondary: Icon(
                     _isPublic ? Icons.public : Icons.lock,
                     color: _isPublic ? AppColors.primary : Colors.grey,
@@ -188,7 +187,6 @@ class _CvAdditionalInfoFormState extends State<CvAdditionalInfoForm> {
                       color: AppColors.textSecondary,
                     ),
                   ),
-                  activeThumbColor: AppColors.primary,
                   secondary: Icon(
                     _isPrimary ? Icons.star : Icons.star_border,
                     color: _isPrimary ? AppColors.primary : Colors.grey,

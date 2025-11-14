@@ -152,6 +152,26 @@ class AppTheme {
       ),
       behavior: SnackBarBehavior.floating,
     ),
+
+    // Switch Theme
+    switchTheme: SwitchThemeData(
+      thumbColor: WidgetStateProperty.resolveWith<Color>(
+        (Set<WidgetState> states) {
+          if (states.contains(WidgetState.selected)) {
+            return AppColors.primary;
+          }
+          return AppColors.grey400;
+        },
+      ),
+      trackColor: WidgetStateProperty.resolveWith<Color>(
+        (Set<WidgetState> states) {
+          if (states.contains(WidgetState.selected)) {
+            return AppColors.primary.withValues(alpha: 0.5);
+          }
+          return AppColors.grey300;
+        },
+      ),
+    ),
   );
 
   static ThemeData darkTheme = ThemeData(
@@ -302,6 +322,26 @@ class AppTheme {
         borderRadius: BorderRadius.circular(8),
       ),
       behavior: SnackBarBehavior.floating,
+    ),
+
+    // Switch Theme
+    switchTheme: SwitchThemeData(
+      thumbColor: WidgetStateProperty.resolveWith<Color>(
+        (Set<WidgetState> states) {
+          if (states.contains(WidgetState.selected)) {
+            return AppColors.primary;
+          }
+          return AppColors.grey600;
+        },
+      ),
+      trackColor: WidgetStateProperty.resolveWith<Color>(
+        (Set<WidgetState> states) {
+          if (states.contains(WidgetState.selected)) {
+            return AppColors.primary.withValues(alpha: 0.5);
+          }
+          return AppColors.grey700;
+        },
+      ),
     ),
   );
 }

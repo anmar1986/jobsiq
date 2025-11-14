@@ -87,7 +87,6 @@ class _MyApplicationsPageState extends State<MyApplicationsPage> {
               padding: EdgeInsets.all(16.w),
               color: Colors.grey.shade50,
               child: DropdownButtonFormField<String>(
-                initialValue: _selectedStatus ?? '',
                 decoration: const InputDecoration(
                   labelText: 'Filter by Status',
                   prefixIcon: Icon(Icons.filter_list_rounded),
@@ -98,6 +97,17 @@ class _MyApplicationsPageState extends State<MyApplicationsPage> {
                     child: Text(option['label']!),
                   );
                 }).toList(),
+                selectedItemBuilder: (BuildContext context) {
+                  return _statusOptions.map<Widget>((option) {
+                    return Text(option['label']!);
+                  }).toList();
+                },
+                hint: Text(
+                  _statusOptions.firstWhere(
+                    (opt) => opt['value'] == (_selectedStatus ?? ''),
+                    orElse: () => _statusOptions.first,
+                  )['label']!,
+                ),
                 onChanged: (value) {
                   setState(() {
                     _selectedStatus = value == '' ? null : value;

@@ -289,6 +289,10 @@ class _CvSkillsLanguagesFormState extends State<CvSkillsLanguagesForm> {
 
   Widget _buildLanguageCard(int index) {
     final language = _languages[index];
+    final currentProficiency =
+        _proficiencyLevels.contains(language['proficiency'])
+            ? language['proficiency'] as String
+            : _proficiencyLevels.first;
 
     return Card(
       margin: EdgeInsets.only(bottom: 12.h),
@@ -319,7 +323,6 @@ class _CvSkillsLanguagesFormState extends State<CvSkillsLanguagesForm> {
                   ),
                   SizedBox(height: 12.h),
                   DropdownButtonFormField<String>(
-                    initialValue: language['proficiency'],
                     decoration: InputDecoration(
                       labelText: 'Proficiency Level',
                       prefixIcon: Icon(Icons.bar_chart, size: 20.sp),
@@ -337,6 +340,12 @@ class _CvSkillsLanguagesFormState extends State<CvSkillsLanguagesForm> {
                               child: Text(level),
                             ))
                         .toList(),
+                    selectedItemBuilder: (BuildContext context) {
+                      return _proficiencyLevels.map<Widget>((String level) {
+                        return Text(level);
+                      }).toList();
+                    },
+                    hint: Text(currentProficiency),
                     onChanged: (value) {
                       if (value != null) {
                         _updateLanguage(index, 'proficiency', value);

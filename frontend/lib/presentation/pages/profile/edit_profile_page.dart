@@ -196,7 +196,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   ),
                   SizedBox(height: 16.h),
                   DropdownButtonFormField<String>(
-                    initialValue: _selectedGender,
                     decoration: const InputDecoration(
                       labelText: 'Gender (optional)',
                       prefixIcon: Icon(Icons.person),
@@ -206,6 +205,23 @@ class _EditProfilePageState extends State<EditProfilePage> {
                       DropdownMenuItem(value: 'female', child: Text('Female')),
                       DropdownMenuItem(value: 'other', child: Text('Other')),
                     ],
+                    selectedItemBuilder: (BuildContext context) {
+                      return ['male', 'female', 'other']
+                          .map<Widget>((String value) {
+                        return Text(value == 'male'
+                            ? 'Male'
+                            : value == 'female'
+                                ? 'Female'
+                                : 'Other');
+                      }).toList();
+                    },
+                    hint: Text(_selectedGender != null
+                        ? (_selectedGender == 'male'
+                            ? 'Male'
+                            : _selectedGender == 'female'
+                                ? 'Female'
+                                : 'Other')
+                        : 'Select gender'),
                     onChanged: isLoading
                         ? null
                         : (value) {
