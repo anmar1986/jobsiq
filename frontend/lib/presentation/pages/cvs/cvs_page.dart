@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../config/di/injection.dart';
 import '../../../config/routes/app_router.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/services/cv_pdf_generator.dart';
 import '../../../domain/entities/cv_entity.dart';
 import '../../bloc/cvs/cvs_bloc.dart';
 import '../../bloc/cvs/cvs_event.dart';
@@ -333,9 +334,7 @@ class CvsPage extends StatelessWidget {
   void _handleMenuAction(BuildContext context, String action, CvEntity cv) {
     switch (action) {
       case 'edit':
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Edit CV feature coming soon')),
-        );
+        context.push(AppRouter.editCv, extra: cv);
         break;
       case 'primary':
         context.read<CvsBloc>().add(SetPrimaryCvEvent(cv.id));
@@ -344,14 +343,10 @@ class CvsPage extends StatelessWidget {
         );
         break;
       case 'download':
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Download PDF feature coming soon')),
-        );
+        _downloadPdf(context, cv);
         break;
       case 'share':
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Share CV feature coming soon')),
-        );
+        _sharePdf(context, cv);
         break;
       case 'delete':
         _showDeleteConfirmation(context, cv);
@@ -405,5 +400,102 @@ class CvsPage extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  Future<void> _downloadPdf(BuildContext context, CvEntity cv) async {
+    try {
+      // Show loading indicator
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Row(
+            children: [
+              SizedBox(
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                ),
+              ),
+              SizedBox(width: 16),
+              Text('Generating PDF...'),
+            ],
+          ),
+          duration: Duration(seconds: 3),
+        ),
+      );
+
+      final file = await CvPdfGenerator.downloadPdf(cv);
+
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).clearSnackBars();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('CV downloaded to ${file.path}'),
+            backgroundColor: Colors.green,
+            action: SnackBarAction(
+              label: 'Open',
+              textColor: Colors.white,
+              onPressed: () {
+                // You can add open file functionality here if needed
+              },
+            ),
+          ),
+        );
+      }
+    } catch (e) {
+      debugPrint('❌ Error downloading PDF: $e');
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).clearSnackBars();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to download PDF: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
+  Future<void> _sharePdf(BuildContext context, CvEntity cv) async {
+    try {
+      // Show loading indicator
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Row(
+            children: [
+              SizedBox(
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                ),
+              ),
+              SizedBox(width: 16),
+              Text('Preparing PDF to share...'),
+            ],
+          ),
+          duration: Duration(seconds: 2),
+        ),
+      );
+
+      await CvPdfGenerator.sharePdf(cv);
+
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).clearSnackBars();
+      }
+    } catch (e) {
+      debugPrint('❌ Error sharing PDF: $e');
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).clearSnackBars();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to share PDF: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
   }
 }

@@ -42,7 +42,7 @@ class JobRemoteDataSourceImpl implements JobRemoteDataSource {
   @override
   Future<JobsResponse> getJobs({
     int page = 1,
-    int perPage = 10,
+    int perPage = 15, // Reduced from 20 to avoid truncation issues
     String? search,
     String? location,
     List<String>? employmentTypes,
@@ -96,11 +96,16 @@ class JobRemoteDataSourceImpl implements JobRemoteDataSource {
         queryParameters: queryParameters,
         options: Options(
           responseType: ResponseType.plain,
-          receiveTimeout: const Duration(seconds: 30),
+          receiveTimeout: const Duration(seconds: 45), // Increased timeout
+          sendTimeout: const Duration(seconds: 30),
           // Add headers to prevent compression issues
           headers: {
             'Accept-Encoding': 'identity',
+            'Accept': 'application/json',
           },
+          // Increase receive data buffer
+          receiveDataWhenStatusError: true,
+          validateStatus: (status) => status != null && status < 500,
         ),
       );
 
@@ -114,7 +119,27 @@ class JobRemoteDataSourceImpl implements JobRemoteDataSource {
             debugPrint(
                 '⚠️ Warning: Response appears truncated. Length: ${rawData.length}');
             debugPrint(
-                '⚠️ Last 100 chars: ${rawData.substring(rawData.length > 100 ? rawData.length - 100 : 0)}');
+                '⚠️ Last 200 chars: ${rawData.substring(rawData.length > 200 ? rawData.length - 200 : 0)}');
+
+            // Try to salvage partial JSON by finding the last complete object
+            final lastBraceIndex = rawData.lastIndexOf('}');
+            if (lastBraceIndex > 0) {
+              debugPrint(
+                  '⚠️ Attempting to parse truncated JSON up to last complete brace');
+              final truncatedData = rawData.substring(0, lastBraceIndex + 1);
+              try {
+                final data = jsonDecode(truncatedData);
+                if (data['success'] == true && data['data'] != null) {
+                  debugPrint('✅ Successfully parsed truncated response');
+                  return JobsResponse.fromJson(data['data']);
+                }
+              } catch (e) {
+                debugPrint('❌ Failed to parse truncated JSON: $e');
+              }
+            }
+
+            throw const FormatException(
+                'Response truncated - incomplete JSON received');
           }
 
           final data = jsonDecode(rawData);
@@ -123,8 +148,14 @@ class JobRemoteDataSourceImpl implements JobRemoteDataSource {
           } else {
             throw ServerException(data['message'] ?? 'Failed to fetch jobs');
           }
-        } catch (e) {
+        } on FormatException catch (e) {
           debugPrint('❌ JSON Parse Error: $e');
+          debugPrint('📏 Response length: ${(response.data as String).length}');
+          throw ServerException(
+            'Failed to parse jobs data. Try reducing results or check network connection.',
+          );
+        } catch (e) {
+          debugPrint('❌ Error processing response: $e');
           debugPrint('📏 Response length: ${(response.data as String).length}');
           rethrow;
         }

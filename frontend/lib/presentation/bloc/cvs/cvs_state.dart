@@ -61,3 +61,16 @@ class CvSettingPrimary extends CvsState {
   @override
   List<Object?> get props => [cvId, cvs];
 }
+
+class CvUpdating extends CvsState {
+  const CvUpdating();
+}
+
+class CvUpdated extends CvsState {
+  final CvEntity cv;
+
+  const CvUpdated(this.cv);
+
+  @override
+  List<Object?> get props => [cv];
+}

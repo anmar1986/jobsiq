@@ -10,6 +10,7 @@ class CvsBloc extends Bloc<CvsEvent, CvsState> {
     on<LoadCvsEvent>(_onLoadCvs);
     on<DeleteCvEvent>(_onDeleteCv);
     on<SetPrimaryCvEvent>(_onSetPrimaryCv);
+    on<UpdateCvEvent>(_onUpdateCv);
   }
 
   Future<void> _onLoadCvs(LoadCvsEvent event, Emitter<CvsState> emit) async {
@@ -80,6 +81,23 @@ class CvsBloc extends Bloc<CvsEvent, CvsState> {
 
       // Reload CVs after error
       add(const LoadCvsEvent());
+    }
+  }
+
+  Future<void> _onUpdateCv(UpdateCvEvent event, Emitter<CvsState> emit) async {
+    emit(const CvUpdating());
+
+    try {
+      final updatedCv = await cvDataSource.updateCv(event.cvId, event.cvData);
+      emit(CvUpdated(updatedCv));
+
+      // Reload CVs to reflect the update
+      add(const LoadCvsEvent());
+    } catch (e) {
+      final errorMessage = e.toString().contains('401')
+          ? 'Please login to update CV'
+          : 'Failed to update CV. Please try again.';
+      emit(CvsError(errorMessage));
     }
   }
 }

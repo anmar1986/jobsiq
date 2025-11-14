@@ -12,6 +12,7 @@ import '../../data/datasources/job_remote_data_source.dart';
 import '../../data/datasources/saved_job_remote_data_source.dart';
 import '../../data/datasources/job_application_remote_data_source.dart';
 import '../../data/datasources/cv_remote_data_source.dart';
+import '../../data/datasources/company_remote_data_source.dart';
 import '../../data/repositories/auth_repository_impl.dart';
 import '../../data/repositories/job_repository_impl.dart';
 import '../../domain/repositories/auth_repository.dart';
@@ -29,6 +30,7 @@ import '../../presentation/bloc/auth/auth_bloc.dart';
 import '../../presentation/bloc/jobs/jobs_bloc.dart';
 import '../../presentation/bloc/saved_jobs/saved_jobs_bloc.dart';
 import '../../presentation/bloc/cvs/cvs_bloc.dart';
+import '../../presentation/bloc/companies/companies_bloc.dart';
 
 final sl = GetIt.instance;
 
@@ -80,6 +82,10 @@ Future<void> initializeDependencies() async {
 
   sl.registerLazySingleton<CvRemoteDataSource>(
     () => CvRemoteDataSourceImpl(client: sl()),
+  );
+
+  sl.registerLazySingleton<CompanyRemoteDataSource>(
+    () => CompanyRemoteDataSourceImpl(client: sl()),
   );
 
   // Repositories
@@ -142,6 +148,12 @@ Future<void> initializeDependencies() async {
   sl.registerFactory(
     () => CvsBloc(
       cvDataSource: sl(),
+    ),
+  );
+
+  sl.registerFactory(
+    () => CompaniesBloc(
+      companyDataSource: sl(),
     ),
   );
 }

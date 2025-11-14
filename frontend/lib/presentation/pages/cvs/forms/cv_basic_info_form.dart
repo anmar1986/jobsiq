@@ -1,6 +1,8 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:image_cropper/image_cropper.dart';
 import '../../../../core/theme/app_colors.dart';
 
 class CvBasicInfoForm extends StatefulWidget {
@@ -30,6 +32,9 @@ class _CvBasicInfoFormState extends State<CvBasicInfoForm> {
   late TextEditingController _websiteController;
   late TextEditingController _linkedinController;
   late TextEditingController _githubController;
+
+  File? _selectedImage;
+  final ImagePicker _imagePicker = ImagePicker();
 
   @override
   void initState() {
@@ -335,19 +340,189 @@ class _CvBasicInfoFormState extends State<CvBasicInfoForm> {
     );
   }
 
+  Future<void> _pickAndCropImage(ImageSource source) async {
+    if (!mounted) return;
+    final scaffoldMessenger = ScaffoldMessenger.of(context);
+
+    try {
+      final XFile? pickedFile = await _imagePicker.pickImage(
+        source: source,
+        maxWidth: 1024,
+        maxHeight: 1024,
+        imageQuality: 85,
+      );
+
+      if (pickedFile == null || !mounted) return;
+
+      // Crop the image
+      final CroppedFile? croppedFile = await ImageCropper().cropImage(
+        sourcePath: pickedFile.path,
+        compressFormat: ImageCompressFormat.jpg,
+        compressQuality: 85,
+        uiSettings: [
+          AndroidUiSettings(
+            toolbarTitle: 'Crop Profile Photo',
+            toolbarColor: AppColors.primary,
+            toolbarWidgetColor: Colors.white,
+            initAspectRatio: CropAspectRatioPreset.square,
+            lockAspectRatio: true,
+            aspectRatioPresets: [
+              CropAspectRatioPreset.square,
+            ],
+          ),
+          IOSUiSettings(
+            title: 'Crop Profile Photo',
+            aspectRatioLockEnabled: true,
+            aspectRatioPresets: [
+              CropAspectRatioPreset.square,
+            ],
+          ),
+          if (mounted)
+            WebUiSettings(
+              context: context,
+              presentStyle: WebPresentStyle.dialog,
+              size: const CropperSize(
+                width: 512,
+                height: 512,
+              ),
+            ),
+        ],
+      );
+
+      if (croppedFile != null && mounted) {
+        setState(() {
+          _selectedImage = File(croppedFile.path);
+        });
+
+        widget.onDataChanged({'profileImage': _selectedImage});
+
+        scaffoldMessenger.showSnackBar(
+          const SnackBar(
+            content: Text('Profile photo selected successfully'),
+            backgroundColor: Colors.green,
+          ),
+        );
+      }
+    } catch (e) {
+      debugPrint('❌ Error picking/cropping image: $e');
+      if (mounted) {
+        scaffoldMessenger.showSnackBar(
+          SnackBar(
+            content: Text('Failed to pick image: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
+  void _showImageSourceDialog() {
+    showModalBottomSheet(
+      context: context,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
+      ),
+      builder: (modalContext) => SafeArea(
+        child: Padding(
+          padding: EdgeInsets.all(20.w),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                'Choose Photo Source',
+                style: TextStyle(
+                  fontSize: 18.sp,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SizedBox(height: 20.h),
+              ListTile(
+                leading:
+                    const Icon(Icons.photo_camera, color: AppColors.primary),
+                title: const Text('Camera'),
+                onTap: () {
+                  Navigator.pop(modalContext);
+                  _pickAndCropImage(ImageSource.camera);
+                },
+              ),
+              ListTile(
+                leading:
+                    const Icon(Icons.photo_library, color: AppColors.primary),
+                title: const Text('Gallery'),
+                onTap: () {
+                  Navigator.pop(modalContext);
+                  _pickAndCropImage(ImageSource.gallery);
+                },
+              ),
+              if (_selectedImage != null)
+                ListTile(
+                  leading: const Icon(Icons.delete, color: Colors.red),
+                  title: const Text('Remove Photo'),
+                  onTap: () {
+                    Navigator.pop(modalContext);
+                    setState(() {
+                      _selectedImage = null;
+                    });
+                    widget.onDataChanged({'profileImage': null});
+                    if (mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Profile photo removed')),
+                      );
+                    }
+                  },
+                ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _buildImageUploadSection() {
     return Card(
+      elevation: 2,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12.r),
+      ),
       child: Padding(
         padding: EdgeInsets.all(16.w),
         child: Row(
           children: [
-            CircleAvatar(
-              radius: 30.r,
-              backgroundColor: AppColors.primary.withValues(alpha: 0.1),
-              child: Icon(
-                Icons.person,
-                size: 30.sp,
-                color: AppColors.primary,
+            GestureDetector(
+              onTap: _showImageSourceDialog,
+              child: Stack(
+                children: [
+                  CircleAvatar(
+                    radius: 40.r,
+                    backgroundColor: AppColors.primary.withValues(alpha: 0.1),
+                    backgroundImage: _selectedImage != null
+                        ? FileImage(_selectedImage!)
+                        : null,
+                    child: _selectedImage == null
+                        ? Icon(
+                            Icons.person,
+                            size: 40.sp,
+                            color: AppColors.primary,
+                          )
+                        : null,
+                  ),
+                  Positioned(
+                    bottom: 0,
+                    right: 0,
+                    child: Container(
+                      padding: EdgeInsets.all(4.w),
+                      decoration: const BoxDecoration(
+                        color: AppColors.primary,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        Icons.camera_alt,
+                        size: 16.sp,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
             SizedBox(width: 16.w),
@@ -358,13 +533,15 @@ class _CvBasicInfoFormState extends State<CvBasicInfoForm> {
                   Text(
                     'Profile Photo',
                     style: TextStyle(
-                      fontSize: 14.sp,
+                      fontSize: 15.sp,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
                   SizedBox(height: 4.h),
                   Text(
-                    'Add a professional photo (optional)',
+                    _selectedImage != null
+                        ? 'Photo selected. Tap to change.'
+                        : 'Add a professional photo (optional)',
                     style: TextStyle(
                       fontSize: 12.sp,
                       color: AppColors.textSecondary,
@@ -373,38 +550,20 @@ class _CvBasicInfoFormState extends State<CvBasicInfoForm> {
                 ],
               ),
             ),
-            OutlinedButton.icon(
-              onPressed: () async {
-                try {
-                  final ImagePicker picker = ImagePicker();
-                  final XFile? image = await picker.pickImage(
-                    source: ImageSource.gallery,
-                    maxWidth: 1024,
-                    maxHeight: 1024,
-                    imageQuality: 85,
-                  );
-
-                  if (image != null) {
-                    final data = widget.initialData;
-                    data['profileImagePath'] = image.path;
-                    widget.onDataChanged(data);
-                    if (mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                            content: Text('Image selected successfully')),
-                      );
-                    }
-                  }
-                } catch (e) {
-                  if (mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text('Failed to pick image: $e')),
-                    );
-                  }
-                }
-              },
-              icon: const Icon(Icons.upload),
-              label: const Text('Upload'),
+            Column(
+              children: [
+                IconButton(
+                  onPressed: _showImageSourceDialog,
+                  icon: Icon(
+                    _selectedImage != null
+                        ? Icons.edit
+                        : Icons.add_photo_alternate,
+                    color: AppColors.primary,
+                  ),
+                  tooltip:
+                      _selectedImage != null ? 'Change Photo' : 'Add Photo',
+                ),
+              ],
             ),
           ],
         ),

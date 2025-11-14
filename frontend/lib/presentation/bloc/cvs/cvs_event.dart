@@ -28,3 +28,13 @@ class SetPrimaryCvEvent extends CvsEvent {
   @override
   List<Object?> get props => [cvId];
 }
+
+class UpdateCvEvent extends CvsEvent {
+  final int cvId;
+  final Map<String, dynamic> cvData;
+
+  const UpdateCvEvent(this.cvId, this.cvData);
+
+  @override
+  List<Object?> get props => [cvId, cvData];
+}
