@@ -423,7 +423,7 @@ class _AddAlertDialogState extends State<AddAlertDialog> {
                 initialValue: _selectedExperienceLevel,
                 decoration: const InputDecoration(
                   labelText: 'Experience Level',
-                  prefixIcon: Icon(Icons.star),
+                  prefixIcon: Icon(Icons.school),
                 ),
                 items: _experienceLevels.map((level) {
                   return DropdownMenuItem(value: level, child: Text(level));
