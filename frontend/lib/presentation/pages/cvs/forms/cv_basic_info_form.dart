@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:image_picker/image_picker.dart';
 import '../../../../core/theme/app_colors.dart';
 
 class CvBasicInfoForm extends StatefulWidget {
@@ -373,11 +374,34 @@ class _CvBasicInfoFormState extends State<CvBasicInfoForm> {
               ),
             ),
             OutlinedButton.icon(
-              onPressed: () {
-                // TODO: Implement image picker
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Image upload coming soon')),
-                );
+              onPressed: () async {
+                try {
+                  final ImagePicker picker = ImagePicker();
+                  final XFile? image = await picker.pickImage(
+                    source: ImageSource.gallery,
+                    maxWidth: 1024,
+                    maxHeight: 1024,
+                    imageQuality: 85,
+                  );
+
+                  if (image != null) {
+                    final data = widget.initialData;
+                    data['profileImagePath'] = image.path;
+                    widget.onDataChanged(data);
+                    if (mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                            content: Text('Image selected successfully')),
+                      );
+                    }
+                  }
+                } catch (e) {
+                  if (mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Failed to pick image: $e')),
+                    );
+                  }
+                }
               },
               icon: const Icon(Icons.upload),
               label: const Text('Upload'),

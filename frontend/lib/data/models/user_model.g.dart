@@ -11,7 +11,7 @@ UserModel _$UserModelFromJson(Map<String, dynamic> json) => UserModel(
       name: json['name'] as String,
       email: json['email'] as String,
       userType: json['user_type'] as String,
-      isAdmin: json['is_admin'] as bool,
+      isAdmin: (json['is_admin'] as bool?) ?? false,
       profilePhoto: json['profile_photo'] as String?,
       headline: json['headline'] as String?,
       gender: json['gender'] as String?,

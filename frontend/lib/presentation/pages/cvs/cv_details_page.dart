@@ -270,6 +270,10 @@ class _CvDetailsPageState extends State<CvDetailsPage> {
               SizedBox(height: 8.h),
               _buildInfoRow('Phone', _currentCv.phone!),
             ],
+            if (_currentCv.address != null) ...[
+              SizedBox(height: 8.h),
+              _buildInfoRow('Address', _currentCv.address!),
+            ],
             if (_currentCv.city != null || _currentCv.country != null) ...[
               SizedBox(height: 8.h),
               _buildInfoRow(
@@ -278,6 +282,10 @@ class _CvDetailsPageState extends State<CvDetailsPage> {
                     .where((e) => e != null)
                     .join(', '),
               ),
+            ],
+            if (_currentCv.postalCode != null) ...[
+              SizedBox(height: 8.h),
+              _buildInfoRow('Postal Code', _currentCv.postalCode!),
             ],
             if (_currentCv.website != null) ...[
               SizedBox(height: 8.h),

@@ -255,7 +255,21 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       case DioExceptionType.badResponse:
         final statusCode = e.response?.statusCode;
         final message = e.response?.data['message'] ?? 'Unknown error';
-        final errors = e.response?.data['errors'];
+        final rawErrors = e.response?.data['errors'];
+
+        // Convert errors from Map<String, dynamic> to Map<String, List<String>>
+        Map<String, List<String>>? errors;
+        if (rawErrors != null && rawErrors is Map) {
+          final errorMap = <String, List<String>>{};
+          rawErrors.forEach((key, value) {
+            if (value is List) {
+              errorMap[key] = value.map((e) => e.toString()).toList();
+            } else if (value is String) {
+              errorMap[key] = [value];
+            }
+          });
+          errors = errorMap;
+        }
 
         if (statusCode == 401) {
           return AuthenticationException(message);

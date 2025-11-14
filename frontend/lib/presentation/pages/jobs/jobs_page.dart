@@ -10,6 +10,7 @@ import '../../bloc/jobs/jobs_bloc.dart';
 import '../../bloc/jobs/jobs_event.dart';
 import '../../bloc/jobs/jobs_state.dart';
 import '../../widgets/common/job_card.dart';
+import '../../widgets/jobs/job_filter_bottom_sheet.dart';
 
 class JobsPage extends StatelessWidget {
   const JobsPage({super.key});
@@ -33,6 +34,7 @@ class _JobsPageContent extends StatefulWidget {
 class _JobsPageContentState extends State<_JobsPageContent> {
   final _searchController = TextEditingController();
   final _scrollController = ScrollController();
+  Map<String, dynamic> _currentFilters = {};
 
   @override
   void initState() {
@@ -138,8 +140,45 @@ class _JobsPageContentState extends State<_JobsPageContent> {
                 actions: [
                   IconButton(
                     icon: const Icon(Icons.tune_rounded),
-                    onPressed: () {
-                      // TODO: Open filters
+                    onPressed: () async {
+                      final bloc = context.read<JobsBloc>();
+                      final filters =
+                          await showModalBottomSheet<Map<String, dynamic>>(
+                        context: context,
+                        isScrollControlled: true,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.vertical(
+                            top: Radius.circular(20.r),
+                          ),
+                        ),
+                        builder: (context) => SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.85,
+                          child: JobFilterBottomSheet(
+                            currentFilters: _currentFilters,
+                          ),
+                        ),
+                      );
+
+                      if (filters != null && mounted) {
+                        setState(() {
+                          _currentFilters = filters;
+                        });
+                        bloc.add(
+                          LoadJobsEvent(
+                            refresh: true,
+                            search: _searchController.text.isEmpty
+                                ? null
+                                : _searchController.text,
+                            location: filters['location'],
+                            employmentTypes: filters['employmentTypes'],
+                            experienceLevels: filters['experienceLevels'],
+                            isRemote: filters['isRemote'],
+                            category: filters['category'],
+                            salaryMin: filters['salaryMin'],
+                            sort: filters['sort'],
+                          ),
+                        );
+                      }
                     },
                   ),
                 ],
