@@ -33,9 +33,7 @@ JobModel _$JobModelFromJson(Map<String, dynamic> json) => JobModel(
           ? true
           : JobModel._boolFromJson(json['is_active']),
       isSaved: json['is_saved'] as bool?,
-      isApplied: json['is_applied'] == null
-          ? null
-          : JobModel._boolFromJson(json['is_applied']),
+      isApplied: JobModel._boolFromJson(json['is_applied']),
       expiresAt: json['expires_at'] == null
           ? null
           : DateTime.parse(json['expires_at'] as String),
@@ -69,7 +67,6 @@ Map<String, dynamic> _$JobModelToJson(JobModel instance) => <String, dynamic>{
       'is_remote': instance.isRemote,
       'is_featured': instance.isFeatured,
       'is_saved': instance.isSaved,
-      'is_applied': instance.isApplied,
       'expires_at': instance.expiresAt?.toIso8601String(),
       'published_at': instance.publishedAt?.toIso8601String(),
       'created_at': instance.createdAt.toIso8601String(),
@@ -78,6 +75,7 @@ Map<String, dynamic> _$JobModelToJson(JobModel instance) => <String, dynamic>{
       'salary_min': instance.salaryMin,
       'salary_max': instance.salaryMax,
       'is_active': instance.isActive,
+      'is_applied': instance.isApplied,
     };
 
 CompanyBriefModel _$CompanyBriefModelFromJson(Map<String, dynamic> json) =>

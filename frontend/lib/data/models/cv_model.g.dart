@@ -57,7 +57,6 @@ Map<String, dynamic> _$CvModelToJson(CvModel instance) => <String, dynamic>{
       'website': instance.website,
       'linkedin': instance.linkedin,
       'github': instance.github,
-      'profile_image_path': instance.profileImagePath,
       'address': instance.address,
       'city': instance.city,
       'country': instance.country,
@@ -75,6 +74,7 @@ Map<String, dynamic> _$CvModelToJson(CvModel instance) => <String, dynamic>{
       'certifications':
           instance.certifications?.map((e) => e.toJson()).toList(),
       'projects': instance.projects?.map((e) => e.toJson()).toList(),
+      'profile_image_path': instance.profileImagePath,
     };
 
 WorkExperienceModel _$WorkExperienceModelFromJson(Map<String, dynamic> json) =>
