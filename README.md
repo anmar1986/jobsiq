@@ -18,7 +18,7 @@ A modern, full-stack job search and CV management platform built with Laravel an
 ## Tech Stack
 
 ### Backend
-- **Laravel 11** - PHP Framework
+- **Laravel 12** - PHP Framework
 - **MySQL** - Database
 - **Laravel Sanctum** - API Authentication
 - **Laravel Pint** - Code Style
