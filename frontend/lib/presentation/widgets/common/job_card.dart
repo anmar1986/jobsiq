@@ -83,7 +83,7 @@ class JobCard extends StatelessWidget {
                       label: _formatExperienceLevel(job.experienceLevel)!,
                     ),
                   if (job.isRemote)
-                    _InfoChip(
+                    const _InfoChip(
                       icon: Icons.home_work_outlined,
                       label: 'Remote',
                     ),

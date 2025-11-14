@@ -16,7 +16,7 @@ class ContentSecurityPolicy
         $response = $next($request);
 
         // Check if CSP is enabled
-        if (!config('csp.enabled', true)) {
+        if (! config('csp.enabled', true)) {
             return $response;
         }
 

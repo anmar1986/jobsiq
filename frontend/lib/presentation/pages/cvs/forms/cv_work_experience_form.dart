@@ -122,7 +122,7 @@ class _CvWorkExperienceFormState extends State<CvWorkExperienceForm> {
             label: const Text('Add Work Experience'),
             style: OutlinedButton.styleFrom(
               minimumSize: Size(double.infinity, 48.h),
-              side: BorderSide(color: AppColors.primary),
+              side: const BorderSide(color: AppColors.primary),
               foregroundColor: AppColors.primary,
             ),
           ),

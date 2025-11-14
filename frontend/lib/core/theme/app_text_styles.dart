@@ -113,11 +113,17 @@ class AppTextStyles {
   static TextStyle h5Dark = h5.copyWith(color: AppColors.textPrimaryDark);
   static TextStyle h6Dark = h6.copyWith(color: AppColors.textPrimaryDark);
 
-  static TextStyle bodyLargeDark = bodyLarge.copyWith(color: AppColors.textPrimaryDark);
-  static TextStyle bodyMediumDark = bodyMedium.copyWith(color: AppColors.textPrimaryDark);
-  static TextStyle bodySmallDark = bodySmall.copyWith(color: AppColors.textSecondaryDark);
+  static TextStyle bodyLargeDark =
+      bodyLarge.copyWith(color: AppColors.textPrimaryDark);
+  static TextStyle bodyMediumDark =
+      bodyMedium.copyWith(color: AppColors.textPrimaryDark);
+  static TextStyle bodySmallDark =
+      bodySmall.copyWith(color: AppColors.textSecondaryDark);
 
-  static TextStyle captionDark = caption.copyWith(color: AppColors.textTertiaryDark);
-  static TextStyle labelDark = label.copyWith(color: AppColors.textSecondaryDark);
-  static TextStyle labelSmallDark = labelSmall.copyWith(color: AppColors.textTertiaryDark);
+  static TextStyle captionDark =
+      caption.copyWith(color: AppColors.textTertiaryDark);
+  static TextStyle labelDark =
+      label.copyWith(color: AppColors.textSecondaryDark);
+  static TextStyle labelSmallDark =
+      labelSmall.copyWith(color: AppColors.textTertiaryDark);
 }

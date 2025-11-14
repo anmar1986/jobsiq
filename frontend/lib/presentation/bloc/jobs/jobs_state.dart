@@ -30,7 +30,8 @@ class JobsLoaded extends JobsState {
   });
 
   @override
-  List<Object?> get props => [jobs, currentPage, lastPage, total, hasMore, seed];
+  List<Object?> get props =>
+      [jobs, currentPage, lastPage, total, hasMore, seed];
 
   JobsLoaded copyWith({
     List<JobEntity>? jobs,

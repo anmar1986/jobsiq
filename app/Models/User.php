@@ -196,8 +196,8 @@ class User extends Authenticatable
     public function sendPasswordResetNotification($token)
     {
         // Get frontend URL from config or env
-        $frontendUrl = config('app.frontend_url', 'http://localhost:5173') . '/reset-password';
-        
+        $frontendUrl = config('app.frontend_url', 'http://localhost:5173').'/reset-password';
+
         $this->notify(new ResetPasswordNotification($token, $frontendUrl));
     }
 }

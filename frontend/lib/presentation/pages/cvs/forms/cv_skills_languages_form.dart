@@ -255,7 +255,7 @@ class _CvSkillsLanguagesFormState extends State<CvSkillsLanguagesForm> {
             label: const Text('Add Language'),
             style: OutlinedButton.styleFrom(
               minimumSize: Size(double.infinity, 48.h),
-              side: BorderSide(color: AppColors.primary),
+              side: const BorderSide(color: AppColors.primary),
               foregroundColor: AppColors.primary,
             ),
           ),

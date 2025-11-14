@@ -92,9 +92,10 @@ For deployment jobs, configure these secrets in GitHub Settings:
 ## Flutter Setup
 
 The Flutter workflow uses:
-- **Flutter Version**: 3.24.0 (stable channel)
+- **Flutter Version**: 3.27.0 (stable channel)
 - **Java Version**: 17 (Zulu distribution) for Android builds
 - **macOS runner**: Required for iOS builds
+- **flutter_lints**: 4.0.0 (compatible with Dart SDK 3.3.0+)
 
 ---
 

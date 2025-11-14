@@ -87,7 +87,7 @@ class _MyApplicationsPageState extends State<MyApplicationsPage> {
               padding: EdgeInsets.all(16.w),
               color: Colors.grey.shade50,
               child: DropdownButtonFormField<String>(
-                value: _selectedStatus ?? '',
+                initialValue: _selectedStatus ?? '',
                 decoration: const InputDecoration(
                   labelText: 'Filter by Status',
                   prefixIcon: Icon(Icons.filter_list_rounded),
@@ -242,7 +242,7 @@ class _MyApplicationsPageState extends State<MyApplicationsPage> {
                                                 color: _getStatusColor(
                                                         application['status'] ??
                                                             '')
-                                                    .withOpacity(0.1),
+                                                    .withValues(alpha: 0.1),
                                                 borderRadius:
                                                     BorderRadius.circular(12.r),
                                               ),

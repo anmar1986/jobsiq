@@ -87,8 +87,9 @@
 ## What You Need to Do
 
 ### Immediate (Required)
-1. ✅ **Verify Flutter version**: Workflows use Flutter 3.24.0
-   - If you use a different version, update in `flutter-ci.yml` and `ci-cd.yml`
+1. ✅ **Verify Flutter version**: Workflows use Flutter 3.27.0
+   - Updated `pubspec.yaml` to use `flutter_lints: ^4.0.0` (compatible with Dart 3.3.0+)
+   - If you need a different version, update in workflow files
 
 2. ✅ **Test the workflows**: Push to a feature branch and verify they run
    ```bash

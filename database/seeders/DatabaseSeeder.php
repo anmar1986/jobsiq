@@ -70,7 +70,7 @@ class DatabaseSeeder extends Seeder
             /** @var User|null $owner */
             $owner = $company->owners()->wherePivot('is_primary', true)->first();
 
-            if (!$owner) {
+            if (! $owner) {
                 continue;
             }
 

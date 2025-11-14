@@ -211,7 +211,7 @@ class Job extends Model
     {
         $user = auth('sanctum')->user();
 
-        if (!$user) {
+        if (! $user) {
             return false;
         }
 
@@ -227,7 +227,7 @@ class Job extends Model
     {
         $user = auth('sanctum')->user();
 
-        if (!$user) {
+        if (! $user) {
             return false;
         }
 

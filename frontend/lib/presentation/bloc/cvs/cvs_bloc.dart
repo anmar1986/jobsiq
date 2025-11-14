@@ -41,9 +41,8 @@ class CvsBloc extends Bloc<CvsEvent, CvsState> {
       await cvDataSource.deleteCv(event.cvId);
 
       // Remove the deleted CV from the list
-      final updatedCvs = currentState.cvs
-          .where((cv) => cv.id != event.cvId)
-          .toList();
+      final updatedCvs =
+          currentState.cvs.where((cv) => cv.id != event.cvId).toList();
 
       if (updatedCvs.isEmpty) {
         emit(const CvsEmpty());

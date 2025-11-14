@@ -122,7 +122,7 @@ class _CvEducationFormState extends State<CvEducationForm> {
             label: const Text('Add Education'),
             style: OutlinedButton.styleFrom(
               minimumSize: Size(double.infinity, 48.h),
-              side: BorderSide(color: AppColors.primary),
+              side: const BorderSide(color: AppColors.primary),
               foregroundColor: AppColors.primary,
             ),
           ),
