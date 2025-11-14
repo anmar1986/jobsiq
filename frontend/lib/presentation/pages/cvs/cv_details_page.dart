@@ -31,12 +31,15 @@ class _CvDetailsPageState extends State<CvDetailsPage> {
             expandedHeight: 200.h,
             pinned: true,
             flexibleSpace: FlexibleSpaceBar(
+              titlePadding: EdgeInsets.only(left: 16.w, bottom: 16.h),
               title: Text(
                 _currentCv.title,
                 style: TextStyle(
-                  fontSize: 18.sp,
-                  fontWeight: FontWeight.bold,
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.w600,
                 ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
               ),
               background: Container(
                 decoration: BoxDecoration(
@@ -258,19 +261,18 @@ class _CvDetailsPageState extends State<CvDetailsPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildInfoRow(Icons.person, 'Full Name', _currentCv.fullName),
+            _buildInfoRow('Full Name', _currentCv.fullName),
             if (_currentCv.email.isNotEmpty) ...[
-              SizedBox(height: 12.h),
-              _buildInfoRow(Icons.email, 'Email', _currentCv.email),
+              SizedBox(height: 8.h),
+              _buildInfoRow('Email', _currentCv.email),
             ],
             if (_currentCv.phone != null) ...[
-              SizedBox(height: 12.h),
-              _buildInfoRow(Icons.phone, 'Phone', _currentCv.phone!),
+              SizedBox(height: 8.h),
+              _buildInfoRow('Phone', _currentCv.phone!),
             ],
             if (_currentCv.city != null || _currentCv.country != null) ...[
-              SizedBox(height: 12.h),
+              SizedBox(height: 8.h),
               _buildInfoRow(
-                Icons.location_on,
                 'Location',
                 [_currentCv.city, _currentCv.country]
                     .where((e) => e != null)
@@ -278,16 +280,16 @@ class _CvDetailsPageState extends State<CvDetailsPage> {
               ),
             ],
             if (_currentCv.website != null) ...[
-              SizedBox(height: 12.h),
-              _buildInfoRow(Icons.language, 'Website', _currentCv.website!),
+              SizedBox(height: 8.h),
+              _buildInfoRow('Website', _currentCv.website!),
             ],
             if (_currentCv.linkedin != null) ...[
-              SizedBox(height: 12.h),
-              _buildInfoRow(Icons.link, 'LinkedIn', _currentCv.linkedin!),
+              SizedBox(height: 8.h),
+              _buildInfoRow('LinkedIn', _currentCv.linkedin!),
             ],
             if (_currentCv.github != null) ...[
-              SizedBox(height: 12.h),
-              _buildInfoRow(Icons.code, 'GitHub', _currentCv.github!),
+              SizedBox(height: 8.h),
+              _buildInfoRow('GitHub', _currentCv.github!),
             ],
           ],
         ),
@@ -295,32 +297,25 @@ class _CvDetailsPageState extends State<CvDetailsPage> {
     );
   }
 
-  Widget _buildInfoRow(IconData icon, String label, String value) {
+  Widget _buildInfoRow(String label, String value) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Icon(icon, size: 20.sp, color: AppColors.primary),
-        SizedBox(width: 12.w),
+        Text(
+          '$label: ',
+          style: TextStyle(
+            fontSize: 12.sp,
+            fontWeight: FontWeight.w600,
+            color: AppColors.textPrimary,
+          ),
+        ),
         Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                label,
-                style: TextStyle(
-                  fontSize: 12.sp,
-                  color: AppColors.textSecondary,
-                ),
-              ),
-              SizedBox(height: 2.h),
-              Text(
-                value,
-                style: TextStyle(
-                  fontSize: 14.sp,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ],
+          child: Text(
+            value,
+            style: TextStyle(
+              fontSize: 12.sp,
+              color: AppColors.textSecondary,
+            ),
           ),
         ),
       ],
