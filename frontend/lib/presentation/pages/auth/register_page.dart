@@ -65,10 +65,21 @@ class _RegisterPageState extends State<RegisterPage> {
         if (state is Authenticated) {
           context.go(state.redirectTo ?? AppRouter.main);
         } else if (state is AuthError) {
+          // Build error message from field-specific errors if available
+          String errorMessage = state.message;
+          if (state.errors != null && state.errors!.isNotEmpty) {
+            final errorMessages = <String>[];
+            state.errors!.forEach((field, messages) {
+              errorMessages.addAll(messages);
+            });
+            errorMessage = errorMessages.join('\n');
+          }
+
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(state.message),
+              content: Text(errorMessage),
               backgroundColor: Colors.red,
+              duration: const Duration(seconds: 4),
             ),
           );
         }

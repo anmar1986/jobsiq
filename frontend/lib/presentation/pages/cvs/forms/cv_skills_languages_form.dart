@@ -22,11 +22,10 @@ class _CvSkillsLanguagesFormState extends State<CvSkillsLanguagesForm> {
   final TextEditingController _skillController = TextEditingController();
 
   final List<String> _proficiencyLevels = [
-    'Native',
-    'Fluent',
-    'Advanced',
-    'Intermediate',
-    'Basic',
+    'native',
+    'fluent',
+    'conversational',
+    'basic',
   ];
 
   @override
@@ -65,7 +64,7 @@ class _CvSkillsLanguagesFormState extends State<CvSkillsLanguagesForm> {
     setState(() {
       _languages.add({
         'language': '',
-        'proficiency': 'Intermediate',
+        'proficiency': 'conversational',
       });
     });
     widget.onDataChanged({'languages': _languages});

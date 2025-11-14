@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../config/di/injection.dart';
+import '../../../config/routes/app_router.dart';
 import '../../../data/datasources/cv_remote_data_source.dart';
 import 'forms/cv_basic_info_form.dart';
 import 'forms/cv_work_experience_form.dart';
@@ -207,15 +208,24 @@ class _CreateCvPageState extends State<CreateCvPage> {
             backgroundColor: Colors.green,
           ),
         );
-        context.pop(); // Navigate back to CVs page
+        // Use go instead of pop to avoid passing null to routes expecting entities
+        context.go(AppRouter.cvs);
       }
     } catch (e) {
       debugPrint('❌ Error creating CV: $e');
       if (mounted) {
+        String errorMessage = 'Failed to create CV';
+        if (e.toString().contains('ServerException:')) {
+          errorMessage = e.toString().replaceAll('ServerException: ', '');
+        } else {
+          errorMessage = e.toString();
+        }
+
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Failed to create CV: ${e.toString()}'),
+            content: Text(errorMessage),
             backgroundColor: Colors.red,
+            duration: const Duration(seconds: 5),
           ),
         );
       }

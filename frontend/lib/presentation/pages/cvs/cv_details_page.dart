@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../config/routes/app_router.dart';
+import '../../../core/services/cv_pdf_generator.dart';
 import '../../../domain/entities/cv_entity.dart';
 
 class CvDetailsPage extends StatefulWidget {
@@ -132,10 +135,18 @@ class _CvDetailsPageState extends State<CvDetailsPage> {
                     ),
                   ),
                 ],
-                onSelected: (value) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('$value feature coming soon')),
-                  );
+                onSelected: (value) async {
+                  switch (value) {
+                    case 'edit':
+                      context.push(AppRouter.editCv, extra: _currentCv);
+                      break;
+                    case 'download':
+                      await _downloadPdf();
+                      break;
+                    case 'share':
+                      await _sharePdf();
+                      break;
+                  }
                 },
               ),
             ],
@@ -754,5 +765,96 @@ class _CvDetailsPageState extends State<CvDetailsPage> {
       return '$startFormatted - $endFormatted';
     }
     return startFormatted;
+  }
+
+  Future<void> _downloadPdf() async {
+    try {
+      // Show loading indicator
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Row(
+            children: [
+              SizedBox(
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                ),
+              ),
+              SizedBox(width: 16),
+              Text('Generating PDF...'),
+            ],
+          ),
+          duration: Duration(seconds: 3),
+        ),
+      );
+
+      final file = await CvPdfGenerator.downloadPdf(_currentCv);
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).clearSnackBars();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('CV downloaded to ${file.path}'),
+            backgroundColor: Colors.green,
+            duration: const Duration(seconds: 4),
+          ),
+        );
+      }
+    } catch (e) {
+      debugPrint('❌ Error downloading PDF: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).clearSnackBars();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to download PDF: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
+  Future<void> _sharePdf() async {
+    try {
+      // Show loading indicator
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Row(
+            children: [
+              SizedBox(
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                ),
+              ),
+              SizedBox(width: 16),
+              Text('Preparing PDF to share...'),
+            ],
+          ),
+          duration: Duration(seconds: 2),
+        ),
+      );
+
+      await CvPdfGenerator.sharePdf(_currentCv);
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).clearSnackBars();
+      }
+    } catch (e) {
+      debugPrint('❌ Error sharing PDF: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).clearSnackBars();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to share PDF: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
   }
 }

@@ -20,6 +20,7 @@ class ApiConstants {
   // User Endpoints
   static const String user = '$apiPrefix/user';
   static const String profile = '$apiPrefix/profile';
+  static const String deleteProfile = '$apiPrefix/profile';
   static const String changePassword = '$apiPrefix/change-password';
 
   // Job Endpoints

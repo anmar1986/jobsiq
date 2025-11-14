@@ -4,6 +4,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../config/routes/app_router.dart';
+import '../../../config/di/injection.dart';
+import '../../../core/network/dio_client.dart';
+import '../../../core/constants/api_constants.dart';
 import '../../bloc/auth/auth_bloc.dart';
 import '../../bloc/auth/auth_event.dart';
 import '../../bloc/auth/auth_state.dart';
@@ -54,7 +57,9 @@ class ProfilePage extends StatelessWidget {
                   actions: [
                     IconButton(
                       icon: const Icon(Icons.settings_rounded),
-                      onPressed: () {},
+                      onPressed: () {
+                        context.push(AppRouter.settings);
+                      },
                     ),
                   ],
                 ),
@@ -114,6 +119,13 @@ class ProfilePage extends StatelessWidget {
                           trailing: const Icon(Icons.chevron_right_rounded),
                           onTap: () => context.push(AppRouter.myApplications),
                         ),
+                        ListTile(
+                          leading:
+                              const Icon(Icons.notifications_active_outlined),
+                          title: const Text('Job Alerts'),
+                          trailing: const Icon(Icons.chevron_right_rounded),
+                          onTap: () => context.push(AppRouter.jobAlerts),
+                        ),
                         SizedBox(height: 24.h),
                         OutlinedButton.icon(
                           onPressed: () {
@@ -128,6 +140,17 @@ class ProfilePage extends StatelessWidget {
                             side: const BorderSide(color: AppColors.error),
                           ),
                         ),
+                        SizedBox(height: 12.h),
+                        OutlinedButton.icon(
+                          onPressed: () => _showDeleteAccountDialog(context),
+                          icon: const Icon(Icons.delete_forever_rounded),
+                          label: const Text('Delete Account'),
+                          style: OutlinedButton.styleFrom(
+                            minimumSize: Size(double.infinity, 44.h),
+                            foregroundColor: Colors.red.shade700,
+                            side: BorderSide(color: Colors.red.shade700),
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -138,5 +161,104 @@ class ProfilePage extends StatelessWidget {
         );
       },
     );
+  }
+
+  void _showDeleteAccountDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Row(
+          children: [
+            Icon(Icons.warning_amber_rounded, color: Colors.red.shade700),
+            SizedBox(width: 12.w),
+            const Text('Delete Account'),
+          ],
+        ),
+        content: const Text(
+          'Are you sure you want to delete your account? This action cannot be undone and all your data will be permanently deleted including:\n\n• Your profile\n• All CVs\n• Saved jobs\n• Job applications\n• Personal information\n\nThis action is irreversible.',
+          style: TextStyle(height: 1.5),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              Navigator.pop(dialogContext);
+              await _deleteAccount(context);
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red.shade700,
+              foregroundColor: Colors.white,
+            ),
+            child: const Text('Delete'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _deleteAccount(BuildContext context) async {
+    // Show loading dialog
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => const Center(
+        child: Card(
+          child: Padding(
+            padding: EdgeInsets.all(20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                CircularProgressIndicator(),
+                SizedBox(height: 16),
+                Text('Deleting account...'),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+
+    try {
+      final dioClient = sl<DioClient>();
+      final response = await dioClient.delete(ApiConstants.deleteProfile);
+
+      if (context.mounted) {
+        Navigator.pop(context); // Close loading dialog
+
+        if (response.statusCode == 200) {
+          // Logout and redirect to login
+          context.read<AuthBloc>().add(LogoutEvent());
+          context.go(AppRouter.login);
+
+          // Show success message
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Account deleted successfully'),
+              backgroundColor: Colors.green,
+            ),
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Failed to delete account: ${response.data}'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      if (context.mounted) {
+        Navigator.pop(context); // Close loading dialog
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error: ${e.toString()}'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
   }
 }

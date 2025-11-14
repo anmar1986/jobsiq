@@ -139,6 +139,12 @@ class _JobsPageContentState extends State<_JobsPageContent> {
                 ),
                 actions: [
                   IconButton(
+                    icon: const Icon(Icons.notifications_outlined),
+                    onPressed: () {
+                      context.push(AppRouter.jobAlerts);
+                    },
+                  ),
+                  IconButton(
                     icon: const Icon(Icons.tune_rounded),
                     onPressed: () async {
                       final bloc = context.read<JobsBloc>();

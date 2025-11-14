@@ -4,8 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../data/datasources/job_application_remote_data_source.dart';
 import '../../../config/di/injection.dart' as di;
-import '../../../domain/entities/job_entity.dart';
-import '../../../config/routes/app_router.dart';
+import 'application_details_page.dart';
 
 class MyApplicationsPage extends StatefulWidget {
   const MyApplicationsPage({super.key});
@@ -208,9 +207,15 @@ class _MyApplicationsPageState extends State<MyApplicationsPage> {
                                     margin: EdgeInsets.only(bottom: 16.h),
                                     child: InkWell(
                                       onTap: () {
-                                        if (job != null) {
-                                          _navigateToJobDetails(job);
-                                        }
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                ApplicationDetailsPage(
+                                              application: application,
+                                            ),
+                                          ),
+                                        );
                                       },
                                       borderRadius: BorderRadius.circular(8.r),
                                       child: Padding(
@@ -342,79 +347,6 @@ class _MyApplicationsPageState extends State<MyApplicationsPage> {
       }
     } catch (e) {
       return date.toString();
-    }
-  }
-
-  void _navigateToJobDetails(Map<String, dynamic> jobData) {
-    try {
-      // Parse company data
-      final company = jobData['company'] != null
-          ? CompanyBriefEntity(
-              id: int.parse(jobData['company']['id'].toString()),
-              name: jobData['company']['name']?.toString() ?? '',
-              slug: jobData['company']['slug']?.toString() ?? '',
-              logo: jobData['company']['logo']?.toString(),
-              industry: jobData['company']['industry']?.toString(),
-              companySize: jobData['company']['company_size']?.toString(),
-            )
-          : null;
-
-      // Parse job entity with safe type conversions
-      final jobEntity = JobEntity(
-        id: int.parse(jobData['id'].toString()),
-        companyId: jobData['company_id'] != null
-            ? int.parse(jobData['company_id'].toString())
-            : null,
-        userId: jobData['user_id'] != null
-            ? int.parse(jobData['user_id'].toString())
-            : null,
-        title: jobData['title']?.toString() ?? '',
-        slug: jobData['slug']?.toString() ?? '',
-        description: jobData['description']?.toString() ?? '',
-        requirements: jobData['requirements']?.toString(),
-        benefits: jobData['benefits']?.toString(),
-        location: jobData['location']?.toString(),
-        city: jobData['city']?.toString(),
-        country: jobData['country']?.toString(),
-        employmentType: jobData['employment_type']?.toString() ?? 'full_time',
-        experienceLevel: jobData['experience_level']?.toString(),
-        category: jobData['category']?.toString(),
-        skills: jobData['skills'] != null
-            ? List<String>.from(jobData['skills'])
-            : null,
-        salaryMin: jobData['salary_min'] != null
-            ? double.tryParse(jobData['salary_min'].toString())
-            : null,
-        salaryMax: jobData['salary_max'] != null
-            ? double.tryParse(jobData['salary_max'].toString())
-            : null,
-        salaryCurrency: jobData['salary_currency']?.toString(),
-        salaryPeriod: jobData['salary_period']?.toString(),
-        isRemote: jobData['is_remote'] == 1 || jobData['is_remote'] == true,
-        isFeatured:
-            jobData['is_featured'] == 1 || jobData['is_featured'] == true,
-        isActive: jobData['is_active'] == 1 || jobData['is_active'] == true,
-        isSaved: jobData['is_saved'] == 1 || jobData['is_saved'] == true,
-        isApplied: true, // Already applied
-        expiresAt: jobData['expires_at'] != null
-            ? DateTime.tryParse(jobData['expires_at'].toString())
-            : null,
-        publishedAt: jobData['published_at'] != null
-            ? DateTime.tryParse(jobData['published_at'].toString())
-            : null,
-        createdAt: DateTime.parse(jobData['created_at'].toString()),
-        updatedAt: DateTime.parse(jobData['updated_at'].toString()),
-        company: company,
-      );
-
-      context.push(AppRouter.jobDetails, extra: jobEntity);
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Error loading job details: $e'),
-          backgroundColor: Colors.red,
-        ),
-      );
     }
   }
 }
