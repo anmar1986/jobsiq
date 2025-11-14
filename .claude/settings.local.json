@@ -7,7 +7,10 @@
       "Bash(flutter analyze:*)",
       "Bash(flutter doctor:*)",
       "Bash(flutter pub run build_runner build:*)",
-      "Bash(flutter:*)"
+      "Bash(flutter:*)",
+      "Bash(curl:*)",
+      "Bash(php artisan tinker:*)",
+      "Bash(cat:*)"
     ],
     "deny": [],
     "ask": []

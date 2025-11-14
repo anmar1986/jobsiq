@@ -5,13 +5,34 @@ on:
     branches:
       - develop
       - main
+    paths:
+      - 'app/**'
+      - 'config/**'
+      - 'database/**'
+      - 'routes/**'
+      - 'tests/**'
+      - 'src/**'
+      - 'package.json'
+      - 'composer.json'
+      - '.github/workflows/tests.yml'
   pull_request:
     branches:
       - develop
       - main
+    paths:
+      - 'app/**'
+      - 'config/**'
+      - 'database/**'
+      - 'routes/**'
+      - 'tests/**'
+      - 'src/**'
+      - 'package.json'
+      - 'composer.json'
+      - '.github/workflows/tests.yml'
 
 jobs:
-  tests:
+  backend-tests:
+    name: Backend Tests
     runs-on: ubuntu-latest
     env:
       DB_CONNECTION: mysql
@@ -103,6 +124,26 @@ jobs:
 
       - name: Run PHP Tests
         run: ./vendor/bin/phpunit --coverage-text
+
+  web-frontend-tests:
+    name: Web Frontend Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install Node Dependencies
+        run: npm ci
+
+      - name: Build Frontend Assets
+        run: npm run build
 
       - name: Type Check Frontend
         run: npm run type-check

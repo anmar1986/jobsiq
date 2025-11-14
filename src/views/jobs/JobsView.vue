@@ -22,9 +22,12 @@
             </BaseInput>
           </div>
           <div class="w-full sm:w-72 relative">
+            <label for="job-location" class="sr-only">Location</label>
             <input
+              id="job-location"
               v-model="filters.location"
               type="text"
+              name="job-location"
               placeholder="City"
               class="w-full px-4 py-2 pl-10 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white"
               @input="handleLocationInput"
@@ -76,8 +79,11 @@
           <!-- Scrollable filters container on mobile -->
           <div class="flex gap-3 overflow-x-auto pb-2 sm:pb-0 flex-1">
             <!-- Employment Type -->
+            <label for="employment-type" class="sr-only">Employment Type</label>
             <select
+              id="employment-type"
               v-model="filters.employment_type"
+              name="employment-type"
               @change="searchJobs"
               class="px-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-primary-500 focus:border-primary-500 bg-white flex-shrink-0 cursor-pointer hover:border-gray-400 hover:bg-gray-50 transition-colors"
             >
@@ -90,8 +96,11 @@
             </select>
 
             <!-- Experience Level -->
+            <label for="experience-level" class="sr-only">Experience Level</label>
             <select
+              id="experience-level"
               v-model="filters.experience_level"
+              name="experience-level"
               @change="searchJobs"
               class="px-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-primary-500 focus:border-primary-500 bg-white flex-shrink-0 cursor-pointer hover:border-gray-400 hover:bg-gray-50 transition-colors"
             >
@@ -104,8 +113,11 @@
             </select>
 
             <!-- Salary -->
+            <label for="salary-min" class="sr-only">Minimum Salary</label>
             <select
+              id="salary-min"
               v-model="filters.salary_min"
+              name="salary-min"
               @change="searchJobs"
               class="px-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-primary-500 focus:border-primary-500 bg-white flex-shrink-0 cursor-pointer hover:border-gray-400 hover:bg-gray-50 transition-colors"
             >
@@ -119,8 +131,10 @@
             <!-- Remote Only Checkbox -->
             <label class="flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg text-sm bg-white cursor-pointer hover:bg-gray-50 hover:border-gray-400 flex-shrink-0 whitespace-nowrap transition-colors">
               <input
+                id="is-remote"
                 v-model="filters.is_remote"
                 type="checkbox"
+                name="is-remote"
                 class="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded cursor-pointer"
                 @change="searchJobs"
               />

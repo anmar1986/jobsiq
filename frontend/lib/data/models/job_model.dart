@@ -3,7 +3,7 @@ import '../../domain/entities/job_entity.dart';
 
 part 'job_model.g.dart';
 
-@JsonSerializable(explicitToJson: true)
+@JsonSerializable(explicitToJson: true, fieldRename: FieldRename.snake)
 class JobModel extends JobEntity {
   @JsonKey(fromJson: _companyFromJson, toJson: _companyToJson)
   @override
@@ -12,8 +12,8 @@ class JobModel extends JobEntity {
 
   const JobModel({
     required super.id,
-    required super.companyId,
-    required super.userId,
+    super.companyId,
+    super.userId,
     required super.title,
     required super.slug,
     required super.description,
@@ -23,11 +23,11 @@ class JobModel extends JobEntity {
     super.city,
     super.country,
     required super.employmentType,
-    required super.experienceLevel,
+    super.experienceLevel,
     super.category,
     super.skills,
-    super.salaryMin,
-    super.salaryMax,
+    @JsonKey(fromJson: _salaryFromJson) super.salaryMin,
+    @JsonKey(fromJson: _salaryFromJson) super.salaryMax,
     super.salaryCurrency,
     super.salaryPeriod,
     required super.isRemote,
@@ -51,9 +51,20 @@ class JobModel extends JobEntity {
 
   static Map<String, dynamic>? _companyToJson(CompanyBriefModel? company) =>
       company?.toJson();
+
+  static double? _salaryFromJson(dynamic value) {
+    if (value == null) return null;
+    if (value is double) return value;
+    if (value is int) return value.toDouble();
+    if (value is String) {
+      final parsed = double.tryParse(value);
+      return parsed;
+    }
+    return null;
+  }
 }
 
-@JsonSerializable()
+@JsonSerializable(fieldRename: FieldRename.snake)
 class CompanyBriefModel extends CompanyBriefEntity {
   const CompanyBriefModel({
     required super.id,

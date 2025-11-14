@@ -5,10 +5,26 @@ on:
     branches:
       - develop
       - main
+    paths:
+      - 'app/**'
+      - 'config/**'
+      - 'routes/**'
+      - 'src/**'
+      - 'package.json'
+      - 'composer.json'
+      - '.github/workflows/lint.yml'
   pull_request:
     branches:
       - develop
       - main
+    paths:
+      - 'app/**'
+      - 'config/**'
+      - 'routes/**'
+      - 'src/**'
+      - 'package.json'
+      - 'composer.json'
+      - '.github/workflows/lint.yml'
 
 permissions:
   contents: write
@@ -46,7 +62,7 @@ jobs:
         run: vendor/bin/pint --test
 
   frontend-lint:
-    name: Frontend Code Quality
+    name: Web Frontend Code Quality
     runs-on: ubuntu-latest
     
     steps:

@@ -6,39 +6,47 @@
         <div class="p-4 sm:p-6">
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <div>
-              <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">Search</label>
+              <label for="company-search" class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">Search</label>
               <input
+                id="company-search"
                 v-model="filters.search"
                 type="text"
+                name="company-search"
                 placeholder="Company name..."
                 class="w-full px-3 py-2 text-sm rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 touch-manipulation"
                 @input="handleFilterChange"
               />
             </div>
             <div>
-              <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">Industry</label>
+              <label for="company-industry" class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">Industry</label>
               <input
+                id="company-industry"
                 v-model="filters.industry"
                 type="text"
+                name="company-industry"
                 placeholder="Filter by industry..."
                 class="w-full px-3 py-2 text-sm rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 touch-manipulation"
                 @input="handleFilterChange"
               />
             </div>
             <div>
-              <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">Country</label>
+              <label for="company-country" class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">Country</label>
               <input
+                id="company-country"
                 v-model="filters.country"
                 type="text"
+                name="company-country"
                 placeholder="Filter by country..."
                 class="w-full px-3 py-2 text-sm rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 touch-manipulation"
                 @input="handleFilterChange"
               />
             </div>
             <div>
-              <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">Per Page</label>
+              <label for="companies-per-page" class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">Per Page</label>
               <select
+                id="companies-per-page"
                 v-model="filters.per_page"
+                name="companies-per-page"
                 class="w-full px-3 py-2 text-sm rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 touch-manipulation"
                 @change="handleFilterChange"
               >

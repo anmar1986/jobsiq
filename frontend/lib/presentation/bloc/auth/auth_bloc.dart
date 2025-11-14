@@ -38,21 +38,32 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     final result = await checkAuthenticationUseCase(NoParams());
 
-    result.fold(
-      (failure) => emit(Unauthenticated()),
-      (isAuthenticated) async {
-        if (isAuthenticated) {
-          // Get user data
-          final userResult = await getCurrentUserUseCase(NoParams());
-          userResult.fold(
-            (failure) => emit(Unauthenticated()),
-            (user) => emit(Authenticated(user: user)),
-          );
-        } else {
-          emit(Unauthenticated());
-        }
-      },
-    );
+    if (result.isLeft()) {
+      emit(Unauthenticated());
+      return;
+    }
+
+    final isAuthenticated = result.fold((l) => false, (r) => r);
+
+    if (!isAuthenticated) {
+      emit(Unauthenticated());
+      return;
+    }
+
+    // Get user data
+    final userResult = await getCurrentUserUseCase(NoParams());
+
+    if (userResult.isLeft()) {
+      emit(Unauthenticated());
+      return;
+    }
+
+    final user = userResult.fold((l) => null, (r) => r);
+    if (user != null) {
+      emit(Authenticated(user: user));
+    } else {
+      emit(Unauthenticated());
+    }
   }
 
   Future<void> _onLogin(

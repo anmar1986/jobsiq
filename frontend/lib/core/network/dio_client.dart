@@ -40,17 +40,19 @@ class DioClient {
       ),
     );
 
-    // Add pretty logger in debug mode
-    _dio.interceptors.add(
-      PrettyDioLogger(
-        requestHeader: true,
-        requestBody: true,
-        responseBody: true,
-        responseHeader: false,
-        error: true,
-        compact: true,
-      ),
-    );
+    // Pretty logger disabled to prevent large response truncation errors
+    // Uncomment for debugging if needed, but keep responseBody: false
+    // _dio.interceptors.add(
+    //   PrettyDioLogger(
+    //     requestHeader: true,
+    //     requestBody: true,
+    //     responseBody: false,
+    //     responseHeader: false,
+    //     error: true,
+    //     compact: true,
+    //     maxWidth: 90,
+    //   ),
+    // );
   }
 
   Future<void> _onRequest(

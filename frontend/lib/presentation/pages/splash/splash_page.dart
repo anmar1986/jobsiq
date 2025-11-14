@@ -39,6 +39,9 @@ class _SplashPageState extends State<SplashPage> {
           context.go(AppRouter.main);
         } else if (state is Unauthenticated) {
           context.go(AppRouter.login);
+        } else if (state is AuthError) {
+          // Navigate to login on error
+          context.go(AppRouter.login);
         }
       },
       child: Scaffold(

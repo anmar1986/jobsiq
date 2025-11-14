@@ -131,9 +131,12 @@
                 />
               </div>
               <div class="flex-1">
+                <label for="profile-photo-input" class="sr-only">Profile Photo</label>
                 <input
+                  id="profile-photo-input"
                   type="file"
                   ref="photoInput"
+                  name="profile-photo"
                   accept="image/*"
                   @change="handlePhotoChange"
                   class="hidden"
@@ -190,9 +193,11 @@
             <h2 class="text-xl font-semibold text-gray-900 mb-4">Personal Information</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label class="block text-sm font-semibold text-gray-700 mb-2">Gender</label>
+                <label for="profile-gender" class="block text-sm font-semibold text-gray-700 mb-2">Gender</label>
                 <select
+                  id="profile-gender"
                   v-model="formData.gender"
+                  name="profile-gender"
                   class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
                 >
                   <option value="">Select gender</option>

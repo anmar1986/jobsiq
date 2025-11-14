@@ -6,19 +6,23 @@
         <div class="p-4 sm:p-6">
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
             <div>
-              <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">Search</label>
+              <label for="jobs-search" class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">Search</label>
               <input
+                id="jobs-search"
                 v-model="filters.search"
                 type="text"
+                name="jobs-search"
                 placeholder="Job title..."
                 class="w-full px-3 py-2 text-sm rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 touch-manipulation"
                 @input="handleFilterChange"
               />
             </div>
             <div>
-              <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">Status</label>
+              <label for="jobs-status" class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">Status</label>
               <select
+                id="jobs-status"
                 v-model="filters.status"
+                name="jobs-status"
                 class="w-full px-3 py-2 text-sm rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 touch-manipulation"
                 @change="handleFilterChange"
               >
@@ -29,9 +33,11 @@
               </select>
             </div>
             <div>
-              <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">Job Type</label>
+              <label for="jobs-type" class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">Job Type</label>
               <select
+                id="jobs-type"
                 v-model="filters.job_type"
+                name="jobs-type"
                 class="w-full px-3 py-2 text-sm rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 touch-manipulation"
                 @change="handleFilterChange"
               >
@@ -43,9 +49,11 @@
               </select>
             </div>
             <div>
-              <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">Featured</label>
+              <label for="jobs-featured" class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">Featured</label>
               <select
+                id="jobs-featured"
                 v-model="filters.is_featured"
+                name="jobs-featured"
                 class="w-full px-3 py-2 text-sm rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 touch-manipulation"
                 @change="handleFilterChange"
               >
@@ -55,9 +63,11 @@
               </select>
             </div>
             <div>
-              <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">Per Page</label>
+              <label for="jobs-per-page" class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">Per Page</label>
               <select
+                id="jobs-per-page"
                 v-model="filters.per_page"
+                name="jobs-per-page"
                 class="w-full px-3 py-2 text-sm rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 touch-manipulation"
                 @change="handleFilterChange"
               >

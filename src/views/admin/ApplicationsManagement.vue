@@ -6,19 +6,23 @@
         <div class="p-4 sm:p-6">
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <div>
-              <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">Search</label>
+              <label for="application-search" class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">Search</label>
               <input
+                id="application-search"
                 v-model="filters.search"
                 type="text"
+                name="application-search"
                 placeholder="Applicant name..."
                 class="w-full px-3 py-2 text-sm rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 touch-manipulation"
                 @input="handleFilterChange"
               />
             </div>
             <div>
-              <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">Status</label>
+              <label for="application-status" class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">Status</label>
               <select
+                id="application-status"
                 v-model="filters.status"
+                name="application-status"
                 class="w-full px-3 py-2 text-sm rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 touch-manipulation"
                 @change="handleFilterChange"
               >
@@ -31,9 +35,11 @@
               </select>
             </div>
             <div>
-              <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">Date Range</label>
+              <label for="application-date-range" class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">Date Range</label>
               <select
+                id="application-date-range"
                 v-model="filters.date_range"
+                name="application-date-range"
                 class="w-full px-3 py-2 text-sm rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 touch-manipulation"
                 @change="handleFilterChange"
               >
@@ -44,9 +50,11 @@
               </select>
             </div>
             <div>
-              <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">Per Page</label>
+              <label for="applications-per-page" class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">Per Page</label>
               <select
+                id="applications-per-page"
                 v-model="filters.per_page"
+                name="applications-per-page"
                 class="w-full px-3 py-2 text-sm rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 touch-manipulation"
                 @change="handleFilterChange"
               >
