@@ -110,7 +110,8 @@ class AppTheme {
       type: BottomNavigationBarType.fixed,
       elevation: 8,
       selectedLabelStyle: TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
-      unselectedLabelStyle: TextStyle(fontSize: 12, fontWeight: FontWeight.normal),
+      unselectedLabelStyle:
+          TextStyle(fontSize: 12, fontWeight: FontWeight.normal),
     ),
 
     // Divider Theme
@@ -150,6 +151,26 @@ class AppTheme {
         borderRadius: BorderRadius.circular(8),
       ),
       behavior: SnackBarBehavior.floating,
+    ),
+
+    // Switch Theme
+    switchTheme: SwitchThemeData(
+      thumbColor: WidgetStateProperty.resolveWith<Color>(
+        (Set<WidgetState> states) {
+          if (states.contains(WidgetState.selected)) {
+            return AppColors.primary;
+          }
+          return AppColors.grey400;
+        },
+      ),
+      trackColor: WidgetStateProperty.resolveWith<Color>(
+        (Set<WidgetState> states) {
+          if (states.contains(WidgetState.selected)) {
+            return AppColors.primary.withValues(alpha: 0.5);
+          }
+          return AppColors.grey300;
+        },
+      ),
     ),
   );
 
@@ -260,7 +281,8 @@ class AppTheme {
       type: BottomNavigationBarType.fixed,
       elevation: 8,
       selectedLabelStyle: TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
-      unselectedLabelStyle: TextStyle(fontSize: 12, fontWeight: FontWeight.normal),
+      unselectedLabelStyle:
+          TextStyle(fontSize: 12, fontWeight: FontWeight.normal),
     ),
 
     // Divider Theme
@@ -300,6 +322,26 @@ class AppTheme {
         borderRadius: BorderRadius.circular(8),
       ),
       behavior: SnackBarBehavior.floating,
+    ),
+
+    // Switch Theme
+    switchTheme: SwitchThemeData(
+      thumbColor: WidgetStateProperty.resolveWith<Color>(
+        (Set<WidgetState> states) {
+          if (states.contains(WidgetState.selected)) {
+            return AppColors.primary;
+          }
+          return AppColors.grey600;
+        },
+      ),
+      trackColor: WidgetStateProperty.resolveWith<Color>(
+        (Set<WidgetState> states) {
+          if (states.contains(WidgetState.selected)) {
+            return AppColors.primary.withValues(alpha: 0.5);
+          }
+          return AppColors.grey700;
+        },
+      ),
     ),
   );
 }

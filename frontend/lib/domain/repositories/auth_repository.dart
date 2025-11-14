@@ -27,6 +27,27 @@ abstract class AuthRepository {
   Future<Either<Failure, bool>> isAuthenticated();
 
   Future<Either<Failure, String?>> getToken();
+
+  Future<Either<Failure, UserEntity>> updateProfile({
+    String? name,
+    String? email,
+    String? profilePhoto,
+    String? headline,
+    String? gender,
+    String? dateOfBirth,
+    String? nationality,
+    String? city,
+    String? country,
+    String? address,
+    String? phoneNumber,
+    String? linkedinUrl,
+  });
+
+  Future<Either<Failure, void>> changePassword({
+    required String currentPassword,
+    required String password,
+    required String passwordConfirmation,
+  });
 }
 
 class AuthResult {

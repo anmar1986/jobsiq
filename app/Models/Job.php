@@ -48,6 +48,8 @@ class Job extends Model
         'published_at' => 'datetime',
     ];
 
+    protected $appends = ['is_saved', 'is_applied'];
+
     protected static function boot()
     {
         parent::boot();
@@ -200,5 +202,39 @@ class Job extends Model
         }
 
         return $min ? "{$currency} {$min}+" : "{$currency} {$max}";
+    }
+
+    /**
+     * Check if the job is saved by the authenticated user.
+     */
+    public function getIsSavedAttribute(): bool
+    {
+        $user = auth('sanctum')->user();
+
+        if (! $user) {
+            return false;
+        }
+
+        /** @var \App\Models\User $user */
+        return SavedJob::where('user_id', $user->id)
+            ->where('job_id', $this->id)
+            ->exists();
+    }
+
+    /**
+     * Check if the authenticated user has applied to this job.
+     */
+    public function getIsAppliedAttribute(): bool
+    {
+        $user = auth('sanctum')->user();
+
+        if (! $user) {
+            return false;
+        }
+
+        /** @var \App\Models\User $user */
+        return JobApplication::where('user_id', $user->id)
+            ->where('job_id', $this->id)
+            ->exists();
     }
 }

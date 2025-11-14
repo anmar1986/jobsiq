@@ -19,19 +19,23 @@
         <div class="p-4 sm:p-6">
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <div>
-              <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">Search</label>
+              <label for="user-search" class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">Search</label>
               <input
+                id="user-search"
                 v-model="filters.search"
                 type="text"
+                name="user-search"
                 placeholder="Name or email..."
                 class="w-full px-3 py-2 text-sm rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 touch-manipulation"
                 @input="handleFilterChange"
               />
             </div>
             <div>
-              <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">User Type</label>
+              <label for="user-type" class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">User Type</label>
               <select
+                id="user-type"
                 v-model="filters.user_type"
+                name="user-type"
                 class="w-full px-3 py-2 text-sm rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 touch-manipulation"
                 @change="handleFilterChange"
               >
@@ -41,9 +45,11 @@
               </select>
             </div>
             <div>
-              <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">Admin Status</label>
+              <label for="admin-status" class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">Admin Status</label>
               <select
+                id="admin-status"
                 v-model="filters.is_admin"
+                name="admin-status"
                 class="w-full px-3 py-2 text-sm rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 touch-manipulation"
                 @change="handleFilterChange"
               >
@@ -53,9 +59,11 @@
               </select>
             </div>
             <div>
-              <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">Per Page</label>
+              <label for="users-per-page" class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">Per Page</label>
               <select
+                id="users-per-page"
                 v-model="filters.per_page"
+                name="users-per-page"
                 class="w-full px-3 py-2 text-sm rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 touch-manipulation"
                 @change="handleFilterChange"
               >
@@ -159,36 +167,44 @@
     <BaseModal v-model="showCreateModal" :title="editingUser ? 'Edit User' : 'Create User'">
       <form @submit.prevent="saveUser" class="space-y-4">
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Name</label>
+          <label for="modal-user-name" class="block text-sm font-medium text-gray-700 mb-1">Name</label>
           <input
+            id="modal-user-name"
             v-model="userForm.name"
             type="text"
+            name="modal-user-name"
             required
             class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
           />
         </div>
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+          <label for="modal-user-email" class="block text-sm font-medium text-gray-700 mb-1">Email</label>
           <input
+            id="modal-user-email"
             v-model="userForm.email"
             type="email"
+            name="modal-user-email"
             required
             class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
           />
         </div>
         <div v-if="!editingUser">
-          <label class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+          <label for="modal-user-password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
           <input
+            id="modal-user-password"
             v-model="userForm.password"
             type="password"
+            name="modal-user-password"
             :required="!editingUser"
             class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
           />
         </div>
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">User Type</label>
+          <label for="modal-user-type" class="block text-sm font-medium text-gray-700 mb-1">User Type</label>
           <select
+            id="modal-user-type"
             v-model="userForm.user_type"
+            name="modal-user-type"
             required
             class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
           >
@@ -198,11 +214,13 @@
         </div>
         <div class="flex items-center">
           <input
+            id="modal-user-admin"
             v-model="userForm.is_admin"
             type="checkbox"
+            name="modal-user-admin"
             class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
           />
-          <label class="ml-2 block text-sm text-gray-900">Admin User</label>
+          <label for="modal-user-admin" class="ml-2 block text-sm text-gray-900">Admin User</label>
         </div>
         <div class="flex justify-end space-x-3 pt-4">
           <button

@@ -1,29 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../domain/entities/job_entity.dart';
 
 class JobCard extends StatelessWidget {
-  final String title;
-  final String companyName;
-  final String? companyLogo;
-  final String location;
-  final String employmentType;
-  final String experienceLevel;
-  final String salaryRange;
-  final bool isSaved;
+  final JobEntity job;
   final VoidCallback? onTap;
   final VoidCallback? onSaveToggle;
 
   const JobCard({
     super.key,
-    required this.title,
-    required this.companyName,
-    this.companyLogo,
-    required this.location,
-    required this.employmentType,
-    required this.experienceLevel,
-    required this.salaryRange,
-    this.isSaved = false,
+    required this.job,
     this.onTap,
     this.onSaveToggle,
   });
@@ -49,7 +36,7 @@ class JobCard extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          title,
+                          job.title,
                           style: TextStyle(
                             fontSize: 16.sp,
                             fontWeight: FontWeight.w600,
@@ -57,7 +44,7 @@ class JobCard extends StatelessWidget {
                         ),
                         SizedBox(height: 4.h),
                         Text(
-                          companyName,
+                          job.company?.name ?? 'Unknown Company',
                           style: TextStyle(
                             fontSize: 14.sp,
                             color: AppColors.textSecondary,
@@ -68,37 +55,44 @@ class JobCard extends StatelessWidget {
                   ),
                   IconButton(
                     icon: Icon(
-                      isSaved
+                      job.isSaved == true
                           ? Icons.bookmark_rounded
                           : Icons.bookmark_border_rounded,
-                      color: isSaved ? AppColors.primary : null,
+                      color: job.isSaved == true ? AppColors.primary : null,
                     ),
                     onPressed: onSaveToggle,
                   ),
                 ],
               ),
               SizedBox(height: 12.h),
-              Row(
+              Wrap(
+                spacing: 8.w,
+                runSpacing: 8.h,
                 children: [
                   _InfoChip(
                     icon: Icons.location_on_outlined,
-                    label: location,
+                    label: job.location ?? 'Remote',
                   ),
-                  SizedBox(width: 8.w),
                   _InfoChip(
                     icon: Icons.work_outline_rounded,
-                    label: employmentType,
+                    label: _formatEmploymentType(job.employmentType),
                   ),
-                  SizedBox(width: 8.w),
-                  _InfoChip(
-                    icon: Icons.stars_rounded,
-                    label: experienceLevel,
-                  ),
+                  if (job.experienceLevel != null)
+                    _InfoChip(
+                      icon: Icons.stars_rounded,
+                      label: _formatExperienceLevel(job.experienceLevel) ??
+                          'Unknown',
+                    ),
+                  if (job.isRemote)
+                    const _InfoChip(
+                      icon: Icons.home_work_outlined,
+                      label: 'Remote',
+                    ),
                 ],
               ),
               SizedBox(height: 12.h),
               Text(
-                salaryRange,
+                job.salaryRange,
                 style: TextStyle(
                   fontSize: 14.sp,
                   fontWeight: FontWeight.w600,
@@ -120,11 +114,11 @@ class JobCard extends StatelessWidget {
         color: AppColors.grey100,
         borderRadius: BorderRadius.circular(8),
       ),
-      child: companyLogo != null
+      child: job.company?.logo != null
           ? ClipRRect(
               borderRadius: BorderRadius.circular(8),
               child: Image.network(
-                companyLogo!,
+                job.company!.logo!,
                 fit: BoxFit.cover,
                 errorBuilder: (context, error, stackTrace) =>
                     const Icon(Icons.business_rounded),
@@ -132,6 +126,41 @@ class JobCard extends StatelessWidget {
             )
           : const Icon(Icons.business_rounded),
     );
+  }
+
+  String _formatEmploymentType(String type) {
+    switch (type) {
+      case 'full-time':
+        return 'Full Time';
+      case 'part-time':
+        return 'Part Time';
+      case 'contract':
+        return 'Contract';
+      case 'freelance':
+        return 'Freelance';
+      case 'internship':
+        return 'Internship';
+      default:
+        return type;
+    }
+  }
+
+  String? _formatExperienceLevel(String? level) {
+    if (level == null) return null;
+    switch (level) {
+      case 'entry':
+        return 'Entry Level';
+      case 'junior':
+        return 'Junior';
+      case 'mid':
+        return 'Mid Level';
+      case 'senior':
+        return 'Senior';
+      case 'lead':
+        return 'Lead';
+      default:
+        return level;
+    }
   }
 }
 

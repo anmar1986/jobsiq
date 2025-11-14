@@ -2,8 +2,8 @@ import 'package:equatable/equatable.dart';
 
 class JobEntity extends Equatable {
   final int id;
-  final int companyId;
-  final int userId;
+  final int? companyId;
+  final int? userId;
   final String title;
   final String slug;
   final String description;
@@ -13,7 +13,7 @@ class JobEntity extends Equatable {
   final String? city;
   final String? country;
   final String employmentType;
-  final String experienceLevel;
+  final String? experienceLevel;
   final String? category;
   final List<String>? skills;
   final double? salaryMin;
@@ -24,6 +24,7 @@ class JobEntity extends Equatable {
   final bool isFeatured;
   final bool isActive;
   final bool? isSaved;
+  final bool? isApplied;
   final DateTime? expiresAt;
   final DateTime? publishedAt;
   final DateTime createdAt;
@@ -32,8 +33,8 @@ class JobEntity extends Equatable {
 
   const JobEntity({
     required this.id,
-    required this.companyId,
-    required this.userId,
+    this.companyId,
+    this.userId,
     required this.title,
     required this.slug,
     required this.description,
@@ -43,7 +44,7 @@ class JobEntity extends Equatable {
     this.city,
     this.country,
     required this.employmentType,
-    required this.experienceLevel,
+    this.experienceLevel,
     this.category,
     this.skills,
     this.salaryMin,
@@ -54,6 +55,7 @@ class JobEntity extends Equatable {
     required this.isFeatured,
     required this.isActive,
     this.isSaved,
+    this.isApplied,
     this.expiresAt,
     this.publishedAt,
     required this.createdAt,
@@ -71,6 +73,43 @@ class JobEntity extends Equatable {
     } else {
       return 'Up to $currency ${salaryMax!.toStringAsFixed(0)}';
     }
+  }
+
+  JobEntity copyWith({
+    bool? isSaved,
+    bool? isApplied,
+  }) {
+    return JobEntity(
+      id: id,
+      companyId: companyId,
+      userId: userId,
+      title: title,
+      slug: slug,
+      description: description,
+      requirements: requirements,
+      benefits: benefits,
+      location: location,
+      city: city,
+      country: country,
+      employmentType: employmentType,
+      experienceLevel: experienceLevel,
+      category: category,
+      skills: skills,
+      salaryMin: salaryMin,
+      salaryMax: salaryMax,
+      salaryCurrency: salaryCurrency,
+      salaryPeriod: salaryPeriod,
+      isRemote: isRemote,
+      isFeatured: isFeatured,
+      isActive: isActive,
+      isSaved: isSaved ?? this.isSaved,
+      isApplied: isApplied ?? this.isApplied,
+      expiresAt: expiresAt,
+      publishedAt: publishedAt,
+      createdAt: createdAt,
+      updatedAt: updatedAt,
+      company: company,
+    );
   }
 
   @override
@@ -98,6 +137,7 @@ class JobEntity extends Equatable {
         isFeatured,
         isActive,
         isSaved,
+        isApplied,
         expiresAt,
         publishedAt,
         createdAt,

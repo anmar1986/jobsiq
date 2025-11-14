@@ -27,8 +27,11 @@
 
           <!-- Status Filter -->
           <div>
+            <label for="my-applications-status" class="sr-only">Application Status</label>
             <select
+              id="my-applications-status"
               v-model="filters.status"
+              name="my-applications-status"
               @change="handleFilterChange"
               class="w-full px-3 sm:px-4 py-2 sm:py-2.5 text-sm sm:text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
             >

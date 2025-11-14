@@ -139,36 +139,44 @@
         <div class="p-4 sm:p-6">
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <div>
-              <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">Search</label>
+              <label for="search-history-query" class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">Search</label>
               <input
+                id="search-history-query"
                 v-model="filters.search"
                 type="text"
+                name="search-history-query"
                 placeholder="Search query..."
                 class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 touch-manipulation"
               />
             </div>
             <div>
-              <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">Location</label>
+              <label for="search-history-location" class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">Location</label>
               <input
+                id="search-history-location"
                 v-model="filters.location"
                 type="text"
+                name="search-history-location"
                 placeholder="Filter by location..."
                 class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 touch-manipulation"
               />
             </div>
             <div>
-              <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">From Date</label>
+              <label for="search-history-from-date" class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">From Date</label>
               <input
+                id="search-history-from-date"
                 v-model="filters.from_date"
                 type="date"
+                name="search-history-from-date"
                 class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 touch-manipulation"
               />
             </div>
             <div>
-              <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">To Date</label>
+              <label for="search-history-to-date" class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">To Date</label>
               <input
+                id="search-history-to-date"
                 v-model="filters.to_date"
                 type="date"
+                name="search-history-to-date"
                 class="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 touch-manipulation"
               />
             </div>
@@ -289,9 +297,12 @@
         <p class="text-gray-700 mb-4">
           Clear search history older than:
         </p>
+        <label for="clear-before-date" class="sr-only">Clear before date</label>
         <input
+          id="clear-before-date"
           v-model="clearBeforeDate"
           type="date"
+          name="clear-before-date"
           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 mb-4"
         />
         <p class="text-sm text-gray-500 mb-6">

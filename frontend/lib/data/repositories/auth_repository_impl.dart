@@ -191,4 +191,83 @@ class AuthRepositoryImpl implements AuthRepository {
       return Left(CacheFailure('Failed to get token: $e'));
     }
   }
+
+  @override
+  Future<Either<Failure, UserEntity>> updateProfile({
+    String? name,
+    String? email,
+    String? profilePhoto,
+    String? headline,
+    String? gender,
+    String? dateOfBirth,
+    String? nationality,
+    String? city,
+    String? country,
+    String? address,
+    String? phoneNumber,
+    String? linkedinUrl,
+  }) async {
+    if (!await networkInfo.isConnected) {
+      return const Left(NetworkFailure('No internet connection'));
+    }
+
+    try {
+      final user = await remoteDataSource.updateProfile(
+        name: name,
+        email: email,
+        profilePhoto: profilePhoto,
+        headline: headline,
+        gender: gender,
+        dateOfBirth: dateOfBirth,
+        nationality: nationality,
+        city: city,
+        country: country,
+        address: address,
+        phoneNumber: phoneNumber,
+        linkedinUrl: linkedinUrl,
+      );
+
+      // Update cache with new user data
+      await localDataSource.cacheUser(user);
+
+      return Right(user);
+    } on ValidationException catch (e) {
+      return Left(ValidationFailure(e.message, errors: e.errors));
+    } on NetworkException catch (e) {
+      return Left(NetworkFailure(e.message));
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message));
+    } catch (e) {
+      return Left(ServerFailure('Failed to update profile: $e'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> changePassword({
+    required String currentPassword,
+    required String password,
+    required String passwordConfirmation,
+  }) async {
+    if (!await networkInfo.isConnected) {
+      return const Left(NetworkFailure('No internet connection'));
+    }
+
+    try {
+      await remoteDataSource.changePassword(
+        currentPassword: currentPassword,
+        password: password,
+        passwordConfirmation: passwordConfirmation,
+      );
+
+      return const Right(null);
+    } on ValidationException catch (e) {
+      return Left(ValidationFailure(e.message, errors: e.errors));
+    } on NetworkException catch (e) {
+      return Left(NetworkFailure(e.message));
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message));
+    } catch (e) {
+      return Left(ServerFailure('Failed to change password: $e'));
+    }
+  }
 }

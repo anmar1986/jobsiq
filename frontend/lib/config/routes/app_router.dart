@@ -1,14 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import '../../domain/entities/job_entity.dart';
+import '../../domain/entities/cv_entity.dart';
 import '../../presentation/pages/main/main_page.dart';
 import '../../presentation/pages/auth/login_page.dart';
 import '../../presentation/pages/auth/register_page.dart';
+import '../../presentation/pages/auth/forgot_password_page.dart';
 import '../../presentation/pages/splash/splash_page.dart';
+import '../../presentation/pages/jobs/job_details_page.dart';
+import '../../presentation/pages/cvs/cv_details_page.dart';
+import '../../presentation/pages/cvs/create_cv_page.dart';
+import '../../presentation/pages/profile/edit_profile_page.dart';
+import '../../presentation/pages/profile/change_password_page.dart';
+import '../../presentation/pages/profile/personal_information_page.dart';
+import '../../presentation/pages/profile/my_applications_page.dart';
 
 class AppRouter {
   static const String splash = '/';
   static const String login = '/login';
   static const String register = '/register';
+  static const String forgotPassword = '/forgot-password';
   static const String main = '/main';
   static const String jobs = '/main/jobs';
   static const String savedJobs = '/main/saved';
@@ -16,7 +27,11 @@ class AppRouter {
   static const String profile = '/main/profile';
   static const String jobDetails = '/jobs/:slug';
   static const String cvDetails = '/cvs/:id';
+  static const String createCv = '/cvs/create';
   static const String editProfile = '/profile/edit';
+  static const String changePassword = '/profile/change-password';
+  static const String personalInformation = '/profile/personal-information';
+  static const String myApplications = '/profile/my-applications';
 
   static final GoRouter router = GoRouter(
     initialLocation: splash,
@@ -38,6 +53,11 @@ class AppRouter {
         builder: (context, state) => const RegisterPage(),
       ),
       GoRoute(
+        path: forgotPassword,
+        name: 'forgotPassword',
+        builder: (context, state) => const ForgotPasswordPage(),
+      ),
+      GoRoute(
         path: main,
         name: 'main',
         builder: (context, state) {
@@ -46,7 +66,47 @@ class AppRouter {
           return MainPage(initialTab: initialIndex);
         },
       ),
-      // TODO: Add more routes for job details, cv details, etc.
+      GoRoute(
+        path: jobDetails,
+        name: 'jobDetails',
+        builder: (context, state) {
+          final job = state.extra as JobEntity;
+          return JobDetailsPage(job: job);
+        },
+      ),
+      GoRoute(
+        path: cvDetails,
+        name: 'cvDetails',
+        builder: (context, state) {
+          final cv = state.extra as CvEntity;
+          return CvDetailsPage(cv: cv);
+        },
+      ),
+      GoRoute(
+        path: createCv,
+        name: 'createCv',
+        builder: (context, state) => const CreateCvPage(),
+      ),
+      GoRoute(
+        path: editProfile,
+        name: 'editProfile',
+        builder: (context, state) => const EditProfilePage(),
+      ),
+      GoRoute(
+        path: changePassword,
+        name: 'changePassword',
+        builder: (context, state) => const ChangePasswordPage(),
+      ),
+      GoRoute(
+        path: personalInformation,
+        name: 'personalInformation',
+        builder: (context, state) => const PersonalInformationPage(),
+      ),
+      GoRoute(
+        path: myApplications,
+        name: 'myApplications',
+        builder: (context, state) => const MyApplicationsPage(),
+      ),
     ],
     errorBuilder: (context, state) => Scaffold(
       body: Center(

@@ -1,0 +1,4 @@
+
+Warning: file_get_contents(http://10.0.2.2:8000/api/my-cvs): Failed to open stream: Ein Verbindungsversuch ist fehlgeschlagen, da die Gegenstelle nach einer bestimmten Zeitspanne nicht richtig reagiert hat, oder die hergestellte Verbindung war fehlerhaft, da der verbundene Host nicht reagiert hat in Command line code on line 1
+
+Warning: file_put_contents(/tmp/cv_response.json): Failed to open stream: No such file or directory in Command line code on line 1

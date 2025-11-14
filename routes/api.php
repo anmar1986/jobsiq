@@ -26,6 +26,8 @@ use Illuminate\Support\Facades\Route;
 // Authentication routes
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
+Route::post('/forgot-password', [AuthController::class, 'forgotPassword']);
+Route::post('/reset-password', [AuthController::class, 'resetPassword']);
 
 // Home page routes - cached for 5 minutes
 Route::middleware([CacheResponse::class.':300'])->group(function () {
@@ -74,6 +76,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/my-companies/{company}', [CompanyController::class, 'show']); // Get owned company by ID (fallback)
     Route::post('/companies', [CompanyController::class, 'store']);
     Route::put('/companies/{company:id}', [CompanyController::class, 'update']);
+    Route::post('/companies/{company:id}', [CompanyController::class, 'update']); // Support POST for file uploads
     Route::delete('/companies/{company:id}', [CompanyController::class, 'destroy']);
 
     // Company ownership

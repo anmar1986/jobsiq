@@ -1,7 +1,9 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
+import 'package:dio/io.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:logger/logger.dart';
-import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 import '../constants/api_constants.dart';
 import '../constants/app_constants.dart';
 
@@ -25,10 +27,27 @@ class DioClient {
       baseUrl: ApiConstants.baseUrl,
       connectTimeout: ApiConstants.connectTimeout,
       receiveTimeout: ApiConstants.receiveTimeout,
+      responseType: ResponseType.json,
+      receiveDataWhenStatusError: true,
       headers: {
         'Content-Type': ApiConstants.contentType,
         'Accept': ApiConstants.accept,
+        'Accept-Encoding':
+            'identity', // Disable compression to avoid truncation
       },
+    );
+
+    // Configure HTTP adapter to handle larger responses on mobile
+    // This fixes the response truncation issue that occurs with large JSON payloads
+    _dio.httpClientAdapter = IOHttpClientAdapter(
+      createHttpClient: () {
+        final client = HttpClient();
+        client.autoUncompress =
+            false; // Disable auto uncompress to prevent buffer issues
+        client.idleTimeout = const Duration(seconds: 30);
+        return client;
+      },
+      validateCertificate: (cert, host, port) => true,
     );
 
     // Add interceptors
@@ -37,18 +56,6 @@ class DioClient {
         onRequest: _onRequest,
         onResponse: _onResponse,
         onError: _onError,
-      ),
-    );
-
-    // Add pretty logger in debug mode
-    _dio.interceptors.add(
-      PrettyDioLogger(
-        requestHeader: true,
-        requestBody: true,
-        responseBody: true,
-        responseHeader: false,
-        error: true,
-        compact: true,
       ),
     );
   }

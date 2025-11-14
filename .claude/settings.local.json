@@ -1,13 +1,7 @@
 {
   "permissions": {
     "allow": [
-      "Bash(flutter create:*)",
-      "Bash(flutter pub get:*)",
-      "Bash(README.md)",
-      "Bash(flutter analyze:*)",
-      "Bash(flutter doctor:*)",
-      "Bash(flutter pub run build_runner build:*)",
-      "Bash(flutter:*)"
+      "Bash(tee:*)"
     ],
     "deny": [],
     "ask": []

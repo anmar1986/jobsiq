@@ -8,8 +8,8 @@ part of 'job_model.dart';
 
 JobModel _$JobModelFromJson(Map<String, dynamic> json) => JobModel(
       id: (json['id'] as num).toInt(),
-      companyId: (json['companyId'] as num).toInt(),
-      userId: (json['userId'] as num).toInt(),
+      companyId: (json['company_id'] as num?)?.toInt(),
+      userId: (json['user_id'] as num?)?.toInt(),
       title: json['title'] as String,
       slug: json['slug'] as String,
       description: json['description'] as String,
@@ -18,35 +18,38 @@ JobModel _$JobModelFromJson(Map<String, dynamic> json) => JobModel(
       location: json['location'] as String?,
       city: json['city'] as String?,
       country: json['country'] as String?,
-      employmentType: json['employmentType'] as String,
-      experienceLevel: json['experienceLevel'] as String,
+      employmentType: json['employment_type'] as String,
+      experienceLevel: json['experience_level'] as String?,
       category: json['category'] as String?,
       skills:
           (json['skills'] as List<dynamic>?)?.map((e) => e as String).toList(),
-      salaryMin: (json['salaryMin'] as num?)?.toDouble(),
-      salaryMax: (json['salaryMax'] as num?)?.toDouble(),
-      salaryCurrency: json['salaryCurrency'] as String?,
-      salaryPeriod: json['salaryPeriod'] as String?,
-      isRemote: json['isRemote'] as bool,
-      isFeatured: json['isFeatured'] as bool,
-      isActive: json['isActive'] as bool,
-      isSaved: json['isSaved'] as bool?,
-      expiresAt: json['expiresAt'] == null
+      salaryMin: JobModel._salaryFromJson(json['salary_min']),
+      salaryMax: JobModel._salaryFromJson(json['salary_max']),
+      salaryCurrency: json['salary_currency'] as String?,
+      salaryPeriod: json['salary_period'] as String?,
+      isRemote: json['is_remote'] as bool,
+      isFeatured: json['is_featured'] as bool,
+      isActive: json['is_active'] == null
+          ? true
+          : JobModel._boolFromJson(json['is_active']),
+      isSaved: json['is_saved'] as bool?,
+      isApplied: JobModel._boolFromJson(json['is_applied']),
+      expiresAt: json['expires_at'] == null
           ? null
-          : DateTime.parse(json['expiresAt'] as String),
-      publishedAt: json['publishedAt'] == null
+          : DateTime.parse(json['expires_at'] as String),
+      publishedAt: json['published_at'] == null
           ? null
-          : DateTime.parse(json['publishedAt'] as String),
-      createdAt: DateTime.parse(json['createdAt'] as String),
-      updatedAt: DateTime.parse(json['updatedAt'] as String),
+          : DateTime.parse(json['published_at'] as String),
+      createdAt: DateTime.parse(json['created_at'] as String),
+      updatedAt: DateTime.parse(json['updated_at'] as String),
       company:
           JobModel._companyFromJson(json['company'] as Map<String, dynamic>?),
     );
 
 Map<String, dynamic> _$JobModelToJson(JobModel instance) => <String, dynamic>{
       'id': instance.id,
-      'companyId': instance.companyId,
-      'userId': instance.userId,
+      'company_id': instance.companyId,
+      'user_id': instance.userId,
       'title': instance.title,
       'slug': instance.slug,
       'description': instance.description,
@@ -55,23 +58,24 @@ Map<String, dynamic> _$JobModelToJson(JobModel instance) => <String, dynamic>{
       'location': instance.location,
       'city': instance.city,
       'country': instance.country,
-      'employmentType': instance.employmentType,
-      'experienceLevel': instance.experienceLevel,
+      'employment_type': instance.employmentType,
+      'experience_level': instance.experienceLevel,
       'category': instance.category,
       'skills': instance.skills,
-      'salaryMin': instance.salaryMin,
-      'salaryMax': instance.salaryMax,
-      'salaryCurrency': instance.salaryCurrency,
-      'salaryPeriod': instance.salaryPeriod,
-      'isRemote': instance.isRemote,
-      'isFeatured': instance.isFeatured,
-      'isActive': instance.isActive,
-      'isSaved': instance.isSaved,
-      'expiresAt': instance.expiresAt?.toIso8601String(),
-      'publishedAt': instance.publishedAt?.toIso8601String(),
-      'createdAt': instance.createdAt.toIso8601String(),
-      'updatedAt': instance.updatedAt.toIso8601String(),
+      'salary_currency': instance.salaryCurrency,
+      'salary_period': instance.salaryPeriod,
+      'is_remote': instance.isRemote,
+      'is_featured': instance.isFeatured,
+      'is_saved': instance.isSaved,
+      'expires_at': instance.expiresAt?.toIso8601String(),
+      'published_at': instance.publishedAt?.toIso8601String(),
+      'created_at': instance.createdAt.toIso8601String(),
+      'updated_at': instance.updatedAt.toIso8601String(),
       'company': JobModel._companyToJson(instance.company),
+      'salary_min': instance.salaryMin,
+      'salary_max': instance.salaryMax,
+      'is_active': instance.isActive,
+      'is_applied': instance.isApplied,
     };
 
 CompanyBriefModel _$CompanyBriefModelFromJson(Map<String, dynamic> json) =>
@@ -79,9 +83,9 @@ CompanyBriefModel _$CompanyBriefModelFromJson(Map<String, dynamic> json) =>
       id: (json['id'] as num).toInt(),
       name: json['name'] as String,
       slug: json['slug'] as String,
-      logo: json['logo'] as String?,
+      logo: CompanyBriefModel._logoFromJson(json['logo']),
       industry: json['industry'] as String?,
-      companySize: json['companySize'] as String?,
+      companySize: json['company_size'] as String?,
     );
 
 Map<String, dynamic> _$CompanyBriefModelToJson(CompanyBriefModel instance) =>
@@ -89,7 +93,7 @@ Map<String, dynamic> _$CompanyBriefModelToJson(CompanyBriefModel instance) =>
       'id': instance.id,
       'name': instance.name,
       'slug': instance.slug,
-      'logo': instance.logo,
       'industry': instance.industry,
-      'companySize': instance.companySize,
+      'company_size': instance.companySize,
+      'logo': instance.logo,
     };
