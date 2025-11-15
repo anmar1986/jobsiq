@@ -22,7 +22,10 @@ class AppConfig {
   /// API Base URL - configurable via --dart-define
   static String get baseUrl {
     // Check for build-time environment variable first
-    const String envBaseUrl = String.fromEnvironment('API_BASE_URL');
+    const String envBaseUrl = String.fromEnvironment(
+      'API_BASE_URL',
+      defaultValue: '',
+    );
 
     if (envBaseUrl.isNotEmpty) {
       return envBaseUrl;

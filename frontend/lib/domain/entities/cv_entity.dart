@@ -1,5 +1,8 @@
 import 'package:equatable/equatable.dart';
 
+// Sentinel value to distinguish between null and undefined in copyWith
+const _undefined = Object();
+
 class CvEntity extends Equatable {
   final int id;
   final int userId;
@@ -88,24 +91,24 @@ class CvEntity extends Equatable {
     String? slug,
     String? fullName,
     String? email,
-    String? phone,
-    String? website,
-    String? linkedin,
-    String? github,
-    String? profileImagePath,
-    String? address,
-    String? city,
-    String? country,
-    String? postalCode,
-    List<WorkExperienceEntity>? workExperience,
-    List<EducationEntity>? education,
-    List<String>? skills,
-    List<LanguageEntity>? languages,
-    List<CertificationEntity>? certifications,
-    List<ProjectEntity>? projects,
+    Object? phone = _undefined,
+    Object? website = _undefined,
+    Object? linkedin = _undefined,
+    Object? github = _undefined,
+    Object? profileImagePath = _undefined,
+    Object? address = _undefined,
+    Object? city = _undefined,
+    Object? country = _undefined,
+    Object? postalCode = _undefined,
+    Object? workExperience = _undefined,
+    Object? education = _undefined,
+    Object? skills = _undefined,
+    Object? languages = _undefined,
+    Object? certifications = _undefined,
+    Object? projects = _undefined,
     bool? isPublic,
     bool? isPrimary,
-    String? template,
+    Object? template = _undefined,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) {
@@ -116,24 +119,37 @@ class CvEntity extends Equatable {
       slug: slug ?? this.slug,
       fullName: fullName ?? this.fullName,
       email: email ?? this.email,
-      phone: phone ?? this.phone,
-      website: website ?? this.website,
-      linkedin: linkedin ?? this.linkedin,
-      github: github ?? this.github,
-      profileImagePath: profileImagePath ?? this.profileImagePath,
-      address: address ?? this.address,
-      city: city ?? this.city,
-      country: country ?? this.country,
-      postalCode: postalCode ?? this.postalCode,
-      workExperience: workExperience ?? this.workExperience,
-      education: education ?? this.education,
-      skills: skills ?? this.skills,
-      languages: languages ?? this.languages,
-      certifications: certifications ?? this.certifications,
-      projects: projects ?? this.projects,
+      phone: phone == _undefined ? this.phone : phone as String?,
+      website: website == _undefined ? this.website : website as String?,
+      linkedin: linkedin == _undefined ? this.linkedin : linkedin as String?,
+      github: github == _undefined ? this.github : github as String?,
+      profileImagePath: profileImagePath == _undefined
+          ? this.profileImagePath
+          : profileImagePath as String?,
+      address: address == _undefined ? this.address : address as String?,
+      city: city == _undefined ? this.city : city as String?,
+      country: country == _undefined ? this.country : country as String?,
+      postalCode:
+          postalCode == _undefined ? this.postalCode : postalCode as String?,
+      workExperience: workExperience == _undefined
+          ? this.workExperience
+          : workExperience as List<WorkExperienceEntity>?,
+      education: education == _undefined
+          ? this.education
+          : education as List<EducationEntity>?,
+      skills: skills == _undefined ? this.skills : skills as List<String>?,
+      languages: languages == _undefined
+          ? this.languages
+          : languages as List<LanguageEntity>?,
+      certifications: certifications == _undefined
+          ? this.certifications
+          : certifications as List<CertificationEntity>?,
+      projects: projects == _undefined
+          ? this.projects
+          : projects as List<ProjectEntity>?,
       isPublic: isPublic ?? this.isPublic,
       isPrimary: isPrimary ?? this.isPrimary,
-      template: template ?? this.template,
+      template: template == _undefined ? this.template : template as String?,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
     );
