@@ -7,6 +7,7 @@ import '../../../config/routes/app_router.dart';
 import '../../../config/di/injection.dart';
 import '../../../core/network/dio_client.dart';
 import '../../../core/constants/api_constants.dart';
+import '../../../core/config/app_config.dart';
 import '../../bloc/auth/auth_bloc.dart';
 import '../../bloc/auth/auth_event.dart';
 import '../../bloc/auth/auth_state.dart';
@@ -36,7 +37,7 @@ class ProfilePage extends StatelessWidget {
         if (user.profilePhoto != null && user.profilePhoto!.isNotEmpty) {
           final imageUrl = user.profilePhoto!.startsWith('http')
               ? user.profilePhoto!
-              : 'http://10.0.2.2:8000/storage/${user.profilePhoto}';
+              : AppConfig.getStorageUrl(user.profilePhoto!);
           profileImageProvider = NetworkImage(imageUrl);
         }
 

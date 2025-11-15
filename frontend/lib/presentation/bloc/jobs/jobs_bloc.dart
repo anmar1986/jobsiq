@@ -169,19 +169,8 @@ class JobsBloc extends Bloc<JobsEvent, JobsState> {
         emit(currentState.copyWith(jobs: updatedJobs));
       }
 
+      // Emit save toggled event for UI feedback (e.g., showing snackbar)
       emit(JobSaveToggled(jobId: event.jobId, isSaved: isSaved));
-
-      // Restore the previous state if it was JobsLoaded
-      if (currentState is JobsLoaded) {
-        final updatedJobs = currentState.jobs.map((job) {
-          if (job.id == event.jobId) {
-            return job.copyWith(isSaved: isSaved);
-          }
-          return job;
-        }).toList();
-
-        emit(currentState.copyWith(jobs: updatedJobs));
-      }
     } catch (e) {
       debugPrint('❌ Error toggling save job: $e');
 

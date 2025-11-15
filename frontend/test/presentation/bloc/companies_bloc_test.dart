@@ -1,8 +1,10 @@
 import 'package:bloc_test/bloc_test.dart';
+import 'package:dartz/dartz.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
-import 'package:jobsiq_mobile/data/datasources/company_remote_data_source.dart';
+import 'package:jobsiq_mobile/core/error/failures.dart';
+import 'package:jobsiq_mobile/domain/repositories/company_repository.dart';
 import 'package:jobsiq_mobile/data/models/company_model.dart';
 import 'package:jobsiq_mobile/presentation/bloc/companies/companies_bloc.dart';
 import 'package:jobsiq_mobile/presentation/bloc/companies/companies_event.dart';
@@ -11,15 +13,15 @@ import 'package:jobsiq_mobile/presentation/bloc/companies/companies_state.dart';
 import 'companies_bloc_test.mocks.dart';
 
 @GenerateMocks([
-  CompanyRemoteDataSource,
+  CompanyRepository,
 ])
 void main() {
   late CompaniesBloc bloc;
-  late MockCompanyRemoteDataSource mockCompanyDataSource;
+  late MockCompanyRepository mockCompanyRepository;
 
   setUp(() {
-    mockCompanyDataSource = MockCompanyRemoteDataSource();
-    bloc = CompaniesBloc(companyDataSource: mockCompanyDataSource);
+    mockCompanyRepository = MockCompanyRepository();
+    bloc = CompaniesBloc(companyRepository: mockCompanyRepository);
   });
 
   tearDown(() {
@@ -71,14 +73,14 @@ void main() {
       blocTest<CompaniesBloc, CompaniesState>(
         'emits [CompaniesLoading, CompaniesLoaded] when loading first page succeeds',
         build: () {
-          when(mockCompanyDataSource.getCompanies(
+          when(mockCompanyRepository.getCompanies(
             search: anyNamed('search'),
             city: anyNamed('city'),
             country: anyNamed('country'),
             sort: anyNamed('sort'),
             page: anyNamed('page'),
           )).thenAnswer(
-            (_) async => tCompanies,
+            (_) async => Right(tCompanies),
           );
           return bloc;
         },
@@ -92,7 +94,7 @@ void main() {
           ),
         ],
         verify: (_) {
-          verify(mockCompanyDataSource.getCompanies(
+          verify(mockCompanyRepository.getCompanies(
             search: null,
             city: null,
             country: null,
@@ -105,14 +107,14 @@ void main() {
       blocTest<CompaniesBloc, CompaniesState>(
         'emits [CompaniesLoading, CompaniesEmpty] when first page returns empty',
         build: () {
-          when(mockCompanyDataSource.getCompanies(
+          when(mockCompanyRepository.getCompanies(
             search: anyNamed('search'),
             city: anyNamed('city'),
             country: anyNamed('country'),
             sort: anyNamed('sort'),
             page: anyNamed('page'),
           )).thenAnswer(
-            (_) async => [],
+            (_) async => const Right([]),
           );
           return bloc;
         },
@@ -126,14 +128,14 @@ void main() {
       blocTest<CompaniesBloc, CompaniesState>(
         'emits [CompaniesLoadingMore, CompaniesLoaded] when loading additional pages',
         build: () {
-          when(mockCompanyDataSource.getCompanies(
+          when(mockCompanyRepository.getCompanies(
             search: anyNamed('search'),
             city: anyNamed('city'),
             country: anyNamed('country'),
             sort: anyNamed('sort'),
             page: anyNamed('page'),
           )).thenAnswer(
-            (_) async => [tCompany1],
+            (_) async => Right([tCompany1]),
           );
           return bloc;
         },
@@ -170,14 +172,14 @@ void main() {
               updatedAt: DateTime(2024, 1, 1),
             ),
           );
-          when(mockCompanyDataSource.getCompanies(
+          when(mockCompanyRepository.getCompanies(
             search: anyNamed('search'),
             city: anyNamed('city'),
             country: anyNamed('country'),
             sort: anyNamed('sort'),
             page: anyNamed('page'),
           )).thenAnswer(
-            (_) async => fullPage,
+            (_) async => Right(fullPage),
           );
           return bloc;
         },
@@ -196,14 +198,14 @@ void main() {
       blocTest<CompaniesBloc, CompaniesState>(
         'passes search parameters correctly',
         build: () {
-          when(mockCompanyDataSource.getCompanies(
+          when(mockCompanyRepository.getCompanies(
             search: anyNamed('search'),
             city: anyNamed('city'),
             country: anyNamed('country'),
             sort: anyNamed('sort'),
             page: anyNamed('page'),
           )).thenAnswer(
-            (_) async => tCompanies,
+            (_) async => Right(tCompanies),
           );
           return bloc;
         },
@@ -225,7 +227,7 @@ void main() {
           ),
         ],
         verify: (_) {
-          verify(mockCompanyDataSource.getCompanies(
+          verify(mockCompanyRepository.getCompanies(
             search: 'Tech',
             city: 'New York',
             country: 'USA',
@@ -238,35 +240,36 @@ void main() {
       blocTest<CompaniesBloc, CompaniesState>(
         'emits [CompaniesLoading, CompaniesError] when loading fails',
         build: () {
-          when(mockCompanyDataSource.getCompanies(
+          when(mockCompanyRepository.getCompanies(
             search: anyNamed('search'),
             city: anyNamed('city'),
             country: anyNamed('country'),
             sort: anyNamed('sort'),
             page: anyNamed('page'),
-          )).thenThrow(
-            Exception('Failed to load companies'),
+          )).thenAnswer(
+            (_) async => const Left(ServerFailure('Failed to load companies')),
           );
           return bloc;
         },
         act: (bloc) => bloc.add(const LoadCompaniesEvent(page: 1)),
         expect: () => [
           const CompaniesLoading(),
-          const CompaniesError('Failed to load companies. Please try again.'),
+          const CompaniesError('Failed to load companies'),
         ],
       );
 
       blocTest<CompaniesBloc, CompaniesState>(
         'emits login message when 401 error occurs',
         build: () {
-          when(mockCompanyDataSource.getCompanies(
+          when(mockCompanyRepository.getCompanies(
             search: anyNamed('search'),
             city: anyNamed('city'),
             country: anyNamed('country'),
             sort: anyNamed('sort'),
             page: anyNamed('page'),
-          )).thenThrow(
-            Exception('401 Unauthorized'),
+          )).thenAnswer(
+            (_) async => const Left(
+                AuthenticationFailure('Please login to view companies')),
           );
           return bloc;
         },
@@ -302,8 +305,8 @@ void main() {
       blocTest<CompaniesBloc, CompaniesState>(
         'emits [CompaniesLoading, CompanyDetailsLoaded] when loading company details succeeds',
         build: () {
-          when(mockCompanyDataSource.getCompanyBySlug(any)).thenAnswer(
-            (_) async => tCompanyDetails,
+          when(mockCompanyRepository.getCompanyBySlug(any)).thenAnswer(
+            (_) async => Right(tCompanyDetails),
           );
           return bloc;
         },
@@ -313,31 +316,31 @@ void main() {
           CompanyDetailsLoaded(tCompanyDetails),
         ],
         verify: (_) {
-          verify(mockCompanyDataSource.getCompanyBySlug('tech-corp')).called(1);
+          verify(mockCompanyRepository.getCompanyBySlug('tech-corp')).called(1);
         },
       );
 
       blocTest<CompaniesBloc, CompaniesState>(
         'emits [CompaniesLoading, CompaniesError] when loading company details fails',
         build: () {
-          when(mockCompanyDataSource.getCompanyBySlug(any)).thenThrow(
-            Exception('Company not found'),
+          when(mockCompanyRepository.getCompanyBySlug(any)).thenAnswer(
+            (_) async => const Left(NotFoundFailure('Company not found')),
           );
           return bloc;
         },
         act: (bloc) => bloc.add(const LoadCompanyBySlugEvent('non-existent')),
         expect: () => [
           const CompaniesLoading(),
-          const CompaniesError(
-              'Failed to load company details. Please try again.'),
+          const CompaniesError('Company not found'),
         ],
       );
 
       blocTest<CompaniesBloc, CompaniesState>(
         'emits login message when 401 error occurs',
         build: () {
-          when(mockCompanyDataSource.getCompanyBySlug(any)).thenThrow(
-            Exception('401 Unauthorized'),
+          when(mockCompanyRepository.getCompanyBySlug(any)).thenAnswer(
+            (_) async => const Left(
+                AuthenticationFailure('Please login to view company details')),
           );
           return bloc;
         },
@@ -353,14 +356,14 @@ void main() {
       blocTest<CompaniesBloc, CompaniesState>(
         'triggers LoadCompaniesEvent with page 1',
         build: () {
-          when(mockCompanyDataSource.getCompanies(
+          when(mockCompanyRepository.getCompanies(
             search: anyNamed('search'),
             city: anyNamed('city'),
             country: anyNamed('country'),
             sort: anyNamed('sort'),
             page: anyNamed('page'),
           )).thenAnswer(
-            (_) async => tCompanies,
+            (_) async => Right(tCompanies),
           );
           return bloc;
         },
@@ -374,7 +377,7 @@ void main() {
           ),
         ],
         verify: (_) {
-          verify(mockCompanyDataSource.getCompanies(
+          verify(mockCompanyRepository.getCompanies(
             search: null,
             city: null,
             country: null,

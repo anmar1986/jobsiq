@@ -6,6 +6,9 @@ import 'config/di/injection.dart' as di;
 import 'config/routes/app_router.dart';
 import 'core/theme/app_theme.dart';
 import 'presentation/bloc/auth/auth_bloc.dart';
+import 'presentation/bloc/theme/theme_bloc.dart';
+import 'presentation/bloc/theme/theme_event.dart';
+import 'presentation/bloc/theme/theme_state.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -27,20 +30,31 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => di.sl<AuthBloc>(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (_) => di.sl<AuthBloc>(),
+        ),
+        BlocProvider(
+          create: (_) => di.sl<ThemeBloc>()..add(const ThemeLoaded()),
+        ),
+      ],
       child: ScreenUtilInit(
         designSize: const Size(375, 812), // iPhone 11 Pro size
         minTextAdapt: true,
         splitScreenMode: true,
         builder: (context, child) {
-          return MaterialApp.router(
-            title: 'JobsIQ',
-            debugShowCheckedModeBanner: false,
-            theme: AppTheme.lightTheme,
-            darkTheme: AppTheme.darkTheme,
-            themeMode: ThemeMode.system,
-            routerConfig: AppRouter.router,
+          return BlocBuilder<ThemeBloc, ThemeState>(
+            builder: (context, themeState) {
+              return MaterialApp.router(
+                title: 'JobsIQ',
+                debugShowCheckedModeBanner: false,
+                theme: AppTheme.lightTheme,
+                darkTheme: AppTheme.darkTheme,
+                themeMode: themeState.themeMode,
+                routerConfig: AppRouter.router,
+              );
+            },
           );
         },
       ),

@@ -13,19 +13,26 @@ import '../../widgets/common/job_card.dart';
 import '../../widgets/jobs/job_filter_bottom_sheet.dart';
 
 class JobsPage extends StatelessWidget {
-  const JobsPage({super.key});
+  final String? companyFilter;
+
+  const JobsPage({super.key, this.companyFilter});
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (_) => sl<JobsBloc>()..add(const LoadJobsEvent()),
-      child: const _JobsPageContent(),
+      create: (_) => sl<JobsBloc>()
+        ..add(LoadJobsEvent(
+          company: companyFilter,
+        )),
+      child: _JobsPageContent(companyFilter: companyFilter),
     );
   }
 }
 
 class _JobsPageContent extends StatefulWidget {
-  const _JobsPageContent();
+  final String? companyFilter;
+
+  const _JobsPageContent({this.companyFilter});
 
   @override
   State<_JobsPageContent> createState() => _JobsPageContentState();

@@ -5,7 +5,9 @@
       "Bash(flutter pub get:*)",
       "Bash(flutter pub run build_runner build:*)",
       "Bash(git -C \"C:\\xampp\\htdocs\\myProjects\\jobsiq\" status --short)",
-      "Bash(git -C \"C:\\xampp\\htdocs\\myProjects\\jobsiq\" log --oneline -20)"
+      "Bash(git -C \"C:\\xampp\\htdocs\\myProjects\\jobsiq\" log --oneline -20)",
+      "Bash(flutter analyze:*)",
+      "Bash(./vendor/bin/phpstan analyze:*)"
     ],
     "deny": [],
     "ask": []

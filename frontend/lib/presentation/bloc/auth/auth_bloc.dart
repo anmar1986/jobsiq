@@ -88,7 +88,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     );
 
     result.fold(
-      (failure) => emit(AuthError(message: _mapFailureToMessage(failure))),
+      (failure) => emit(AuthError(
+        message: _mapFailureToMessage(failure),
+        failure: failure,
+      )),
       (authResult) => emit(
         Authenticated(
           user: authResult.user,
@@ -121,10 +124,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         if (failure is ValidationFailure) {
           emit(AuthError(
             message: failure.message,
+            failure: failure,
             errors: failure.errors,
           ));
         } else {
-          emit(AuthError(message: _mapFailureToMessage(failure)));
+          emit(AuthError(
+            message: _mapFailureToMessage(failure),
+            failure: failure,
+          ));
         }
       },
       (authResult) => emit(
@@ -162,7 +169,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     final result = await getCurrentUserUseCase(NoParams());
 
     result.fold(
-      (failure) => emit(AuthError(message: _mapFailureToMessage(failure))),
+      (failure) => emit(AuthError(
+        message: _mapFailureToMessage(failure),
+        failure: failure,
+      )),
       (user) => emit(Authenticated(user: user)),
     );
   }
@@ -195,10 +205,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         if (failure is ValidationFailure) {
           emit(AuthError(
             message: failure.message,
+            failure: failure,
             errors: failure.errors,
           ));
         } else {
-          emit(AuthError(message: _mapFailureToMessage(failure)));
+          emit(AuthError(
+            message: _mapFailureToMessage(failure),
+            failure: failure,
+          ));
         }
       },
       (user) => emit(ProfileUpdateSuccess(user: user)),
@@ -224,10 +238,14 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         if (failure is ValidationFailure) {
           emit(AuthError(
             message: failure.message,
+            failure: failure,
             errors: failure.errors,
           ));
         } else {
-          emit(AuthError(message: _mapFailureToMessage(failure)));
+          emit(AuthError(
+            message: _mapFailureToMessage(failure),
+            failure: failure,
+          ));
         }
       },
       (_) => emit(const PasswordChangeSuccess()),

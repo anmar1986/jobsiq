@@ -1,5 +1,8 @@
 import 'package:equatable/equatable.dart';
 
+// Sentinel value to distinguish between null and undefined in copyWith
+const _undefined = Object();
+
 class CvEntity extends Equatable {
   final int id;
   final int userId;
@@ -79,6 +82,77 @@ class CvEntity extends Equatable {
     } else {
       return 'Updated ${updatedAt.day}/${updatedAt.month}/${updatedAt.year}';
     }
+  }
+
+  CvEntity copyWith({
+    int? id,
+    int? userId,
+    String? title,
+    String? slug,
+    String? fullName,
+    String? email,
+    Object? phone = _undefined,
+    Object? website = _undefined,
+    Object? linkedin = _undefined,
+    Object? github = _undefined,
+    Object? profileImagePath = _undefined,
+    Object? address = _undefined,
+    Object? city = _undefined,
+    Object? country = _undefined,
+    Object? postalCode = _undefined,
+    Object? workExperience = _undefined,
+    Object? education = _undefined,
+    Object? skills = _undefined,
+    Object? languages = _undefined,
+    Object? certifications = _undefined,
+    Object? projects = _undefined,
+    bool? isPublic,
+    bool? isPrimary,
+    Object? template = _undefined,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+  }) {
+    return CvEntity(
+      id: id ?? this.id,
+      userId: userId ?? this.userId,
+      title: title ?? this.title,
+      slug: slug ?? this.slug,
+      fullName: fullName ?? this.fullName,
+      email: email ?? this.email,
+      phone: phone == _undefined ? this.phone : phone as String?,
+      website: website == _undefined ? this.website : website as String?,
+      linkedin: linkedin == _undefined ? this.linkedin : linkedin as String?,
+      github: github == _undefined ? this.github : github as String?,
+      profileImagePath: profileImagePath == _undefined
+          ? this.profileImagePath
+          : profileImagePath as String?,
+      address: address == _undefined ? this.address : address as String?,
+      city: city == _undefined ? this.city : city as String?,
+      country: country == _undefined ? this.country : country as String?,
+      postalCode:
+          postalCode == _undefined ? this.postalCode : postalCode as String?,
+      workExperience: workExperience == _undefined
+          ? this.workExperience
+          : workExperience as List<WorkExperienceEntity>?,
+      education: education == _undefined
+          ? this.education
+          : education as List<EducationEntity>?,
+      skills: skills == _undefined ? this.skills : skills as List<String>?,
+      languages: languages == _undefined
+          ? this.languages
+          : languages as List<LanguageEntity>?,
+      certifications: certifications == _undefined
+          ? this.certifications
+          : certifications as List<CertificationEntity>?,
+      projects: projects == _undefined
+          ? this.projects
+          : projects as List<ProjectEntity>?,
+      isPublic: isPublic ?? this.isPublic,
+      isPrimary: isPrimary ?? this.isPrimary,
+      template: template == _undefined ? this.template : template as String?,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+    );
   }
 
   @override

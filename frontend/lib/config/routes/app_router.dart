@@ -73,8 +73,12 @@ class AppRouter {
         name: 'main',
         builder: (context, state) {
           final tab = state.uri.queryParameters['tab'];
+          final company = state.uri.queryParameters['company'];
           final initialIndex = _getInitialTabIndex(tab);
-          return MainPage(initialTab: initialIndex);
+          return MainPage(
+            initialTab: initialIndex,
+            companyFilter: company,
+          );
         },
       ),
       GoRoute(

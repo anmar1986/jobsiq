@@ -270,4 +270,24 @@ class AuthRepositoryImpl implements AuthRepository {
       return Left(ServerFailure('Failed to change password: $e'));
     }
   }
+
+  @override
+  Future<Either<Failure, void>> forgotPassword({required String email}) async {
+    if (!await networkInfo.isConnected) {
+      return const Left(NetworkFailure('No internet connection'));
+    }
+
+    try {
+      await remoteDataSource.forgotPassword(email: email);
+      return const Right(null);
+    } on ValidationException catch (e) {
+      return Left(ValidationFailure(e.message, errors: e.errors));
+    } on NetworkException catch (e) {
+      return Left(NetworkFailure(e.message));
+    } on ServerException catch (e) {
+      return Left(ServerFailure(e.message));
+    } catch (e) {
+      return Left(ServerFailure('Failed to send reset link: $e'));
+    }
+  }
 }

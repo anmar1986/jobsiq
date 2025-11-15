@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../config/di/injection.dart';
+import '../../../domain/repositories/auth_repository.dart';
 
 class ForgotPasswordPage extends StatefulWidget {
   const ForgotPasswordPage({super.key});
@@ -13,8 +15,10 @@ class ForgotPasswordPage extends StatefulWidget {
 class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
+  final _authRepository = sl<AuthRepository>();
   bool _isLoading = false;
   bool _emailSent = false;
+  String? _errorMessage;
 
   @override
   void dispose() {
@@ -26,15 +30,35 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
     if (_formKey.currentState!.validate()) {
       setState(() {
         _isLoading = true;
+        _errorMessage = null;
       });
 
-      // Simulate API call
-      await Future.delayed(const Duration(seconds: 2));
+      final result = await _authRepository.forgotPassword(
+        email: _emailController.text.trim(),
+      );
 
-      setState(() {
-        _isLoading = false;
-        _emailSent = true;
-      });
+      if (mounted) {
+        result.fold(
+          (failure) {
+            setState(() {
+              _isLoading = false;
+              _errorMessage = failure.message;
+            });
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(failure.message),
+                backgroundColor: Colors.red,
+              ),
+            );
+          },
+          (_) {
+            setState(() {
+              _isLoading = false;
+              _emailSent = true;
+            });
+          },
+        );
+      }
     }
   }
 
@@ -91,10 +115,11 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
           TextFormField(
             controller: _emailController,
             keyboardType: TextInputType.emailAddress,
-            decoration: const InputDecoration(
+            decoration: InputDecoration(
               labelText: 'Email',
               hintText: 'Enter your email address',
-              prefixIcon: Icon(Icons.email_outlined),
+              prefixIcon: const Icon(Icons.email_outlined),
+              errorText: _errorMessage,
             ),
             validator: (value) {
               if (value == null || value.isEmpty) {

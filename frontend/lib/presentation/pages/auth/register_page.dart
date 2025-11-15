@@ -4,6 +4,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../config/routes/app_router.dart';
+import '../../../core/utils/error_handler.dart';
+import '../../../core/error/failures.dart';
 import '../../bloc/auth/auth_bloc.dart';
 import '../../bloc/auth/auth_event.dart';
 import '../../bloc/auth/auth_state.dart';
@@ -63,25 +65,35 @@ class _RegisterPageState extends State<RegisterPage> {
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
         if (state is Authenticated) {
+          ErrorHandler.showSuccessSnackBar(
+            context,
+            'Account created successfully!',
+          );
           context.go(state.redirectTo ?? AppRouter.main);
         } else if (state is AuthError) {
-          // Build error message from field-specific errors if available
-          String errorMessage = state.message;
-          if (state.errors != null && state.errors!.isNotEmpty) {
-            final errorMessages = <String>[];
-            state.errors!.forEach((field, messages) {
-              errorMessages.addAll(messages);
-            });
-            errorMessage = errorMessages.join('\n');
+          // Show error dialog for validation errors (better for multiple field errors)
+          // or snackbar for simple errors
+          if (state.failure is ValidationFailure &&
+              (state.failure as ValidationFailure).errors != null) {
+            ErrorHandler.showErrorDialog(
+              context,
+              state.failure,
+              title: 'Registration Failed',
+              onRetry: _handleRegister,
+            );
+          } else {
+            ErrorHandler.showErrorSnackBar(
+              context,
+              state.failure,
+              action: ErrorHandler.isNetworkError(state.failure)
+                  ? SnackBarAction(
+                      label: 'Retry',
+                      textColor: Colors.white,
+                      onPressed: _handleRegister,
+                    )
+                  : null,
+            );
           }
-
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(errorMessage),
-              backgroundColor: Colors.red,
-              duration: const Duration(seconds: 4),
-            ),
-          );
         }
       },
       child: Scaffold(
