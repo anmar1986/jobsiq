@@ -111,11 +111,12 @@ class JobSaveError extends JobsState {
 
 class JobApplicationSuccess extends JobsState {
   final String message;
+  final String jobSlug;
 
-  const JobApplicationSuccess(this.message);
+  const JobApplicationSuccess(this.message, this.jobSlug);
 
   @override
-  List<Object?> get props => [message];
+  List<Object?> get props => [message, jobSlug];
 }
 
 class JobApplicationError extends JobsState {

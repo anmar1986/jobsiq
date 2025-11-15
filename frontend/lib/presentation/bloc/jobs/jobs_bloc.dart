@@ -204,10 +204,20 @@ class JobsBloc extends Bloc<JobsEvent, JobsState> {
 
       debugPrint('✅ Applied for job: ${event.jobSlug}');
 
-      emit(const JobApplicationSuccess('Application submitted successfully!'));
+      emit(JobApplicationSuccess(
+          'Application submitted successfully!', event.jobSlug));
 
-      // Restore previous state
+      // Update the job's isApplied flag in the state
       if (currentState is JobsLoaded) {
+        final updatedJobs = currentState.jobs.map((job) {
+          if (job.slug == event.jobSlug) {
+            return job.copyWith(isApplied: true);
+          }
+          return job;
+        }).toList();
+
+        emit(currentState.copyWith(jobs: updatedJobs));
+      } else {
         emit(currentState);
       }
     } catch (e) {
