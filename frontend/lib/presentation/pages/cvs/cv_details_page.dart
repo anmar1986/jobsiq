@@ -64,7 +64,8 @@ class _CvDetailsPageState extends State<CvDetailsPage> {
                         CircleAvatar(
                           radius: 40.r,
                           backgroundImage: NetworkImage(
-                            AppConfig.getStorageUrl(_currentCv.profileImagePath!),
+                            AppConfig.getStorageUrl(
+                                _currentCv.profileImagePath!),
                           ),
                         )
                       else
@@ -397,11 +398,15 @@ class _CvDetailsPageState extends State<CvDetailsPage> {
                 children: [
                   Icon(Icons.location_on, size: 14.sp, color: Colors.grey),
                   SizedBox(width: 4.w),
-                  Text(
-                    exp.location!,
-                    style: TextStyle(
-                      fontSize: 12.sp,
-                      color: AppColors.textSecondary,
+                  Expanded(
+                    child: Text(
+                      exp.location!,
+                      style: TextStyle(
+                        fontSize: 12.sp,
+                        color: AppColors.textSecondary,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 2,
                     ),
                   ),
                 ],
@@ -412,11 +417,14 @@ class _CvDetailsPageState extends State<CvDetailsPage> {
               children: [
                 Icon(Icons.calendar_today, size: 14.sp, color: Colors.grey),
                 SizedBox(width: 4.w),
-                Text(
-                  _formatDateRange(exp.startDate, exp.endDate, exp.isCurrent),
-                  style: TextStyle(
-                    fontSize: 12.sp,
-                    color: AppColors.textSecondary,
+                Expanded(
+                  child: Text(
+                    _formatDateRange(exp.startDate, exp.endDate, exp.isCurrent),
+                    style: TextStyle(
+                      fontSize: 12.sp,
+                      color: AppColors.textSecondary,
+                    ),
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
               ],
@@ -430,6 +438,7 @@ class _CvDetailsPageState extends State<CvDetailsPage> {
                   color: AppColors.textPrimary,
                   height: 1.5,
                 ),
+                textAlign: TextAlign.justify,
               ),
             ],
           ],
@@ -493,11 +502,15 @@ class _CvDetailsPageState extends State<CvDetailsPage> {
                 children: [
                   Icon(Icons.location_on, size: 14.sp, color: Colors.grey),
                   SizedBox(width: 4.w),
-                  Text(
-                    edu.location!,
-                    style: TextStyle(
-                      fontSize: 12.sp,
-                      color: AppColors.textSecondary,
+                  Expanded(
+                    child: Text(
+                      edu.location!,
+                      style: TextStyle(
+                        fontSize: 12.sp,
+                        color: AppColors.textSecondary,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 2,
                     ),
                   ),
                 ],
@@ -508,11 +521,14 @@ class _CvDetailsPageState extends State<CvDetailsPage> {
               children: [
                 Icon(Icons.calendar_today, size: 14.sp, color: Colors.grey),
                 SizedBox(width: 4.w),
-                Text(
-                  _formatDateRange(edu.startDate, edu.endDate, edu.isCurrent),
-                  style: TextStyle(
-                    fontSize: 12.sp,
-                    color: AppColors.textSecondary,
+                Expanded(
+                  child: Text(
+                    _formatDateRange(edu.startDate, edu.endDate, edu.isCurrent),
+                    style: TextStyle(
+                      fontSize: 12.sp,
+                      color: AppColors.textSecondary,
+                    ),
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
               ],
@@ -526,6 +542,7 @@ class _CvDetailsPageState extends State<CvDetailsPage> {
                   color: AppColors.textPrimary,
                   height: 1.5,
                 ),
+                textAlign: TextAlign.justify,
               ),
             ],
           ],
@@ -622,20 +639,26 @@ class _CvDetailsPageState extends State<CvDetailsPage> {
                 children: [
                   Icon(Icons.calendar_today, size: 14.sp, color: Colors.grey),
                   SizedBox(width: 4.w),
-                  Text(
-                    'Issued: ${DateFormat('MMM yyyy').format(cert.issueDate!)}',
-                    style: TextStyle(
-                      fontSize: 12.sp,
-                      color: AppColors.textSecondary,
+                  Expanded(
+                    child: Text(
+                      'Issued: ${DateFormat('MMM yyyy').format(cert.issueDate!)}',
+                      style: TextStyle(
+                        fontSize: 12.sp,
+                        color: AppColors.textSecondary,
+                      ),
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
                   if (cert.expiryDate != null) ...[
                     SizedBox(width: 16.w),
-                    Text(
-                      'Expires: ${DateFormat('MMM yyyy').format(cert.expiryDate!)}',
-                      style: TextStyle(
-                        fontSize: 12.sp,
-                        color: AppColors.textSecondary,
+                    Expanded(
+                      child: Text(
+                        'Expires: ${DateFormat('MMM yyyy').format(cert.expiryDate!)}',
+                        style: TextStyle(
+                          fontSize: 12.sp,
+                          color: AppColors.textSecondary,
+                        ),
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
                   ],
@@ -648,11 +671,14 @@ class _CvDetailsPageState extends State<CvDetailsPage> {
                 children: [
                   Icon(Icons.badge, size: 14.sp, color: Colors.grey),
                   SizedBox(width: 4.w),
-                  Text(
-                    'ID: ${cert.credentialId!}',
-                    style: TextStyle(
-                      fontSize: 12.sp,
-                      color: AppColors.textSecondary,
+                  Expanded(
+                    child: Text(
+                      'ID: ${cert.credentialId!}',
+                      style: TextStyle(
+                        fontSize: 12.sp,
+                        color: AppColors.textSecondary,
+                      ),
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
                 ],
@@ -705,15 +731,18 @@ class _CvDetailsPageState extends State<CvDetailsPage> {
                 children: [
                   Icon(Icons.calendar_today, size: 14.sp, color: Colors.grey),
                   SizedBox(width: 4.w),
-                  Text(
-                    _formatDateRange(
-                      project.startDate!,
-                      project.endDate,
-                      false,
-                    ),
-                    style: TextStyle(
-                      fontSize: 12.sp,
-                      color: AppColors.textSecondary,
+                  Expanded(
+                    child: Text(
+                      _formatDateRange(
+                        project.startDate!,
+                        project.endDate,
+                        false,
+                      ),
+                      style: TextStyle(
+                        fontSize: 12.sp,
+                        color: AppColors.textSecondary,
+                      ),
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
                 ],
@@ -728,6 +757,7 @@ class _CvDetailsPageState extends State<CvDetailsPage> {
                   color: AppColors.textPrimary,
                   height: 1.5,
                 ),
+                textAlign: TextAlign.justify,
               ),
             ],
             if (project.technologies != null &&

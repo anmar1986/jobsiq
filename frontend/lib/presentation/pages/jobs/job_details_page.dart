@@ -54,10 +54,24 @@ class _JobDetailsPageState extends State<JobDetailsPage> {
               ),
             );
           } else if (state is JobApplicationSuccess) {
+            // Close any open dialogs
+            if (Navigator.canPop(context)) {
+              Navigator.of(context).pop();
+            }
+
+            // Update the job's isApplied flag
+            if (state.jobSlug == _currentJob.slug) {
+              setState(() {
+                _currentJob = _currentJob.copyWith(isApplied: true);
+              });
+            }
+
+            // Show success message
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(state.message),
                 backgroundColor: Colors.green,
+                duration: const Duration(seconds: 3),
               ),
             );
           } else if (state is JobApplicationError) {
@@ -65,6 +79,7 @@ class _JobDetailsPageState extends State<JobDetailsPage> {
               SnackBar(
                 content: Text(state.message),
                 backgroundColor: Colors.red,
+                duration: const Duration(seconds: 3),
               ),
             );
           }
@@ -408,9 +423,13 @@ class _JobDetailsPageState extends State<JobDetailsPage> {
   }
 
   void _showApplyDialog(BuildContext context) {
+    final bloc = context.read<JobsBloc>();
     showDialog(
       context: context,
-      builder: (dialogContext) => _ApplyJobDialog(job: _currentJob),
+      builder: (dialogContext) => BlocProvider.value(
+        value: bloc,
+        child: _ApplyJobDialog(job: _currentJob),
+      ),
     );
   }
 
@@ -496,6 +515,7 @@ class _ApplyJobDialogState extends State<_ApplyJobDialog> {
 
   List<CvModel>? cvs;
   bool isLoadingCvs = true;
+  bool isSubmitting = false;
   int? selectedCvId;
 
   @override
@@ -538,155 +558,181 @@ class _ApplyJobDialogState extends State<_ApplyJobDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      title: Text(
-        'Apply for ${widget.job.title}',
-        style: TextStyle(fontSize: 18.sp),
-      ),
-      content: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // CV Selection
-            Text(
-              'Select CV',
-              style: TextStyle(
-                fontSize: 14.sp,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            SizedBox(height: 8.h),
-            if (isLoadingCvs)
-              const Center(child: CircularProgressIndicator())
-            else if (cvs == null || cvs!.isEmpty)
-              Container(
-                padding: EdgeInsets.all(12.w),
-                decoration: BoxDecoration(
-                  color: Colors.orange.shade50,
-                  borderRadius: BorderRadius.circular(8.r),
-                  border: Border.all(color: Colors.orange.shade200),
+    return BlocListener<JobsBloc, JobsState>(
+      listener: (context, state) {
+        if (state is JobApplicationSuccess || state is JobApplicationError) {
+          // Reset submitting state when done
+          if (mounted) {
+            setState(() {
+              isSubmitting = false;
+            });
+          }
+        }
+      },
+      child: AlertDialog(
+        title: Text(
+          'Apply for ${widget.job.title}',
+          style: TextStyle(fontSize: 18.sp),
+        ),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // CV Selection
+              Text(
+                'Select CV',
+                style: TextStyle(
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.w600,
                 ),
-                child: Row(
-                  children: [
-                    Icon(Icons.warning_amber_rounded,
-                        color: Colors.orange.shade700),
-                    SizedBox(width: 8.w),
-                    Expanded(
-                      child: Text(
-                        'You need to create a CV first',
-                        style: TextStyle(
-                          fontSize: 13.sp,
-                          color: Colors.orange.shade900,
+              ),
+              SizedBox(height: 8.h),
+              if (isLoadingCvs)
+                const Center(child: CircularProgressIndicator())
+              else if (cvs == null || cvs!.isEmpty)
+                Container(
+                  padding: EdgeInsets.all(12.w),
+                  decoration: BoxDecoration(
+                    color: Colors.orange.shade50,
+                    borderRadius: BorderRadius.circular(8.r),
+                    border: Border.all(color: Colors.orange.shade200),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(Icons.warning_amber_rounded,
+                          color: Colors.orange.shade700),
+                      SizedBox(width: 8.w),
+                      Expanded(
+                        child: Text(
+                          'You need to create a CV first',
+                          style: TextStyle(
+                            fontSize: 13.sp,
+                            color: Colors.orange.shade900,
+                          ),
                         ),
                       ),
-                    ),
-                  ],
-                ),
-              )
-            else
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 12.w),
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.grey.shade300),
-                  borderRadius: BorderRadius.circular(8.r),
-                ),
-                child: DropdownButtonHideUnderline(
-                  child: DropdownButton<int>(
-                    isExpanded: true,
-                    value: selectedCvId,
-                    hint: const Text('Select a CV'),
-                    items: cvs!.map((cv) {
-                      return DropdownMenuItem<int>(
-                        value: cv.id,
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: Text(
-                                cv.title,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                            if (cv.isPrimary)
-                              Container(
-                                margin: EdgeInsets.only(left: 8.w),
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: 6.w,
-                                  vertical: 2.h,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: Colors.blue.shade100,
-                                  borderRadius: BorderRadius.circular(4.r),
-                                ),
+                    ],
+                  ),
+                )
+              else
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: 12.w),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.grey.shade300),
+                    borderRadius: BorderRadius.circular(8.r),
+                  ),
+                  child: DropdownButtonHideUnderline(
+                    child: DropdownButton<int>(
+                      isExpanded: true,
+                      value: selectedCvId,
+                      hint: const Text('Select a CV'),
+                      items: cvs!.map((cv) {
+                        return DropdownMenuItem<int>(
+                          value: cv.id,
+                          child: Row(
+                            children: [
+                              Expanded(
                                 child: Text(
-                                  'Primary',
-                                  style: TextStyle(
-                                    fontSize: 10.sp,
-                                    color: Colors.blue.shade700,
-                                    fontWeight: FontWeight.bold,
+                                  cv.title,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                              if (cv.isPrimary)
+                                Container(
+                                  margin: EdgeInsets.only(left: 8.w),
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: 6.w,
+                                    vertical: 2.h,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: Colors.blue.shade100,
+                                    borderRadius: BorderRadius.circular(4.r),
+                                  ),
+                                  child: Text(
+                                    'Primary',
+                                    style: TextStyle(
+                                      fontSize: 10.sp,
+                                      color: Colors.blue.shade700,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
                                 ),
-                              ),
-                          ],
-                        ),
-                      );
-                    }).toList(),
-                    onChanged: (value) {
-                      setState(() {
-                        selectedCvId = value;
-                      });
-                    },
+                            ],
+                          ),
+                        );
+                      }).toList(),
+                      onChanged: (value) {
+                        setState(() {
+                          selectedCvId = value;
+                        });
+                      },
+                    ),
+                  ),
+                ),
+
+              SizedBox(height: 16.h),
+
+              // Cover Letter
+              Text(
+                'Cover Letter (Optional)',
+                style: TextStyle(
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              SizedBox(height: 8.h),
+              TextField(
+                controller: coverLetterController,
+                maxLines: 5,
+                decoration: InputDecoration(
+                  hintText: 'Tell the employer why you\'re a great fit...',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(8.r),
                   ),
                 ),
               ),
-
-            SizedBox(height: 16.h),
-
-            // Cover Letter
-            Text(
-              'Cover Letter (Optional)',
-              style: TextStyle(
-                fontSize: 14.sp,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            SizedBox(height: 8.h),
-            TextField(
-              controller: coverLetterController,
-              maxLines: 5,
-              decoration: InputDecoration(
-                hintText: 'Tell the employer why you\'re a great fit...',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8.r),
-                ),
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
+        actions: [
+          TextButton(
+            onPressed: isSubmitting ? null : () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: (cvs == null ||
+                    cvs!.isEmpty ||
+                    selectedCvId == null ||
+                    isSubmitting)
+                ? null
+                : () {
+                    setState(() {
+                      isSubmitting = true;
+                    });
+                    context.read<JobsBloc>().add(
+                          ApplyForJobEvent(
+                            jobSlug: widget.job.slug,
+                            cvId: selectedCvId,
+                            coverLetter: coverLetterController.text.isEmpty
+                                ? null
+                                : coverLetterController.text,
+                          ),
+                        );
+                  },
+            child: isSubmitting
+                ? SizedBox(
+                    height: 20.h,
+                    width: 20.w,
+                    child: const CircularProgressIndicator(
+                      strokeWidth: 2,
+                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                    ),
+                  )
+                : const Text('Submit Application'),
+          ),
+        ],
       ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: const Text('Cancel'),
-        ),
-        ElevatedButton(
-          onPressed: (cvs == null || cvs!.isEmpty || selectedCvId == null)
-              ? null
-              : () {
-                  Navigator.pop(context);
-                  context.read<JobsBloc>().add(
-                        ApplyForJobEvent(
-                          jobSlug: widget.job.slug,
-                          cvId: selectedCvId,
-                          coverLetter: coverLetterController.text.isEmpty
-                              ? null
-                              : coverLetterController.text,
-                        ),
-                      );
-                },
-          child: const Text('Submit Application'),
-        ),
-      ],
     );
   }
 }
