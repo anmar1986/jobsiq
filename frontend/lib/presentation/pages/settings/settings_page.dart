@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../config/di/injection.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../bloc/theme/theme_bloc.dart';
+import '../../bloc/theme/theme_event.dart';
+import '../../bloc/theme/theme_state.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -12,7 +16,6 @@ class SettingsPage extends StatefulWidget {
 }
 
 class _SettingsPageState extends State<SettingsPage> {
-  bool _isDarkMode = false;
   bool _notificationsEnabled = true;
   bool _emailNotifications = true;
   String _language = 'English';
@@ -26,7 +29,6 @@ class _SettingsPageState extends State<SettingsPage> {
   Future<void> _loadSettings() async {
     final prefs = sl<SharedPreferences>();
     setState(() {
-      _isDarkMode = prefs.getBool('dark_mode') ?? false;
       _notificationsEnabled = prefs.getBool('notifications_enabled') ?? true;
       _emailNotifications = prefs.getBool('email_notifications') ?? true;
       _language = prefs.getString('language') ?? 'English';
@@ -53,21 +55,13 @@ class _SettingsPageState extends State<SettingsPage> {
         children: [
           // Appearance Section
           _buildSectionHeader('Appearance'),
-          _buildSwitchTile(
-            icon: Icons.dark_mode,
-            title: 'Dark Mode',
-            subtitle: 'Switch between light and dark theme',
-            value: _isDarkMode,
-            onChanged: (value) {
-              setState(() => _isDarkMode = value);
-              _saveSetting('dark_mode', value);
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(
-                    'Dark mode ${value ? 'enabled' : 'disabled'}. Please restart the app to apply changes.',
-                  ),
-                  duration: const Duration(seconds: 3),
-                ),
+          BlocBuilder<ThemeBloc, ThemeState>(
+            builder: (context, themeState) {
+              return _buildTile(
+                icon: Icons.palette_outlined,
+                title: 'Theme',
+                subtitle: _getThemeModeName(themeState.themeMode),
+                onTap: () => _showThemeDialog(context, themeState.themeMode),
               );
             },
           ),
@@ -369,6 +363,152 @@ class _SettingsPageState extends State<SettingsPage> {
             child: const Text('Delete'),
           ),
         ],
+      ),
+    );
+  }
+
+  String _getThemeModeName(ThemeMode mode) {
+    switch (mode) {
+      case ThemeMode.light:
+        return 'Light';
+      case ThemeMode.dark:
+        return 'Dark';
+      case ThemeMode.system:
+        return 'System Default';
+    }
+  }
+
+  void _showThemeDialog(BuildContext context, ThemeMode currentMode) {
+    showDialog(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: Row(
+          children: [
+            const Icon(Icons.palette_outlined, color: AppColors.primary),
+            SizedBox(width: 12.w),
+            const Text('Select Theme'),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _buildThemeOption(
+              context,
+              ThemeMode.light,
+              'Light',
+              'Use light theme',
+              Icons.light_mode,
+              currentMode,
+            ),
+            SizedBox(height: 8.h),
+            _buildThemeOption(
+              context,
+              ThemeMode.dark,
+              'Dark',
+              'Use dark theme',
+              Icons.dark_mode,
+              currentMode,
+            ),
+            SizedBox(height: 8.h),
+            _buildThemeOption(
+              context,
+              ThemeMode.system,
+              'System Default',
+              'Follow system theme',
+              Icons.brightness_auto,
+              currentMode,
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext),
+            child: const Text('Cancel'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildThemeOption(
+    BuildContext context,
+    ThemeMode mode,
+    String title,
+    String subtitle,
+    IconData icon,
+    ThemeMode currentMode,
+  ) {
+    final isSelected = mode == currentMode;
+
+    return InkWell(
+      onTap: () {
+        context.read<ThemeBloc>().add(ThemeChanged(mode));
+        Navigator.pop(context);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Theme changed to ${_getThemeModeName(mode)}'),
+            duration: const Duration(seconds: 2),
+          ),
+        );
+      },
+      borderRadius: BorderRadius.circular(8),
+      child: Container(
+        padding: EdgeInsets.all(12.w),
+        decoration: BoxDecoration(
+          color: isSelected
+              ? AppColors.primary.withValues(alpha: 0.1)
+              : Colors.transparent,
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(
+            color: isSelected ? AppColors.primary : AppColors.borderLight,
+            width: isSelected ? 2 : 1,
+          ),
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: EdgeInsets.all(8.w),
+              decoration: BoxDecoration(
+                color: AppColors.primary.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Icon(
+                icon,
+                color: AppColors.primary,
+                size: 24.sp,
+              ),
+            ),
+            SizedBox(width: 12.w),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: TextStyle(
+                      fontSize: 15.sp,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  SizedBox(height: 2.h),
+                  Text(
+                    subtitle,
+                    style: TextStyle(
+                      fontSize: 12.sp,
+                      color: AppColors.textSecondary,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            if (isSelected)
+              Icon(
+                Icons.check_circle,
+                color: AppColors.primary,
+                size: 24.sp,
+              ),
+          ],
+        ),
       ),
     );
   }

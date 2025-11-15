@@ -104,11 +104,6 @@ const authStore = useAuthStore()
 const sidebarOpen = ref(false)
 const _userMenuOpen = ref(false)
 
-const initials = computed(() => {
-  const name = authStore.userName || 'A'
-  return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
-})
-
 const pageTitle = computed(() => {
   return route.meta.title as string || 'Admin'
 })

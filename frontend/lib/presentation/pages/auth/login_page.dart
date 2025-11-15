@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../config/routes/app_router.dart';
+import '../../../core/utils/error_handler.dart';
 import '../../bloc/auth/auth_bloc.dart';
 import '../../bloc/auth/auth_event.dart';
 import '../../bloc/auth/auth_state.dart';
@@ -44,13 +45,22 @@ class _LoginPageState extends State<LoginPage> {
     return BlocListener<AuthBloc, AuthState>(
       listener: (context, state) {
         if (state is Authenticated) {
+          ErrorHandler.showSuccessSnackBar(
+            context,
+            'Welcome back, ${state.user.name}!',
+          );
           context.go(AppRouter.main);
         } else if (state is AuthError) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(state.message),
-              backgroundColor: AppColors.error,
-            ),
+          ErrorHandler.showErrorSnackBar(
+            context,
+            state.failure,
+            action: ErrorHandler.isNetworkError(state.failure)
+                ? SnackBarAction(
+                    label: 'Retry',
+                    textColor: Colors.white,
+                    onPressed: _handleLogin,
+                  )
+                : null,
           );
         }
       },

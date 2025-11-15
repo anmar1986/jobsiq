@@ -47,6 +47,8 @@ abstract class AuthRemoteDataSource {
     required String password,
     required String passwordConfirmation,
   });
+
+  Future<void> forgotPassword({required String email});
 }
 
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
@@ -238,6 +240,25 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       if (response.statusCode != 200) {
         throw ServerException(
           response.data['message'] ?? 'Failed to change password',
+          statusCode: response.statusCode,
+        );
+      }
+    } on DioException catch (e) {
+      throw _handleDioException(e);
+    }
+  }
+
+  @override
+  Future<void> forgotPassword({required String email}) async {
+    try {
+      final response = await client.post(
+        ApiConstants.forgotPassword,
+        data: {'email': email},
+      );
+
+      if (response.statusCode != 200) {
+        throw ServerException(
+          response.data['message'] ?? 'Failed to send reset link',
           statusCode: response.statusCode,
         );
       }

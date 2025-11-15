@@ -1,4 +1,4 @@
-import type { ApiResponse, PaginatedResponse } from '@/types'
+import type { ApiResponse } from '@/types'
 import apiClient from './api'
 
 export interface SearchHistoryEntry {

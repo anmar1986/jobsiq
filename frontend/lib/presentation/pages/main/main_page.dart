@@ -6,10 +6,12 @@ import '../profile/profile_page.dart';
 
 class MainPage extends StatefulWidget {
   final int initialTab;
+  final String? companyFilter;
 
   const MainPage({
     super.key,
     this.initialTab = 0,
+    this.companyFilter,
   });
 
   @override
@@ -20,18 +22,21 @@ class _MainPageState extends State<MainPage> {
   late int _currentIndex;
   late PageController _pageController;
 
-  final List<Widget> _pages = const [
-    JobsPage(),
-    SavedJobsPage(),
-    CvsPage(),
-    ProfilePage(),
-  ];
+  late final List<Widget> _pages;
 
   @override
   void initState() {
     super.initState();
     _currentIndex = widget.initialTab;
     _pageController = PageController(initialPage: _currentIndex);
+
+    // Initialize pages with company filter if provided
+    _pages = [
+      JobsPage(companyFilter: widget.companyFilter),
+      const SavedJobsPage(),
+      const CvsPage(),
+      const ProfilePage(),
+    ];
   }
 
   @override

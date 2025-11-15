@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../config/routes/app_router.dart';
 import '../../../core/services/cv_pdf_generator.dart';
+import '../../../core/config/app_config.dart';
 import '../../../domain/entities/cv_entity.dart';
 
 class CvDetailsPage extends StatefulWidget {
@@ -63,7 +64,7 @@ class _CvDetailsPageState extends State<CvDetailsPage> {
                         CircleAvatar(
                           radius: 40.r,
                           backgroundImage: NetworkImage(
-                            'http://10.0.2.2:8000/storage/${_currentCv.profileImagePath}',
+                            AppConfig.getStorageUrl(_currentCv.profileImagePath!),
                           ),
                         )
                       else

@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:go_router/go_router.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../config/routes/app_router.dart';
 import '../../../domain/entities/company_entity.dart';
 
 class CompanyDetailsPage extends StatelessWidget {
@@ -168,12 +170,9 @@ class CompanyDetailsPage extends StatelessWidget {
       floatingActionButton: company.jobsCount > 0
           ? FloatingActionButton.extended(
               onPressed: () {
-                // TODO: Navigate to jobs filtered by this company
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text('Viewing ${company.jobsCount} jobs from ${company.name}'),
-                  ),
-                );
+                // Navigate to jobs page with company filter
+                context
+                    .go('${AppRouter.main}?tab=jobs&company=${company.slug}');
               },
               icon: const Icon(Icons.work),
               label: Text('View ${company.jobsCount} Jobs'),
@@ -238,7 +237,8 @@ class CompanyDetailsPage extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                if (company.industry != null && company.industry!.isNotEmpty) ...[
+                if (company.industry != null &&
+                    company.industry!.isNotEmpty) ...[
                   SizedBox(height: 4.h),
                   Text(
                     company.industry!,

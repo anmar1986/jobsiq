@@ -195,7 +195,10 @@ void main() {
         ),
         expect: () => [
           AuthLoading(),
-          const AuthError(message: 'Invalid credentials'),
+          const AuthError(
+            message: 'Invalid credentials',
+            failure: AuthenticationFailure('Invalid credentials'),
+          ),
         ],
       );
 
@@ -217,6 +220,7 @@ void main() {
           AuthLoading(),
           const AuthError(
             message: 'No internet connection. Please check your connection.',
+            failure: NetworkFailure('No connection'),
           ),
         ],
       );
@@ -280,6 +284,10 @@ void main() {
           AuthLoading(),
           const AuthError(
             message: 'Validation failed',
+            failure: ValidationFailure('Validation failed', errors: {
+              'email': ['Email is already taken'],
+              'password': ['Password must be at least 8 characters'],
+            }),
             errors: {
               'email': ['Email is already taken'],
               'password': ['Password must be at least 8 characters'],
@@ -380,7 +388,10 @@ void main() {
         act: (bloc) => bloc.add(GetCurrentUserEvent()),
         expect: () => [
           AuthLoading(),
-          const AuthError(message: 'Failed to get user'),
+          const AuthError(
+            message: 'Failed to get user',
+            failure: ServerFailure('Failed to get user'),
+          ),
         ],
       );
     });
@@ -448,6 +459,9 @@ void main() {
           AuthLoading(),
           const AuthError(
             message: 'Validation failed',
+            failure: ValidationFailure('Validation failed', errors: {
+              'email': ['Email is already taken'],
+            }),
             errors: {
               'email': ['Email is already taken'],
             },
@@ -504,7 +518,10 @@ void main() {
         ),
         expect: () => [
           AuthLoading(),
-          const AuthError(message: 'Current password is incorrect'),
+          const AuthError(
+            message: 'Current password is incorrect',
+            failure: AuthenticationFailure('Current password is incorrect'),
+          ),
         ],
       );
 
@@ -532,6 +549,9 @@ void main() {
           AuthLoading(),
           const AuthError(
             message: 'Validation failed',
+            failure: ValidationFailure('Validation failed', errors: {
+              'password': ['Password must be at least 8 characters'],
+            }),
             errors: {
               'password': ['Password must be at least 8 characters'],
             },

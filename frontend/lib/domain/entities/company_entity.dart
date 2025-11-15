@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import '../../core/config/app_config.dart';
 
 class CompanyEntity extends Equatable {
   final int id;
@@ -50,12 +51,12 @@ class CompanyEntity extends Equatable {
 
   String get logoUrl {
     if (logo == null || logo!.isEmpty) return '';
-    return 'http://10.0.2.2:8000/storage/$logo';
+    return AppConfig.getStorageUrl(logo!);
   }
 
   String get coverUrl {
     if (cover == null || cover!.isEmpty) return '';
-    return 'http://10.0.2.2:8000/storage/$cover';
+    return AppConfig.getStorageUrl(cover!);
   }
 
   @override

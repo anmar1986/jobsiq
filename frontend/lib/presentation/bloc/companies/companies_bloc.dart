@@ -1,13 +1,13 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../data/datasources/company_remote_data_source.dart';
 import '../../../domain/entities/company_entity.dart';
+import '../../../domain/repositories/company_repository.dart';
 import 'companies_event.dart';
 import 'companies_state.dart';
 
 class CompaniesBloc extends Bloc<CompaniesEvent, CompaniesState> {
-  final CompanyRemoteDataSource companyDataSource;
+  final CompanyRepository companyRepository;
 
-  CompaniesBloc({required this.companyDataSource})
+  CompaniesBloc({required this.companyRepository})
       : super(const CompaniesInitial()) {
     on<LoadCompaniesEvent>(_onLoadCompanies);
     on<LoadCompanyBySlugEvent>(_onLoadCompanyBySlug);
@@ -30,54 +30,55 @@ class CompaniesBloc extends Bloc<CompaniesEvent, CompaniesState> {
       }
     }
 
-    try {
-      final companies = await companyDataSource.getCompanies(
-        search: event.search,
-        city: event.city,
-        country: event.country,
-        sort: event.sort,
-        page: event.page,
-      );
+    final result = await companyRepository.getCompanies(
+      search: event.search,
+      city: event.city,
+      country: event.country,
+      sort: event.sort,
+      page: event.page,
+    );
 
-      if (companies.isEmpty && event.page == 1) {
-        emit(const CompaniesEmpty());
-      } else {
-        List<CompanyEntity> allCompanies = companies;
+    result.fold(
+      (failure) {
+        emit(CompaniesError(failure.message));
+      },
+      (companies) {
+        if (companies.isEmpty && event.page == 1) {
+          emit(const CompaniesEmpty());
+        } else {
+          List<CompanyEntity> allCompanies = companies;
 
-        // If loading more, append to existing companies
-        if (event.page > 1 && state is CompaniesLoadingMore) {
-          final currentState = state as CompaniesLoadingMore;
-          allCompanies = [...currentState.companies, ...companies];
+          // If loading more, append to existing companies
+          if (event.page > 1 && state is CompaniesLoadingMore) {
+            final currentState = state as CompaniesLoadingMore;
+            allCompanies = [...currentState.companies, ...companies];
+          }
+
+          emit(CompaniesLoaded(
+            companies: allCompanies,
+            hasMore: companies.length >=
+                15, // If we got a full page, there might be more
+            currentPage: event.page,
+          ));
         }
-
-        emit(CompaniesLoaded(
-          companies: allCompanies,
-          hasMore: companies.length >=
-              15, // If we got a full page, there might be more
-          currentPage: event.page,
-        ));
-      }
-    } catch (e) {
-      final errorMessage = e.toString().contains('401')
-          ? 'Please login to view companies'
-          : 'Failed to load companies. Please try again.';
-      emit(CompaniesError(errorMessage));
-    }
+      },
+    );
   }
 
   Future<void> _onLoadCompanyBySlug(
       LoadCompanyBySlugEvent event, Emitter<CompaniesState> emit) async {
     emit(const CompaniesLoading());
 
-    try {
-      final company = await companyDataSource.getCompanyBySlug(event.slug);
-      emit(CompanyDetailsLoaded(company));
-    } catch (e) {
-      final errorMessage = e.toString().contains('401')
-          ? 'Please login to view company details'
-          : 'Failed to load company details. Please try again.';
-      emit(CompaniesError(errorMessage));
-    }
+    final result = await companyRepository.getCompanyBySlug(event.slug);
+
+    result.fold(
+      (failure) {
+        emit(CompaniesError(failure.message));
+      },
+      (company) {
+        emit(CompanyDetailsLoaded(company));
+      },
+    );
   }
 
   Future<void> _onRefreshCompanies(

@@ -15,8 +15,10 @@ import '../../data/datasources/cv_remote_data_source.dart';
 import '../../data/datasources/company_remote_data_source.dart';
 import '../../data/repositories/auth_repository_impl.dart';
 import '../../data/repositories/job_repository_impl.dart';
+import '../../data/repositories/company_repository_impl.dart';
 import '../../domain/repositories/auth_repository.dart';
 import '../../domain/repositories/job_repository.dart';
+import '../../domain/repositories/company_repository.dart';
 import '../../domain/usecases/auth/check_authentication_usecase.dart';
 import '../../domain/usecases/auth/get_current_user_usecase.dart';
 import '../../domain/usecases/auth/login_usecase.dart';
@@ -31,6 +33,7 @@ import '../../presentation/bloc/jobs/jobs_bloc.dart';
 import '../../presentation/bloc/saved_jobs/saved_jobs_bloc.dart';
 import '../../presentation/bloc/cvs/cvs_bloc.dart';
 import '../../presentation/bloc/companies/companies_bloc.dart';
+import '../../presentation/bloc/theme/theme_bloc.dart';
 
 final sl = GetIt.instance;
 
@@ -104,6 +107,13 @@ Future<void> initializeDependencies() async {
     ),
   );
 
+  sl.registerLazySingleton<CompanyRepository>(
+    () => CompanyRepositoryImpl(
+      remoteDataSource: sl(),
+      networkInfo: sl(),
+    ),
+  );
+
   // Use Cases - Auth
   sl.registerLazySingleton(() => LoginUseCase(sl()));
   sl.registerLazySingleton(() => RegisterUseCase(sl()));
@@ -153,7 +163,13 @@ Future<void> initializeDependencies() async {
 
   sl.registerFactory(
     () => CompaniesBloc(
-      companyDataSource: sl(),
+      companyRepository: sl(),
+    ),
+  );
+
+  sl.registerFactory(
+    () => ThemeBloc(
+      sharedPreferences: sl(),
     ),
   );
 }
