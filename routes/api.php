@@ -69,7 +69,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/my-jobs/{job}', [JobController::class, 'show']); // Get owned job by ID
     Route::post('/jobs', [JobController::class, 'store']);
     Route::put('/jobs/{job:id}', [JobController::class, 'update']);
-    Route::delete('/jobs/{job:id}', [JobController::class, 'destroy']);
+    Route::delete('/jobs/{jobId}', [JobController::class, 'destroy']);
 
     // Company management
     Route::get('/my-companies/slug/{slug}', [CompanyController::class, 'showMyCompanyBySlug']); // Get owned company by slug

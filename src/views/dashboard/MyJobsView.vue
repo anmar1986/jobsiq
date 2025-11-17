@@ -5,9 +5,9 @@
       <div class="mb-6 sm:mb-8">
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">My Jobs</h1>
+            <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">{{ $t('myJobs.title') }}</h1>
             <p class="text-sm sm:text-base text-gray-600">
-              Manage all your job postings
+              {{ $t('myJobs.subtitle') }}
             </p>
           </div>
           <router-link
@@ -18,7 +18,7 @@
             <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
             </svg>
-            Post New Job
+            {{ $t('myJobs.postNewJob') }}
           </router-link>
         </div>
       </div>
@@ -35,7 +35,7 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
           <div>
-            <h3 class="text-sm font-medium text-red-800">Error loading jobs</h3>
+            <h3 class="text-sm font-medium text-red-800">{{ $t('myJobs.errorLoadingJobs') }}</h3>
             <p class="text-sm text-red-700 mt-1">{{ error }}</p>
           </div>
         </div>
@@ -46,13 +46,13 @@
         <svg class="mx-auto h-16 w-16 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
         </svg>
-        <h3 class="text-lg font-semibold text-gray-900 mb-2">No Company Profile</h3>
-        <p class="text-gray-600 mb-6">You need to create a company profile before posting jobs.</p>
+        <h3 class="text-lg font-semibold text-gray-900 mb-2">{{ $t('myJobs.noCompanyProfile') }}</h3>
+        <p class="text-gray-600 mb-6">{{ $t('myJobs.noCompanyMessage') }}</p>
         <router-link
           to="/my-companies"
           class="inline-flex items-center px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
         >
-          Create Company Profile
+          {{ $t('myJobs.createCompanyProfile') }}
         </router-link>
       </div>
 
@@ -61,8 +61,8 @@
         <svg class="mx-auto h-16 w-16 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
         </svg>
-        <h3 class="text-lg font-semibold text-gray-900 mb-2">No Jobs Posted Yet</h3>
-        <p class="text-gray-600 mb-6">Start posting jobs to find the perfect candidates.</p>
+        <h3 class="text-lg font-semibold text-gray-900 mb-2">{{ $t('myJobs.noJobsYet') }}</h3>
+        <p class="text-gray-600 mb-6">{{ $t('myJobs.noJobsMessage') }}</p>
         <router-link
           to="/post-job"
           class="inline-flex items-center px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
@@ -70,7 +70,7 @@
           <svg class="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
           </svg>
-          Post Your First Job
+          {{ $t('myJobs.postYourFirstJob') }}
         </router-link>
       </div>
 
@@ -124,7 +124,7 @@
                     v-if="job.is_featured"
                     class="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-semibold bg-yellow-100 text-yellow-800"
                   >
-                    ⭐ Featured
+                    ⭐ {{ $t('myJobs.featured') }}
                   </span>
                   <span
                     :class="[
@@ -132,7 +132,7 @@
                       job.is_active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
                     ]"
                   >
-                    {{ job.is_active ? '● Active' : '○ Inactive' }}
+                    {{ job.is_active ? '● ' + $t('myJobs.active') : '○ ' + $t('myJobs.inactive') }}
                   </span>
                 </div>
               </div>
@@ -149,7 +149,7 @@
                   {{ formatEmploymentType(job.employment_type) }}
                 </span>
                 <span v-if="job.is_remote" class="inline-flex items-center px-3 py-1 rounded-md text-xs font-medium bg-green-100 text-green-800">
-                  🌐 Remote
+                  🌐 {{ $t('jobs.remote') }}
                 </span>
                 <span v-if="job.category" class="inline-flex items-center px-3 py-1 rounded-md text-xs font-medium bg-purple-100 text-purple-800">
                   {{ job.category }}
@@ -174,13 +174,13 @@
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                     </svg>
                     <span class="font-semibold text-gray-900">{{ job.applications_count || 0 }}</span>
-                    <span class="ml-1">{{ job.applications_count === 1 ? 'Application' : 'Applications' }}</span>
+                    <span class="ml-1">{{ job.applications_count === 1 ? $t('myJobs.application') : $t('myJobs.applications') }}</span>
                   </span>
                   <span class="text-gray-500">
-                    Posted on {{ formatActualDate(job.published_at || job.created_at) }}
+                    {{ $t('myJobs.postedOn') }} {{ formatActualDate(job.published_at || job.created_at) }}
                   </span>
                   <span v-if="job.expires_at" class="text-gray-500">
-                    Expires on {{ formatActualDate(job.expires_at) }}
+                    {{ $t('myJobs.expiresOn') }} {{ formatActualDate(job.expires_at) }}
                   </span>
                 </div>
 
@@ -194,7 +194,7 @@
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                     </svg>
-                    View Details
+                    {{ $t('myJobs.viewDetails') }}
                   </router-link>
                   <router-link
                     :to="`/my-companies/${job.company_id}/jobs/${job.id}/edit`"
@@ -203,7 +203,7 @@
                     <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                     </svg>
-                    Edit Job
+                    {{ $t('myJobs.editJob') }}
                   </router-link>
                   <button
                     @click="confirmDeleteJob(job)"
@@ -212,7 +212,7 @@
                     <svg class="h-4 w-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                     </svg>
-                    Delete
+                    {{ $t('myJobs.deleteJob') }}
                   </button>
                 </div>
               </div>
@@ -225,13 +225,12 @@
     <!-- Delete Job Confirmation Modal -->
     <BaseModal
       v-model="showDeleteJobModal"
-      title="Delete Job"
+      :title="$t('myJobs.deleteJobTitle')"
       size="sm"
     >
       <div class="p-6">
         <p class="text-gray-700 mb-6">
-          Are you sure you want to delete <strong>{{ jobToDelete?.title }}</strong>? 
-          This action cannot be undone and will also delete all applications associated with this job.
+          {{ $t('myJobs.deleteJobConfirm', { jobTitle: jobToDelete?.title }) }}
         </p>
         <div class="flex items-center justify-end gap-3">
           <BaseButton
@@ -239,7 +238,7 @@
             @click="showDeleteJobModal = false"
             :disabled="deletingJob"
           >
-            Cancel
+            {{ $t('myJobs.cancel') }}
           </BaseButton>
           <BaseButton
             variant="primary"
@@ -247,7 +246,7 @@
             :loading="deletingJob"
             class="bg-red-600 hover:bg-red-700"
           >
-            Delete Job
+            {{ deletingJob ? $t('myJobs.deleting') : $t('myJobs.deleteJob') }}
           </BaseButton>
         </div>
       </div>
@@ -262,6 +261,7 @@ import { useAuthStore } from '@/stores/auth'
 import { useCompanyStore } from '@/stores/company'
 import { jobService } from '@/services/job.service'
 import { formatSalaryRange } from '@/utils/currency'
+import { useToast } from '@/composables/useToast'
 import type { Job } from '@/types'
 import BaseButton from '@/components/base/BaseButton.vue'
 import BaseModal from '@/components/base/BaseModal.vue'
@@ -269,6 +269,7 @@ import BaseModal from '@/components/base/BaseModal.vue'
 const _router = useRouter()
 const _authStore = useAuthStore()
 const companyStore = useCompanyStore()
+const toast = useToast()
 
 const jobs = ref<Job[]>([])
 const loading = ref(true)
@@ -309,17 +310,31 @@ const handleDeleteJob = async () => {
 
   try {
     deletingJob.value = true
-    await jobService.deleteJob(jobToDelete.value.id)
+    const response = await jobService.deleteJob(jobToDelete.value.id)
     
-    // Remove job from the list
-    jobs.value = jobs.value.filter(j => j.id !== jobToDelete.value!.id)
-    
-    showDeleteJobModal.value = false
-    jobToDelete.value = null
+    if (response.success) {
+      // Remove job from the list
+      jobs.value = jobs.value.filter(j => j.id !== jobToDelete.value!.id)
+      
+      showDeleteJobModal.value = false
+      jobToDelete.value = null
+      toast.success('Job deleted successfully!')
+    } else {
+      toast.error(response.message || 'Failed to delete job. Please try again.')
+    }
   } catch (err: unknown) {
     console.error('Error deleting job:', err)
-    const error = err as { response?: { data?: { message?: string } }; message?: string }
-    alert(error.response?.data?.message || error.message || 'Failed to delete job')
+    const error = err as { response?: { data?: { message?: string }, status?: number }; message?: string }
+    
+    if (error.response?.status === 404) {
+      // Job already deleted, remove from list
+      jobs.value = jobs.value.filter(j => j.id !== jobToDelete.value!.id)
+      showDeleteJobModal.value = false
+      jobToDelete.value = null
+      toast.error('Job not found. It may have been already deleted.')
+    } else {
+      toast.error(error.response?.data?.message || error.message || 'Failed to delete job. Please try again.')
+    }
   } finally {
     deletingJob.value = false
   }

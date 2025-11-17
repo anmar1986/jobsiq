@@ -70,14 +70,18 @@
       <!-- No Results -->
       <div
         v-if="showDropdown && searchQuery && filteredOptions.length === 0"
-        class="absolute z-50 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg px-4 py-3 text-sm text-gray-500"
+        class="absolute z-50 w-full mt-1 bg-red-50 border border-red-200 rounded-lg shadow-lg px-4 py-3 text-sm text-red-600"
       >
-        No results found for "{{ searchQuery }}"
+        <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        Not found. Please type a valid option from the list.
       </div>
     </div>
     
     <!-- Error Message -->
     <p v-if="error" class="text-red-600 text-sm mt-1">{{ error }}</p>
+    <p v-else-if="validationError" class="text-red-600 text-sm mt-1">{{ validationError }}</p>
   </div>
 </template>
 
@@ -111,6 +115,7 @@ const inputRef = ref<HTMLInputElement | null>(null)
 const searchQuery = ref(props.modelValue)
 const showDropdown = ref(false)
 const highlightedIndex = ref(0)
+const validationError = ref('')
 
 // Watch for external changes to modelValue
 watch(() => props.modelValue, (newValue) => {
@@ -136,12 +141,15 @@ const showClearButton = computed(() => {
 const handleInput = () => {
   showDropdown.value = true
   highlightedIndex.value = 0
-  emit('update:modelValue', searchQuery.value)
+  validationError.value = ''
+  // Don't emit the value while typing - only emit when a valid option is selected
+  // This prevents invalid values from being saved
 }
 
 const selectOption = (option: string) => {
   searchQuery.value = option
   emit('update:modelValue', option)
+  validationError.value = ''
   closeDropdown()
   inputRef.value?.blur()
 }
@@ -167,6 +175,7 @@ const navigateUp = () => {
 const clearInput = () => {
   searchQuery.value = ''
   emit('update:modelValue', '')
+  validationError.value = ''
   showDropdown.value = false
   inputRef.value?.focus()
 }
@@ -179,6 +188,36 @@ const closeDropdown = () => {
 const handleBlur = () => {
   // Delay to allow click events on dropdown items
   setTimeout(() => {
+    // Validate if the current input matches any option
+    const isValidOption = props.options.some(
+      option => option.toLowerCase() === searchQuery.value.toLowerCase().trim()
+    )
+    
+    // If not valid and not empty, try to find a close match or clear it
+    if (!isValidOption && searchQuery.value) {
+      // Check if there's an exact match in filtered options
+      const exactMatch = filteredOptions.value.find(
+        option => option.toLowerCase() === searchQuery.value.toLowerCase().trim()
+      )
+      
+      if (exactMatch) {
+        searchQuery.value = exactMatch
+        emit('update:modelValue', exactMatch)
+        validationError.value = ''
+      } else if (filteredOptions.value.length === 1) {
+        // If only one filtered option, auto-select it
+        searchQuery.value = filteredOptions.value[0]
+        emit('update:modelValue', filteredOptions.value[0])
+        validationError.value = ''
+      } else {
+        // Clear invalid input and show error
+        validationError.value = 'Please select a valid option from the list'
+        searchQuery.value = props.modelValue // Revert to last valid value
+      }
+    } else {
+      validationError.value = ''
+    }
+    
     closeDropdown()
   }, 200)
 }

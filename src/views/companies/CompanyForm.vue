@@ -2,14 +2,14 @@
   <form @submit.prevent="handleSubmit" class="space-y-6">
     <!-- Basic Information Section -->
     <div class="bg-white p-6 rounded-lg border border-gray-200">
-      <h3 class="text-lg font-semibold text-gray-900 mb-4">Basic Information</h3>
+      <h3 class="text-lg font-semibold text-gray-900 mb-4">{{ $t('companies.basicInformation') }}</h3>
       
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div class="md:col-span-2">
           <BaseInput
             v-model="formData.name"
-            label="Company Name *"
-            placeholder="Enter company name"
+            :label="$t('companies.companyNameRequired')"
+            :placeholder="$t('companies.enterCompanyName')"
             :error="errors.name"
             required
           />
@@ -17,7 +17,7 @@
 
         <div class="md:col-span-2">
           <label for="company-logo-input" class="block text-sm font-medium text-gray-700 mb-2">
-            Company Logo
+            {{ $t('companies.companyLogo') }}
           </label>
           
           <div class="flex items-center gap-6">
@@ -67,11 +67,11 @@
                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
-                Choose Logo
+                {{ $t('companies.chooseLogo') }}
               </BaseButton>
               
               <p class="text-xs text-gray-500 mt-2">
-                PNG, JPG, GIF up to 2MB
+                {{ $t('companies.pngJpgGifUpTo2MB') }}
               </p>
               <p v-if="errors.logo" class="text-red-600 text-sm mt-1">{{ errors.logo }}</p>
             </div>
@@ -80,7 +80,7 @@
 
         <div class="md:col-span-2">
           <label for="company-cover-input" class="block text-sm font-medium text-gray-700 mb-2">
-            Cover Image
+            {{ $t('companies.coverImage') }}
           </label>
           
           <div class="flex items-center gap-6">
@@ -130,11 +130,11 @@
                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                 </svg>
-                Choose Cover Image
+                {{ $t('companies.chooseCoverImage') }}
               </BaseButton>
               
               <p class="text-xs text-gray-500 mt-2">
-                PNG, JPG, GIF up to 2MB
+                {{ $t('companies.pngJpgGifUpTo2MB') }}
               </p>
               <p v-if="errors.cover" class="text-red-600 text-sm mt-1">{{ errors.cover }}</p>
             </div>
@@ -143,8 +143,8 @@
 
         <div class="md:col-span-2">
           <label for="company-images-input" class="block text-sm font-medium text-gray-700 mb-2">
-            Company Pictures
-            <span class="text-gray-500 text-xs font-normal ml-2">(Maximum 10 images)</span>
+            {{ $t('companies.companyPictures') }}
+            <span class="text-gray-500 text-xs font-normal ml-2">{{ $t('companies.maximum10Images') }}</span>
           </label>
           
           <!-- Image Upload Area -->
@@ -169,10 +169,10 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
               </svg>
               <p class="text-sm text-gray-600">
-                <span class="font-medium text-primary-600">Click to upload</span> or drag and drop
+                <span class="font-medium text-primary-600">{{ $t('common.upload') }}</span> or drag and drop
               </p>
-              <p class="text-xs text-gray-500 mt-1">PNG, JPG, GIF up to 2MB each</p>
-              <p class="text-xs text-gray-500 mt-1">{{ companyImages.length }} / 10 images uploaded</p>
+              <p class="text-xs text-gray-500 mt-1">{{ $t('companies.pngJpgGifUpTo2MBEach') }}</p>
+              <p class="text-xs text-gray-500 mt-1">{{ $t('companies.imagesUploaded', { count: companyImages.length }) }}</p>
             </button>
             <p v-if="errors.images" class="text-red-600 text-sm mt-1">{{ errors.images }}</p>
           </div>
@@ -213,44 +213,44 @@
 
         <div class="md:col-span-2">
           <label for="company-about" class="block text-sm font-medium text-gray-700 mb-1">
-            About
+            {{ $t('companies.about') }}
           </label>
           <textarea
             id="company-about"
             v-model="formData.about"
             rows="4"
             class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-            placeholder="Brief overview of your company..."
+            :placeholder="$t('companies.briefOverviewCompany')"
           />
           <p v-if="errors.about" class="text-red-600 text-sm mt-1">{{ errors.about }}</p>
         </div>
 
         <div class="md:col-span-2">
           <label for="company-description" class="block text-sm font-medium text-gray-700 mb-1">
-            Description
+            {{ $t('companies.description') }}
           </label>
           <textarea
             id="company-description"
             v-model="formData.description"
             rows="4"
             class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-            placeholder="Tell us about your company..."
+            :placeholder="$t('companies.tellUsAboutCompany')"
           />
           <p v-if="errors.description" class="text-red-600 text-sm mt-1">{{ errors.description }}</p>
         </div>
 
         <BaseInput
           v-model="formData.tagline"
-          label="Tagline"
-          placeholder="Short company tagline"
+          :label="$t('companies.tagline')"
+          :placeholder="$t('companies.taglinePlaceholder')"
           :error="errors.tagline"
         />
 
         <BaseInput
           v-model="formData.website"
-          label="Website"
+          :label="$t('common.website')"
           type="url"
-          placeholder="https://example.com"
+          :placeholder="$t('companies.websitePlaceholder')"
           :error="errors.website"
         />
       </div>
@@ -258,21 +258,21 @@
 
     <!-- Contact Information Section -->
     <div class="bg-white p-6 rounded-lg border border-gray-200">
-      <h3 class="text-lg font-semibold text-gray-900 mb-4">Contact Information</h3>
+      <h3 class="text-lg font-semibold text-gray-900 mb-4">{{ $t('companies.contactInformation') }}</h3>
       
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <BaseInput
           v-model="formData.email"
-          label="Email"
+          :label="$t('common.email')"
           type="email"
-          placeholder="contact@company.com"
+          :placeholder="$t('companies.emailPlaceholder')"
           :error="errors.email"
         />
 
         <BaseInput
           v-model="formData.phone"
-          label="Phone"
-          placeholder="+1 (555) 000-0000"
+          :label="$t('common.phone')"
+          :placeholder="$t('companies.phonePlaceholder')"
           :error="errors.phone"
         />
       </div>
@@ -280,14 +280,14 @@
 
     <!-- Address Section -->
     <div class="bg-white p-6 rounded-lg border border-gray-200">
-      <h3 class="text-lg font-semibold text-gray-900 mb-4">Address</h3>
+      <h3 class="text-lg font-semibold text-gray-900 mb-4">{{ $t('companies.address') }}</h3>
       
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div class="md:col-span-2">
           <BaseInput
             v-model="formData.street"
-            label="Street Address"
-            placeholder="123 Main Street"
+            :label="$t('companies.streetAddress')"
+            :placeholder="$t('jobs.streetAddressPlaceholder')"
             :error="errors.street"
           />
         </div>
@@ -295,15 +295,15 @@
         <BaseAutocomplete
           v-model="formData.city"
           :options="iraqCities"
-          label="City"
-          placeholder="Type to search cities..."
+          :label="$t('common.city')"
+          :placeholder="$t('companies.typeToSearchCities')"
           required
           :error="errors.city"
         />
 
         <BaseInput
           v-model="formData.country"
-          label="Country"
+          :label="$t('common.country')"
           value="Iraq"
           readonly
           :error="errors.country"
@@ -313,12 +313,12 @@
 
     <!-- Business Information Section -->
     <div class="bg-white p-6 rounded-lg border border-gray-200">
-      <h3 class="text-lg font-semibold text-gray-900 mb-4">Business Information</h3>
+      <h3 class="text-lg font-semibold text-gray-900 mb-4">{{ $t('companies.companyDetails') }}</h3>
       
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <label for="company-category" class="block text-sm font-medium text-gray-700 mb-1">
-            Category *
+            {{ $t('companies.category') }} *
           </label>
           <select
             id="company-category"
@@ -326,7 +326,7 @@
             class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
             required
           >
-            <option value="">Select category</option>
+            <option value="">{{ $t('companies.selectCategory') }}</option>
             <option v-for="category in companyCategories" :key="category" :value="category">
               {{ category }}
             </option>
@@ -336,14 +336,14 @@
 
         <div>
           <label for="company-size" class="block text-sm font-medium text-gray-700 mb-1">
-            Company Size
+            {{ $t('companies.companySize') }}
           </label>
           <select
             id="company-size"
             v-model="formData.company_size"
             class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
           >
-            <option value="">Select size</option>
+            <option value="">{{ $t('companies.selectCompanySize') }}</option>
             <option value="1-10">1-10 employees</option>
             <option value="11-50">11-50 employees</option>
             <option value="51-200">51-200 employees</option>
@@ -355,30 +355,30 @@
 
         <div>
           <label for="company-type" class="block text-sm font-medium text-gray-700 mb-1">
-            Company Type
+            {{ $t('companies.companyType') }}
           </label>
           <select
             id="company-type"
             v-model="formData.company_type"
             class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
           >
-            <option value="">Select type</option>
-            <option value="startup">Startup</option>
-            <option value="small_business">Small Business</option>
-            <option value="mid_market">Mid Market</option>
-            <option value="enterprise">Enterprise</option>
-            <option value="nonprofit">Nonprofit</option>
-            <option value="government">Government</option>
-            <option value="agency">Agency</option>
+            <option value="">{{ $t('companies.selectType') }}</option>
+            <option value="startup">{{ $t('companies.startup') }}</option>
+            <option value="small_business">{{ $t('companies.smallBusiness') }}</option>
+            <option value="mid_market">{{ $t('companies.midMarket') }}</option>
+            <option value="enterprise">{{ $t('companies.enterprise') }}</option>
+            <option value="nonprofit">{{ $t('companies.nonprofit') }}</option>
+            <option value="government">{{ $t('companies.government') }}</option>
+            <option value="agency">{{ $t('companies.agency') }}</option>
           </select>
         </div>
 
         <BaseInput
           v-model="formData.total_employees"
-          label="Total Employees"
+          :label="$t('companies.totalEmployees')"
           type="number"
           min="0"
-          placeholder="100"
+          :placeholder="$t('companies.employeesPlaceholder')"
           :error="errors.total_employees"
         />
       </div>
@@ -386,14 +386,14 @@
 
     <!-- Social Media Section -->
     <div class="bg-white p-6 rounded-lg border border-gray-200">
-      <h3 class="text-lg font-semibold text-gray-900 mb-4">Social Media</h3>
+      <h3 class="text-lg font-semibold text-gray-900 mb-4">{{ $t('companies.socialMedia') }}</h3>
       
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <BaseInput
           v-model="formData.linkedin"
-          label="LinkedIn"
+          :label="$t('companies.linkedin')"
           type="url"
-          placeholder="https://linkedin.com/company/..."
+          :placeholder="$t('companies.linkedinPlaceholder')"
           :error="errors.linkedin"
         >
           <template #icon-left>
@@ -405,9 +405,9 @@
 
         <BaseInput
           v-model="formData.twitter"
-          label="Twitter / X"
+          :label="$t('companies.twitter')"
           type="url"
-          placeholder="https://twitter.com/..."
+          :placeholder="$t('companies.twitterPlaceholder')"
           :error="errors.twitter"
         >
           <template #icon-left>
@@ -419,17 +419,17 @@
 
         <BaseInput
           v-model="formData.facebook"
-          label="Facebook"
+          :label="$t('companies.facebook')"
           type="url"
-          placeholder="https://facebook.com/..."
+          :placeholder="$t('companies.facebookPlaceholder')"
           :error="errors.facebook"
         />
 
         <BaseInput
           v-model="formData.instagram"
-          label="Instagram"
+          :label="$t('companies.instagram')"
           type="url"
-          placeholder="https://instagram.com/..."
+          :placeholder="$t('companies.instagramPlaceholder')"
           :error="errors.instagram"
         >
           <template #icon-left>
@@ -441,9 +441,9 @@
 
         <BaseInput
           v-model="formData.youtube"
-          label="YouTube"
+          :label="$t('companies.youtube')"
           type="url"
-          placeholder="https://youtube.com/@..."
+          :placeholder="$t('companies.youtubePlaceholder')"
           :error="errors.youtube"
         >
           <template #icon-left>
@@ -456,8 +456,9 @@
     </div>
 
     <!-- Status Section -->
-    <div class="bg-white rounded-lg border border-gray-200 p-6">
-      <h3 class="text-lg font-semibold text-gray-900 mb-4">Company Status</h3>
+    <!-- Company Status -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+      <h3 class="text-lg font-semibold text-gray-900 mb-4">{{ $t('companies.companyStatus') }}</h3>
       <div class="space-y-4">
         <!-- Is Active -->
         <div class="flex items-start">
@@ -470,8 +471,8 @@
             />
           </div>
           <div class="ml-3 text-sm">
-            <label for="is_active" class="font-medium text-gray-700">Company Active</label>
-            <p class="text-gray-500">Make this company visible to job seekers</p>
+            <label for="is_active" class="font-medium text-gray-700">{{ $t('companies.companyActive') }}</label>
+            <p class="text-gray-500">{{ $t('companies.companyActiveDescription') }}</p>
           </div>
         </div>
 
@@ -486,8 +487,8 @@
             />
           </div>
           <div class="ml-3 text-sm">
-            <label for="is_hiring" class="font-medium text-gray-700">Currently Hiring</label>
-            <p class="text-gray-500">Show "We're Hiring" badge on company profile</p>
+            <label for="is_hiring" class="font-medium text-gray-700">{{ $t('companies.currentlyHiring') }}</label>
+            <p class="text-gray-500">{{ $t('companies.currentlyHiringDescription') }}</p>
           </div>
         </div>
       </div>
@@ -501,14 +502,14 @@
         @click="$emit('cancel')"
         :disabled="loading"
       >
-        Cancel
+        {{ $t('common.cancel') }}
       </BaseButton>
       <BaseButton
         type="submit"
         variant="primary"
         :loading="loading"
       >
-        {{ isEdit ? 'Update Company' : 'Create Company' }}
+        {{ isEdit ? $t('companies.updateCompany') : $t('companies.createCompany') }}
       </BaseButton>
     </div>
   </form>
@@ -516,12 +517,15 @@
 
 <script setup lang="ts">
 import { ref, reactive, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import type { Company } from '@/types'
 import BaseInput from '@/components/base/BaseInput.vue'
 import BaseButton from '@/components/base/BaseButton.vue'
 import BaseAutocomplete from '@/components/base/BaseAutocomplete.vue'
 import { companyCategories } from '@/config/companyCategories'
 import { iraqCities } from '@/config/iraqCities'
+
+const { t: $t } = useI18n()
 
 interface Props {
   company?: Company

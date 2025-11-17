@@ -2,8 +2,8 @@
   <div class="container-custom py-8">
     <!-- Header -->
     <div class="mb-8">
-      <h1 class="text-3xl font-bold text-gray-900 mb-2">Saved Jobs</h1>
-      <p class="text-gray-600">Jobs you've saved for later</p>
+      <h1 class="text-3xl font-bold text-gray-900 mb-2">{{ $t('savedJobs.title') }}</h1>
+      <p class="text-gray-600">{{ $t('savedJobs.subtitle') }}</p>
     </div>
 
     <!-- Loading State -->
@@ -23,10 +23,10 @@
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
         </svg>
       </div>
-      <h3 class="text-xl font-semibold text-gray-900 mb-2">No Saved Jobs</h3>
-      <p class="text-gray-600 mb-6">Start saving jobs to build your collection</p>
+      <h3 class="text-xl font-semibold text-gray-900 mb-2">{{ $t('savedJobs.noSavedJobs') }}</h3>
+      <p class="text-gray-600 mb-6">{{ $t('savedJobs.startSaving') }}</p>
       <router-link to="/jobs" class="btn-primary">
-        Browse Jobs
+        {{ $t('savedJobs.browseJobs') }}
       </router-link>
     </div>
 
@@ -93,7 +93,7 @@
               variant="outline"
               size="md"
               @click.stop="handleUnsaveJob(job)"
-              title="Remove from saved jobs"
+              :title="$t('savedJobs.removeFromSaved')"
               class="cursor-pointer hover:bg-red-50 hover:border-red-300 transition-colors"
             >
               <template #icon-left>
@@ -101,7 +101,7 @@
                   <path d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0111.186 0z" />
                 </svg>
               </template>
-              <span class="hidden sm:inline">Unsave</span>
+              <span class="hidden sm:inline">{{ $t('savedJobs.unsave') }}</span>
             </BaseButton>
           </div>
         </div>
@@ -113,6 +113,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { useSavedJobStore } from '@/stores/savedJob'
 import { savedJobService } from '@/services/savedJob.service'
 import type { Job } from '@/types'
@@ -124,6 +125,7 @@ import { formatSalaryRange } from '@/utils/currency'
 
 const router = useRouter()
 const toast = useToast()
+const { t } = useI18n()
 const savedJobStore = useSavedJobStore()
 
 const savedJobs = ref<Job[]>([])
@@ -164,7 +166,7 @@ const fetchSavedJobs = async () => {
     const errorMessage = err && typeof err === 'object' && 'response' in err
       ? (err as { response?: { data?: { message?: string } } }).response?.data?.message
       : undefined
-    error.value = errorMessage || 'Failed to load saved jobs'
+    error.value = errorMessage || t('savedJobs.failedToLoad')
   } finally {
     loading.value = false
   }
@@ -174,12 +176,12 @@ const handleUnsaveJob = async (job: Job) => {
   try {
     await savedJobStore.unsaveJob(job.id)
     savedJobs.value = savedJobs.value.filter(j => j.id !== job.id)
-    toast.success('Job removed from saved')
+    toast.success(t('savedJobs.jobRemoved'))
   } catch (err: unknown) {
     const errorMessage = err && typeof err === 'object' && 'response' in err
       ? (err as { response?: { data?: { message?: string } } }).response?.data?.message
       : undefined
-    toast.error(errorMessage || 'Failed to unsave job')
+    toast.error(errorMessage || t('savedJobs.failedToUnsave'))
   }
 }
 
