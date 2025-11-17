@@ -278,6 +278,8 @@
     "lead": "Lead",
     "executive": "Executive",
     "applyJob": "Apply for Job",
+    "companyOwnersCannotApply": "Company owners cannot apply to jobs. Only job seekers can apply.",
+    "companyOwnersCannotSave": "Company owners cannot save jobs. Only job seekers can save jobs.",
     "applicationSubmitted": "Application submitted successfully!",
     "coverLetter": "Cover Letter",
     "attachCv": "Attach CV",
@@ -303,7 +305,9 @@
     "pleaseLoginToSave": "Please login to save jobs",
     "jobSaved": "Job saved successfully",
     "jobUnsaved": "Job removed from saved",
+    "jobRemovedFromSaved": "Job removed from saved jobs",
     "failedToSaveJob": "Failed to save job",
+    "failedToLoadJob": "Failed to load job details. Please try again.",
     "alreadyAppliedToJob": "You have already applied to this job",
     "cityPlaceholder": "City",
     "streetAddress": "Street Address",
@@ -949,7 +953,8 @@
     "yesterday": "yesterday",
     "daysAgo": "{count} days ago",
     "weeksAgo": "{count} weeks ago",
-    "monthsAgo": "{count} months ago"
+    "monthsAgo": "{count} months ago",
+    "yearsAgo": "{count} years ago"
   },
   "myJobs": {
     "title": "My Jobs",
@@ -977,6 +982,7 @@
     "cancel": "Cancel",
     "deleting": "Deleting...",
     "deleteSuccess": "Job deleted successfully",
-    "deleteFailed": "Failed to delete job"
+    "deleteFailed": "Failed to delete job",
+    "jobNotFound": "Job not found. It may have been already deleted."
   }
 }
