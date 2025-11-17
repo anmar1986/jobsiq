@@ -2,8 +2,8 @@
   <div class="container-custom py-8">
     <!-- Header -->
     <div class="mb-8">
-      <h1 class="text-3xl font-bold text-gray-900">Edit Company</h1>
-      <p class="text-gray-600 mt-2">Update your company information</p>
+      <h1 class="text-3xl font-bold text-gray-900">{{ $t('companies.editCompany') }}</h1>
+      <p class="text-gray-600 mt-2">{{ $t('companies.updateYourCompanyInfo') }}</p>
     </div>
 
     <!-- Loading State -->
@@ -25,9 +25,9 @@
 
     <!-- Error State -->
     <div v-else class="text-center py-12">
-      <p class="text-gray-600 mb-4">Company not found</p>
+      <p class="text-gray-600 mb-4">{{ $t('companies.companyNotFound') }}</p>
       <BaseButton variant="primary" @click="handleCancel">
-        Go Back
+        {{ $t('companies.goBack') }}
       </BaseButton>
     </div>
   </div>
@@ -36,6 +36,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { useToast } from '@/composables/useToast'
 import { companyService } from '@/services/cv.service'
 import type { Company } from '@/types'
@@ -45,6 +46,7 @@ import CompanyForm from '@/views/companies/CompanyForm.vue'
 
 const router = useRouter()
 const route = useRoute()
+const { t: $t } = useI18n()
 const toast = useToast()
 
 const loading = ref(false)

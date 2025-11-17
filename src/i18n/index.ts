@@ -42,4 +42,4 @@ export const setLocale = (locale: 'en' | 'ar') => {
 }
 
 // Initialize on load
-setLocale(i18n.global.locale)
+setLocale(i18n.global.locale as 'en' | 'ar')

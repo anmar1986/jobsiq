@@ -223,8 +223,18 @@ class JobController extends Controller
     /**
      * Remove the specified job.
      */
-    public function destroy(Request $request, Job $job): JsonResponse
+    public function destroy(Request $request, $jobId): JsonResponse
     {
+        // Try to find the job
+        $job = Job::find($jobId);
+
+        if (! $job) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Job not found. It may have been already deleted.',
+            ], 404);
+        }
+
         /** @var \App\Models\Company $company */
         $company = $job->company;
 

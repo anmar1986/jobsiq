@@ -17,7 +17,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/jobs/:slug',
     name: 'job-detail',
-    component: () => import('@/views/jobs/JobDetailView.vue'),
+    component: () => import('@/views/jobs/JobsDetailView.vue'),
     meta: { title: 'Job Details' },
   },
   {

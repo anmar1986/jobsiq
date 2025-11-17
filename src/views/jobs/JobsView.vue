@@ -9,7 +9,7 @@
             <BaseInput
               v-model="filters.search"
               type="text"
-              placeholder="Search by job title, keywords, or company..."
+              :placeholder="$t('jobs.searchByKeywords')"
               size="md"
               show-clear-button
               @keyup.enter="searchJobs"
@@ -22,13 +22,13 @@
             </BaseInput>
           </div>
           <div class="w-full sm:w-72 relative">
-            <label for="job-location" class="sr-only">Location</label>
+            <label for="job-location" class="sr-only">{{ $t('common.location') }}</label>
             <input
               id="job-location"
               v-model="filters.location"
               type="text"
               name="job-location"
-              placeholder="City"
+              :placeholder="$t('jobs.cityPlaceholder')"
               class="w-full px-4 py-2 pl-10 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white"
               @input="handleLocationInput"
               @focus="showCitySuggestions = true"
@@ -73,13 +73,13 @@
         <div class="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center">
           <!-- Results count -->
           <span class="text-sm font-medium text-gray-900 sm:flex-shrink-0">
-            {{ totalJobs }} {{ totalJobs === 1 ? 'job' : 'jobs' }}
+            {{ totalJobs }} {{ $t('jobs.jobCount', totalJobs) }}
           </span>
 
           <!-- Scrollable filters container on mobile -->
           <div class="flex gap-3 overflow-x-auto pb-2 sm:pb-0 flex-1">
             <!-- Employment Type -->
-            <label for="employment-type" class="sr-only">Employment Type</label>
+            <label for="employment-type" class="sr-only">{{ $t('jobs.employmentType') }}</label>
             <select
               id="employment-type"
               v-model="filters.employment_type"
@@ -87,16 +87,16 @@
               @change="searchJobs"
               class="px-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-primary-500 focus:border-primary-500 bg-white flex-shrink-0 cursor-pointer hover:border-gray-400 hover:bg-gray-50 transition-colors"
             >
-              <option value="">Employment Type</option>
-              <option value="full-time">Full-time</option>
-              <option value="part-time">Part-time</option>
-              <option value="contract">Contract</option>
-              <option value="freelance">Freelance</option>
-              <option value="internship">Internship</option>
+              <option value="">{{ $t('jobs.employmentType') }}</option>
+              <option value="full-time">{{ $t('jobs.fullTime') }}</option>
+              <option value="part-time">{{ $t('jobs.partTime') }}</option>
+              <option value="contract">{{ $t('jobs.contract') }}</option>
+              <option value="freelance">{{ $t('jobs.freelance') }}</option>
+              <option value="internship">{{ $t('jobs.internship') }}</option>
             </select>
 
             <!-- Experience Level -->
-            <label for="experience-level" class="sr-only">Experience Level</label>
+            <label for="experience-level" class="sr-only">{{ $t('jobs.experienceLevel') }}</label>
             <select
               id="experience-level"
               v-model="filters.experience_level"
@@ -104,16 +104,16 @@
               @change="searchJobs"
               class="px-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-primary-500 focus:border-primary-500 bg-white flex-shrink-0 cursor-pointer hover:border-gray-400 hover:bg-gray-50 transition-colors"
             >
-              <option value="">Experience Level</option>
-              <option value="entry">Entry Level</option>
-              <option value="mid">Mid Level</option>
-              <option value="senior">Senior</option>
-              <option value="lead">Lead</option>
-              <option value="executive">Executive</option>
+              <option value="">{{ $t('jobs.experienceLevel') }}</option>
+              <option value="entry">{{ $t('jobs.entryLevel') }}</option>
+              <option value="mid">{{ $t('jobs.midLevel') }}</option>
+              <option value="senior">{{ $t('jobs.senior') }}</option>
+              <option value="lead">{{ $t('jobs.lead') }}</option>
+              <option value="executive">{{ $t('jobs.executive') }}</option>
             </select>
 
             <!-- Salary -->
-            <label for="salary-min" class="sr-only">Minimum Salary</label>
+            <label for="salary-min" class="sr-only">{{ $t('jobs.salaryMin') }}</label>
             <select
               id="salary-min"
               v-model="filters.salary_min"
@@ -121,11 +121,11 @@
               @change="searchJobs"
               class="px-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-primary-500 focus:border-primary-500 bg-white flex-shrink-0 cursor-pointer hover:border-gray-400 hover:bg-gray-50 transition-colors"
             >
-              <option value="">Salary</option>
-              <option value="250">From $250</option>
-              <option value="500">From $500</option>
-              <option value="1000">From $1000</option>
-              <option value="2000">From $2000</option>
+              <option value="">{{ $t('jobs.salaryMin') }}</option>
+              <option value="250">{{ $t('jobs.from', { amount: '250' }) }}</option>
+              <option value="500">{{ $t('jobs.from', { amount: '500' }) }}</option>
+              <option value="1000">{{ $t('jobs.from', { amount: '1000' }) }}</option>
+              <option value="2000">{{ $t('jobs.from', { amount: '2000' }) }}</option>
             </select>
 
             <!-- Remote Only Checkbox -->
@@ -138,7 +138,7 @@
                 class="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded cursor-pointer"
                 @change="searchJobs"
               />
-              <span class="font-medium text-gray-700">Remote Only</span>
+              <span class="font-medium text-gray-700">{{ $t('jobs.remoteOnly') }}</span>
             </label>
           </div>
 
@@ -147,7 +147,7 @@
             @click="clearFilters"
             class="px-4 py-2 text-sm text-gray-600 hover:text-gray-900 font-medium flex-shrink-0 cursor-pointer transition-colors"
           >
-            Clear all
+            {{ $t('common.clearAll') }}
           </button>
         </div>
       </div>
@@ -218,10 +218,10 @@
                       {{ formatEmploymentType(job.employment_type) }}
                     </span>
                     <span v-if="job.is_remote" class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-green-100 text-green-800">
-                      Remote
+                      {{ $t('jobs.remote') }}
                     </span>
                     <span v-if="job.category" class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-purple-100 text-purple-800">
-                      {{ job.category }}
+                      {{ formatCategory(job.category) }}
                     </span>
                   </div>
                   
@@ -240,9 +240,9 @@
             <svg class="h-12 w-12 mx-auto text-gray-400 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
-            <h3 class="text-sm font-semibold text-gray-900 mb-1">No jobs found</h3>
-            <p class="text-xs text-gray-600 mb-4">Try adjusting your filters</p>
-            <BaseButton variant="primary" size="sm" @click="clearFilters">Clear Filters</BaseButton>
+            <h3 class="text-sm font-semibold text-gray-900 mb-1">{{ $t('jobs.noJobsFound') }}</h3>
+            <p class="text-xs text-gray-600 mb-4">{{ $t('jobs.tryAdjustingFilters') }}</p>
+            <BaseButton variant="primary" size="sm" @click="clearFilters">{{ $t('common.clearAll') }}</BaseButton>
           </div>
 
           <!-- Load More Button -->
@@ -259,10 +259,10 @@
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
                 </svg>
               </template>
-              Load More Jobs
+              {{ $t('jobs.loadMoreJobs') }}
             </BaseButton>
             <p class="text-center text-sm text-gray-500 mt-3">
-              Showing {{ jobs.length }} of {{ totalJobs }} jobs
+              {{ $t('jobs.showingJobs', { current: jobs.length, total: totalJobs }) }}
             </p>
           </div>
         </div>
@@ -306,13 +306,13 @@
                     <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                     </svg>
-                    <span class="text-sm font-medium text-green-700">Remote</span>
+                    <span class="text-sm font-medium text-green-700">{{ $t('jobs.remote') }}</span>
                   </div>
                   <div v-if="selectedJob.category" class="flex items-center gap-2 px-3 py-1.5 bg-purple-50 rounded-md border border-purple-200">
                     <svg class="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
                     </svg>
-                    <span class="text-sm font-medium text-purple-700">{{ selectedJob.category }}</span>
+                    <span class="text-sm font-medium text-purple-700">{{ formatCategory(selectedJob.category) }}</span>
                   </div>
                 </div>
 
@@ -330,10 +330,10 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
                     </template>
-                    {{ hasApplied(selectedJob.id) ? 'Already Applied' : 'Apply Now' }}
+                    {{ hasApplied(selectedJob.id) ? $t('jobs.alreadyApplied') : $t('jobs.applyNow') }}
                   </BaseButton>
                   <BaseButton variant="outline" size="lg" class="flex-1 sm:flex-initial" @click="goToJobDetail(selectedJob)">
-                    View Details
+                    {{ $t('jobs.viewDetails') }}
                   </BaseButton>
                   
                   <!-- Share Job Button with Dropdown -->
@@ -344,7 +344,7 @@
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
                         </svg>
                       </template>
-                      Share
+                      {{ $t('common.share') }}
                     </BaseButton>
 
                     <!-- Share Menu Dropdown -->
@@ -358,61 +358,74 @@
                     >
                       <div
                         v-if="showShareMenu"
-                        class="absolute top-full left-0 mt-2 w-64 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50 max-h-96 overflow-y-auto"
+                        class="absolute top-full left-0 mt-2 min-w-[200px] bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50 max-h-96 overflow-y-auto"
                       >
-                        <!-- Share on X (Twitter) -->
+                        <!-- Copy Link -->
                         <button
-                          @click="shareOn('twitter')"
-                          class="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center gap-3 text-gray-700"
+                          @click="copyJobLink"
+                          class="w-full px-3 py-2 bg-gray-800 hover:bg-gray-900 text-white rounded-lg transition-colors text-sm flex items-center gap-2 cursor-pointer"
                         >
-                          <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+                          <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
                           </svg>
-                          <span>Share on X</span>
+                          <span>{{ $t('jobs.copyLink') }}</span>
                         </button>
+
+                        <div class="border-t border-gray-200 my-1"></div>
 
                         <!-- Share on Facebook -->
                         <button
                           @click="shareOn('facebook')"
-                          class="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center gap-3 text-gray-700"
+                          class="w-full px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors text-sm flex items-center gap-2 cursor-pointer"
                         >
-                          <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+                          <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
                             <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
                           </svg>
-                          <span>Share on Facebook</span>
+                          <span>{{ $t('jobs.shareOnFacebook') }}</span>
                         </button>
 
                         <!-- Share on Instagram -->
                         <button
                           @click="shareOn('instagram')"
-                          class="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center gap-3 text-gray-700"
+                          class="instagram-gradient w-full px-3 py-2 text-white rounded-lg transition-colors text-sm flex items-center gap-2 cursor-pointer"
                         >
-                          <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+                          <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
                             <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
                           </svg>
-                          <span>Share on Instagram</span>
+                          <span>{{ $t('jobs.shareOnInstagram') }}</span>
+                        </button>
+
+                        <!-- Share on LinkedIn -->
+                        <button
+                          @click="shareOn('linkedin')"
+                          class="w-full px-3 py-2 bg-blue-700 hover:bg-blue-800 text-white rounded-lg transition-colors text-sm flex items-center gap-2 cursor-pointer"
+                        >
+                          <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
+                          </svg>
+                          <span>{{ $t('jobs.shareOnLinkedIn') }}</span>
+                        </button>
+
+                        <!-- Share on X (Twitter) -->
+                        <button
+                          @click="shareOn('twitter')"
+                          class="w-full px-3 py-2 bg-black hover:bg-gray-900 text-white rounded-lg transition-colors text-sm flex items-center gap-2 cursor-pointer"
+                        >
+                          <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+                          </svg>
+                          <span>{{ $t('jobs.shareOnTwitter') }}</span>
                         </button>
 
                         <!-- Share on Snapchat -->
                         <button
                           @click="shareOn('snapchat')"
-                          class="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center gap-3 text-gray-700"
+                          class="w-full px-3 py-2 bg-yellow-400 hover:bg-yellow-500 text-gray-900 rounded-lg transition-colors text-sm flex items-center gap-2 cursor-pointer"
                         >
-                          <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
+                          <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
                             <path d="M12.206.793c.99 0 4.347.276 5.93 3.821.529 1.193.403 3.219.299 4.847l-.003.06c-.012.18-.022.345-.03.51.075.045.203.09.401.09.3 0 .73-.057 1.126-.12.57-.084 1.185-.179 1.757-.179.3 0 .582.04.84.12.42.15.81.42 1.023.84.195.39.225.84.09 1.289-.12.45-.36.87-.645 1.17-.27.285-.645.54-1.065.705l-.084.045c-.3.165-.704.42-.78.885-.03.135-.015.27.045.404.09.21.21.405.345.585.195.27.42.54.645.81.51.585 1.065 1.185 1.47 1.83.225.36.42.72.57 1.095.09.24.15.495.18.75.015.195 0 .375-.045.555-.075.27-.24.54-.495.705-.3.195-.659.285-1.065.285l-.075-.015c-.705-.075-1.38-.24-2.04-.42-.585-.165-1.17-.3-1.77-.42-.15-.03-.296-.045-.444-.045-.555 0-1.05.195-1.53.42-.45.195-.945.405-1.485.57-.9.3-1.725.345-2.385.345-.405 0-.78-.045-1.095-.09-.75-.15-1.485-.42-2.22-.705-.585-.225-1.17-.48-1.77-.705-.42-.15-.885-.225-1.335-.225-.3 0-.585.03-.87.09-.555.12-1.095.27-1.65.42-.705.195-1.38.42-2.085.57-.705.15-1.38.225-2.01.195-.45-.015-.885-.135-1.26-.375-.3-.195-.495-.495-.585-.84-.075-.3-.075-.615 0-.915.09-.375.27-.735.495-1.065.42-.645.96-1.23 1.485-1.815.24-.27.465-.54.675-.81.12-.165.225-.345.3-.54.09-.195.12-.405.075-.615-.045-.435-.375-.705-.69-.87l-.096-.06c-.42-.165-.795-.42-1.065-.705-.285-.3-.525-.72-.645-1.17-.135-.45-.105-.9.09-1.29.21-.42.6-.69 1.02-.84.259-.08.541-.12.84-.12.573 0 1.185.09 1.757.18.39.06.825.12 1.124.12.195 0 .315-.045.375-.075-.015-.165-.03-.345-.045-.54l-.015-.09c-.105-1.59-.21-3.615.285-4.806C7.86 1.068 11.19.792 12.206.792zm0 0" />
                           </svg>
-                          <span>Share on Snapchat</span>
-                        </button>
-
-                        <!-- Copy Link -->
-                        <button
-                          @click="copyJobLink"
-                          class="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center gap-3 text-gray-700 border-t border-gray-100"
-                        >
-                          <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
-                          </svg>
-                          <span>Copy Link</span>
+                          <span>{{ $t('jobs.shareOnSnapchat') }}</span>
                         </button>
                       </div>
                     </Transition>
@@ -435,7 +448,7 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
                       </svg>
                     </template>
-                    <span class="hidden sm:inline">{{ savedJobStore.savedJobIds.has(selectedJob.id) ? 'Saved' : 'Save' }}</span>
+                    <span class="hidden sm:inline">{{ savedJobStore.savedJobIds.has(selectedJob.id) ? $t('jobs.saved') : $t('jobs.saveJob') }}</span>
                   </BaseButton>
                 </div>
               </div>
@@ -444,41 +457,41 @@
             <!-- Salary & Details -->
             <div v-if="selectedJob.salary_min && selectedJob.salary_max" class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8 p-6 bg-gray-50 rounded-lg border border-gray-200">
               <div>
-                <p class="text-sm font-medium text-gray-700 mb-2">Salary Range</p>
+                <p class="text-sm font-medium text-gray-700 mb-2">{{ $t('jobs.salaryRange') }}</p>
                 <p class="text-2xl font-bold text-gray-900">
                   {{ formatSalaryRange(selectedJob.salary_min, selectedJob.salary_max, selectedJob.salary_currency, selectedJob.salary_period ? formatSalaryPeriod(selectedJob.salary_period) : undefined) }}
                 </p>
               </div>
               <div>
-                <p class="text-sm font-medium text-gray-700 mb-2">Experience Level</p>
+                <p class="text-sm font-medium text-gray-700 mb-2">{{ $t('jobs.experienceLevel') }}</p>
                 <p class="text-xl font-semibold text-gray-900">{{ formatExperienceLevel(selectedJob.experience_level) }}</p>
               </div>
             </div>
 
             <!-- Job Description -->
             <div class="prose prose-sm max-w-none mb-8">
-              <h2 class="text-xl font-bold text-gray-900 mb-4">Job Description</h2>
+              <h2 class="text-xl font-bold text-gray-900 mb-4">{{ $t('jobs.jobDescription') }}</h2>
               <!-- eslint-disable-next-line vue/no-v-html -->
               <div v-html="selectedJob.description" class="text-gray-600"></div>
             </div>
 
             <!-- Requirements -->
             <div v-if="selectedJob.requirements" class="prose prose-sm max-w-none mb-8">
-              <h2 class="text-xl font-bold text-gray-900 mb-4">Requirements</h2>
+              <h2 class="text-xl font-bold text-gray-900 mb-4">{{ $t('jobs.requirements') }}</h2>
               <!-- eslint-disable-next-line vue/no-v-html -->
               <div v-html="selectedJob.requirements" class="text-gray-600"></div>
             </div>
 
             <!-- Benefits -->
             <div v-if="selectedJob.benefits" class="prose prose-sm max-w-none mb-8">
-              <h2 class="text-xl font-bold text-gray-900 mb-4">Benefits</h2>
+              <h2 class="text-xl font-bold text-gray-900 mb-4">{{ $t('jobs.benefits') }}</h2>
               <!-- eslint-disable-next-line vue/no-v-html -->
               <div v-html="selectedJob.benefits" class="text-gray-600"></div>
             </div>
 
             <!-- Skills -->
             <div v-if="selectedJob.skills && selectedJob.skills.length > 0" class="mt-8">
-              <h3 class="text-lg font-bold text-gray-900 mb-4">Required Skills</h3>
+              <h3 class="text-lg font-bold text-gray-900 mb-4">{{ $t('jobs.requiredSkills') }}</h3>
               <div class="flex flex-wrap gap-2">
                 <span
                   v-for="skill in selectedJob.skills"
@@ -497,8 +510,8 @@
               <svg class="h-24 w-24 mx-auto text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
               </svg>
-              <h3 class="text-xl font-semibold text-gray-900 mb-2">Select a job to view details</h3>
-              <p class="text-gray-600">Click on any job from the list to see more information</p>
+              <h3 class="text-xl font-semibold text-gray-900 mb-2">{{ $t('jobs.selectJobToViewDetails') }}</h3>
+              <p class="text-gray-600">{{ $t('jobs.clickAnyJob') }}</p>
             </div>
           </div>
         </div>
@@ -522,6 +535,7 @@ import BaseInput from '@/components/base/BaseInput.vue'
 import BaseButton from '@/components/base/BaseButton.vue'
 import type { Job, JobFilters } from '@/types'
 import { iraqCities } from '@/config/iraqCities'
+import { useI18n } from 'vue-i18n'
 
 const router = useRouter()
 const route = useRoute()
@@ -529,6 +543,7 @@ const jobStore = useJobStore()
 const authStore = useAuthStore()
 const savedJobStore = useSavedJobStore()
 const toast = useToast()
+const { t } = useI18n()
 
 // Responsive breakpoint for mobile detection
 const isMobile = useMediaQuery('(max-width: 1023px)')
@@ -750,7 +765,7 @@ const applyForJob = (job: Job) => {
   
   // Check if already applied
   if (hasApplied(job.id)) {
-    toast.info('You have already applied to this job')
+    toast.info(t('jobs.alreadyAppliedToJob'))
     return
   }
   
@@ -767,7 +782,7 @@ const isOwnJob = (job: Job): boolean => {
 
 const saveJob = async (job: Job) => {
   if (!authStore.isAuthenticated) {
-    toast.error('Please login to save jobs')
+    toast.error(t('jobs.pleaseLoginToSave'))
     router.push('/login')
     return
   }
@@ -776,17 +791,17 @@ const saveJob = async (job: Job) => {
     if (savedJobStore.savedJobIds.has(job.id)) {
       // Unsave the job
       await savedJobStore.unsaveJob(job.id)
-      toast.success('Job removed from saved')
+      toast.success(t('jobs.jobUnsaved'))
     } else {
       // Save the job
       await savedJobStore.saveJob(job.id)
-      toast.success('Job saved successfully')
+      toast.success(t('jobs.jobSaved'))
     }
   } catch (err: unknown) {
     const errorMessage = err && typeof err === 'object' && 'response' in err
       ? (err as { response?: { data?: { message?: string } } }).response?.data?.message
       : undefined
-    toast.error(errorMessage || 'Failed to save job')
+    toast.error(errorMessage || t('jobs.failedToSaveJob'))
   }
 }
 
@@ -810,13 +825,16 @@ const shareOn = (platform: string) => {
     case 'facebook':
       shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`
       break
+    case 'linkedin':
+      shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`
+      break
     case 'instagram':
       // Instagram doesn't support direct web sharing, so we'll copy the link and notify the user
       copyToClipboard(url).then(() => {
-        toast.info('Link copied! Open Instagram app to share')
+        toast.info(t('jobs.linkCopiedInstagram'))
         showShareMenu.value = false
       }).catch(() => {
-        toast.error('Failed to copy link')
+        toast.error(t('jobs.failedToCopyLink'))
       })
       return
     case 'snapchat':
@@ -837,35 +855,41 @@ const copyJobLink = async () => {
   const url = `${window.location.origin}/jobs/${selectedJob.value.slug}`
   try {
     await copyToClipboard(url)
-    toast.success('Link copied to clipboard!')
+    toast.success(t('jobs.linkCopied'))
     showShareMenu.value = false
-  } catch (error) {
-    console.error('Failed to copy link:', error)
-    toast.error('Failed to copy link')
+  } catch (err) {
+    console.error('Failed to copy link:', err)
+    toast.error(t('jobs.failedToCopyLink'))
   }
 }
 
 // Formatting helpers
 const formatEmploymentType = (type: string): string => {
   const types: Record<string, string> = {
-    'full-time': 'Full-time',
-    'part-time': 'Part-time',
-    'contract': 'Contract',
-    'freelance': 'Freelance',
-    'internship': 'Internship',
+    'full-time': t('jobs.fullTime'),
+    'part-time': t('jobs.partTime'),
+    'contract': t('jobs.contract'),
+    'freelance': t('jobs.freelance'),
+    'internship': t('jobs.internship'),
   }
   return types[type] || type
 }
 
 const formatExperienceLevel = (level: string): string => {
   const levels: Record<string, string> = {
-    'entry': 'Entry Level',
-    'mid': 'Mid Level',
-    'senior': 'Senior',
-    'lead': 'Lead',
-    'executive': 'Executive',
+    'entry': t('jobs.entryLevel'),
+    'mid': t('jobs.midLevel'),
+    'senior': t('jobs.senior'),
+    'lead': t('jobs.lead'),
+    'executive': t('jobs.executive'),
   }
   return levels[level] || level
+}
+
+const formatCategory = (category: string): string => {
+  // Categories are stored as readable names in the database
+  // For now, return as-is. Can be extended with translations in the future.
+  return category
 }
 
 const _formatSalary = (amount: number): string => {
@@ -877,10 +901,10 @@ const _formatSalary = (amount: number): string => {
 
 const formatSalaryPeriod = (period: string): string => {
   const periods: Record<string, string> = {
-    'hourly': 'hourly',
-    'daily': 'daily',
-    'monthly': 'monthly',
-    'yearly': 'yearly',
+    'hourly': t('jobs.perHour'),
+    'daily': t('jobs.perHour'), // No daily translation, using hourly as fallback
+    'monthly': t('jobs.perMonth'),
+    'yearly': t('jobs.perYear'),
   }
   return periods[period] || period
 }
@@ -941,4 +965,14 @@ const handleClickOutside = (event: MouseEvent) => {
   }
 }
 </script>
+
+<style scoped>
+.instagram-gradient {
+  background: linear-gradient(135deg, #9333ea 0%, #db2777 100%);
+}
+
+.instagram-gradient:hover {
+  background: linear-gradient(135deg, #7e22ce 0%, #be185d 100%);
+}
+</style>
 

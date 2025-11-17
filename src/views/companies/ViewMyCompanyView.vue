@@ -37,7 +37,7 @@
             <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
             </svg>
-            Back to Dashboard
+            {{ $t('dashboard.dashboard') }}
           </button>
         </div>
 
@@ -104,20 +104,20 @@
       </div>
 
       <!-- Stats Bar -->
-      <div class="bg-gradient-to-r from-primary-600 to-secondary-600 border-b border-primary-700 shadow-sm">
+      <div class="stats-bar-gradient border-b border-primary-700 shadow-sm">
         <div class="container-custom">
           <div class="grid grid-cols-2 md:grid-cols-4 gap-4 py-6">
             <div class="text-center">
               <p class="text-3xl font-bold text-white">{{ company.jobs_count || 0 }}</p>
-              <p class="text-sm text-primary-100 mt-1">Open Positions</p>
+              <p class="text-sm text-primary-100 mt-1">{{ $t('companies.openPositions') }}</p>
             </div>
             <div class="text-center">
               <p class="text-3xl font-bold text-white">{{ formatDate(company.created_at) }}</p>
-              <p class="text-sm text-primary-100 mt-1">Member Since</p>
+              <p class="text-sm text-primary-100 mt-1">{{ $t('companies.memberSince') }}</p>
             </div>
             <div v-if="company.city" class="text-center">
               <p class="text-3xl font-bold text-white">1</p>
-              <p class="text-sm text-primary-100 mt-1">Location</p>
+              <p class="text-sm text-primary-100 mt-1">{{ $t('companies.location') }}</p>
             </div>
             <div class="text-center">
               <div class="flex items-center justify-center gap-2">
@@ -125,9 +125,9 @@
                   class="inline-block w-3 h-3 rounded-full" 
                   :class="company.is_active ? 'bg-green-400' : 'bg-red-400'"
                 ></span>
-                <p class="text-3xl font-bold text-white">{{ company.is_active ? 'Active' : 'Inactive' }}</p>
+                <p class="text-3xl font-bold text-white">{{ company.is_active ? $t('companies.active') : $t('companies.inactive') }}</p>
               </div>
-              <p class="text-sm text-primary-100 mt-1">Status</p>
+              <p class="text-sm text-primary-100 mt-1">{{ $t('common.status') }}</p>
             </div>
           </div>
         </div>
@@ -139,9 +139,9 @@
         <BaseCard class="p-8 mb-8">
           <div class="flex flex-col lg:flex-row gap-8">
             <!-- Left Sidebar - Social Media Links -->
-            <div class="lg:w-64 flex-shrink-0">
+            <div class="lg:w-48 flex-shrink-0">
               <div v-if="company.linkedin || company.twitter || company.facebook || company.instagram || company.youtube">
-                <h3 class="text-lg font-semibold text-gray-900 mb-4">Follow Us</h3>
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">{{ $t('companies.followUs') }}</h3>
                 <div class="flex flex-col gap-3 items-start">
                   <a
                     v-if="company.linkedin" :href="company.linkedin" target="_blank" rel="noopener noreferrer" 
@@ -150,7 +150,7 @@
                     <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
                       <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
                     </svg>
-                    LinkedIn
+                    {{ $t('companies.linkedin') }}
                   </a>
 
                   <a
@@ -160,17 +160,17 @@
                     <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
                       <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
                     </svg>
-                    Facebook
+                    {{ $t('companies.facebook') }}
                   </a>
 
                   <a
                     v-if="company.instagram" :href="company.instagram" target="_blank" rel="noopener noreferrer"
-                    class="flex items-center gap-2 px-3 py-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-lg transition-colors text-sm w-full"
+                    class="instagram-gradient-link flex items-center gap-2 px-3 py-2 text-white rounded-lg transition-colors text-sm w-full"
                   >
                     <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
                       <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
                     </svg>
-                    Instagram
+                    {{ $t('companies.instagram') }}
                   </a>
 
                   <a
@@ -180,7 +180,7 @@
                     <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
                       <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
                     </svg>
-                    YouTube
+                    {{ $t('companies.youtube') }}
                   </a>
 
                   <a
@@ -190,7 +190,7 @@
                     <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
                       <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
                     </svg>
-                    X
+                    {{ $t('companies.twitter') }}
                   </a>
                 </div>
               </div>
@@ -198,11 +198,11 @@
 
             <!-- Center - Company Information -->
             <div class="flex-1">
-              <h2 class="text-2xl font-bold text-gray-900 mb-6 text-center">Company Details</h2>
+              <h2 class="text-2xl font-bold text-gray-900 mb-6 text-center">{{ $t('companies.companyDetails') }}</h2>
               
               <!-- About -->
               <div v-if="company.about" class="mb-12">
-                <h3 class="text-lg font-semibold text-gray-900 mb-3 text-center">About</h3>
+                <h3 class="text-lg font-semibold text-gray-900 mb-3 text-center">{{ $t('companies.about') }}</h3>
                 <p class="text-gray-700 leading-relaxed text-center">
                   {{ company.about }}
                 </p>
@@ -210,7 +210,7 @@
 
               <!-- Description -->
               <div v-if="company.description" class="mb-12">
-                <h3 class="text-lg font-semibold text-gray-900 mb-3 text-center">Description</h3>
+                <h3 class="text-lg font-semibold text-gray-900 mb-3 text-center">{{ $t('companies.description') }}</h3>
                 <p class="text-gray-700 leading-relaxed text-center">
                   {{ company.description }}
                 </p>
@@ -220,17 +220,17 @@
               <div class="grid md:grid-cols-2 gap-6">
                 <!-- Founded -->
                 <div v-if="company.founded_date">
-                  <h3 class="text-sm font-semibold text-gray-900 mb-2">Founded</h3>
+                  <h3 class="text-sm font-semibold text-gray-900 mb-2">{{ $t('companies.founded') }}</h3>
                   <p class="text-gray-700">{{ formatFoundedDate(company.founded_date) }}</p>
                 </div>
               </div>
             </div>
 
             <!-- Right Sidebar - Contact Information -->
-            <div class="lg:w-80 flex-shrink-0">
+            <div class="lg:w-48 flex-shrink-0">
               <!-- Quick Actions -->
               <div class="mb-6 pb-6 border-b border-gray-200">
-                <h3 class="text-lg font-semibold text-gray-900 mb-3">Quick Actions</h3>
+                <h3 class="text-lg font-semibold text-gray-900 mb-3">{{ $t('companies.quickActions') }}</h3>
                 <div class="space-y-2">
                   <BaseButton
                     variant="primary"
@@ -243,7 +243,7 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                       </svg>
                     </template>
-                    Post New Job
+                    {{ $t('companies.postNewJob') }}
                   </BaseButton>
                   <BaseButton
                     variant="outline"
@@ -256,7 +256,7 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                       </svg>
                     </template>
-                    Edit Company
+                    {{ $t('companies.editCompany') }}
                   </BaseButton>
                   <BaseButton
                     variant="outline"
@@ -269,7 +269,7 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                       </svg>
                     </template>
-                    View Public Profile
+                    {{ $t('companies.viewPublicProfile') }}
                   </BaseButton>
                   <BaseButton
                     variant="outline"
@@ -282,19 +282,19 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                       </svg>
                     </template>
-                    Delete Company
+                    {{ $t('companies.deleteCompany') }}
                   </BaseButton>
                 </div>
               </div>
 
-              <h3 class="text-lg font-semibold text-gray-900 mb-4">Contact Information</h3>
+              <h3 class="text-lg font-semibold text-gray-900 mb-4">{{ $t('companies.contactInfo') }}</h3>
               <div class="space-y-4">
                 <div v-if="company.email" class="flex items-start gap-3">
                   <svg class="h-5 w-5 text-gray-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                   </svg>
                   <div class="flex-1 min-w-0">
-                    <p class="text-sm text-gray-600 mb-1">Email</p>
+                    <p class="text-sm text-gray-600 mb-1">{{ $t('companies.email') }}</p>
                     <a :href="`mailto:${company.email}`" class="text-sm text-primary-600 hover:text-primary-700 break-all">
                       {{ company.email }}
                     </a>
@@ -306,7 +306,7 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                   </svg>
                   <div class="flex-1 min-w-0">
-                    <p class="text-sm text-gray-600 mb-1">Phone</p>
+                    <p class="text-sm text-gray-600 mb-1">{{ $t('companies.phone') }}</p>
                     <a :href="`tel:${company.phone}`" class="text-sm text-primary-600 hover:text-primary-700">
                       {{ company.phone }}
                     </a>
@@ -318,7 +318,7 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
                   </svg>
                   <div class="flex-1 min-w-0">
-                    <p class="text-sm text-gray-600 mb-1">Website</p>
+                    <p class="text-sm text-gray-600 mb-1">{{ $t('companies.website') }}</p>
                     <a :href="company.website" target="_blank" class="text-sm text-primary-600 hover:text-primary-700 break-all">
                       {{ formatWebsite(company.website) }}
                     </a>
@@ -330,7 +330,7 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                   </svg>
                   <div class="flex-1 min-w-0">
-                    <p class="text-sm text-gray-600 mb-1">Address</p>
+                    <p class="text-sm text-gray-600 mb-1">{{ $t('companies.address') }}</p>
                     <p class="text-sm text-gray-900">
                       <span v-if="company.street">{{ company.street }}<br /></span>
                       <span v-if="company.city">{{ company.city }}</span>
@@ -347,7 +347,7 @@
       <!-- Company Photos Gallery - Full Width -->
       <div v-if="company.images && company.images.filter(img => img.type === 'gallery').length > 0" class="mb-8">
         <div class="container-custom mb-4">
-          <h2 class="text-2xl font-bold text-gray-900 text-center">Company Photos</h2>
+          <h2 class="text-2xl font-bold text-gray-900 text-center">{{ $t('companies.companyPhotos') }}</h2>
         </div>
         
         <!-- Horizontal carousel with navigation arrows -->
@@ -481,7 +481,7 @@
         <div>
           <div class="flex flex-col items-center justify-center mb-6 gap-4">
             <h2 class="text-2xl font-bold text-gray-900 text-center">
-              Posted Jobs ({{ jobs.length }})
+              {{ $t('companies.postedJobs') }} ({{ jobs.length }})
             </h2>
             <BaseButton 
               variant="primary" 
@@ -492,7 +492,7 @@
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                 </svg>
               </template>
-              Post New Job
+              {{ $t('companies.postNewJob') }}
             </BaseButton>
           </div>
 
@@ -555,7 +555,7 @@
                 <BaseBadge :variant="getBadgeVariant(job.experience_level)">
                   {{ formatExperienceLevel(job.experience_level) }}
                 </BaseBadge>
-                <BaseBadge v-if="job.is_remote" variant="success">Remote</BaseBadge>
+                <BaseBadge v-if="job.is_remote" variant="success">{{ $t('companies.remote') }}</BaseBadge>
                 <BaseBadge v-if="job.category" variant="info">{{ job.category }}</BaseBadge>
               </div>
 
@@ -608,15 +608,15 @@
             <svg class="h-16 w-16 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
             </svg>
-            <h3 class="text-xl font-semibold text-gray-900 mb-2">No Jobs Posted Yet</h3>
-            <p class="text-gray-600 mb-6">Start posting jobs to attract talented candidates.</p>
+            <h3 class="text-xl font-semibold text-gray-900 mb-2">{{ $t('companies.noJobsPostedYet') }}</h3>
+            <p class="text-gray-600 mb-6">{{ $t('companies.startPostingJobs') }}</p>
             <BaseButton variant="primary" @click="navigateToPostJob">
               <template #icon-left>
                 <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                 </svg>
               </template>
-              Post Your First Job
+              {{ $t('companies.postYourFirstJob') }}
             </BaseButton>
           </BaseCard>
         </div>
@@ -683,13 +683,13 @@
     <!-- Delete Job Confirmation Modal -->
     <BaseModal
       v-model="showDeleteJobModal"
-      title="Delete Job"
+      :title="$t('companies.deleteJob')"
       size="sm"
     >
       <div class="p-6">
         <p class="text-gray-700 mb-6">
-          Are you sure you want to delete <strong>{{ selectedJob?.title }}</strong>? 
-          This action cannot be undone and all applications for this job will be lost.
+          {{ $t('companies.areYouSureDeleteJob') }} <strong>{{ selectedJob?.title }}</strong>? 
+          {{ $t('companies.deleteJobWarning') }}
         </p>
         <div class="flex items-center justify-end gap-3">
           <BaseButton
@@ -697,7 +697,7 @@
             @click="showDeleteJobModal = false"
             :disabled="deletingJob"
           >
-            Cancel
+            {{ $t('common.cancel') }}
           </BaseButton>
           <BaseButton
             variant="primary"
@@ -705,7 +705,7 @@
             :loading="deletingJob"
             class="bg-red-600 hover:bg-red-700"
           >
-            Delete Job
+            {{ $t('companies.deleteJob') }}
           </BaseButton>
         </div>
       </div>
@@ -714,13 +714,13 @@
     <!-- Delete Company Confirmation Modal -->
     <BaseModal
       v-model="showDeleteCompanyModal"
-      title="Delete Company"
+      :title="$t('companies.deleteCompany')"
       size="sm"
     >
       <div class="p-6">
         <p class="text-gray-700 mb-6">
-          Are you sure you want to delete <strong>{{ company?.name }}</strong>? 
-          This action cannot be undone and will also delete all jobs and applications associated with this company.
+          {{ $t('companies.areYouSureDeleteCompany') }} <strong>{{ company?.name }}</strong>? 
+          {{ $t('companies.deleteCompanyWarning') }}
         </p>
         <div class="flex items-center justify-end gap-3">
           <BaseButton
@@ -728,7 +728,7 @@
             @click="showDeleteCompanyModal = false"
             :disabled="deletingCompany"
           >
-            Cancel
+            {{ $t('common.cancel') }}
           </BaseButton>
           <BaseButton
             variant="primary"
@@ -736,7 +736,7 @@
             :loading="deletingCompany"
             class="bg-red-600 hover:bg-red-700"
           >
-            Delete Company
+            {{ $t('companies.deleteCompany') }}
           </BaseButton>
         </div>
       </div>
@@ -1224,5 +1224,31 @@ watch(() => route.name, async (newName) => {
 .scrollbar-hide {
   -ms-overflow-style: none;
   scrollbar-width: none;
+}
+
+/* Instagram gradient that works in both LTR and RTL */
+.instagram-gradient-link {
+  background: linear-gradient(to right, #9333ea, #db2777) !important;
+}
+
+.instagram-gradient-link:hover {
+  background: linear-gradient(to right, #7e22ce, #be185d) !important;
+}
+
+[dir="rtl"] .instagram-gradient-link {
+  background: linear-gradient(to left, #9333ea, #db2777) !important;
+}
+
+[dir="rtl"] .instagram-gradient-link:hover {
+  background: linear-gradient(to left, #7e22ce, #be185d) !important;
+}
+
+/* Stats bar gradient that works in both LTR and RTL */
+.stats-bar-gradient {
+  background: linear-gradient(to right, #2563eb, #9333ea) !important;
+}
+
+[dir="rtl"] .stats-bar-gradient {
+  background: linear-gradient(to left, #2563eb, #9333ea) !important;
 }
 </style>

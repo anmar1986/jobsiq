@@ -18,7 +18,7 @@
           <button
             @click="accountType = 'job_seeker'"
             :class="[
-              'flex-1 px-4 py-3 rounded-md text-sm font-medium transition-all duration-200',
+              'flex-1 px-4 py-3 rounded-md text-sm font-medium transition-all duration-200 cursor-pointer',
               accountType === 'job_seeker'
                 ? 'bg-primary-600 text-white shadow-sm'
                 : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
@@ -34,7 +34,7 @@
           <button
             @click="accountType = 'company_owner'"
             :class="[
-              'flex-1 px-4 py-3 rounded-md text-sm font-medium transition-all duration-200',
+              'flex-1 px-4 py-3 rounded-md text-sm font-medium transition-all duration-200 cursor-pointer',
               accountType === 'company_owner'
                 ? 'bg-primary-600 text-white shadow-sm'
                 : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
