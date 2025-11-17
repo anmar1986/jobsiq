@@ -5,7 +5,7 @@
         <svg class="w-5 h-5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
         </svg>
-        References
+        {{ $t('cv.references') }}
       </h3>
       <BaseButton
         type="button"
@@ -13,10 +13,12 @@
         size="sm"
         @click="addReference"
       >
-        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-        </svg>
-        Add Reference
+        <template #icon-left>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+          </svg>
+        </template>
+        {{ $t('cv.addItem') }}
       </BaseButton>
     </div>
     
@@ -28,7 +30,7 @@
         class="p-6 border-l-4 border-primary-500"
       >
         <div class="flex justify-between items-start mb-4">
-          <h4 class="font-semibold text-gray-900">Reference #{{ index + 1 }}</h4>
+          <h4 class="font-semibold text-gray-900">{{ $t('cv.references') }} #{{ index + 1 }}</h4>
           <button
             type="button"
             @click="removeReference(index)"
@@ -43,24 +45,24 @@
         <div class="grid md:grid-cols-2 gap-4">
           <BaseInput
             v-model="reference.name"
-            label="Full Name"
-            placeholder="e.g., John Smith"
+            :label="$t('cv.fullName')"
+            :placeholder="$t('cv.fullNamePlaceholder')"
             required
             @update:model-value="updateReference(index)"
           />
           
           <BaseInput
             v-model="reference.position"
-            label="Position"
-            placeholder="e.g., Senior Manager"
+            :label="$t('cv.position')"
+            :placeholder="$t('cv.positionPlaceholder')"
             required
             @update:model-value="updateReference(index)"
           />
           
           <BaseInput
             v-model="reference.company"
-            label="Company"
-            placeholder="e.g., Tech Corp"
+            :label="$t('cv.companyName')"
+            :placeholder="$t('cv.companyPlaceholder')"
             required
             @update:model-value="updateReference(index)"
           />
@@ -68,7 +70,7 @@
           <BaseInput
             v-model="reference.relationship"
             label="Relationship"
-            placeholder="e.g., Former Supervisor"
+            placeholder="Former Supervisor"
             required
             @update:model-value="updateReference(index)"
           />
@@ -76,16 +78,16 @@
           <BaseInput
             :model-value="reference.email || ''"
             type="email"
-            label="Email"
-            placeholder="john.smith@example.com"
+            :label="$t('cv.email')"
+            :placeholder="$t('cv.emailPlaceholder')"
             @update:model-value="reference.email = $event as string; updateReference(index)"
           />
           
           <BaseInput
             :model-value="reference.phone || ''"
             type="tel"
-            label="Phone"
-            placeholder="+1 (555) 123-4567"
+            :label="$t('cv.phone')"
+            :placeholder="$t('cv.phonePlaceholder')"
             @update:model-value="reference.phone = $event as string; updateReference(index)"
           />
         </div>
@@ -93,13 +95,14 @@
     </div>
     
     <p v-else class="text-sm text-gray-500 italic p-4 bg-gray-50 rounded-lg border border-gray-200">
-      No references added yet. Click "Add Reference" to include professional references.
+      {{ $t('cv.noReferencesAdded') }}
     </p>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import BaseButton from '@/components/base/BaseButton.vue'
 import BaseCard from '@/components/base/BaseCard.vue'
 import BaseInput from '@/components/base/BaseInput.vue'
@@ -110,6 +113,8 @@ interface Props {
 }
 
 const props = defineProps<Props>()
+
+const { t: $t } = useI18n()
 
 const emit = defineEmits<{
   'update:references': [value: Reference[]]

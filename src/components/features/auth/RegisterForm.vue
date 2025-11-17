@@ -2,9 +2,9 @@
   <BaseCard class="w-full max-w-md">
     <form @submit.prevent="handleSubmit" class="space-y-6">
       <div class="text-center">
-        <h2 class="text-2xl font-bold text-gray-900">Create Account</h2>
+        <h2 class="text-2xl font-bold text-gray-900">{{ $t('auth.createAccount') }}</h2>
         <p class="mt-2 text-sm text-gray-600">
-          {{ accountType === 'job_seeker' ? 'Join JobsIQ and start your career journey' : 'Register your company and find great talent' }}
+          {{ props.accountType === 'job_seeker' ? $t('auth.joinJobsIQ') : $t('auth.registerCompany') }}
         </p>
       </div>
 
@@ -20,12 +20,12 @@
 
       <div class="space-y-4">
         <!-- Job Seeker Fields -->
-        <template v-if="accountType === 'job_seeker'">
+        <template v-if="props.accountType === 'job_seeker'">
           <BaseInput
             v-model="formData.name"
             type="text"
-            label="Full Name"
-            placeholder="John Doe"
+            :label="$t('cv.fullName')"
+            :placeholder="$t('cv.fullNamePlaceholder')"
             :error="errors.name"
             required
             autocomplete="name"
@@ -43,8 +43,8 @@
           <BaseInput
             v-model="formData.company_name"
             type="text"
-            label="Company Name"
-            placeholder="Acme Corporation"
+            :label="$t('auth.companyName')"
+            :placeholder="$t('auth.companyNamePlaceholder')"
             :error="errors.company_name"
             required
           >
@@ -58,8 +58,8 @@
           <BaseInput
             v-model="formData.name"
             type="text"
-            label="Your Full Name"
-            placeholder="John Doe"
+            :label="$t('auth.yourFullName')"
+            :placeholder="$t('cv.fullNamePlaceholder')"
             :error="errors.name"
             required
             autocomplete="name"
@@ -74,8 +74,8 @@
           <BaseInput
             v-model="formData.company_email"
             type="email"
-            label="Company Email"
-            placeholder="info@company.com"
+            :label="$t('auth.companyEmail')"
+            :placeholder="$t('auth.companyEmailPlaceholder')"
             :error="errors.company_email"
             required
           >
@@ -90,8 +90,8 @@
         <BaseInput
           v-model="formData.email"
           type="email"
-          :label="accountType === 'company_owner' ? 'Your Email' : 'Email Address'"
-          :placeholder="accountType === 'company_owner' ? 'john@company.com' : 'john@example.com'"
+          :label="props.accountType === 'company_owner' ? $t('auth.yourEmail') : $t('auth.email')"
+          :placeholder="props.accountType === 'company_owner' ? $t('auth.yourEmailPlaceholder') : $t('auth.emailPlaceholder')"
           :error="errors.email"
           required
           autocomplete="email"
@@ -106,8 +106,8 @@
         <BaseInput
           v-model="formData.password"
           :type="showPassword ? 'text' : 'password'"
-          label="Password"
-          placeholder="Create a strong password"
+          :label="$t('auth.password')"
+          :placeholder="$t('auth.createPasswordPlaceholder')"
           :error="errors.password"
           :hint="passwordStrength.hint"
           required
@@ -150,8 +150,8 @@
         <BaseInput
           v-model="formData.password_confirmation"
           :type="showConfirmPassword ? 'text' : 'password'"
-          label="Confirm Password"
-          placeholder="Re-enter your password"
+          :label="$t('auth.confirmPassword')"
+          :placeholder="$t('auth.confirmPasswordPlaceholder')"
           :error="errors.password_confirmation"
           required
           autocomplete="new-password"
@@ -185,10 +185,10 @@
             class="mt-1 h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
           />
           <span class="text-sm text-gray-700">
-            I agree to the
-            <a href="#" class="text-primary-600 hover:text-primary-700 font-medium">Terms of Service</a>
-            and
-            <a href="#" class="text-primary-600 hover:text-primary-700 font-medium">Privacy Policy</a>
+            {{ $t('auth.iAgreeToThe') }}
+            <a href="#" class="text-primary-600 hover:text-primary-700 font-medium">{{ $t('auth.termsOfService') }}</a>
+            {{ $t('auth.and') }}
+            <a href="#" class="text-primary-600 hover:text-primary-700 font-medium">{{ $t('auth.privacyPolicy') }}</a>
           </span>
         </label>
         <p v-if="errors.agreeToTerms" class="text-sm text-red-600">{{ errors.agreeToTerms }}</p>
@@ -201,13 +201,13 @@
         :loading="loading"
         full-width
       >
-        Create Account
+        {{ $t('auth.createAccount') }}
       </BaseButton>
 
       <div class="text-center text-sm text-gray-600">
-        Already have an account?
+        {{ $t('auth.alreadyHaveAccount') }}
         <router-link to="/login" class="text-primary-600 hover:text-primary-700 font-medium">
-          Sign in
+          {{ $t('auth.signIn') }}
         </router-link>
       </div>
     </form>
@@ -217,6 +217,7 @@
 <script setup lang="ts">
 import { ref, reactive, computed } from 'vue'
 import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '@/stores/auth'
 import BaseCard from '@/components/base/BaseCard.vue'
 import BaseInput from '@/components/base/BaseInput.vue'
@@ -228,6 +229,8 @@ interface Props {
 }
 
 const props = defineProps<Props>()
+
+const { t: $t } = useI18n()
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -277,10 +280,10 @@ const passwordStrength = computed(() => {
   
   const strengths = [
     { hint: '', color: 'bg-gray-200' },
-    { hint: 'Weak password', color: 'bg-red-500' },
-    { hint: 'Fair password', color: 'bg-yellow-500' },
-    { hint: 'Good password', color: 'bg-blue-500' },
-    { hint: 'Strong password', color: 'bg-green-500' },
+    { hint: $t('auth.passwordWeak'), color: 'bg-red-500' },
+    { hint: $t('auth.passwordFair'), color: 'bg-yellow-500' },
+    { hint: $t('auth.passwordGood'), color: 'bg-blue-500' },
+    { hint: $t('auth.passwordStrong'), color: 'bg-green-500' },
   ]
   
   return { score, ...strengths[score] }
@@ -296,59 +299,59 @@ const validateForm = (): boolean => {
   
   // Name validation
   if (!formData.name) {
-    errors.name = 'Name is required'
+    errors.name = $t('validation.nameRequired')
     isValid = false
   } else if (formData.name.length < 2) {
-    errors.name = 'Name must be at least 2 characters'
+    errors.name = $t('validation.nameMinLength')
     isValid = false
   }
 
   // Company name validation (for company owners)
   if (props.accountType === 'company_owner') {
     if (!formData.company_name) {
-      errors.company_name = 'Company name is required'
+      errors.company_name = $t('validation.companyNameRequired')
       isValid = false
     }
-    
+
     if (!formData.company_email) {
-      errors.company_email = 'Company email is required'
+      errors.company_email = $t('validation.companyEmailRequired')
       isValid = false
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.company_email)) {
-      errors.company_email = 'Please enter a valid company email'
+      errors.company_email = $t('validation.emailInvalid')
       isValid = false
     }
   }
   
   // Email validation
   if (!formData.email) {
-    errors.email = 'Email is required'
+    errors.email = $t('validation.emailRequired')
     isValid = false
   } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-    errors.email = 'Please enter a valid email'
+    errors.email = $t('validation.emailInvalid')
     isValid = false
   }
-  
+
   // Password validation
   if (!formData.password) {
-    errors.password = 'Password is required'
+    errors.password = $t('validation.passwordRequired')
     isValid = false
   } else if (formData.password.length < 8) {
-    errors.password = 'Password must be at least 8 characters'
+    errors.password = $t('validation.passwordMinLength8')
     isValid = false
   }
-  
+
   // Password confirmation validation
   if (!formData.password_confirmation) {
-    errors.password_confirmation = 'Please confirm your password'
+    errors.password_confirmation = $t('validation.confirmPasswordRequired')
     isValid = false
   } else if (formData.password !== formData.password_confirmation) {
-    errors.password_confirmation = 'Passwords do not match'
+    errors.password_confirmation = $t('validation.passwordsDoNotMatch')
     isValid = false
   }
-  
+
   // Terms agreement validation
   if (!formData.agreeToTerms) {
-    errors.agreeToTerms = 'You must agree to the terms and conditions'
+    errors.agreeToTerms = $t('validation.agreeToTerms')
     isValid = false
   }
   
@@ -380,7 +383,7 @@ const handleSubmit = async () => {
     const errorMessage = err && typeof err === 'object' && 'response' in err
       ? (err as { response?: { data?: { message?: string } } }).response?.data?.message
       : undefined
-    error.value = errorMessage || 'Registration failed. Please try again.'
+    error.value = errorMessage || $t('auth.registrationFailed')
     showError.value = true
   } finally {
     loading.value = false

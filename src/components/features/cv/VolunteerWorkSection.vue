@@ -5,7 +5,7 @@
         <svg class="w-5 h-5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
         </svg>
-        Volunteer Work
+        {{ $t('cv.volunteerWork') }}
       </h3>
       <BaseButton
         type="button"
@@ -13,10 +13,12 @@
         size="sm"
         @click="addVolunteerWork"
       >
-        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-        </svg>
-        Add Volunteer Work
+        <template #icon-left>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+          </svg>
+        </template>
+        {{ $t('cv.addItem') }}
       </BaseButton>
     </div>
     
@@ -28,7 +30,7 @@
         class="p-6 border-l-4 border-primary-500"
       >
         <div class="flex justify-between items-start mb-4">
-          <h4 class="font-semibold text-gray-900">Volunteer Work #{{ index + 1 }}</h4>
+          <h4 class="font-semibold text-gray-900">{{ $t('cv.volunteerWork') }} #{{ index + 1 }}</h4>
           <button
             type="button"
             @click="removeVolunteerWork(index)"
@@ -43,16 +45,16 @@
         <div class="grid md:grid-cols-2 gap-4">
           <BaseInput
             v-model="vol.organization"
-            label="Organization"
-            placeholder="e.g., Local Food Bank"
+            :label="$t('cv.issuingOrganization')"
+            placeholder="Local Food Bank"
             required
             @update:model-value="updateVolunteerWork(index)"
           />
           
           <BaseInput
             v-model="vol.role"
-            label="Role"
-            placeholder="e.g., Volunteer Coordinator"
+            :label="$t('cv.position')"
+            placeholder="Volunteer Coordinator"
             required
             @update:model-value="updateVolunteerWork(index)"
           />
@@ -60,7 +62,7 @@
           <BaseInput
             v-model="vol.start_date"
             type="date"
-            label="Start Date"
+            :label="$t('cv.startDate')"
             required
             @update:model-value="updateVolunteerWork(index)"
           />
@@ -68,18 +70,18 @@
           <BaseInput
             :model-value="vol.end_date || ''"
             type="date"
-            label="End Date"
+            :label="$t('cv.endDate')"
             @update:model-value="vol.end_date = $event as string; updateVolunteerWork(index)"
           />
           
           <div class="md:col-span-2">
             <label class="block text-sm font-medium text-gray-700 mb-2">
-              Description
+              {{ $t('common.description') }}
             </label>
             <textarea
               :value="vol.description || ''"
               rows="3"
-              placeholder="Describe your volunteer work and contributions..."
+              :placeholder="$t('jobs.descriptionPlaceholder')"
               class="block w-full px-4 py-2.5 text-sm border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
               @input="vol.description = ($event.target as HTMLTextAreaElement).value; updateVolunteerWork(index)"
             />
@@ -89,13 +91,14 @@
     </div>
     
     <p v-else class="text-sm text-gray-500 italic p-4 bg-gray-50 rounded-lg border border-gray-200">
-      No volunteer work added yet. Click "Add Volunteer Work" to showcase your community involvement.
+      {{ $t('cv.noVolunteerWorkAdded') }}
     </p>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import BaseButton from '@/components/base/BaseButton.vue'
 import BaseCard from '@/components/base/BaseCard.vue'
 import BaseInput from '@/components/base/BaseInput.vue'
@@ -106,6 +109,8 @@ interface Props {
 }
 
 const props = defineProps<Props>()
+
+const { t: $t } = useI18n()
 
 const emit = defineEmits<{
   'update:volunteer-work': [value: VolunteerWork[]]

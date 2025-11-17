@@ -5,7 +5,7 @@
         <svg class="w-5 h-5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
         </svg>
-        Education
+        {{ $t('cv.education') }}
       </h3>
       <BaseButton
         type="button"
@@ -13,10 +13,12 @@
         size="sm"
         @click="addEducation"
       >
-        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-        </svg>
-        Add Education
+        <template #icon-left>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+          </svg>
+        </template>
+        {{ $t('cv.addEducation') }}
       </BaseButton>
     </div>
     
@@ -28,7 +30,7 @@
         class="p-6 border-l-4 border-green-500"
       >
         <div class="flex justify-between items-start mb-4">
-          <h4 class="font-semibold text-gray-900">Education #{{ index + 1 }}</h4>
+          <h4 class="font-semibold text-gray-900">{{ $t('cv.educationNumber', { number: index + 1 }) }}</h4>
           <button
             type="button"
             @click="removeEducation(index)"
@@ -43,72 +45,72 @@
         <div class="grid md:grid-cols-2 gap-4">
           <BaseInput
             v-model="edu.degree"
-            label="Degree"
-            placeholder="e.g., Bachelor of Science"
+            :label="$t('cv.degree')"
+            :placeholder="$t('cv.degreePlaceholder')"
             required
             @update:model-value="updateEducation(index)"
           />
-          
+
           <BaseInput
             v-model="edu.field"
-            label="Field of Study"
-            placeholder="e.g., Computer Science"
+            :label="$t('cv.fieldOfStudy')"
+            :placeholder="$t('cv.fieldOfStudyPlaceholder')"
             required
             @update:model-value="updateEducation(index)"
           />
-          
+
           <BaseInput
             v-model="edu.institution"
-            label="Institution"
-            placeholder="e.g., MIT"
+            :label="$t('cv.institution')"
+            :placeholder="$t('cv.institutionPlaceholder')"
             required
             @update:model-value="updateEducation(index)"
           />
-          
+
           <BaseInput
             :model-value="edu.street_address || ''"
-            label="Street Address"
-            placeholder="e.g., 77 Massachusetts Avenue"
+            :label="$t('cv.streetAddress')"
+            :placeholder="$t('cv.streetAddressPlaceholder')"
             @update:model-value="edu.street_address = $event as string; updateLocationField(edu); updateEducation(index)"
           />
-          
+
           <BaseInput
             :model-value="edu.city || ''"
-            label="City"
-            placeholder="e.g., Cambridge"
+            :label="$t('common.city')"
+            :placeholder="$t('cv.cityPlaceholder')"
             @update:model-value="edu.city = $event as string; updateLocationField(edu); updateEducation(index)"
           />
-          
+
           <BaseInput
             :model-value="edu.country || ''"
-            label="Country"
-            placeholder="e.g., United States"
+            :label="$t('common.country')"
+            :placeholder="$t('cv.countryPlaceholder')"
             @update:model-value="edu.country = $event as string; updateLocationField(edu); updateEducation(index)"
           />
-          
+
           <BaseInput
             v-model="edu.start_date"
             type="date"
-            label="Start Date"
+            :label="$t('cv.startDate')"
             required
             @update:model-value="updateEducation(index)"
           />
-          
+
           <BaseInput
             :model-value="edu.end_date || ''"
             type="date"
-            label="End Date"
+            :label="$t('cv.endDate')"
             @update:model-value="edu.end_date = $event as string; updateEducation(index)"
           />
           
           <div class="md:col-span-2">
             <label class="block text-sm font-medium text-gray-700 mb-2">
-              Description
+              {{ $t('common.description') }}
             </label>
             <textarea
               v-model="edu.description"
               rows="2"
-              placeholder="Honors, relevant coursework, achievements..."
+              :placeholder="$t('cv.descriptionPlaceholder')"
               class="block w-full px-4 py-2.5 text-sm border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
               @input="updateEducation(index)"
             />
@@ -118,13 +120,14 @@
     </div>
     
     <p v-else class="text-sm text-gray-500 italic p-4 bg-gray-50 rounded-lg border border-gray-200">
-      No education added yet. Click "Add Education" to get started.
+      {{ $t('cv.noEducationAdded') }}
     </p>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import BaseButton from '@/components/base/BaseButton.vue'
 import BaseCard from '@/components/base/BaseCard.vue'
 import BaseInput from '@/components/base/BaseInput.vue'
@@ -135,6 +138,8 @@ interface Props {
 }
 
 const props = defineProps<Props>()
+
+const { t: $t } = useI18n()
 
 const emit = defineEmits<{
   'update:education': [value: Education[]]

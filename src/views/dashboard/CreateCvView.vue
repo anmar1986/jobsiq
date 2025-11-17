@@ -6,10 +6,10 @@
         <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
         </svg>
-        Back to My CVs
+        {{ $t('cv.backToMyCvs') }}
       </button>
-      <h1 class="text-3xl font-bold text-gray-900">{{ isEditing ? 'Edit CV' : 'Create New CV' }}</h1>
-      <p class="text-gray-600 mt-2">{{ isEditing ? 'Update your CV information' : 'Fill in your details to create your professional CV' }}</p>
+      <h1 class="text-3xl font-bold text-gray-900">{{ isEditing ? $t('cv.editCv') : $t('cv.createNewCv') }}</h1>
+      <p class="text-gray-600 mt-2">{{ isEditing ? $t('cv.updateCvInfo') : $t('cv.fillDetailsToCreate') }}</p>
     </div>
 
     <!-- CV Form -->
@@ -92,10 +92,10 @@
         <!-- Form Actions -->
         <div class="flex gap-3 pt-4 border-t border-gray-200">
           <BaseButton type="button" variant="outline" @click="router.back()" class="flex-1">
-            Cancel
+            {{ $t('common.cancel') }}
           </BaseButton>
           <BaseButton type="submit" variant="primary" :loading="saving" class="flex-1">
-            {{ isEditing ? 'Update CV' : 'Create CV' }}
+            {{ isEditing ? $t('common.update') + ' ' + $t('cv.title') : $t('cv.createCv') }}
           </BaseButton>
         </div>
       </BaseCard>

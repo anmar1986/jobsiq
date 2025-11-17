@@ -4,15 +4,15 @@
       <svg class="w-5 h-5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
       </svg>
-      Social Links
+      {{ $t('cv.socialLinks') }}
     </h3>
     
     <div class="grid md:grid-cols-2 gap-4">
       <BaseInput
         :model-value="localLinks.website || ''"
         type="url"
-        label="Website"
-        placeholder="https://yourwebsite.com"
+        :label="$t('cv.website')"
+        :placeholder="$t('companies.websitePlaceholder')"
         @update:model-value="updateField('website', $event)"
       >
         <template #icon-left>
@@ -25,8 +25,8 @@
       <BaseInput
         :model-value="localLinks.linkedin || ''"
         type="url"
-        label="LinkedIn"
-        placeholder="https://linkedin.com/in/yourprofile"
+        :label="$t('cv.linkedin')"
+        :placeholder="$t('companies.linkedinPlaceholder')"
         @update:model-value="updateField('linkedin', $event)"
       >
         <template #icon-left>
@@ -39,7 +39,7 @@
       <BaseInput
         :model-value="localLinks.github || ''"
         type="url"
-        label="GitHub"
+        :label="$t('cv.github')"
         placeholder="https://github.com/yourusername"
         @update:model-value="updateField('github', $event)"
       >
@@ -55,6 +55,7 @@
 
 <script setup lang="ts">
 import { ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import BaseInput from '@/components/base/BaseInput.vue'
 
 interface SocialLinks {
@@ -68,6 +69,8 @@ interface Props {
 }
 
 const props = defineProps<Props>()
+
+const { t: $t } = useI18n()
 
 const emit = defineEmits<{
   'update:social-links': [value: SocialLinks]

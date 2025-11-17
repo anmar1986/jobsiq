@@ -4,58 +4,58 @@
       <svg class="w-5 h-5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
       </svg>
-      Personal Information
+      {{ $t('cv.personalInfo') }}
     </h3>
-    
+
     <div class="grid md:grid-cols-2 gap-4">
       <BaseInput
         v-model="localInfo.full_name"
-        label="Full Name"
-        placeholder="John Doe"
+        :label="$t('cv.fullName')"
+        :placeholder="$t('cv.fullNamePlaceholder')"
         required
         @update:model-value="updateField('full_name', $event)"
       />
-      
+
       <BaseInput
         v-model="localInfo.title"
-        label="Job Title"
-        placeholder="e.g., Senior Software Engineer"
+        :label="$t('cv.jobTitle')"
+        :placeholder="$t('cv.jobTitlePlaceholder')"
         required
         @update:model-value="updateField('title', $event)"
       />
-      
+
       <BaseInput
         v-model="localInfo.email"
         type="email"
-        label="Email"
-        placeholder="john.doe@example.com"
+        :label="$t('cv.email')"
+        :placeholder="$t('cv.emailPlaceholder')"
         required
         @update:model-value="updateField('email', $event)"
       />
-      
+
       <BaseInput
         v-model="localInfo.phone"
         type="tel"
-        label="Phone"
-        placeholder="+1 (555) 123-4567"
+        :label="$t('cv.phone')"
+        :placeholder="$t('cv.phonePlaceholder')"
         @update:model-value="updateField('phone', $event)"
       />
-      
+
       <div class="relative">
         <label class="block text-sm font-medium text-gray-700 mb-1">
-          City
+          {{ $t('cv.city') }}
         </label>
         <input
           v-model="cityInput"
           type="text"
-          placeholder="Baghdad"
+          :placeholder="$t('cv.cityPlaceholder')"
           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors appearance-none"
           @input="handleCityInput"
           @focus="showCitySuggestions = true"
           @blur="handleCityBlur"
           @keydown="handleKeyDown"
         />
-        
+
         <!-- Suggestions Dropdown -->
         <div
           v-if="showCitySuggestions && filteredCities.length > 0"
@@ -78,10 +78,10 @@
           </button>
         </div>
       </div>
-      
+
       <div class="relative">
         <label class="block text-sm font-medium text-gray-700 mb-1">
-          Country
+          {{ $t('cv.country') }}
         </label>
         <div class="px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-700">
           Iraq
@@ -94,8 +94,11 @@
 
 <script setup lang="ts">
 import { ref, watch, computed, nextTick } from 'vue'
+import { useI18n } from 'vue-i18n'
 import BaseInput from '@/components/base/BaseInput.vue'
 import { iraqCities } from '@/config/iraqCities'
+
+const { t: $t } = useI18n()
 
 interface PersonalInfo {
   full_name: string

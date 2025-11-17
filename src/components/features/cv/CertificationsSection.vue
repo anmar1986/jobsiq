@@ -5,7 +5,7 @@
         <svg class="w-5 h-5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
         </svg>
-        Certifications
+        {{ $t('cv.certifications') }}
       </h3>
       <BaseButton
         type="button"
@@ -13,10 +13,12 @@
         size="sm"
         @click="addCertification"
       >
-        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-        </svg>
-        Add Certification
+        <template #icon-left>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+          </svg>
+        </template>
+        {{ $t('cv.addItem') }}
       </BaseButton>
     </div>
     
@@ -28,7 +30,7 @@
         class="p-6 border-l-4 border-yellow-500"
       >
         <div class="flex justify-between items-start mb-4">
-          <h4 class="font-semibold text-gray-900">Certification #{{ index + 1 }}</h4>
+          <h4 class="font-semibold text-gray-900">{{ $t('cv.certifications') }} #{{ index + 1 }}</h4>
           <button
             type="button"
             @click="removeCertification(index)"
@@ -43,16 +45,16 @@
         <div class="grid md:grid-cols-2 gap-4">
           <BaseInput
             v-model="cert.name"
-            label="Certification Name"
-            placeholder="e.g., AWS Certified Solutions Architect"
+            :label="$t('cv.certificateName')"
+            placeholder="AWS Certified Solutions Architect"
             required
             @update:model-value="updateCertification(index)"
           />
           
           <BaseInput
             v-model="cert.issuer"
-            label="Issuing Organization"
-            placeholder="e.g., Amazon Web Services"
+            :label="$t('cv.issuingOrganization')"
+            placeholder="Amazon Web Services"
             required
             @update:model-value="updateCertification(index)"
           />
@@ -60,7 +62,7 @@
           <BaseInput
             v-model="cert.date"
             type="date"
-            label="Issue Date"
+            :label="$t('cv.issueDate')"
             required
             @update:model-value="updateCertification(index)"
           />
@@ -68,21 +70,21 @@
           <BaseInput
             :model-value="cert.expiry_date || ''"
             type="date"
-            label="Expiry Date"
+            :label="$t('cv.expiryDate')"
             @update:model-value="cert.expiry_date = $event as string; updateCertification(index)"
           />
           
           <BaseInput
             :model-value="cert.credential_id || ''"
-            label="Credential ID"
-            placeholder="e.g., ABC123XYZ"
+            :label="$t('cv.credentialId')"
+            placeholder="ABC123XYZ"
             @update:model-value="cert.credential_id = $event as string; updateCertification(index)"
           />
           
           <BaseInput
             :model-value="cert.url || ''"
             type="url"
-            label="Credential URL"
+            label="URL"
             placeholder="https://..."
             @update:model-value="cert.url = $event as string; updateCertification(index)"
           />
@@ -91,13 +93,14 @@
     </div>
     
     <p v-else class="text-sm text-gray-500 italic p-4 bg-gray-50 rounded-lg border border-gray-200">
-      No certifications added yet. Click "Add Certification" to get started.
+      {{ $t('cv.noCertificationsAdded') }}
     </p>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import BaseButton from '@/components/base/BaseButton.vue'
 import BaseCard from '@/components/base/BaseCard.vue'
 import BaseInput from '@/components/base/BaseInput.vue'
@@ -108,6 +111,8 @@ interface Props {
 }
 
 const props = defineProps<Props>()
+
+const { t: $t } = useI18n()
 
 const emit = defineEmits<{
   'update:certifications': [value: Certification[]]

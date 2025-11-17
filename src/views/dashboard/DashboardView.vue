@@ -2,11 +2,11 @@
   <div class="container-custom py-6 sm:py-8">
     <!-- Header -->
     <div class="mb-6 sm:mb-8">
-      <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">Dashboard</h1>
+      <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">{{ $t('dashboard.title') }}</h1>
       <p class="text-sm sm:text-base text-gray-600">
         {{ authStore.isCompanyOwner 
-          ? 'Welcome back! Manage your companies and jobs from here.' 
-          : 'Welcome back! Manage your CVs and job applications from here.' 
+          ? $t('dashboard.welcomeCompany') 
+          : $t('dashboard.welcomeJobSeeker') 
         }}
       </p>
     </div>
@@ -30,10 +30,10 @@
           </svg>
         </div>
         <h3 class="text-lg sm:text-xl font-semibold text-gray-900 mb-2 group-hover:text-primary-600 transition-colors">
-          {{ companyStore.myCompanies.length === 1 ? 'My Company' : 'My Companies' }}
+          {{ companyStore.myCompanies.length === 1 ? $t('dashboard.oneCompany') : $t('dashboard.multipleCompanies') }}
         </h3>
         <p class="text-gray-600 text-xs sm:text-sm">
-          {{ companyStore.myCompanies.length === 1 ? 'Manage your company and post jobs' : 'Create your company profile' }}
+          {{ companyStore.myCompanies.length === 1 ? $t('dashboard.manageCompanyAndPostJobs') : $t('dashboard.createCompanyProfile') }}
         </p>
       </router-link>
 
@@ -53,8 +53,8 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
           </svg>
         </div>
-        <h3 class="text-lg sm:text-xl font-semibold text-gray-900 mb-2 group-hover:text-primary-600 transition-colors">My Jobs</h3>
-        <p class="text-gray-600 text-xs sm:text-sm">View and manage posted jobs</p>
+        <h3 class="text-lg sm:text-xl font-semibold text-gray-900 mb-2 group-hover:text-primary-600 transition-colors">{{ $t('dashboard.myJobs') }}</h3>
+        <p class="text-gray-600 text-xs sm:text-sm">{{ $t('dashboard.viewManageJobs') }}</p>
       </router-link>
 
       <!-- My Profile Card - Job Seekers Only -->
@@ -73,8 +73,8 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
           </svg>
         </div>
-        <h3 class="text-lg sm:text-xl font-semibold text-gray-900 mb-2 group-hover:text-primary-600 transition-colors">My Profile</h3>
-        <p class="text-gray-600 text-xs sm:text-sm">Update your personal information</p>
+        <h3 class="text-lg sm:text-xl font-semibold text-gray-900 mb-2 group-hover:text-primary-600 transition-colors">{{ $t('dashboard.myProfile') }}</h3>
+        <p class="text-gray-600 text-xs sm:text-sm">{{ $t('dashboard.updatePersonalInfo') }}</p>
       </router-link>
 
       <!-- My CVs Card - Job Seekers Only -->
@@ -93,8 +93,8 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
           </svg>
         </div>
-        <h3 class="text-lg sm:text-xl font-semibold text-gray-900 mb-2 group-hover:text-primary-600 transition-colors">My CVs</h3>
-        <p class="text-gray-600 text-xs sm:text-sm">Create and manage your resumes</p>
+        <h3 class="text-lg sm:text-xl font-semibold text-gray-900 mb-2 group-hover:text-primary-600 transition-colors">{{ $t('dashboard.myCvs') }}</h3>
+        <p class="text-gray-600 text-xs sm:text-sm">{{ $t('dashboard.createManageResumes') }}</p>
       </router-link>
 
       <!-- Saved Jobs Card - Job Seekers Only -->
@@ -114,10 +114,10 @@
           </svg>
         </div>
         <h3 class="text-lg sm:text-xl font-semibold text-gray-900 mb-2 group-hover:text-primary-600 transition-colors">
-          Saved Jobs
-          <span v-if="savedJobStore.savedJobsCount !== null" class="text-xs sm:text-sm text-gray-500 font-normal ml-2">({{ savedJobStore.savedJobsCount }})</span>
+          {{ $t('dashboard.savedJobs') }}
+          <span v-if="savedJobStore.savedJobsCount !== null" class="text-xs sm:text-sm text-gray-500 font-normal ml-2">{{ $t('dashboard.savedJobsCount', { count: savedJobStore.savedJobsCount }) }}</span>
         </h3>
-        <p class="text-gray-600 text-xs sm:text-sm">View jobs you've bookmarked</p>
+        <p class="text-gray-600 text-xs sm:text-sm">{{ $t('dashboard.viewBookmarkedJobs') }}</p>
       </router-link>
 
       <!-- My Applications Card - Job Seekers Only -->
@@ -136,8 +136,8 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
           </svg>
         </div>
-        <h3 class="text-lg sm:text-xl font-semibold text-gray-900 mb-2 group-hover:text-primary-600 transition-colors">My Applications</h3>
-        <p class="text-gray-600 text-xs sm:text-sm">Track your job applications</p>
+        <h3 class="text-lg sm:text-xl font-semibold text-gray-900 mb-2 group-hover:text-primary-600 transition-colors">{{ $t('dashboard.myApplications') }}</h3>
+        <p class="text-gray-600 text-xs sm:text-sm">{{ $t('dashboard.trackApplications') }}</p>
       </router-link>
 
       <!-- Free CVs Card - Company Owners Only -->
@@ -156,8 +156,8 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
           </svg>
         </div>
-        <h3 class="text-lg sm:text-xl font-semibold text-gray-900 mb-2 group-hover:text-primary-600 transition-colors">Browse Free CVs</h3>
-        <p class="text-gray-600 text-xs sm:text-sm">View available candidates</p>
+        <h3 class="text-lg sm:text-xl font-semibold text-gray-900 mb-2 group-hover:text-primary-600 transition-colors">{{ $t('dashboard.browseFreeCvs') }}</h3>
+        <p class="text-gray-600 text-xs sm:text-sm">{{ $t('dashboard.viewCandidates') }}</p>
       </router-link>
     </div>
   </div>
