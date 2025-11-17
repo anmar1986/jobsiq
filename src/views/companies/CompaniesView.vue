@@ -3,8 +3,8 @@
     <!-- Page Header -->
     <div class="bg-white border-b border-gray-200">
       <div class="container-custom py-6 sm:py-8">
-        <h1 class="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-2 sm:mb-4">Discover Top Companies</h1>
-        <p class="text-base sm:text-lg text-gray-600">Browse leading companies hiring on JobsIQ</p>
+        <h1 class="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-2 sm:mb-4">{{ $t('companies.discoverTopCompanies') }}</h1>
+        <p class="text-base sm:text-lg text-gray-600">{{ $t('companies.browseLeadingCompanies') }}</p>
       </div>
     </div>
 
@@ -15,7 +15,7 @@
           <BaseInput
             v-model="searchQuery"
             type="text"
-            placeholder="Search companies..."
+            :placeholder="$t('companies.searchCompanies')"
             size="md"
             show-clear-button
             class="flex-1"
@@ -28,7 +28,7 @@
             </template>
           </BaseInput>
           <BaseButton variant="primary" size="md" class="w-full sm:w-auto" @click="handleSearch">
-            Search
+            {{ $t('common.search') }}
           </BaseButton>
         </div>
       </div>
@@ -39,7 +39,7 @@
       <!-- Loading State -->
       <div v-if="isLoading" class="text-center py-12">
         <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
-        <p class="mt-4 text-gray-600">Loading companies...</p>
+        <p class="mt-4 text-gray-600">{{ $t('companies.loadingCompanies') }}</p>
       </div>
 
       <!-- Empty State -->
@@ -47,8 +47,8 @@
         <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
         </svg>
-        <h3 class="mt-4 text-lg font-medium text-gray-900">No companies found</h3>
-        <p class="mt-2 text-gray-600">Try adjusting your search criteria</p>
+        <h3 class="mt-4 text-lg font-medium text-gray-900">{{ $t('companies.noCompaniesFound') }}</h3>
+        <p class="mt-2 text-gray-600">{{ $t('companies.tryAdjustingSearch') }}</p>
       </div>
 
       <!-- Companies Grid -->
@@ -84,7 +84,7 @@
             <!-- Company Name & Industry -->
             <div class="mb-3 sm:mb-4 flex-shrink-0">
               <h3 class="text-lg sm:text-xl font-bold text-gray-900 mb-1 truncate group-hover:text-primary-600 transition-colors">
-                {{ company.name || 'Unknown Company' }}
+                {{ company.name || $t('companies.unknownCompany') }}
               </h3>
               <p v-if="company.industry" class="text-sm sm:text-base text-primary-600 font-medium mb-2 truncate">
                 {{ company.industry }}
@@ -113,7 +113,7 @@
                 <svg class="h-4 w-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                 </svg>
-                <span>{{ company.jobs_count || 0 }} active job{{ (company.jobs_count || 0) !== 1 ? 's' : '' }}</span>
+                <span>{{ $t('companies.activeJobs', { count: company.jobs_count || 0 }) }}</span>
               </div>
             </div>
 
@@ -131,7 +131,7 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                   </svg>
                 </template>
-                View Profile
+                {{ $t('companies.viewProfile') }}
               </BaseButton>
             </div>
           </div>
@@ -144,11 +144,14 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { companyService } from '@/services/cv.service'
 import type { Company } from '@/types'
 import BaseInput from '@/components/base/BaseInput.vue'
 import BaseButton from '@/components/base/BaseButton.vue'
 import { useToast } from '@/composables/useToast'
+
+const { t: $t } = useI18n()
 
 const router = useRouter()
 const toast = useToast()
@@ -175,7 +178,7 @@ const loadCompanies = async () => {
   } catch (error) {
     console.error('Failed to load companies:', error)
     const err = error as { response?: { data?: { message?: string } } }
-    toast.error(err.response?.data?.message || 'Failed to load companies')
+    toast.error(err.response?.data?.message || $t('companies.failedToLoad'))
   } finally {
     isLoading.value = false
   }

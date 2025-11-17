@@ -20,10 +20,9 @@
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
             </svg>
           </div>
-          <h2 class="text-2xl font-bold text-gray-900">Check Your Email</h2>
+          <h2 class="text-2xl font-bold text-gray-900">{{ $t('auth.checkYourEmail') }}</h2>
           <p class="text-gray-600">
-            We've sent a password reset link to <strong>{{ formData.email }}</strong>.
-            Please check your inbox and follow the instructions to reset your password.
+            {{ $t('auth.resetLinkSent', { email: formData.email }) }}
           </p>
           <div class="pt-4">
             <BaseButton
@@ -31,7 +30,7 @@
               full-width
               @click="router.push('/login')"
             >
-              Back to Login
+              {{ $t('auth.backToLogin') }}
             </BaseButton>
           </div>
         </div>
@@ -39,9 +38,9 @@
         <!-- Form State -->
         <form v-else @submit.prevent="handleSubmit" class="space-y-6">
           <div class="text-center">
-            <h2 class="text-2xl font-bold text-gray-900">Forgot Password?</h2>
+            <h2 class="text-2xl font-bold text-gray-900">{{ $t('auth.forgotPassword') }}</h2>
             <p class="mt-2 text-sm text-gray-600">
-              No worries! Enter your email address and we'll send you a link to reset your password.
+              {{ $t('auth.forgotPasswordMessage') }}
             </p>
           </div>
 
@@ -59,8 +58,8 @@
             <BaseInput
               v-model="formData.email"
               type="email"
-              label="Email Address"
-              placeholder="john@example.com"
+              :label="$t('auth.email')"
+              :placeholder="$t('auth.emailPlaceholder')"
               :error="errors.email"
               required
               autocomplete="email"
@@ -80,12 +79,12 @@
             :loading="loading"
             full-width
           >
-            Send Reset Link
+            {{ $t('auth.sendResetLink') }}
           </BaseButton>
 
           <div class="text-center">
             <router-link to="/login" class="text-sm text-primary-600 hover:text-primary-700 font-medium">
-              ← Back to Login
+              {{ $t('auth.backToLoginArrow') }}
             </router-link>
           </div>
         </form>
@@ -97,6 +96,7 @@
 <script setup lang="ts">
 import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { authService } from '@/services/auth.service'
 import BaseCard from '@/components/base/BaseCard.vue'
 import BaseInput from '@/components/base/BaseInput.vue'
@@ -104,6 +104,7 @@ import BaseButton from '@/components/base/BaseButton.vue'
 import BaseAlert from '@/components/base/BaseAlert.vue'
 
 const router = useRouter()
+const { t: $t } = useI18n()
 
 const formData = reactive({
   email: '',
@@ -120,15 +121,15 @@ const isSuccess = ref(false)
 
 const validateForm = (): boolean => {
   errors.email = ''
-  
+
   if (!formData.email) {
-    errors.email = 'Email is required'
+    errors.email = $t('validation.emailRequired')
     return false
   } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-    errors.email = 'Please enter a valid email'
+    errors.email = $t('validation.emailInvalid')
     return false
   }
-  
+
   return true
 }
 
@@ -145,7 +146,7 @@ const handleSubmit = async () => {
     const errorMessage = err && typeof err === 'object' && 'response' in err
       ? (err as { response?: { data?: { message?: string } } }).response?.data?.message
       : undefined
-    error.value = errorMessage || 'Failed to send reset link. Please try again.'
+    error.value = errorMessage || $t('auth.resetLinkFailed')
     showError.value = true
   } finally {
     loading.value = false

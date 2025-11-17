@@ -4,20 +4,20 @@
       <svg class="w-5 h-5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
       </svg>
-      Hobbies & Interests
+      {{ $t('cv.hobbies') }}
     </h3>
     
     <div class="space-y-3">
       <div>
         <label class="block text-sm font-medium text-gray-700 mb-2">
-          Add your hobbies and interests
-          <span class="text-gray-500 text-xs ml-2">(Press Enter to add)</span>
+          {{ $t('cv.addHobbies') }}
+          <span class="text-gray-500 text-xs ml-2">({{ $t('cv.pressEnterToAdd') }})</span>
         </label>
         <div class="flex gap-2">
           <input
             v-model="newHobby"
             type="text"
-            placeholder="e.g., Photography, Hiking, Reading"
+            :placeholder="$t('cv.hobbiesPlaceholder')"
             class="flex-1 px-4 py-2.5 text-sm border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
             @keyup.enter="addHobby"
           />
@@ -27,11 +27,11 @@
             size="sm"
             @click="addHobby"
           >
-            Add
+            {{ $t('common.add') }}
           </BaseButton>
         </div>
         <p class="text-xs text-gray-500 mt-2">
-          Tip: Include hobbies that show personality, teamwork, or creativity.
+          {{ $t('cv.hobbiesTip') }}
         </p>
       </div>
       
@@ -56,7 +56,7 @@
       </div>
       
       <p v-else class="text-sm text-gray-500 italic p-4 bg-gray-50 rounded-lg border border-gray-200">
-        No hobbies added yet. Add your hobbies to give a personal touch to your CV.
+        {{ $t('cv.noHobbiesAdded') }}
       </p>
     </div>
   </div>
@@ -64,6 +64,7 @@
 
 <script setup lang="ts">
 import { ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import BaseButton from '@/components/base/BaseButton.vue'
 
 interface Props {
@@ -71,6 +72,8 @@ interface Props {
 }
 
 const props = defineProps<Props>()
+
+const { t: $t } = useI18n()
 
 const emit = defineEmits<{
   'update:hobbies': [value: string[]]

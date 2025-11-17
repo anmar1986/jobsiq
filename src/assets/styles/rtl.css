@@ -1,0 +1,209 @@
+/**
+ * RTL (Right-to-Left) Specific Styles
+ * These styles automatically apply when the HTML dir attribute is set to "rtl"
+ */
+
+/* RTL Typography Adjustments */
+[dir='rtl'] {
+  font-family: 'Segoe UI', Tahoma, 'Noto Sans Arabic', 'Cairo', sans-serif;
+}
+
+/* RTL Text Alignment */
+[dir='rtl'] .text-left {
+  text-align: right !important;
+}
+
+[dir='rtl'] .text-right {
+  text-align: left !important;
+}
+
+/* RTL Margin Adjustments */
+[dir='rtl'] .ml-auto {
+  margin-left: 0 !important;
+  margin-right: auto !important;
+}
+
+[dir='rtl'] .mr-auto {
+  margin-right: 0 !important;
+  margin-left: auto !important;
+}
+
+/* RTL Padding Adjustments */
+[dir='rtl'] .pl-4 {
+  padding-left: 0 !important;
+  padding-right: 1rem !important;
+}
+
+[dir='rtl'] .pr-4 {
+  padding-right: 0 !important;
+  padding-left: 1rem !important;
+}
+
+/* RTL Float Adjustments */
+[dir='rtl'] .float-left {
+  float: right !important;
+}
+
+[dir='rtl'] .float-right {
+  float: left !important;
+}
+
+/* RTL Border Radius for LTR-designed components */
+[dir='rtl'] .rounded-l-lg {
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+  border-top-right-radius: 0.5rem !important;
+  border-bottom-right-radius: 0.5rem !important;
+}
+
+[dir='rtl'] .rounded-r-lg {
+  border-top-right-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
+  border-top-left-radius: 0.5rem !important;
+  border-bottom-left-radius: 0.5rem !important;
+}
+
+/* RTL Dropdown and Modal Positioning */
+[dir='rtl'] .dropdown-menu {
+  left: auto !important;
+  right: 0 !important;
+}
+
+/* RTL Icons - Mirror horizontally when needed */
+[dir='rtl'] .icon-flip {
+  transform: scaleX(-1);
+}
+
+/* RTL Flexbox Adjustments */
+[dir='rtl'] .flex-row-reverse {
+  flex-direction: row !important;
+}
+
+[dir='rtl'] .flex-row {
+  flex-direction: row-reverse !important;
+}
+
+/* RTL Grid Adjustments */
+[dir='rtl'] .grid {
+  direction: rtl;
+}
+
+/* Utility Classes for RTL-Aware Spacing */
+.ps-4 {
+  padding-inline-start: 1rem;
+}
+
+.pe-4 {
+  padding-inline-end: 1rem;
+}
+
+.ms-4 {
+  margin-inline-start: 1rem;
+}
+
+.me-4 {
+  margin-inline-end: 1rem;
+}
+
+/* RTL-Safe Border */
+.border-s {
+  border-inline-start-width: 1px;
+}
+
+.border-e {
+  border-inline-end-width: 1px;
+}
+
+/* Smooth transitions for direction changes */
+* {
+  transition: margin 0.2s ease, padding 0.2s ease;
+}
+
+/* RTL-specific animations */
+@keyframes slideInRtl {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOutRtl {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+[dir='rtl'] .slide-enter-active {
+  animation: slideInRtl 0.3s ease-out;
+}
+
+[dir='rtl'] .slide-leave-active {
+  animation: slideOutRtl 0.3s ease-in;
+}
+
+/* Fix for common Tailwind utilities in RTL */
+[dir='rtl'] .space-x-4 > * + * {
+  margin-left: 0 !important;
+  margin-right: 1rem !important;
+}
+
+[dir='rtl'] .space-x-2 > * + * {
+  margin-left: 0 !important;
+  margin-right: 0.5rem !important;
+}
+
+/* RTL-aware gradients */
+[dir='rtl'] .bg-gradient-to-r {
+  background-image: linear-gradient(to left, var(--tw-gradient-stops)) !important;
+}
+
+[dir='rtl'] .bg-gradient-to-l {
+  background-image: linear-gradient(to right, var(--tw-gradient-stops)) !important;
+}
+
+/* Better Arabic font rendering */
+[dir='rtl'] body {
+  font-feature-settings: 'liga' 1, 'calt' 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* RTL Form inputs */
+[dir='rtl'] input[type='text'],
+[dir='rtl'] input[type='email'],
+[dir='rtl'] input[type='password'],
+[dir='rtl'] input[type='search'],
+[dir='rtl'] textarea,
+[dir='rtl'] select {
+  text-align: right;
+}
+
+/* RTL Placeholder */
+[dir='rtl'] ::placeholder {
+  text-align: right;
+}
+
+/* RTL Tables */
+[dir='rtl'] table {
+  direction: rtl;
+}
+
+/* RTL breadcrumbs */
+[dir='rtl'] .breadcrumb-separator {
+  transform: scaleX(-1);
+}
+
+/* RTL tooltips */
+[dir='rtl'] .tooltip {
+  direction: rtl;
+  text-align: right;
+}

@@ -1,7 +1,7 @@
 <template>
   <header class="sticky top-0 z-40 bg-white border-b-2 border-gray-300 shadow-sm">
     <nav class="container-custom">
-      <div class="flex items-center justify-between h-16">
+      <div class="flex items-center justify-between h-16" dir="ltr">
         <!-- Logo -->
         <router-link to="/" class="flex items-center gap-2 group">
           <div class="h-10 w-10 bg-gradient-to-br from-primary-600 to-secondary-600 rounded-lg flex items-center justify-center transform group-hover:scale-105 transition-transform">
@@ -14,6 +14,9 @@
 
         <!-- Right Side Actions -->
         <div class="flex items-center gap-6">
+          <!-- Language Switcher -->
+          <LanguageSwitcher variant="compact" />
+
           <!-- Authenticated User -->
           <template v-if="authStore.isAuthenticated && authStore.user">
             <!-- Navigation Links -->
@@ -32,7 +35,7 @@
               class="hidden md:inline-flex text-gray-700 hover:text-primary-600 font-medium transition-all relative pb-1 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-primary-600 after:transition-all after:duration-300 hover:after:w-full"
               active-class="text-primary-600 after:!w-full"
             >
-              Dashboard
+              {{ $t('nav.dashboard') }}
             </router-link>
             
             <!-- User Menu -->
@@ -95,7 +98,7 @@
                       <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                       </svg>
-                      Delete Profile
+                      {{ $t('common.delete') }} {{ $t('common.profile') }}
                     </button>
                     <button
                       @click="handleLogout"
@@ -104,7 +107,7 @@
                       <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                       </svg>
-                      Logout
+                      {{ $t('auth.logout') }}
                     </button>
                   </div>
                 </div>
@@ -126,7 +129,7 @@
             </router-link>
             
             <router-link to="/login" class="btn-primary text-sm">
-              Login
+              {{ $t('auth.login') }}
             </router-link>
           </template>
 
@@ -174,7 +177,7 @@
                 class="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg font-medium transition-colors"
                 @click="closeMobileMenu"
               >
-                Dashboard
+                {{ $t('nav.dashboard') }}
               </router-link>
               <router-link
                 v-if="authStore.isCompanyOwner"
@@ -182,14 +185,14 @@
                 class="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg font-medium transition-colors"
                 @click="closeMobileMenu"
               >
-                For Companies
+                {{ $t('nav.myCompanies') }}
               </router-link>
               <router-link
                 to="/profile"
                 class="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg font-medium transition-colors"
                 @click="closeMobileMenu"
               >
-                Profile
+                {{ $t('nav.profile') }}
               </router-link>
               <router-link
                 v-if="authStore.isJobSeeker"
@@ -197,7 +200,7 @@
                 class="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg font-medium transition-colors"
                 @click="closeMobileMenu"
               >
-                My CVs
+                {{ $t('nav.myCvs') }}
               </router-link>
               <router-link
                 v-if="authStore.isJobSeeker"
@@ -205,13 +208,13 @@
                 class="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg font-medium transition-colors"
                 @click="closeMobileMenu"
               >
-                My Applications
+                {{ $t('nav.myApplications') }}
               </router-link>
               <button
                 @click="handleLogout"
                 class="px-4 py-2 text-red-600 hover:bg-red-50 rounded-lg font-medium transition-colors text-left"
               >
-                Logout
+                {{ $t('auth.logout') }}
               </button>
             </template>
             <template v-else>
@@ -221,7 +224,7 @@
                 class="px-4 py-2 bg-primary-600 text-white hover:bg-primary-700 rounded-lg font-medium transition-colors text-center"
                 @click="closeMobileMenu"
               >
-                Login
+                {{ $t('auth.login') }}
               </router-link>
             </template>
           </div>
@@ -232,13 +235,12 @@
     <!-- Delete Profile Confirmation Modal -->
     <BaseModal
       v-model="showDeleteProfileModal"
-      title="Delete Profile"
+      :title="$t('common.delete') + ' ' + $t('common.profile')"
       size="sm"
     >
       <div class="p-6">
         <p class="text-gray-700 mb-6">
-          Are you sure you want to delete your profile <strong>{{ authStore.user?.name }}</strong>? 
-          This action cannot be undone and will permanently delete your account, all your CVs, job applications, and personal data.
+          {{ $t('messages.confirmDelete') }}
         </p>
         <div class="flex items-center justify-end gap-3">
           <BaseButton
@@ -246,7 +248,7 @@
             @click="showDeleteProfileModal = false"
             :disabled="deletingProfile"
           >
-            Cancel
+            {{ $t('common.cancel') }}
           </BaseButton>
           <BaseButton
             variant="primary"
@@ -254,7 +256,7 @@
             :loading="deletingProfile"
             class="bg-red-600 hover:bg-red-700"
           >
-            Delete Profile
+            {{ $t('common.delete') }} {{ $t('common.profile') }}
           </BaseButton>
         </div>
       </div>
@@ -267,15 +269,18 @@ import { ref, onMounted, onUnmounted, h, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { useToast } from '@/composables/useToast'
+import { useI18n } from 'vue-i18n'
 import BaseAvatar from '@/components/base/BaseAvatar.vue'
 import BaseModal from '@/components/base/BaseModal.vue'
 import BaseButton from '@/components/base/BaseButton.vue'
+import LanguageSwitcher from '@/components/base/LanguageSwitcher.vue'
 import { API_BASE_URL } from '@/config/constants'
 
 const router = useRouter()
 const route = useRoute()
 const authStore = useAuthStore()
 const toast = useToast()
+const { t } = useI18n()
 
 const isMobileMenuOpen = ref(false)
 const isUserMenuOpen = ref(false)
@@ -296,11 +301,11 @@ const _isMyCompaniesActive = computed(() => {
 
 const navLinks = computed(() => {
   const links = [
-    { path: '/jobs', label: 'Jobs' },
-    { path: '/companies', label: 'Companies' },
-    { path: '/about', label: 'About Us' },
+    { path: '/jobs', label: t('nav.jobs') },
+    { path: '/companies', label: t('nav.companies') },
+    { path: '/about', label: t('footer.aboutUs') },
   ]
-  
+
   return links
 })
 
@@ -314,14 +319,14 @@ const userMenuItems = computed(() => {
   const baseItems: MenuItem[] = [
     {
       path: '/profile',
-      label: 'Profile',
+      label: t('nav.profile'),
       icon: () => h('svg', { fill: 'none', stroke: 'currentColor', viewBox: '0 0 24 24', class: 'h-4 w-4' }, [
         h('path', { 'stroke-linecap': 'round', 'stroke-linejoin': 'round', 'stroke-width': '2', d: 'M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z' })
       ])
     },
     {
       path: '/change-password',
-      label: 'Change Password',
+      label: t('auth.changePassword'),
       icon: () => h('svg', { fill: 'none', stroke: 'currentColor', viewBox: '0 0 24 24', class: 'h-4 w-4' }, [
         h('path', { 'stroke-linecap': 'round', 'stroke-linejoin': 'round', 'stroke-width': '2', d: 'M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z' })
       ])
@@ -332,7 +337,7 @@ const userMenuItems = computed(() => {
   if (authStore.user?.user_type === 'company_owner') {
     baseItems.push({
       path: '/my-companies',
-      label: 'My Companies',
+      label: t('nav.myCompanies'),
       icon: () => h('svg', { fill: 'none', stroke: 'currentColor', viewBox: '0 0 24 24', class: 'h-4 w-4' }, [
         h('path', { 'stroke-linecap': 'round', 'stroke-linejoin': 'round', 'stroke-width': '2', d: 'M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4' })
       ])
@@ -382,12 +387,12 @@ const confirmDeleteProfile = async () => {
     await authStore.deleteProfile()
     showDeleteProfileModal.value = false
     closeMobileMenu()
-    toast.success('Profile deleted successfully')
+    toast.success(t('messages.deleteSuccess'))
     router.push('/')
   } catch (error) {
     console.error('Failed to delete profile:', error)
     const err = error as { response?: { data?: { message?: string } } }
-    toast.error(err.response?.data?.message || 'Failed to delete profile. Please try again.')
+    toast.error(err.response?.data?.message || t('messages.errorOccurred'))
   } finally {
     deletingProfile.value = false
   }

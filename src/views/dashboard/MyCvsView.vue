@@ -3,8 +3,8 @@
     <!-- Header -->
     <div class="flex items-center justify-between mb-8">
       <div>
-        <h1 class="text-3xl font-bold text-gray-900 mb-2">My CVs</h1>
-        <p class="text-gray-600">Create and manage your professional CVs ({{ cvs.length }}/6)</p>
+        <h1 class="text-3xl font-bold text-gray-900 mb-2">{{ $t('cv.myCvs') }}</h1>
+        <p class="text-gray-600">{{ $t('cv.manageYourCvs') }} {{ $t('cv.cvCount', { current: cvs.length, max: 6 }) }}</p>
       </div>
       <div>
         <BaseButton 
@@ -19,9 +19,9 @@
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
             </svg>
           </template>
-          Create New CV
+          {{ $t('cv.createNewCv') }}
         </BaseButton>
-        <p v-if="cvs.length >= 6" class="text-sm text-red-600 mt-2">Maximum CV limit reached (6/6)</p>
+        <p v-if="cvs.length >= 6" class="text-sm text-red-600 mt-2">{{ $t('cv.maxCvLimitReached') }}</p>
       </div>
     </div>
 
@@ -48,10 +48,10 @@
       <svg class="h-16 w-16 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
       </svg>
-      <h3 class="text-xl font-semibold text-gray-900 mb-2">No CVs yet</h3>
-      <p class="text-gray-600 mb-6">Create your first CV to start applying for jobs</p>
+      <h3 class="text-xl font-semibold text-gray-900 mb-2">{{ $t('cv.noCvsYet') }}</h3>
+      <p class="text-gray-600 mb-6">{{ $t('cv.createFirstCv') }}</p>
       <BaseButton variant="primary" @click="router.push('/my-cvs/create')">
-        Create Your First CV
+        {{ $t('cv.createYourFirstCv') }}
       </BaseButton>
     </BaseCard>
 
@@ -71,7 +71,7 @@
     <!-- CV Menu Modal -->
     <BaseModal
       v-model="showMenuModal"
-      title="CV Actions"
+      :title="$t('cv.cvActions')"
       size="sm"
     >
       <div class="space-y-2">
@@ -83,7 +83,7 @@
           <svg class="w-5 h-5 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
             <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
           </svg>
-          <span class="font-medium text-gray-900">Set as Primary</span>
+          <span class="font-medium text-gray-900">{{ $t('cv.setPrimary') }}</span>
         </button>
         <button
           @click="togglePublic"
@@ -96,7 +96,7 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
           </svg>
-          <span class="font-medium text-gray-900">{{ selectedCv?.is_public ? 'Make Private' : 'Make Public' }}</span>
+          <span class="font-medium text-gray-900">{{ selectedCv?.is_public ? $t('cv.makePrivate') : $t('cv.makePublic') }}</span>
         </button>
         <button
           @click="duplicateCv"
@@ -105,7 +105,7 @@
           <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
           </svg>
-          <span class="font-medium text-gray-900">Duplicate</span>
+          <span class="font-medium text-gray-900">{{ $t('cv.duplicate') }}</span>
         </button>
         <button
           @click="downloadCv"
@@ -114,7 +114,7 @@
           <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
           </svg>
-          <span class="font-medium text-gray-900">Download PDF</span>
+          <span class="font-medium text-gray-900">{{ $t('cv.downloadPdf') }}</span>
         </button>
         <button
           @click="confirmDelete"
@@ -123,7 +123,7 @@
           <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
           </svg>
-          <span class="font-medium">Delete CV</span>
+          <span class="font-medium">{{ $t('cv.deleteCv') }}</span>
         </button>
       </div>
     </BaseModal>
@@ -131,18 +131,18 @@
     <!-- Delete Confirmation -->
     <BaseModal
       v-model="showDeleteModal"
-      title="Delete CV"
+      :title="$t('cv.deleteCv')"
       size="sm"
     >
       <div class="mb-6">
-        <p class="text-gray-600">Are you sure you want to delete this CV? This action cannot be undone.</p>
+        <p class="text-gray-600">{{ $t('cv.confirmDeleteCv') }}</p>
       </div>
       <div class="flex gap-3">
         <BaseButton type="button" variant="outline" @click="showDeleteModal = false" class="flex-1">
-          Cancel
+          {{ $t('common.cancel') }}
         </BaseButton>
         <BaseButton type="button" variant="danger" @click="deleteCv" :loading="deleting" class="flex-1">
-          Delete
+          {{ $t('common.delete') }}
         </BaseButton>
       </div>
     </BaseModal>

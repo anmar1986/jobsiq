@@ -2,9 +2,9 @@
   <BaseCard class="w-full max-w-md">
     <form @submit.prevent="handleSubmit" class="space-y-6">
       <div class="text-center">
-        <h2 class="text-2xl font-bold text-gray-900">Welcome Back</h2>
+        <h2 class="text-2xl font-bold text-gray-900">{{ $t('auth.welcomeBack') }}</h2>
         <p class="mt-2 text-sm text-gray-600">
-          {{ accountType === 'job_seeker' ? 'Sign in to find your dream job' : 'Sign in to manage your company' }}
+          {{ props.accountType === 'job_seeker' ? $t('auth.signInJobSeeker') : $t('auth.signInCompany') }}
         </p>
       </div>
 
@@ -22,8 +22,8 @@
         <BaseInput
           v-model="formData.email"
           type="email"
-          label="Email Address"
-          placeholder="john@example.com"
+          :label="$t('auth.email')"
+          :placeholder="$t('auth.emailPlaceholder')"
           :error="errors.email"
           required
           autocomplete="email"
@@ -38,8 +38,8 @@
         <BaseInput
           v-model="formData.password"
           :type="showPassword ? 'text' : 'password'"
-          label="Password"
-          placeholder="Enter your password"
+          :label="$t('auth.password')"
+          :placeholder="$t('auth.passwordPlaceholder')"
           :error="errors.password"
           required
           autocomplete="current-password"
@@ -73,10 +73,10 @@
               type="checkbox"
               class="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
             />
-            <span class="text-sm text-gray-700">Remember me</span>
+            <span class="text-sm text-gray-700">{{ $t('auth.rememberMe') }}</span>
           </label>
           <router-link to="/forgot-password" class="text-sm text-primary-600 hover:text-primary-700 font-medium">
-            Forgot password?
+            {{ $t('auth.forgotPassword') }}
           </router-link>
         </div>
       </div>
@@ -88,13 +88,13 @@
         :loading="loading"
         full-width
       >
-        Sign In
+        {{ $t('auth.signIn') }}
       </BaseButton>
 
       <div class="text-center text-sm text-gray-600">
-        Don't have an account?
+        {{ $t('auth.noAccount') }}
         <router-link to="/register" class="text-primary-600 hover:text-primary-700 font-medium">
-          Sign up for free
+          {{ $t('auth.signUpFree') }}
         </router-link>
       </div>
     </form>
@@ -104,6 +104,7 @@
 <script setup lang="ts">
 import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '@/stores/auth'
 import BaseCard from '@/components/base/BaseCard.vue'
 import BaseInput from '@/components/base/BaseInput.vue'
@@ -115,7 +116,9 @@ interface Props {
   accountType: 'job_seeker' | 'company_owner'
 }
 
-defineProps<Props>()
+const props = defineProps<Props>()
+
+const { t: $t } = useI18n()
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -145,19 +148,19 @@ const validateForm = (): boolean => {
   
   // Email validation
   if (!formData.email) {
-    errors.email = 'Email is required'
+    errors.email = $t('validation.emailRequired')
     isValid = false
   } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-    errors.email = 'Please enter a valid email'
+    errors.email = $t('validation.emailInvalid')
     isValid = false
   }
-  
+
   // Password validation
   if (!formData.password) {
-    errors.password = 'Password is required'
+    errors.password = $t('validation.passwordRequired')
     isValid = false
   } else if (formData.password.length < 6) {
-    errors.password = 'Password must be at least 6 characters'
+    errors.password = $t('validation.passwordMinLength')
     isValid = false
   }
   
@@ -184,7 +187,7 @@ const handleSubmit = async () => {
     const errorMessage = err && typeof err === 'object' && 'response' in err
       ? (err as { response?: { data?: { message?: string } } }).response?.data?.message
       : undefined
-    error.value = errorMessage || 'Invalid email or password. Please try again.'
+    error.value = errorMessage || $t('auth.invalidCredentials')
     showError.value = true
   } finally {
     loading.value = false

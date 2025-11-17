@@ -3,13 +3,12 @@
     <div class="container-custom py-12 sm:py-16 md:py-24">
       <div class="max-w-4xl mx-auto text-center">
         <h1 class="text-3xl sm:text-4xl md:text-6xl font-bold mb-4 sm:mb-6 animate-fade-in">
-          Your Career Journey Starts Here
+          {{ $t('home.heroTitle') }}
         </h1>
         <p class="text-lg sm:text-xl md:text-2xl text-primary-100 mb-6 sm:mb-8 md:mb-10 animate-fade-in animation-delay-200">
-          Discover thousands of job opportunities with all the information you need.
-          Connect with top companies worldwide.
+          {{ $t('home.heroSubtitle') }}
         </p>
-        
+
         <!-- Search Bar -->
         <div class="bg-white rounded-lg shadow-2xl p-3 sm:p-4 md:p-6 animate-fade-in animation-delay-400">
           <form @submit.prevent="handleSearch" class="flex flex-col md:flex-row gap-3">
@@ -17,7 +16,7 @@
               <BaseInput
                 v-model="searchQuery"
                 type="text"
-                placeholder="Job title, keywords, or company"
+                :placeholder="$t('home.searchPlaceholder')"
                 size="lg"
                 show-clear-button
               >
@@ -28,12 +27,12 @@
                 </template>
               </BaseInput>
             </div>
-            
+
             <div class="flex-1 md:max-w-xs relative">
               <input
                 v-model="locationQuery"
                 type="text"
-                placeholder="City"
+                :placeholder="$t('home.locationPlaceholder')"
                 class="w-full px-4 py-2.5 sm:py-3 pl-10 sm:pl-12 border border-gray-300 rounded-lg text-gray-900 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-sm sm:text-base"
                 @input="handleLocationInput"
                 @focus="showCitySuggestions = true"
@@ -46,7 +45,7 @@
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                 </svg>
               </div>
-              
+
               <!-- City Suggestions Dropdown -->
               <div
                 v-if="showCitySuggestions && filteredCities.length > 0"
@@ -68,24 +67,24 @@
                 </button>
               </div>
             </div>
-            
+
             <BaseButton type="submit" variant="primary" size="lg" class="w-full md:w-auto">
               <template #icon-left>
                 <svg class="h-4 w-4 sm:h-5 sm:w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                 </svg>
               </template>
-              Search Jobs
+              {{ $t('home.searchButton') }}
             </BaseButton>
           </form>
-          
+
           <!-- Popular Searches -->
           <div class="mt-3 sm:mt-4 flex flex-wrap gap-2 text-xs sm:text-sm justify-center">
-            <span class="text-gray-600">Popular:</span>
+            <span class="text-gray-600">{{ $t('home.popular') }}</span>
             <button
-              v-for="tag in popularSearches"
-              :key="tag"
-              @click="searchQuery = tag; handleSearch()"
+              v-for="(tag, key) in popularSearches"
+              :key="key"
+              @click="searchQuery = $t(`home.popularSearches.${key}`); handleSearch()"
               class="text-primary-600 hover:text-primary-700 font-medium hover:underline"
             >
               {{ tag }}
@@ -100,11 +99,13 @@
 <script setup lang="ts">
 import { ref, computed, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import BaseInput from '@/components/base/BaseInput.vue'
 import BaseButton from '@/components/base/BaseButton.vue'
 import { iraqCities } from '@/config/iraqCities'
 
 const router = useRouter()
+const { t: $t } = useI18n()
 
 const searchQuery = ref('')
 const locationQuery = ref('')
@@ -114,10 +115,18 @@ const showCitySuggestions = ref(false)
 const selectedCityIndex = ref(-1)
 const cityRefs: Record<number, HTMLElement> = {}
 
+const popularSearches = computed(() => ({
+  designer: $t('home.popularSearches.designer'),
+  developer: $t('home.popularSearches.developer'),
+  marketing: $t('home.popularSearches.marketing'),
+  sales: $t('home.popularSearches.sales'),
+  manager: $t('home.popularSearches.manager')
+}))
+
 const filteredCities = computed(() => {
   if (!locationQuery.value) return []
   const searchTerm = locationQuery.value.toLowerCase()
-  return iraqCities.filter(city => 
+  return iraqCities.filter(city =>
     city.toLowerCase().includes(searchTerm)
   )
 })
@@ -142,7 +151,7 @@ const handleCityKeyDown = (event: KeyboardEvent) => {
   // Handle Enter key always (even without suggestions)
   if (event.key === 'Enter') {
     event.preventDefault()
-    if (showCitySuggestions.value && filteredCities.value.length > 0 && 
+    if (showCitySuggestions.value && filteredCities.value.length > 0 &&
         selectedCityIndex.value >= 0 && selectedCityIndex.value < filteredCities.value.length) {
       selectCity(filteredCities.value[selectedCityIndex.value])
     } else {
@@ -187,13 +196,11 @@ const handleCityBlur = () => {
   }, 200)
 }
 
-const popularSearches = ['Designer', 'Developer', 'Marketing', 'Sales', 'Manager']
-
 const handleSearch = () => {
   const params = new URLSearchParams()
   if (searchQuery.value) params.append('search', searchQuery.value)
   if (locationQuery.value) params.append('location', locationQuery.value)
-  
+
   router.push(`/jobs?${params.toString()}`)
 }
 </script>

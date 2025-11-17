@@ -5,7 +5,7 @@
         <svg class="w-5 h-5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
         </svg>
-        Work Experience
+        {{ $t('cv.workExperience') }}
       </h3>
       <BaseButton
         type="button"
@@ -13,10 +13,12 @@
         size="sm"
         @click="addExperience"
       >
-        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-        </svg>
-        Add Experience
+        <template #icon-left>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+          </svg>
+        </template>
+        {{ $t('cv.addExperience') }}
       </BaseButton>
     </div>
     
@@ -28,7 +30,7 @@
         class="p-6 border-l-4 border-primary-500"
       >
         <div class="flex justify-between items-start mb-4">
-          <h4 class="font-semibold text-gray-900">Experience #{{ index + 1 }}</h4>
+          <h4 class="font-semibold text-gray-900">{{ $t('cv.workExperience') }} #{{ index + 1 }}</h4>
           <button
             type="button"
             @click="removeExperience(index)"
@@ -43,45 +45,45 @@
         <div class="grid md:grid-cols-2 gap-4">
           <BaseInput
             v-model="exp.position"
-            label="Position"
-            placeholder="e.g., Senior Software Engineer"
+            :label="$t('cv.position')"
+            :placeholder="$t('cv.positionPlaceholder')"
             required
             @update:model-value="updateExperience(index)"
           />
           
           <BaseInput
             v-model="exp.company"
-            label="Company"
-            placeholder="e.g., Tech Corp"
+            :label="$t('cv.companyName')"
+            :placeholder="$t('cv.companyPlaceholder')"
             required
             @update:model-value="updateExperience(index)"
           />
           
           <BaseInput
             :model-value="exp.street_address || ''"
-            label="Street Address"
-            placeholder="e.g., 123 Main Street"
+            :label="$t('jobs.streetAddress')"
+            :placeholder="$t('jobs.streetAddressPlaceholder')"
             @update:model-value="exp.street_address = $event as string; updateLocationField(exp); updateExperience(index)"
           />
           
           <BaseInput
             :model-value="exp.city || ''"
-            label="City"
-            placeholder="e.g., New York"
+            :label="$t('common.city')"
+            :placeholder="$t('cv.cityPlaceholder')"
             @update:model-value="exp.city = $event as string; updateLocationField(exp); updateExperience(index)"
           />
           
           <BaseInput
             :model-value="exp.country || ''"
-            label="Country"
-            placeholder="e.g., United States"
+            :label="$t('common.country')"
+            :placeholder="$t('cv.countryPlaceholder')"
             @update:model-value="exp.country = $event as string; updateLocationField(exp); updateExperience(index)"
           />
           
           <BaseInput
             v-model="exp.start_date"
             type="date"
-            label="Start Date"
+            :label="$t('cv.startDate')"
             required
             @update:model-value="updateExperience(index)"
           />
@@ -89,7 +91,7 @@
           <BaseInput
             :model-value="exp.end_date || ''"
             type="date"
-            label="End Date"
+            :label="$t('cv.endDate')"
             :disabled="exp.current"
             @update:model-value="exp.end_date = $event as string; updateExperience(index)"
           />
@@ -102,18 +104,18 @@
                 class="w-4 h-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500"
                 @change="handleCurrentChange(index)"
               />
-              <span class="text-sm font-medium text-gray-700">Currently working here</span>
+              <span class="text-sm font-medium text-gray-700">{{ $t('cv.currentlyWorking') }}</span>
             </label>
           </div>
           
           <div class="md:col-span-2">
             <label class="block text-sm font-medium text-gray-700 mb-2">
-              Description
+              {{ $t('common.description') }}
             </label>
             <textarea
               v-model="exp.description"
               rows="3"
-              placeholder="Describe your responsibilities and achievements..."
+              :placeholder="$t('jobs.descriptionPlaceholder')"
               class="block w-full px-4 py-2.5 text-sm border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
               @input="updateExperience(index)"
             />
@@ -123,13 +125,14 @@
     </div>
     
     <p v-else class="text-sm text-gray-500 italic p-4 bg-gray-50 rounded-lg border border-gray-200">
-      No work experience added yet. Click "Add Experience" to get started.
+      {{ $t('cv.noWorkExperienceAdded') }}
     </p>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import BaseButton from '@/components/base/BaseButton.vue'
 import BaseCard from '@/components/base/BaseCard.vue'
 import BaseInput from '@/components/base/BaseInput.vue'
@@ -140,6 +143,8 @@ interface Props {
 }
 
 const props = defineProps<Props>()
+
+const { t: $t } = useI18n()
 
 const emit = defineEmits<{
   'update:work-experience': [value: WorkExperience[]]

@@ -21,9 +21,9 @@
         <svg class="h-12 w-12 sm:h-16 sm:w-16 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
         </svg>
-        <h2 class="text-xl sm:text-2xl font-bold text-gray-900 mb-2">Job Not Found</h2>
-        <p class="text-sm sm:text-base text-gray-600 mb-6">The job you're looking for doesn't exist or has been removed.</p>
-        <BaseButton variant="primary" @click="router.push('/jobs')">Browse All Jobs</BaseButton>
+        <h2 class="text-xl sm:text-2xl font-bold text-gray-900 mb-2">{{ $t('jobs.jobNotFound') }}</h2>
+        <p class="text-sm sm:text-base text-gray-600 mb-6">{{ $t('jobs.tryAdjustingFilters') }}</p>
+        <BaseButton variant="primary" @click="router.push('/jobs')">{{ $t('jobs.browseAllJobs') }}</BaseButton>
       </BaseCard>
     </div>
 
@@ -40,7 +40,7 @@
             <svg class="h-4 w-4 sm:h-5 sm:w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
             </svg>
-            Back to Jobs
+            {{ $t('common.back') }}
           </button>
 
           <div class="flex flex-col lg:flex-row gap-6 sm:gap-8 lg:relative">
@@ -90,7 +90,7 @@
                       <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-green-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                       </svg>
-                      <span class="text-xs sm:text-sm font-medium text-green-700 whitespace-nowrap">Remote</span>
+                      <span class="text-xs sm:text-sm font-medium text-green-700 whitespace-nowrap">{{ $t('jobs.remote') }}</span>
                     </div>
                     <div v-if="job.category" class="flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 py-1 sm:py-1.5 bg-purple-50 rounded-md border border-purple-200">
                       <svg class="w-3.5 h-3.5 sm:w-4 sm:h-4 text-purple-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -449,35 +449,35 @@
           <BaseCard class="p-4 sm:p-6 lg:p-8 mb-6 sm:mb-8">
             <!-- Job Description -->
             <section class="mb-6 sm:mb-8">
-              <h2 class="text-xl sm:text-2xl font-bold text-gray-900 mb-3 sm:mb-4">Job Description</h2>
+              <h2 class="text-xl sm:text-2xl font-bold text-gray-900 mb-3 sm:mb-4">{{ $t('jobs.jobDescription') }}</h2>
               <!-- eslint-disable-next-line vue/no-v-html -->
               <div class="prose prose-sm sm:prose prose-gray max-w-none" v-html="job.description"></div>
             </section>
 
             <!-- Requirements -->
             <section v-if="job.requirements" class="mb-6 sm:mb-8 pb-6 sm:pb-8 border-t border-gray-200 pt-6 sm:pt-8">
-              <h2 class="text-xl sm:text-2xl font-bold text-gray-900 mb-3 sm:mb-4">Requirements</h2>
+              <h2 class="text-xl sm:text-2xl font-bold text-gray-900 mb-3 sm:mb-4">{{ $t('jobs.requirements') }}</h2>
               <!-- eslint-disable-next-line vue/no-v-html -->
               <div class="prose prose-sm sm:prose prose-gray max-w-none" v-html="job.requirements"></div>
             </section>
 
             <!-- Responsibilities -->
             <section v-if="job.responsibilities" class="mb-6 sm:mb-8 pb-6 sm:pb-8 border-t border-gray-200 pt-6 sm:pt-8">
-              <h2 class="text-xl sm:text-2xl font-bold text-gray-900 mb-3 sm:mb-4">Responsibilities</h2>
+              <h2 class="text-xl sm:text-2xl font-bold text-gray-900 mb-3 sm:mb-4">{{ $t('jobs.responsibilities') }}</h2>
               <!-- eslint-disable-next-line vue/no-v-html -->
               <div class="prose prose-sm sm:prose prose-gray max-w-none" v-html="job.responsibilities"></div>
             </section>
 
             <!-- Benefits -->
             <section v-if="job.benefits" class="mb-6 sm:mb-8 pb-6 sm:pb-8 border-t border-gray-200 pt-6 sm:pt-8">
-              <h2 class="text-xl sm:text-2xl font-bold text-gray-900 mb-3 sm:mb-4">Benefits</h2>
+              <h2 class="text-xl sm:text-2xl font-bold text-gray-900 mb-3 sm:mb-4">{{ $t('jobs.benefits') }}</h2>
               <!-- eslint-disable-next-line vue/no-v-html -->
               <div class="prose prose-sm sm:prose prose-gray max-w-none" v-html="job.benefits"></div>
             </section>
 
             <!-- Required Skills -->
             <section v-if="job.skills && job.skills.length > 0" class="pb-6 sm:pb-8 border-t border-gray-200 pt-6 sm:pt-8">
-              <h2 class="text-xl sm:text-2xl font-bold text-gray-900 mb-3 sm:mb-4">Required Skills</h2>
+              <h2 class="text-xl sm:text-2xl font-bold text-gray-900 mb-3 sm:mb-4">{{ $t('jobs.requiredSkills') }}</h2>
               <div class="flex flex-wrap gap-2">
                 <span
                   v-for="skill in job.skills"
@@ -534,41 +534,41 @@
     <!-- Apply Modal -->
     <BaseModal
       v-model="showApplyModal"
-      title="Apply for this position"
+      :title="$t('jobs.applyForPosition')"
     >
       <form @submit.prevent="submitApplication" class="space-y-6">
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">Full Name *</label>
+          <label class="block text-sm font-medium text-gray-700 mb-2">{{ $t('jobs.fullNameRequired') }}</label>
           <BaseInput
             v-model="applicationForm.full_name"
             type="text"
-            placeholder="Enter your full name"
+            :placeholder="$t('jobs.enterFullName')"
             required
           />
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">Email *</label>
+          <label class="block text-sm font-medium text-gray-700 mb-2">{{ $t('jobs.emailRequired') }}</label>
           <BaseInput
             v-model="applicationForm.email"
             type="email"
-            placeholder="your.email@example.com"
+            :placeholder="$t('jobs.enterEmail')"
             required
           />
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">Phone Number *</label>
+          <label class="block text-sm font-medium text-gray-700 mb-2">{{ $t('jobs.phoneRequired') }}</label>
           <BaseInput
             v-model="applicationForm.phone"
             type="tel"
-            placeholder="+1 (555) 000-0000"
+            :placeholder="$t('jobs.enterPhone')"
             required
           />
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">Resume/CV *</label>
+          <label class="block text-sm font-medium text-gray-700 mb-2">{{ $t('jobs.resumeCvRequired') }}</label>
           <input
             type="file"
             accept=".pdf,.doc,.docx"
@@ -586,12 +586,12 @@
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">Cover Letter</label>
+          <label class="block text-sm font-medium text-gray-700 mb-2">{{ $t('jobs.coverLetterOptional') }}</label>
           <textarea
             v-model="applicationForm.cover_letter"
             rows="4"
             class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-            placeholder="Tell us why you're a great fit for this role..."
+            :placeholder="$t('jobs.tellUsWhyGreatFit')"
           ></textarea>
         </div>
 

@@ -5,7 +5,7 @@
         <svg class="w-5 h-5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" />
         </svg>
-        Languages
+        {{ $t('cv.languages') }}
       </h3>
       <BaseButton
         type="button"
@@ -13,10 +13,12 @@
         size="sm"
         @click="addLanguage"
       >
-        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-        </svg>
-        Add Language
+        <template #icon-left>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+          </svg>
+        </template>
+        {{ $t('cv.addItem') }}
       </BaseButton>
     </div>
     
@@ -28,7 +30,7 @@
         class="p-4 border-l-4 border-blue-500"
       >
         <div class="flex justify-between items-start mb-3">
-          <h4 class="font-semibold text-gray-900">Language #{{ index + 1 }}</h4>
+          <h4 class="font-semibold text-gray-900">{{ $t('cv.languages') }} #{{ index + 1 }}</h4>
           <button
             type="button"
             @click="removeLanguage(index)"
@@ -43,15 +45,15 @@
         <div class="grid md:grid-cols-2 gap-3">
           <BaseInput
             v-model="lang.language"
-            label="Language"
-            placeholder="e.g., English, Spanish, Mandarin"
+            :label="$t('cv.languageName')"
+            placeholder="English, Spanish, Mandarin"
             required
             @update:model-value="updateLanguage(index)"
           />
           
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-2">
-              Proficiency
+              {{ $t('cv.proficiencyLevel') }}
               <span class="text-red-500 ml-1">*</span>
             </label>
             <select
@@ -60,11 +62,11 @@
               class="block w-full px-4 py-2.5 text-sm border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors bg-white"
               @change="updateLanguage(index)"
             >
-              <option value="">Select proficiency</option>
-              <option value="basic">Basic</option>
-              <option value="conversational">Conversational</option>
-              <option value="fluent">Fluent</option>
-              <option value="native">Native</option>
+              <option value="">{{ $t('cv.proficiencyLevel') }}</option>
+              <option value="basic">{{ $t('cv.beginner') }}</option>
+              <option value="conversational">{{ $t('cv.intermediate') }}</option>
+              <option value="fluent">{{ $t('cv.advanced') }}</option>
+              <option value="native">{{ $t('cv.native') }}</option>
             </select>
           </div>
         </div>
@@ -72,13 +74,14 @@
     </div>
     
     <p v-else class="text-sm text-gray-500 italic p-4 bg-gray-50 rounded-lg border border-gray-200">
-      No languages added yet. Click "Add Language" to get started.
+      {{ $t('cv.noLanguagesAdded') }}
     </p>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
 import BaseButton from '@/components/base/BaseButton.vue'
 import BaseCard from '@/components/base/BaseCard.vue'
 import BaseInput from '@/components/base/BaseInput.vue'
@@ -89,6 +92,8 @@ interface Props {
 }
 
 const props = defineProps<Props>()
+
+const { t: $t } = useI18n()
 
 const emit = defineEmits<{
   'update:languages': [value: Language[]]
