@@ -274,6 +274,8 @@
     "lead": "قائد",
     "executive": "تنفيذي",
     "applyJob": "التقدم للوظيفة",
+    "companyOwnersCannotApply": "لا يمكن لأصحاب الشركات التقدم للوظائف. يمكن فقط للباحثين عن عمل التقدم.",
+    "companyOwnersCannotSave": "لا يمكن لأصحاب الشركات حفظ الوظائف. يمكن فقط للباحثين عن عمل حفظها.",
     "applicationSubmitted": "تم تقديم الطلب بنجاح!",
     "coverLetter": "خطاب التقديم",
     "attachCv": "إرفاق السيرة الذاتية",
@@ -299,8 +301,10 @@
     "pleaseLoginToSave": "يرجى تسجيل الدخول لحفظ الوظائف",
     "jobSaved": "تم حفظ الوظيفة بنجاح",
     "jobUnsaved": "تم إزالة الوظيفة من المحفوظات",
+    "jobRemovedFromSaved": "تم إزالة الوظيفة من الوظائف المحفوظة",
     "failedToSaveJob": "فشل حفظ الوظيفة",
-    "alreadyAppliedToJob": "لقد قدمت بالفعل لهذه الوظيفة",
+    "failedToLoadJob": "فشل تحميل تفاصيل الوظيفة. يرجى المحاولة مرة أخرى.",
+    "alreadyAppliedToJob": "لقد تقدمت بالفعل لهذه الوظيفة",
     "cityPlaceholder": "المدينة",
     "streetAddress": "عنوان الشارع",
     "streetAddressPlaceholder": "شارع الرئيسي 123",
@@ -950,7 +954,8 @@
     "yesterday": "أمس",
     "daysAgo": "منذ {count} أيام",
     "weeksAgo": "منذ {count} أسابيع",
-    "monthsAgo": "منذ {count} أشهر"
+    "monthsAgo": "منذ {count} أشهر",
+    "yearsAgo": "منذ {count} سنوات"
   },
   "myJobs": {
     "title": "وظائفي",
@@ -978,6 +983,7 @@
     "cancel": "إلغاء",
     "deleting": "جاري الحذف...",
     "deleteSuccess": "تم حذف الوظيفة بنجاح",
-    "deleteFailed": "فشل حذف الوظيفة"
+    "deleteFailed": "فشل حذف الوظيفة",
+    "jobNotFound": "لم يتم العثور على الوظيفة. ربما تم حذفها بالفعل."
   }
 }

@@ -374,6 +374,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { companyService } from '@/services/cv.service'
 import { jobService } from '@/services/job.service'
 import { useToast } from '@/composables/useToast'
@@ -385,6 +386,7 @@ import type { Company, Job } from '@/types'
 const router = useRouter()
 const route = useRoute()
 const toast = useToast()
+const { t } = useI18n()
 
 const loading = ref(true)
 const job = ref<Job | null>(null)
@@ -404,15 +406,15 @@ const formatEmploymentType = (type: string): string => {
 }
 
 const formatExperienceLevel = (level: string): string => {
-  const levels: Record<string, string> = {
-    'entry': 'Entry Level',
-    'junior': 'Junior',
-    'mid': 'Mid Level',
-    'senior': 'Senior',
-    'lead': 'Lead',
-    'executive': 'Executive',
+  const levelKeys: Record<string, string> = {
+    'entry': 'jobs.entryLevel',
+    'junior': 'jobs.junior',
+    'mid': 'jobs.midLevel',
+    'senior': 'jobs.senior',
+    'lead': 'jobs.lead',
+    'executive': 'jobs.executive',
   }
-  return levels[level] || level
+  return levelKeys[level] ? t(levelKeys[level]) : level
 }
 
 const formatDate = (date: string): string => {
@@ -422,7 +424,7 @@ const formatDate = (date: string): string => {
   const diffDays = Math.floor(Math.abs(diffTime) / (1000 * 60 * 60 * 24))
   
   if (diffTime < 0) {
-    if (diffDays === 0) return 'Today'
+    if (diffDays === 0) return t('myApplications.today')
     if (diffDays === 1) return 'Tomorrow'
     if (diffDays < 7) return `in ${diffDays} days`
     if (diffDays < 30) {
@@ -435,19 +437,19 @@ const formatDate = (date: string): string => {
     }
   }
   
-  if (diffDays === 0) return 'Today'
-  if (diffDays === 1) return 'Yesterday'
-  if (diffDays < 7) return `${diffDays} days ago`
+  if (diffDays === 0) return t('myApplications.today')
+  if (diffDays === 1) return t('myApplications.yesterday')
+  if (diffDays < 7) return t('myApplications.daysAgo', { count: diffDays })
   if (diffDays < 30) {
     const weeks = Math.floor(diffDays / 7)
-    return `${weeks} ${weeks === 1 ? 'week' : 'weeks'} ago`
+    return t('myApplications.weeksAgo', { count: weeks })
   }
   if (diffDays < 365) {
     const months = Math.floor(diffDays / 30)
-    return `${months} ${months === 1 ? 'month' : 'months'} ago`
+    return t('myApplications.monthsAgo', { count: months })
   }
   const years = Math.floor(diffDays / 365)
-  return `${years} ${years === 1 ? 'year' : 'years'} ago`
+  return t('myApplications.yearsAgo', { count: years })
 }
 
 const _formatJobDate = (date: string): string => {
@@ -540,7 +542,7 @@ const handleDelete = async () => {
     const response = await jobService.deleteJob(job.value.id)
     if (response.success) {
       showDeleteModal.value = false
-      toast.success('Job deleted successfully!')
+      toast.success(t('myJobs.deleteSuccess'))
       // Redirect to My Jobs page instead of company page
       await router.push({ name: 'my-jobs' })
     } else {
@@ -553,7 +555,7 @@ const handleDelete = async () => {
     // Handle specific error cases
     if (err.response?.status === 404) {
       showDeleteModal.value = false
-      toast.error('Job not found. It may have been already deleted.')
+      toast.error(t('myJobs.jobNotFound'))
       await router.push({ name: 'my-jobs' })
     } else {
       toast.error(err.response?.data?.message || 'Failed to delete job. Please try again.')

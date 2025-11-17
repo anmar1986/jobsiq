@@ -465,26 +465,26 @@ const shareMenuStyle = computed(() => {
 })
 
 const formatEmploymentType = (type: string): string => {
-  const types: Record<string, string> = {
-    'full-time': 'Full-time',
-    'part-time': 'Part-time',
-    'contract': 'Contract',
-    'freelance': 'Freelance',
-    'internship': 'Internship',
+  const typeKeys: Record<string, string> = {
+    'full-time': 'jobs.fullTime',
+    'part-time': 'jobs.partTime',
+    'contract': 'jobs.contract',
+    'freelance': 'jobs.freelance',
+    'internship': 'jobs.internship',
   }
-  return types[type] || type
+  return typeKeys[type] ? t(typeKeys[type]) : type
 }
 
 const formatExperienceLevel = (level: string): string => {
-  const levels: Record<string, string> = {
-    'entry': 'Entry Level',
-    'junior': 'Junior',
-    'mid': 'Mid Level',
-    'senior': 'Senior',
-    'lead': 'Lead',
-    'executive': 'Executive',
+  const levelKeys: Record<string, string> = {
+    'entry': 'jobs.entryLevel',
+    'junior': 'jobs.junior',
+    'mid': 'jobs.midLevel',
+    'senior': 'jobs.senior',
+    'lead': 'jobs.lead',
+    'executive': 'jobs.executive',
   }
-  return levels[level] || level
+  return levelKeys[level] ? t(levelKeys[level]) : level
 }
 
 const formatDate = (date: string): string => {
@@ -494,7 +494,7 @@ const formatDate = (date: string): string => {
   const diffDays = Math.floor(Math.abs(diffTime) / (1000 * 60 * 60 * 24))
   
   if (diffTime < 0) {
-    if (diffDays === 0) return 'Today'
+    if (diffDays === 0) return t('myApplications.today')
     if (diffDays === 1) return 'Tomorrow'
     if (diffDays < 7) return `in ${diffDays} days`
     if (diffDays < 30) {
@@ -507,19 +507,19 @@ const formatDate = (date: string): string => {
     }
   }
   
-  if (diffDays === 0) return 'Today'
-  if (diffDays === 1) return 'Yesterday'
-  if (diffDays < 7) return `${diffDays} days ago`
+  if (diffDays === 0) return t('myApplications.today')
+  if (diffDays === 1) return t('myApplications.yesterday')
+  if (diffDays < 7) return t('myApplications.daysAgo', { count: diffDays })
   if (diffDays < 30) {
     const weeks = Math.floor(diffDays / 7)
-    return `${weeks} ${weeks === 1 ? 'week' : 'weeks'} ago`
+    return t('myApplications.weeksAgo', { count: weeks })
   }
   if (diffDays < 365) {
     const months = Math.floor(diffDays / 30)
-    return `${months} ${months === 1 ? 'month' : 'months'} ago`
+    return t('myApplications.monthsAgo', { count: months })
   }
   const years = Math.floor(diffDays / 365)
-  return `${years} ${years === 1 ? 'year' : 'years'} ago`
+  return t('myApplications.yearsAgo', { count: years })
 }
 
 const handleApply = () => {
@@ -529,7 +529,7 @@ const handleApply = () => {
   }
 
   if (authStore.isCompanyOwner) {
-    toast.error('Company owners cannot apply to jobs. Only job seekers can apply.')
+    toast.error(t('jobs.companyOwnersCannotApply'))
     return
   }
 
@@ -544,7 +544,7 @@ const toggleSave = async () => {
   }
 
   if (authStore.isCompanyOwner) {
-    toast.error('Company owners cannot save jobs. Only job seekers can save jobs.')
+    toast.error(t('jobs.companyOwnersCannotSave'))
     return
   }
   
@@ -554,15 +554,15 @@ const toggleSave = async () => {
     if (isSaved.value) {
       await savedJobStore.unsaveJob(job.value.id)
       isSaved.value = false
-      toast.success('Job removed from saved jobs')
+      toast.success(t('jobs.jobRemovedFromSaved'))
     } else {
       await savedJobStore.saveJob(job.value.id)
       isSaved.value = true
-      toast.success('Job saved successfully!')
+      toast.success(t('jobs.jobSaved'))
     }
   } catch (error) {
     console.error('Error toggling save:', error)
-    toast.error('Failed to save job. Please try again.')
+    toast.error(t('jobs.failedToSaveJob'))
   }
 }
 
@@ -615,11 +615,11 @@ const copyJobLink = async () => {
   const url = window.location.href
   try {
     await copyToClipboard(url)
-    toast.success('Link copied to clipboard!')
+    toast.success(t('jobs.linkCopied'))
     showShareMenu.value = false
   } catch (err) {
     console.error('Failed to copy link:', err)
-    toast.error('Failed to copy link')
+    toast.error(t('jobs.failedToCopyLink'))
   }
 }
 
@@ -666,7 +666,7 @@ onMounted(async () => {
     }
   } catch (error) {
     console.error('Error fetching job:', error)
-    toast.error('Failed to load job details. Please try again.')
+    toast.error(t('jobs.failedToLoadJob'))
   } finally {
     loading.value = false
   }
