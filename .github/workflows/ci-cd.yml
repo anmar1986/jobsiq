@@ -211,6 +211,7 @@ jobs:
             --exclude='node_modules' \
             --exclude='tests' \
             --exclude='.github' \
+            --exclude='deployment' \
             --exclude='storage/logs/*' \
             --exclude='storage/framework/cache/*' \
             --exclude='storage/framework/sessions/*' \
