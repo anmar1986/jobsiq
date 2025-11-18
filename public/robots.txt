@@ -3,8 +3,6 @@ Allow: /
 
 # Sitemap
 Sitemap: https://jobs.iq/sitemap.xml
-Sitemap: https://jobs.iq/sitemap-en.xml
-Sitemap: https://jobs.iq/sitemap-ar.xml
 
 # Disallow admin and API endpoints
 Disallow: /api/

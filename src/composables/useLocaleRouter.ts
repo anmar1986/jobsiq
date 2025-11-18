@@ -15,7 +15,8 @@ export const useLocaleRouter = () => {
    */
   const push = (to: RouteLocationRaw) => {
     if (typeof to === 'string') {
-      return router.push(`/${localeStore.currentLocale}${to}`)
+      const normalizedPath = to.startsWith('/') ? to : `/${to}`
+      return router.push(`/${localeStore.currentLocale}${normalizedPath}`)
     }
     if ('params' in to && to.params) {
       return router.push({
@@ -34,7 +35,8 @@ export const useLocaleRouter = () => {
    */
   const replace = (to: RouteLocationRaw) => {
     if (typeof to === 'string') {
-      return router.replace(`/${localeStore.currentLocale}${to}`)
+      const normalizedPath = to.startsWith('/') ? to : `/${to}`
+      return router.replace(`/${localeStore.currentLocale}${normalizedPath}`)
     }
     if ('params' in to && to.params) {
       return router.replace({

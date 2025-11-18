@@ -237,10 +237,10 @@ const routes: RouteRecordRaw[] = [
   // Root redirect to default locale
   {
     path: '/',
-    redirect: (to) => {
+    redirect: () => {
       const localeStore = useLocaleStore()
       const locale = localeStore.currentLocale || 'en'
-      return `/${locale}${to.path === '/' ? '' : to.path}`
+      return `/${locale}`
     }
   },
   // Catch-all 404 - must be last
@@ -286,8 +286,8 @@ router.beforeEach((to: RouteLocationNormalized, from: RouteLocationNormalized, n
   // Handle routes without locale prefix - redirect to localized version
   if (!localeParam || !['en', 'ar'].includes(localeParam)) {
     const currentLocale = localeStore.currentLocale || 'en'
-    const path = to.fullPath.startsWith('/') ? to.fullPath.slice(1) : to.fullPath
-    return next(`/${currentLocale}/${path}`)
+    const path = to.fullPath.startsWith('/') ? to.fullPath : `/${to.fullPath}`
+    return next(`/${currentLocale}${path}`)
   }
   
   // Sync locale with store and i18n

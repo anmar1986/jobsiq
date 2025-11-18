@@ -28,14 +28,11 @@ export const useLocaleStore = defineStore('locale', () => {
     // Update document attributes
     document.documentElement.lang = locale
     document.documentElement.dir = direction.value
-    
-    // Update localStorage
-    localStorage.setItem('locale', locale)
   }
   
   const initializeLocale = (localeFromUrl?: string) => {
     // Priority: URL param > localStorage > browser language > default (en)
-    let locale: Locale = 'en'
+    let locale: Locale
     
     if (localeFromUrl && ['en', 'ar'].includes(localeFromUrl)) {
       locale = localeFromUrl as Locale

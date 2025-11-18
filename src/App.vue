@@ -15,7 +15,6 @@ import { RouterView, useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { useLocaleStore } from '@/stores/locale'
 import { useRTL } from '@/composables/useRTL'
-import { useSEO } from '@/composables/useSEO'
 import AppHeader from '@/components/layout/AppHeader.vue'
 import AppFooter from '@/components/layout/AppFooter.vue'
 import ToastContainer from '@/components/base/ToastContainer.vue'
@@ -27,14 +26,13 @@ const localeStore = useLocaleStore()
 // Initialize RTL support
 useRTL()
 
-// Initialize SEO meta tags
-useSEO()
+// SEO meta tags are initialized per-route in useSEO composable
+// useSEO() is called automatically on route changes
 
 onMounted(() => {
   // Initialize auth state from localStorage
   authStore.initializeAuth()
   
-  // Initialize locale
-  localeStore.initializeLocale()
+  // Locale initialization is handled by the router guard to avoid race conditions
 })
 </script>
