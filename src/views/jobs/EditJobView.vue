@@ -47,6 +47,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { useToast } from '@/composables/useToast'
 import { companyService } from '@/services/cv.service'
 import { jobService } from '@/services/job.service'
@@ -58,6 +59,7 @@ import JobForm from '@/views/jobs/JobForm.vue'
 const router = useRouter()
 const route = useRoute()
 const toast = useToast()
+const { t } = useI18n()
 
 const loadingJob = ref(false)
 const loadingCompanies = ref(false)
