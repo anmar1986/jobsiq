@@ -27,6 +27,7 @@
         @input="handleInput"
         @blur="handleBlur"
         @focus="handleFocus"
+        @invalid="handleInvalid"
       />
       
       <div v-if="$slots['icon-right'] || showClearButton" class="absolute inset-y-0 right-0 pr-3 flex items-center">
@@ -51,6 +52,9 @@
 
 <script setup lang="ts">
 import { computed, ref, useSlots } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 // Date validation constants
 const MIN_YEAR = 1900
@@ -97,6 +101,9 @@ const inputId = `input-${Math.random().toString(36).substring(2, 9)}`
 const handleInput = (event: Event) => {
   const target = event.target as HTMLInputElement
   let value = target.value
+  
+  // Clear custom validity message when user starts typing
+  target.setCustomValidity('')
   
   // Validate date inputs to prevent invalid years (more than 4 digits)
   if (props.type === 'date' && value) {
@@ -163,6 +170,13 @@ const handleFocus = (event: FocusEvent) => {
 
 const handleClear = () => {
   emit('update:modelValue', '')
+}
+
+const handleInvalid = (event: Event) => {
+  const target = event.target as HTMLInputElement
+  if (target.validity.valueMissing) {
+    target.setCustomValidity(t('validation.fieldRequired'))
+  }
 }
 
 const containerClasses = computed(() => {

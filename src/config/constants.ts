@@ -79,6 +79,13 @@ export const JOB_CATEGORIES = [
   'Fashion & Beauty',
   'Science & Research',
   'Writing, Editing & Translation',
+  'E-commerce & Online Business',
+  'Aviation & Airlines',
+  'Fitness, Sports & Wellness',
+  'Events, Entertainment & Photography',
+  'Pharmaceutical & Lab Work',
+  'Social Media, Content & Influencers',
+  'Food & Beverage (F&B) / Restaurants',
   'Internships & Entry-Level Jobs',
   'Other / Miscellaneous',
 ] as const

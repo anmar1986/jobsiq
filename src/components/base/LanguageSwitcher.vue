@@ -5,7 +5,7 @@
       <button
         @click="toggleDropdown"
         type="button"
-        class="inline-flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium text-gray-700 bg-white border-2 border-gray-300 rounded-lg hover:bg-gray-50 hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-all duration-200 shadow-sm hover:shadow-md"
+        class="inline-flex items-center justify-center gap-2 px-4 py-2.5 text-sm font-medium text-gray-700 bg-white border-2 border-gray-300 rounded-lg hover:bg-gray-50 hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-all duration-200 shadow-sm hover:shadow-md cursor-pointer"
         :aria-label="$t('common.language')"
       >
         <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -47,7 +47,7 @@
               v-for="lang in languages"
               :key="lang.code"
               @click="switchLanguage(lang.code)"
-              class="flex items-center gap-3 w-full px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+              class="flex items-center gap-3 w-full px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-100 transition-colors cursor-pointer"
               :class="{
                 'bg-primary-50 text-primary-700 font-semibold': currentLocale === lang.code
               }"
@@ -80,7 +80,7 @@
         v-for="lang in languages"
         :key="lang.code"
         @click="switchLanguage(lang.code)"
-        class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200"
+        class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 cursor-pointer"
         :class="
           currentLocale === lang.code
             ? 'bg-primary-600 text-white shadow-md hover:bg-primary-700'
@@ -124,7 +124,7 @@
       <button
         @click="toggleDropdown"
         type="button"
-        class="inline-flex items-center justify-center w-10 h-10 text-xl rounded-lg bg-white border border-gray-300 hover:bg-gray-50 hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-all duration-200 shadow-sm hover:shadow-md"
+        class="inline-flex items-center justify-center w-10 h-10 text-xl rounded-lg bg-white border border-gray-300 hover:bg-gray-50 hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-all duration-200 shadow-sm hover:shadow-md cursor-pointer"
         :aria-label="$t('common.language')"
       >
         {{ currentLanguageFlag }}
@@ -147,7 +147,7 @@
             v-for="lang in languages"
             :key="lang.code"
             @click="switchLanguage(lang.code)"
-            class="flex items-center gap-3 w-full px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-100 transition-colors whitespace-nowrap"
+            class="flex items-center gap-3 w-full px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-100 transition-colors whitespace-nowrap cursor-pointer"
             :class="{
               'bg-primary-50 text-primary-700 font-semibold': currentLocale === lang.code
             }"

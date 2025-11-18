@@ -41,39 +41,6 @@
         Go to My Companies
       </BaseButton>
     </BaseCard>
-
-    <!-- Success Modal -->
-    <BaseModal
-      v-model="showSuccessModal"
-      title="Job Updated Successfully!"
-      size="sm"
-    >
-      <div class="p-6 text-center">
-        <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-          <svg class="h-8 w-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-          </svg>
-        </div>
-        <h3 class="text-lg font-semibold text-gray-900 mb-2">Your job has been updated!</h3>
-        <p class="text-gray-600 mb-6">Your changes have been saved successfully.</p>
-        <div class="flex flex-col gap-3">
-          <BaseButton
-            variant="primary"
-            @click="viewJob"
-            class="w-full"
-          >
-            View Job Posting
-          </BaseButton>
-          <BaseButton
-            variant="ghost"
-            @click="goToMyCompanies"
-            class="w-full"
-          >
-            Go to My Companies
-          </BaseButton>
-        </div>
-      </div>
-    </BaseModal>
   </div>
 </template>
 
@@ -86,7 +53,6 @@ import { jobService } from '@/services/job.service'
 import type { Company, Job } from '@/types'
 import BaseCard from '@/components/base/BaseCard.vue'
 import BaseButton from '@/components/base/BaseButton.vue'
-import BaseModal from '@/components/base/BaseModal.vue'
 import JobForm from '@/views/jobs/JobForm.vue'
 
 const router = useRouter()
@@ -98,7 +64,6 @@ const loadingCompanies = ref(false)
 const submitting = ref(false)
 const job = ref<Job | null>(null)
 const userCompanies = ref<Company[]>([])
-const showSuccessModal = ref(false)
 
 const loadJob = async () => {
   loadingJob.value = true
@@ -155,17 +120,22 @@ const handleSubmit = async (jobData: Record<string, unknown>) => {
     const response = await jobService.updateJob(job.value.id, jobData)
     if (response.success && response.data) {
       job.value = response.data
-      showSuccessModal.value = true
+      toast.success('Job updated successfully')
+      router.push({ name: 'my-companies' })
     }
   } catch (error) {
     console.error('Failed to update job:', error)
     const err = error as { response?: { data?: { message?: string; errors?: Record<string, string[]> } } }
-    const message = err.response?.data?.message || 'Failed to update job'
-    toast.error(message)
     
-    // Handle validation errors if any
+    // Show validation errors if available
     if (err.response?.data?.errors) {
-      console.error('Validation errors:', err.response.data.errors)
+      const errors = err.response.data.errors
+      const firstError = Object.values(errors)[0]?.[0]
+      toast.error(firstError || 'Please check your input and try again')
+    } else {
+      // Show generic error message
+      const message = err.response?.data?.message || 'Failed to update job'
+      toast.error(message)
     }
   } finally {
     submitting.value = false
@@ -174,19 +144,6 @@ const handleSubmit = async (jobData: Record<string, unknown>) => {
 
 const handleCancel = () => {
   router.back()
-}
-
-const viewJob = () => {
-  if (job.value) {
-    router.push({
-      name: 'job-detail',
-      params: { slug: job.value.slug }
-    })
-  }
-}
-
-const goToMyCompanies = () => {
-  router.push({ name: 'my-companies' })
 }
 
 onMounted(() => {

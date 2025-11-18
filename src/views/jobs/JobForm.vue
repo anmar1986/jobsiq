@@ -1,19 +1,19 @@
 <template>
-  <form @submit.prevent="handleSubmit" class="space-y-6">
+  <form ref="formRef" @submit.prevent="handleSubmit" class="space-y-6">
     <!-- No Company Warning -->
     <div v-if="!userCompanies || userCompanies.length === 0" class="bg-white p-6 rounded-lg border border-gray-200">
       <div class="text-center py-8">
         <svg class="h-16 w-16 mx-auto text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
         </svg>
-        <h4 class="text-lg font-semibold text-gray-900 mb-2">No Company Profile Yet</h4>
-        <p class="text-gray-600 mb-4">You need to create your company profile before posting a job.</p>
+        <h4 class="text-lg font-semibold text-gray-900 mb-2">{{ $t('jobs.noCompanyProfileYet') }}</h4>
+        <p class="text-gray-600 mb-4">{{ $t('jobs.needCompanyToPostJobs') }}</p>
         <router-link to="/companies/create" class="inline-block">
           <BaseButton
             type="button"
             variant="primary"
           >
-            Create Your Company
+            {{ $t('company.createYourCompany') }}
           </BaseButton>
         </router-link>
       </div>
@@ -21,14 +21,14 @@
 
     <!-- Job Details Section -->
     <div v-if="userCompanies && userCompanies.length > 0" class="bg-white p-6 rounded-lg border border-gray-200">
-      <h3 class="text-lg font-semibold text-gray-900 mb-4">Job Details</h3>
+      <h3 class="text-lg font-semibold text-gray-900 mb-4">{{ $t('jobs.jobDetails') }}</h3>
       
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div class="md:col-span-2">
           <BaseInput
             v-model="formData.title"
-            label="Job Title *"
-            placeholder="e.g. Senior Frontend Developer"
+            :label="$t('jobs.jobTitle') + ' *'"
+            :placeholder="$t('jobs.jobTitlePlaceholder')"
             :error="errors.title"
             required
           />
@@ -36,56 +36,60 @@
 
         <div class="md:col-span-2">
           <label class="block text-sm font-medium text-gray-700 mb-1">
-            Job Description *
+            {{ $t('jobs.description') }} *
           </label>
           <textarea
             v-model="formData.description"
             rows="6"
             class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
             :class="{ 'border-red-500': errors.description }"
-            placeholder="Describe the role, responsibilities, and what makes this position unique..."
+            :placeholder="$t('jobs.descriptionPlaceholder')"
             required
+            @invalid="handleInvalid"
+            @input="handleInput"
           />
           <p v-if="errors.description" class="text-red-600 text-sm mt-1">{{ errors.description }}</p>
         </div>
 
         <div class="md:col-span-2">
           <label class="block text-sm font-medium text-gray-700 mb-1">
-            Requirements
+            {{ $t('jobs.requirements') }}
           </label>
           <textarea
             v-model="formData.requirements"
             rows="4"
             class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-            placeholder="List the required qualifications, experience, and skills..."
+            :placeholder="$t('jobs.requirementsPlaceholder')"
           />
           <p v-if="errors.requirements" class="text-red-600 text-sm mt-1">{{ errors.requirements }}</p>
         </div>
 
         <div class="md:col-span-2">
           <label class="block text-sm font-medium text-gray-700 mb-1">
-            Benefits
+            {{ $t('jobs.benefits') }}
           </label>
           <textarea
             v-model="formData.benefits"
             rows="4"
             class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-            placeholder="List job benefits (e.g., health insurance, flexible hours, remote work options...)"
+            :placeholder="$t('jobs.benefitsPlaceholder')"
           />
           <p v-if="errors.benefits" class="text-red-600 text-sm mt-1">{{ errors.benefits }}</p>
         </div>
 
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-1">
-            Category *
+            {{ $t('jobs.category') }} *
           </label>
           <select
             v-model="formData.category"
             class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
             :class="{ 'border-red-500': errors.category }"
             required
+            @invalid="handleInvalid"
+            @change="handleInput"
           >
-            <option value="">Select category</option>
+            <option value="">{{ $t('jobs.selectCategory') }}</option>
             <option v-for="category in jobCategories" :key="category" :value="category">
               {{ category }}
             </option>
@@ -95,33 +99,35 @@
 
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-1">
-            Employment Type *
+            {{ $t('jobs.employmentType') }} *
           </label>
           <select
             v-model="formData.employment_type"
             class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
             :class="{ 'border-red-500': errors.employment_type }"
             required
+            @invalid="handleInvalid"
+            @change="handleInput"
           >
-            <option value="">Select type</option>
-            <option value="full-time">Full-time</option>
-            <option value="part-time">Part-time</option>
-            <option value="contract">Contract</option>
-            <option value="freelance">Freelance</option>
-            <option value="internship">Internship</option>
+            <option value="">{{ $t('jobs.selectType') }}</option>
+            <option value="full-time">{{ $t('jobs.fullTime') }}</option>
+            <option value="part-time">{{ $t('jobs.partTime') }}</option>
+            <option value="contract">{{ $t('jobs.contract') }}</option>
+            <option value="freelance">{{ $t('jobs.freelance') }}</option>
+            <option value="internship">{{ $t('jobs.internship') }}</option>
           </select>
           <p v-if="errors.employment_type" class="text-red-600 text-sm mt-1">{{ errors.employment_type }}</p>
         </div>
 
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-1">
-            Experience Level
+            {{ $t('jobs.experienceLevel') }}
           </label>
           <select
             v-model="formData.experience_level"
             class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
           >
-            <option value="">Select level</option>
+            <option value="">{{ $t('jobs.selectLevel') }}</option>
             <option v-for="level in EXPERIENCE_LEVELS" :key="level.value" :value="level.value">
               {{ level.label }}
             </option>
@@ -132,14 +138,14 @@
 
     <!-- Address Section -->
     <div v-if="userCompanies && userCompanies.length > 0" class="bg-white p-6 rounded-lg border border-gray-200">
-      <h3 class="text-lg font-semibold text-gray-900 mb-4">Address</h3>
+      <h3 class="text-lg font-semibold text-gray-900 mb-4">{{ $t('jobs.address') }}</h3>
       
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div class="md:col-span-2">
           <BaseInput
             v-model="formData.street"
-            label="Street Address"
-            placeholder="123 Main Street"
+            :label="$t('jobs.streetAddress')"
+            :placeholder="$t('jobs.streetAddressPlaceholder')"
             :error="errors.street"
           />
         </div>
@@ -147,15 +153,15 @@
         <BaseAutocomplete
           v-model="formData.city"
           :options="iraqCities"
-          label="City"
-          placeholder="Type to search cities..."
+          :label="$t('common.city')"
+          :placeholder="$t('jobs.typeToSearchCities')"
           required
           :error="errors.city"
         />
 
         <BaseInput
           v-model="formData.country"
-          label="Country"
+          :label="$t('common.country')"
           value="Iraq"
           readonly
           :error="errors.country"
@@ -168,7 +174,7 @@
               v-model="formData.is_remote"
               class="w-4 h-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500"
             />
-            <span class="text-sm font-medium text-gray-700">This is a remote position</span>
+            <span class="text-sm font-medium text-gray-700">{{ $t('jobs.isRemotePosition') }}</span>
           </label>
         </div>
       </div>
@@ -176,30 +182,30 @@
 
     <!-- Salary Section -->
     <div v-if="userCompanies && userCompanies.length > 0" class="bg-white p-6 rounded-lg border border-gray-200">
-      <h3 class="text-lg font-semibold text-gray-900 mb-4">Salary (Optional)</h3>
+      <h3 class="text-lg font-semibold text-gray-900 mb-4">{{ $t('jobs.salary') }} ({{ $t('common.optional') }})</h3>
       
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <BaseInput
           v-model="formData.salary_min"
-          label="Minimum Salary"
+          :label="$t('jobs.minimumSalary')"
           type="number"
           min="0"
-          placeholder="50000"
+          :placeholder="$t('jobs.salaryPlaceholder')"
           :error="errors.salary_min"
         />
 
         <BaseInput
           v-model="formData.salary_max"
-          label="Maximum Salary"
+          :label="$t('jobs.maximumSalary')"
           type="number"
           min="0"
-          placeholder="80000"
+          :placeholder="$t('jobs.maxSalaryPlaceholder')"
           :error="errors.salary_max"
         />
 
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-1">
-            Currency
+            {{ $t('common.currency') }}
           </label>
           <select
             v-model="formData.salary_currency"
@@ -212,15 +218,15 @@
 
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-1">
-            Period
+            {{ $t('jobs.period') }}
           </label>
           <select
             v-model="formData.salary_period"
             class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
           >
-            <option value="yearly">Per Year</option>
-            <option value="monthly">Per Month</option>
-            <option value="hourly">Per Hour</option>
+            <option value="yearly">{{ $t('jobs.perYear') }}</option>
+            <option value="monthly">{{ $t('jobs.perMonth') }}</option>
+            <option value="hourly">{{ $t('jobs.perHour') }}</option>
           </select>
         </div>
       </div>
@@ -228,11 +234,11 @@
 
     <!-- Skills Section -->
     <div v-if="userCompanies && userCompanies.length > 0" class="bg-white p-6 rounded-lg border border-gray-200">
-      <h3 class="text-lg font-semibold text-gray-900 mb-4">Required Skills</h3>
+      <h3 class="text-lg font-semibold text-gray-900 mb-4">{{ $t('jobs.requiredSkills') }}</h3>
       
       <div>
         <label class="block text-sm font-medium text-gray-700 mb-2">
-          Add Skills (press Enter after each skill)
+          {{ $t('jobs.addSkillsHint') }}
         </label>
         <div class="flex flex-wrap gap-2 mb-3">
           <span
@@ -257,14 +263,14 @@
           type="text"
           @keydown.enter.prevent="addSkill"
           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-          placeholder="e.g. JavaScript, React, Node.js (press Enter)"
+          :placeholder="$t('jobs.skillsPlaceholder')"
         />
       </div>
     </div>
 
     <!-- Additional Options -->
     <div v-if="userCompanies && userCompanies.length > 0" class="bg-white p-6 rounded-lg border border-gray-200">
-      <h3 class="text-lg font-semibold text-gray-900 mb-4">Additional Options</h3>
+      <h3 class="text-lg font-semibold text-gray-900 mb-4">{{ $t('jobs.additionalOptions') }}</h3>
       
       <div class="space-y-3">
         <label class="flex items-center gap-2">
@@ -273,7 +279,7 @@
             v-model="formData.is_featured"
             class="w-4 h-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500"
           />
-          <span class="text-sm font-medium text-gray-700">Feature this job</span>
+          <span class="text-sm font-medium text-gray-700">{{ $t('jobs.featureThisJob') }}</span>
         </label>
         
         <label class="flex items-center gap-2">
@@ -282,7 +288,7 @@
             v-model="formData.is_active"
             class="w-4 h-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500"
           />
-          <span class="text-sm font-medium text-gray-700">Active (visible to job seekers)</span>
+          <span class="text-sm font-medium text-gray-700">{{ $t('jobs.activeVisibleToJobSeekers') }}</span>
         </label>
 
         <div class="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
@@ -290,7 +296,7 @@
             <svg class="inline h-4 w-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
-            This job posting will automatically expire in 30 days
+            {{ $t('jobs.autoExpireIn30Days') }}
           </p>
         </div>
       </div>
@@ -304,14 +310,14 @@
         @click="$emit('cancel')"
         :disabled="loading"
       >
-        Cancel
+        {{ $t('common.cancel') }}
       </BaseButton>
       <BaseButton
         type="submit"
         variant="primary"
         :loading="loading"
       >
-        {{ isEdit ? 'Update Job' : 'Post Job' }}
+        {{ isEdit ? $t('jobs.updateJob') : $t('jobs.postJobButton') }}
       </BaseButton>
     </div>
   </form>
@@ -319,12 +325,15 @@
 
 <script setup lang="ts">
 import { ref, reactive, watch, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
 import type { Job, Company } from '@/types'
 import BaseInput from '@/components/base/BaseInput.vue'
 import BaseButton from '@/components/base/BaseButton.vue'
 import BaseAutocomplete from '@/components/base/BaseAutocomplete.vue'
 import { JOB_CATEGORIES, EXPERIENCE_LEVELS } from '@/config/constants'
 import { iraqCities } from '@/config/iraqCities'
+
+const { t } = useI18n()
 
 interface Props {
   job?: Job
@@ -338,9 +347,24 @@ const emit = defineEmits<{
   cancel: []
 }>()
 
+const formRef = ref<HTMLFormElement | null>(null)
+
 const isEdit = computed(() => !!props.job)
 const skillInput = ref('')
 const jobCategories = JOB_CATEGORIES
+
+// Validation handler
+const handleInvalid = (e: Event) => {
+  const target = e.target as HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+  if (target.validity.valueMissing) {
+    target.setCustomValidity(t('validation.fieldRequired'))
+  }
+}
+
+const handleInput = (e: Event) => {
+  const target = e.target as HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+  target.setCustomValidity('')
+}
 
 // Calculate expiration date (30 days from now)
 const getExpirationDate = () => {
@@ -432,28 +456,38 @@ const handleSubmit = () => {
 
   // Client-side validation
   if (!formData.company_id) {
-    errors.company_id = 'Please select a company'
+    errors.company_id = t('jobs.pleaseSelectCompany')
     return
   }
   if (!formData.title.trim()) {
-    errors.title = 'Job title is required'
+    errors.title = t('jobs.jobTitleRequired')
     return
   }
   if (!formData.description.trim()) {
-    errors.description = 'Job description is required'
+    errors.description = t('jobs.jobDescriptionRequired')
     return
   }
   if (!formData.city.trim()) {
-    errors.city = 'City is required'
+    errors.city = t('jobs.cityRequired')
     return
   }
   if (!formData.employment_type) {
-    errors.employment_type = 'Employment type is required'
+    errors.employment_type = t('jobs.employmentTypeRequired')
     return
   }
   if (!formData.category) {
-    errors.category = 'Category is required'
+    errors.category = t('jobs.categoryRequired')
     return
+  }
+
+  // Validate salary if both min and max are provided
+  if (formData.salary_min && formData.salary_max) {
+    const minSalary = parseFloat(formData.salary_min)
+    const maxSalary = parseFloat(formData.salary_max)
+    if (maxSalary < minSalary) {
+      errors.salary_max = t('validation.maxSalaryMustBeGreaterThanMin')
+      return
+    }
   }
 
   // Prepare location string from street and city

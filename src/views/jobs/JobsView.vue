@@ -73,7 +73,7 @@
         <div class="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center">
           <!-- Results count -->
           <span class="text-sm font-medium text-gray-900 sm:flex-shrink-0">
-            {{ totalJobs }} {{ $t('jobs.jobCount', totalJobs) }}
+            {{ $t('jobs.jobCount', { count: totalJobs }) }}
           </span>
 
           <!-- Scrollable filters container on mobile -->
@@ -225,9 +225,25 @@
                     </span>
                   </div>
                   
-                  <div v-if="job.salary_min && job.salary_max">
+                  <div v-if="job.salary_min && job.salary_max" class="mb-2">
                     <span class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-gray-100 text-gray-800">
                       {{ formatSalaryRange(job.salary_min, job.salary_max, job.salary_currency, job.salary_period ? formatSalaryPeriod(job.salary_period) : undefined) }}
+                    </span>
+                  </div>
+
+                  <!-- Posted and Expires dates -->
+                  <div class="flex items-center gap-3 text-xs text-gray-500 mt-2">
+                    <span class="flex items-center gap-1">
+                      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                      </svg>
+                      {{ formatJobDate(job.published_at || job.created_at) }}
+                    </span>
+                    <span v-if="job.expires_at" class="flex items-center gap-1 text-red-600 font-medium">
+                      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      {{ $t('jobs.expires') }}: {{ formatJobDate(job.expires_at) }}
                     </span>
                   </div>
                 </div>
@@ -296,12 +312,12 @@
                     </svg>
                     <span class="text-sm font-medium text-gray-900">{{ selectedJob.location }}</span>
                   </div>
-                  <div class="flex items-center gap-2 px-3 py-1.5 bg-white rounded-md border border-gray-200">
+                  <span class="flex items-center gap-2 px-3 py-1.5 bg-primary-100 rounded-full border border-primary-200">
                     <svg class="w-4 h-4 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
-                    <span class="text-sm font-medium text-gray-900">{{ formatEmploymentType(selectedJob.employment_type) }}</span>
-                  </div>
+                    <span class="text-sm font-semibold text-primary-800">{{ formatEmploymentType(selectedJob.employment_type) }}</span>
+                  </span>
                   <div v-if="selectedJob.is_remote" class="flex items-center gap-2 px-3 py-1.5 bg-green-50 rounded-md border border-green-200">
                     <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
@@ -457,46 +473,76 @@
             <!-- Salary & Details -->
             <div v-if="selectedJob.salary_min && selectedJob.salary_max" class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8 p-6 bg-gray-50 rounded-lg border border-gray-200">
               <div>
-                <p class="text-sm font-medium text-gray-700 mb-2">{{ $t('jobs.salaryRange') }}</p>
-                <p class="text-2xl font-bold text-gray-900">
+                <div class="flex items-center gap-2 mb-2">
+                  <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                  <p class="text-sm font-medium text-gray-700">{{ $t('jobs.salaryRange') }}</p>
+                </div>
+                <p class="text-2xl font-bold text-green-600">
                   {{ formatSalaryRange(selectedJob.salary_min, selectedJob.salary_max, selectedJob.salary_currency, selectedJob.salary_period ? formatSalaryPeriod(selectedJob.salary_period) : undefined) }}
                 </p>
               </div>
               <div>
-                <p class="text-sm font-medium text-gray-700 mb-2">{{ $t('jobs.experienceLevel') }}</p>
-                <p class="text-xl font-semibold text-gray-900">{{ formatExperienceLevel(selectedJob.experience_level) }}</p>
+                <div class="flex items-center gap-2 mb-2">
+                  <svg class="w-5 h-5 text-secondary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" />
+                  </svg>
+                  <p class="text-sm font-medium text-gray-700">{{ $t('jobs.experienceLevel') }}</p>
+                </div>
+                <span class="inline-flex px-3 py-1 bg-secondary-100 text-secondary-800 rounded-full text-sm font-semibold">{{ formatExperienceLevel(selectedJob.experience_level) }}</span>
               </div>
             </div>
 
             <!-- Job Description -->
             <div class="prose prose-sm max-w-none mb-8">
-              <h2 class="text-xl font-bold text-gray-900 mb-4">{{ $t('jobs.jobDescription') }}</h2>
+              <div class="flex items-center gap-3 mb-4">
+                <svg class="w-6 h-6 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7" />
+                </svg>
+                <h2 class="text-xl font-bold text-gray-900">{{ $t('jobs.jobDescription') }}</h2>
+              </div>
               <!-- eslint-disable-next-line vue/no-v-html -->
               <div v-html="selectedJob.description" class="text-gray-600"></div>
             </div>
 
             <!-- Requirements -->
             <div v-if="selectedJob.requirements" class="prose prose-sm max-w-none mb-8">
-              <h2 class="text-xl font-bold text-gray-900 mb-4">{{ $t('jobs.requirements') }}</h2>
+              <div class="flex items-center gap-3 mb-4">
+                <svg class="w-6 h-6 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                </svg>
+                <h2 class="text-xl font-bold text-gray-900">{{ $t('jobs.requirements') }}</h2>
+              </div>
               <!-- eslint-disable-next-line vue/no-v-html -->
               <div v-html="selectedJob.requirements" class="text-gray-600"></div>
             </div>
 
             <!-- Benefits -->
             <div v-if="selectedJob.benefits" class="prose prose-sm max-w-none mb-8">
-              <h2 class="text-xl font-bold text-gray-900 mb-4">{{ $t('jobs.benefits') }}</h2>
+              <div class="flex items-center gap-3 mb-4">
+                <svg class="w-6 h-6 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                </svg>
+                <h2 class="text-xl font-bold text-gray-900">{{ $t('jobs.benefits') }}</h2>
+              </div>
               <!-- eslint-disable-next-line vue/no-v-html -->
               <div v-html="selectedJob.benefits" class="text-gray-600"></div>
             </div>
 
             <!-- Skills -->
             <div v-if="selectedJob.skills && selectedJob.skills.length > 0" class="mt-8">
-              <h3 class="text-lg font-bold text-gray-900 mb-4">{{ $t('jobs.requiredSkills') }}</h3>
+              <div class="flex items-center gap-2 mb-4">
+                <svg class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                </svg>
+                <h3 class="text-lg font-bold text-gray-900">{{ $t('jobs.requiredSkills') }}</h3>
+              </div>
               <div class="flex flex-wrap gap-2">
                 <span
                   v-for="skill in selectedJob.skills"
                   :key="skill"
-                  class="px-3 py-1 bg-primary-100 text-primary-800 rounded-full text-sm font-medium"
+                  class="px-3 py-1.5 bg-teal-100 text-teal-800 rounded-full text-sm font-medium"
                 >
                   {{ skill }}
                 </span>
@@ -735,6 +781,16 @@ const clearFilters = () => {
 const selectJob = async (job: Job) => {
   // On mobile devices, navigate to job detail page
   if (isMobile.value) {
+    // Save pagination state before navigating
+    const stateToSave = {
+      page: filters.page,
+      filters: filters,
+      seed: randomSeed.value,
+      scrollPosition: window.scrollY
+    }
+    console.log('Saving state from selectJob (mobile):', stateToSave)
+    sessionStorage.setItem('jobsListState', JSON.stringify(stateToSave))
+    
     router.push(`/jobs/${job.slug}`)
     return
   }
@@ -751,6 +807,16 @@ const selectJob = async (job: Job) => {
 }
 
 const goToJobDetail = (job: Job) => {
+  // Save pagination state before navigating
+  const stateToSave = {
+    page: filters.page,
+    filters: filters,
+    seed: randomSeed.value,
+    scrollPosition: window.scrollY
+  }
+  console.log('Saving state from goToJobDetail:', stateToSave)
+  sessionStorage.setItem('jobsListState', JSON.stringify(stateToSave))
+  
   router.push(`/jobs/${job.slug}`)
 }
 
@@ -909,6 +975,14 @@ const formatSalaryPeriod = (period: string): string => {
   return periods[period] || period
 }
 
+const formatJobDate = (date: string): string => {
+  const targetDate = new Date(date)
+  const day = String(targetDate.getDate()).padStart(2, '0')
+  const month = String(targetDate.getMonth() + 1).padStart(2, '0')
+  const year = targetDate.getFullYear()
+  return `${day}.${month}.${year}`
+}
+
 const fetchSavedJobs = async () => {
   if (authStore.isAuthenticated) {
     await savedJobStore.fetchSavedJobsCount()
@@ -937,7 +1011,7 @@ const hasApplied = (jobId: number): boolean => {
   return appliedJobIds.value.has(jobId)
 }
 
-onMounted(() => {
+onMounted(async () => {
   // Load filters from URL query params
   if (route.query.search) filters.search = route.query.search as string
   if (route.query.location) filters.location = route.query.location as string
@@ -948,7 +1022,51 @@ onMounted(() => {
   
   fetchSavedJobs()
   fetchAppliedJobs()
-  searchJobs()
+  
+  // Check if we need to restore pagination state
+  const savedState = sessionStorage.getItem('jobsListState')
+  if (savedState) {
+    console.log('Found saved state, attempting to restore pagination...')
+    try {
+      const state = JSON.parse(savedState)
+      console.log('Saved state:', state)
+      
+      // Restore filters and seed
+      Object.assign(filters, state.filters)
+      randomSeed.value = state.seed
+      const targetPage = state.page
+      console.log('Target page:', targetPage)
+      
+      // Load first page
+      filters.page = 1
+      await searchJobs()
+      console.log('Loaded page 1, jobs count:', jobs.value.length)
+      
+      // Progressively load remaining pages
+      for (let page = 2; page <= targetPage; page++) {
+        console.log('Loading page', page, 'hasMoreJobs:', hasMoreJobs.value)
+        if (hasMoreJobs.value) {
+          await loadMoreJobs()
+          console.log('After loading page', page, 'jobs count:', jobs.value.length)
+        }
+      }
+      
+      // Restore scroll position
+      setTimeout(() => {
+        console.log('Restoring scroll to:', state.scrollPosition)
+        window.scrollTo(0, state.scrollPosition)
+      }, 300)
+      
+      // Clear saved state
+      sessionStorage.removeItem('jobsListState')
+    } catch (error) {
+      console.error('Failed to restore pagination state:', error)
+      searchJobs()
+    }
+  } else {
+    console.log('No saved state found, loading normally')
+    searchJobs()
+  }
   
   // Add click-outside listener for share menu
   document.addEventListener('click', handleClickOutside)

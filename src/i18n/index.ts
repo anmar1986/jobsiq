@@ -4,21 +4,28 @@ import ar from './locales/ar.json'
 
 export type MessageSchema = typeof en
 
-// Get saved locale from localStorage or use browser language
-const getSavedLocale = (): string => {
+// Default locale - the router will set the actual locale based on URL
+const getInitialLocale = (): string => {
+  // Check if there's a locale in the URL path
+  const path = window.location.pathname
+  const localeMatch = path.match(/^\/(en|ar)/)
+  if (localeMatch) {
+    return localeMatch[1]
+  }
+
+  // Fallback to saved locale or browser language
   const saved = localStorage.getItem('locale')
   if (saved && ['en', 'ar'].includes(saved)) {
     return saved
   }
 
-  // Check browser language
   const browserLang = navigator.language.split('-')[0]
   return browserLang === 'ar' ? 'ar' : 'en'
 }
 
 const i18n = createI18n<[MessageSchema], 'en' | 'ar'>({
   legacy: false, // Use Composition API mode
-  locale: getSavedLocale(),
+  locale: getInitialLocale(),
   fallbackLocale: 'en',
   messages: {
     en,

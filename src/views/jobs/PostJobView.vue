@@ -2,8 +2,8 @@
   <div class="container-custom py-8">
     <!-- Header -->
     <div class="mb-8">
-      <h1 class="text-3xl font-bold text-gray-900">Post a Job</h1>
-      <p class="text-gray-600 mt-2">Fill out the details below to create a new job posting</p>
+      <h1 class="text-3xl font-bold text-gray-900">{{ $t('jobs.postJob') }}</h1>
+      <p class="text-gray-600 mt-2">{{ $t('jobs.fillDetailsToCreateJob') }}</p>
     </div>
 
     <!-- Loading State -->
@@ -28,6 +28,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { useToast } from '@/composables/useToast'
 import { companyService } from '@/services/cv.service'
 import { jobService } from '@/services/job.service'
@@ -37,6 +38,7 @@ import JobForm from '@/views/jobs/JobForm.vue'
 
 const router = useRouter()
 const toast = useToast()
+const { t } = useI18n()
 
 const loadingCompanies = ref(false)
 const submitting = ref(false)
@@ -52,7 +54,7 @@ const loadCompanies = async () => {
   } catch (error) {
     console.error('Failed to load companies:', error)
     const err = error as { response?: { data?: { message?: string } } }
-    toast.error(err.response?.data?.message || 'Failed to load your companies')
+    toast.error(err.response?.data?.message || t('jobs.failedToLoadCompanies'))
   } finally {
     loadingCompanies.value = false
   }
@@ -63,19 +65,23 @@ const handleSubmit = async (jobData: Record<string, unknown>) => {
   try {
     const response = await jobService.createJob(jobData as never)
     if (response.success && response.data) {
-      toast.success('New job created successfully!')
+      toast.success(t('jobs.jobCreatedSuccessfully'))
       // Redirect to My Companies page
       router.push({ name: 'my-companies' })
     }
   } catch (error) {
     console.error('Failed to create job:', error)
     const err = error as { response?: { data?: { message?: string; errors?: Record<string, string[]> } } }
-    const message = err.response?.data?.message || 'Failed to post job'
-    toast.error(message)
     
-    // Handle validation errors if any
+    // Show validation errors if available
     if (err.response?.data?.errors) {
-      console.error('Validation errors:', err.response.data.errors)
+      const errors = err.response.data.errors
+      const firstError = Object.values(errors)[0]?.[0]
+      toast.error(firstError || t('jobs.pleaseCheckYourInput'))
+    } else {
+      // Show generic error message
+      const message = err.response?.data?.message || t('jobs.failedToPostJob')
+      toast.error(message)
     }
   } finally {
     submitting.value = false

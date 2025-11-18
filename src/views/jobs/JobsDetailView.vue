@@ -357,7 +357,7 @@
                   </svg>
                   <span class="text-sm">{{ $t('jobs.posted') }}</span>
                 </div>
-                <span class="text-sm font-medium text-gray-900">{{ formatDate(job.created_at) }}</span>
+                <span class="text-sm font-medium text-gray-900">{{ formatDate(job.published_at || job.created_at) }}</span>
               </div>
 
               <!-- Expires -->
