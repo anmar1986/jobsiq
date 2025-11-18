@@ -17,6 +17,28 @@
     RewriteCond %{HTTP:x-xsrf-token} .
     RewriteRule .* - [E=HTTP_X_XSRF_TOKEN:%{HTTP:X-XSRF-Token}]
 
+    # Redirect root to /en or /ar based on Accept-Language header
+    # Only if not already accessing a locale-prefixed URL
+    RewriteCond %{REQUEST_URI} ^/$
+    RewriteCond %{HTTP:Accept-Language} ^ar [NC]
+    RewriteRule ^$ /ar [R=302,L]
+    
+    RewriteCond %{REQUEST_URI} ^/$
+    RewriteRule ^$ /en [R=302,L]
+
+    # Redirect old non-prefixed URLs to locale-prefixed versions
+    # Skip if URL already starts with /en or /ar or is an API call or static file
+    RewriteCond %{REQUEST_URI} !^/(en|ar|api|build|storage|vendor|favicon|robots|phpinfo)
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{HTTP:Accept-Language} ^ar [NC]
+    RewriteRule ^(.*)$ /ar/$1 [R=301,L]
+    
+    RewriteCond %{REQUEST_URI} !^/(en|ar|api|build|storage|vendor|favicon|robots|phpinfo)
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^(.*)$ /en/$1 [R=301,L]
+
     # Redirect Trailing Slashes If Not A Folder...
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_URI} (.+)/$
@@ -27,3 +49,4 @@
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^ index.php [L]
 </IfModule>
+

@@ -1,2 +1,17 @@
 User-agent: *
-Disallow:
+Allow: /
+
+# Sitemap
+Sitemap: https://jobs.iq/sitemap.xml
+Sitemap: https://jobs.iq/sitemap-en.xml
+Sitemap: https://jobs.iq/sitemap-ar.xml
+
+# Disallow admin and API endpoints
+Disallow: /api/
+Disallow: /admin/
+Disallow: /storage/
+Disallow: /vendor/
+
+# Allow crawling of language-prefixed URLs
+Allow: /en/
+Allow: /ar/

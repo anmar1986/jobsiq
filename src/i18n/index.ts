@@ -30,16 +30,3 @@ const i18n = createI18n<[MessageSchema], 'en' | 'ar'>({
 })
 
 export default i18n
-
-// Helper function to set locale and update HTML attributes
-export const setLocale = (locale: 'en' | 'ar') => {
-  i18n.global.locale = locale
-  localStorage.setItem('locale', locale)
-
-  // Update HTML lang and dir attributes
-  document.documentElement.lang = locale
-  document.documentElement.dir = locale === 'ar' ? 'rtl' : 'ltr'
-}
-
-// Initialize on load
-setLocale(i18n.global.locale as 'en' | 'ar')

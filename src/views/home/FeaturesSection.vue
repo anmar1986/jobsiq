@@ -9,8 +9,8 @@
       </div>
 
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-        <div v-for="feature in features" :key="feature.titleKey" class="text-center md:text-left p-4">
-          <div class="w-12 h-12 sm:w-14 sm:h-14 bg-primary-100 rounded-lg flex items-center justify-center mb-3 sm:mb-4 mx-auto md:mx-0">
+        <div v-for="feature in features" :key="feature.titleKey" class="text-center p-4">
+          <div class="w-12 h-12 sm:w-14 sm:h-14 bg-primary-100 rounded-lg flex items-center justify-center mb-3 sm:mb-4 mx-auto">
             <component :is="feature.icon" class="h-6 w-6 sm:h-7 sm:w-7 text-primary-600" />
           </div>
           <h3 class="text-lg sm:text-xl font-semibold text-gray-900 mb-2 sm:mb-3">{{ $t(feature.titleKey) }}</h3>
