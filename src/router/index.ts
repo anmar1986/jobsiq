@@ -1,229 +1,249 @@
 import { createRouter, createWebHistory, type RouteRecordRaw, type NavigationGuardNext, type RouteLocationNormalized } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import { useLocaleStore, type Locale } from '@/stores/locale'
 
-const routes: RouteRecordRaw[] = [
+// Define all route configurations (without locale prefix)
+const routeDefinitions: RouteRecordRaw[] = [
   {
-    path: '/',
+    path: '',
     name: 'home',
     component: () => import('@/views/home/index.vue'),
     meta: { title: 'Find Your Dream Job' },
   },
   {
-    path: '/jobs',
+    path: 'jobs',
     name: 'jobs',
     component: () => import('@/views/jobs/JobsView.vue'),
     meta: { title: 'Browse Jobs' },
   },
   {
-    path: '/jobs/:slug',
+    path: 'jobs/:slug',
     name: 'job-detail',
     component: () => import('@/views/jobs/JobsDetailView.vue'),
     meta: { title: 'Job Details' },
   },
   {
-    path: '/application/:slug',
+    path: 'application/:slug',
     name: 'apply-job',
     component: () => import('@/views/jobs/ApplyJobView.vue'),
     meta: { title: 'Apply for Job', requiresAuth: true, requiresJobSeeker: true },
   },
   {
-    path: '/my-applications',
+    path: 'my-applications',
     name: 'my-applications',
     component: () => import('@/views/jobs/MyApplicationsView.vue'),
     meta: { title: 'My Applications', requiresAuth: true, requiresJobSeeker: true },
   },
   {
-    path: '/saved-jobs',
+    path: 'saved-jobs',
     name: 'saved-jobs',
     component: () => import('@/views/jobs/SavedJobsView.vue'),
     meta: { title: 'Saved Jobs', requiresAuth: true, requiresJobSeeker: true },
   },
   {
-    path: '/companies',
+    path: 'companies',
     name: 'companies',
     component: () => import('@/views/companies/CompaniesView.vue'),
     meta: { title: 'Browse Companies' },
   },
   {
-    path: '/companies/view/:id',
+    path: 'companies/view/:id',
     name: 'company-detail',
     component: () => import('@/views/companies/CompanyDetailView.vue'),
     meta: { title: 'Company Details' },
   },
   {
-    path: '/companies/:slug',
+    path: 'companies/:slug',
     name: 'company-detail-slug',
     component: () => import('@/views/companies/CompanyDetailView.vue'),
     meta: { title: 'Company Details' },
   },
   {
-    path: '/login',
+    path: 'login',
     name: 'login',
     component: () => import('@/views/auth/LoginView.vue'),
     meta: { title: 'Login', guest: true },
   },
   {
-    path: '/register',
+    path: 'register',
     name: 'register',
     component: () => import('@/views/auth/RegisterView.vue'),
     meta: { title: 'Register', guest: true },
   },
   {
-    path: '/forgot-password',
+    path: 'forgot-password',
     name: 'forgot-password',
     component: () => import('@/views/auth/ForgotPasswordView.vue'),
     meta: { title: 'Forgot Password', guest: true },
   },
   {
-    path: '/reset-password',
+    path: 'reset-password',
     name: 'reset-password',
     component: () => import('@/views/auth/ResetPasswordView.vue'),
     meta: { title: 'Reset Password', guest: true },
   },
   {
-    path: '/change-password',
+    path: 'change-password',
     name: 'change-password',
     component: () => import('@/views/auth/ChangePasswordView.vue'),
     meta: { title: 'Change Password', requiresAuth: true },
   },
   {
-    path: '/dashboard',
+    path: 'dashboard',
     name: 'dashboard',
     component: () => import('@/views/dashboard/DashboardView.vue'),
     meta: { title: 'Dashboard', requiresAuth: true },
   },
   {
-    path: '/admin',
+    path: 'admin',
     name: 'admin',
     component: () => import('@/views/admin/AdminDashboard.vue'),
     meta: { title: 'Admin Dashboard', requiresAuth: true, requiresAdmin: true },
   },
   {
-    path: '/admin/users',
+    path: 'admin/users',
     name: 'admin-users',
     component: () => import('@/views/admin/UsersManagement.vue'),
     meta: { title: 'Users Management', requiresAuth: true, requiresAdmin: true },
   },
   {
-    path: '/admin/companies',
+    path: 'admin/companies',
     name: 'admin-companies',
     component: () => import('@/views/admin/CompaniesManagement.vue'),
     meta: { title: 'Companies Management', requiresAuth: true, requiresAdmin: true },
   },
   {
-    path: '/admin/jobs',
+    path: 'admin/jobs',
     name: 'admin-jobs',
     component: () => import('@/views/admin/JobsManagement.vue'),
     meta: { title: 'Jobs Management', requiresAuth: true, requiresAdmin: true },
   },
   {
-    path: '/admin/applications',
+    path: 'admin/applications',
     name: 'admin-applications',
     component: () => import('@/views/admin/ApplicationsManagement.vue'),
     meta: { title: 'Applications Management', requiresAuth: true, requiresAdmin: true },
   },
   {
-    path: '/admin/cvs',
+    path: 'admin/cvs',
     name: 'admin-cvs',
     component: () => import('@/views/admin/FreeCvsView.vue'),
     meta: { title: 'Free CVs Management', requiresAuth: true, requiresAdmin: true },
   },
   {
-    path: '/admin/cvs/:slug',
+    path: 'admin/cvs/:slug',
     name: 'admin-cv-detail',
     component: () => import('@/views/admin/FreeCvDetailView.vue'),
     meta: { title: 'CV Details', requiresAuth: true, requiresAdmin: true },
   },
   {
-    path: '/admin/search-history',
+    path: 'admin/search-history',
     name: 'admin-search-history',
     component: () => import('@/views/admin/SearchHistoryView.vue'),
     meta: { title: 'Search History', requiresAuth: true, requiresAdmin: true },
   },
   {
-    path: '/my-jobs',
+    path: 'my-jobs',
     name: 'my-jobs',
     component: () => import('@/views/dashboard/MyJobsView.vue'),
     meta: { title: 'My Jobs', requiresAuth: true, requiresCompany: true },
   },
   {
-    path: '/profile',
+    path: 'profile',
     name: 'profile',
     component: () => import('@/views/dashboard/ProfileView.vue'),
     meta: { title: 'Profile', requiresAuth: true },
   },
   {
-    path: '/my-companies',
+    path: 'my-companies',
     name: 'my-companies',
     component: () => import('@/views/companies/MyCompaniesView.vue'),
     meta: { title: 'My Companies', requiresAuth: true, requiresCompany: true },
   },
   {
-    path: '/my-companies/:slug',
+    path: 'my-companies/:slug',
     name: 'view-my-company',
     component: () => import('@/views/companies/ViewMyCompanyView.vue'),
     meta: { title: 'View Company', requiresAuth: true, requiresCompany: true },
   },
   {
-    path: '/my-companies/:companyId/jobs/:jobId/view',
+    path: 'my-companies/:companyId/jobs/:jobId/view',
     name: 'view-company-job',
     component: () => import('@/views/companies/ViewCompanyJobView.vue'),
     meta: { title: 'View Job', requiresAuth: true, requiresCompany: true },
   },
   {
-    path: '/my-companies/:companyId/jobs/:jobId/edit',
+    path: 'my-companies/:companyId/jobs/:jobId/edit',
     name: 'edit-company-job',
     component: () => import('@/views/jobs/EditJobView.vue'),
     meta: { title: 'Edit Job', requiresAuth: true, requiresCompany: true },
   },
   {
-    path: '/companies/create',
+    path: 'companies/create',
     name: 'create-company',
     component: () => import('@/views/companies/CreateCompanyView.vue'),
     meta: { title: 'Create Company', requiresAuth: true, requiresCompany: true },
   },
   {
-    path: '/companies/:id/edit',
+    path: 'companies/:id/edit',
     name: 'edit-company',
     component: () => import('@/views/companies/EditCompanyView.vue'),
     meta: { title: 'Edit Company', requiresAuth: true, requiresCompany: true },
   },
   {
-    path: '/post-job',
+    path: 'post-job',
     name: 'post-job',
     component: () => import('@/views/jobs/PostJobView.vue'),
     meta: { title: 'Post a Job', requiresAuth: true, requiresCompany: true },
   },
   {
-    path: '/my-cvs',
+    path: 'my-cvs',
     name: 'my-cvs',
     component: () => import('@/views/dashboard/MyCvsView.vue'),
     meta: { title: 'My CVs', requiresAuth: true, requiresJobSeeker: true },
   },
   {
-    path: '/my-cvs/create',
+    path: 'my-cvs/create',
     name: 'create-cv',
     component: () => import('@/views/dashboard/CreateCvView.vue'),
     meta: { title: 'Create CV', requiresAuth: true, requiresJobSeeker: true },
   },
   {
-    path: '/my-cvs/edit/:id',
+    path: 'my-cvs/edit/:id',
     name: 'edit-cv',
     component: () => import('@/views/dashboard/CreateCvView.vue'),
     meta: { title: 'Edit CV', requiresAuth: true, requiresJobSeeker: true },
   },
   {
-    path: '/my-cvs/view/:id',
+    path: 'my-cvs/view/:id',
     name: 'view-cv',
     component: () => import('@/views/dashboard/ViewCvView.vue'),
     meta: { title: 'View CV', requiresAuth: true, requiresJobSeeker: true },
   },
   {
-    path: '/about',
+    path: 'about',
     name: 'about',
     component: () => import('@/views/AboutView.vue'),
     meta: { title: 'About Us' },
   },
+]
+
+// Wrap routes with locale prefix
+const routes: RouteRecordRaw[] = [
+  {
+    path: '/:locale(en|ar)',
+    children: routeDefinitions,
+  },
+  // Root redirect to default locale
+  {
+    path: '/',
+    redirect: () => {
+      const localeStore = useLocaleStore()
+      const locale = localeStore.currentLocale || 'en'
+      return `/${locale}`
+    }
+  },
+  // Catch-all 404 - must be last
   {
     path: '/:pathMatch(.*)*',
     name: 'not-found',
@@ -256,8 +276,25 @@ if (typeof window !== 'undefined') {
 }
 
 // Navigation guards
-router.beforeEach((to: RouteLocationNormalized, _from: RouteLocationNormalized, next: NavigationGuardNext) => {
+router.beforeEach((to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext) => {
   const authStore = useAuthStore()
+  const localeStore = useLocaleStore()
+  
+  // Extract locale from URL
+  const localeParam = to.params.locale as Locale | undefined
+  
+  // Handle routes without locale prefix - redirect to localized version
+  if (!localeParam || !['en', 'ar'].includes(localeParam)) {
+    const currentLocale = localeStore.currentLocale || 'en'
+    const path = to.fullPath.startsWith('/') ? to.fullPath : `/${to.fullPath}`
+    return next(`/${currentLocale}${path}`)
+  }
+  
+  // Sync locale with store and i18n
+  if (localeParam !== localeStore.currentLocale) {
+    localeStore.setLocale(localeParam)
+  }
+  
   const requiresAuth = to.matched.some((record) => record.meta.requiresAuth)
   const isGuestRoute = to.matched.some((record) => record.meta.guest)
   const requiresCompany = to.matched.some((record) => record.meta.requiresCompany)
@@ -269,19 +306,19 @@ router.beforeEach((to: RouteLocationNormalized, _from: RouteLocationNormalized, 
 
   if (requiresAuth && !authStore.isAuthenticated) {
     // Redirect to login if route requires auth and user is not authenticated
-    next({ name: 'login', query: { redirect: to.fullPath } })
+    next({ name: 'login', params: { locale: localeParam }, query: { redirect: to.fullPath } })
   } else if (isGuestRoute && authStore.isAuthenticated) {
     // Redirect to dashboard if user is already authenticated
-    next({ name: 'dashboard' })
+    next({ name: 'dashboard', params: { locale: localeParam } })
   } else if (requiresAdmin && !authStore.user?.is_admin) {
     // Redirect to dashboard if route requires admin role and user is not admin
-    next({ name: 'dashboard' })
+    next({ name: 'dashboard', params: { locale: localeParam } })
   } else if (requiresCompany && authStore.user?.user_type !== 'company_owner') {
     // Redirect to dashboard if route requires company owner role
-    next({ name: 'dashboard' })
+    next({ name: 'dashboard', params: { locale: localeParam } })
   } else if (requiresJobSeeker && authStore.user?.user_type !== 'job_seeker') {
     // Redirect to dashboard if route requires job seeker role (company owners cannot access CV features)
-    next({ name: 'dashboard' })
+    next({ name: 'dashboard', params: { locale: localeParam } })
   } else {
     next()
   }

@@ -1,5 +1,5 @@
 <template>
-  <section class="bg-gradient-to-br from-primary-600 via-primary-700 to-secondary-700 text-white">
+  <section class="ltr:bg-gradient-to-br rtl:bg-gradient-to-bl from-primary-600 via-primary-700 to-secondary-700 text-white">
     <div class="container-custom py-12 sm:py-16 md:py-24">
       <div class="max-w-4xl mx-auto text-center">
         <h1 class="text-3xl sm:text-4xl md:text-6xl font-bold mb-4 sm:mb-6 animate-fade-in">

@@ -116,7 +116,7 @@
       </div>
 
       <!-- Stats Bar -->
-      <div class="bg-gradient-to-r from-primary-600 to-secondary-600 border-b border-primary-700 shadow-sm">
+      <div class="ltr:bg-gradient-to-r rtl:bg-gradient-to-l from-primary-600 to-secondary-600 border-b border-primary-700 shadow-sm">
         <div class="container-custom">
           <div class="grid grid-cols-2 md:grid-cols-4 gap-4 py-6">
             <div class="text-center">

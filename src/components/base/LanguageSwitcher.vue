@@ -176,7 +176,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { setLocale } from '@/i18n'
+import { useLocaleRouter } from '@/composables/useLocaleRouter'
 
 // Props
 interface Props {
@@ -189,6 +189,7 @@ withDefaults(defineProps<Props>(), {
 
 // Composables
 const { locale } = useI18n()
+const localeRouter = useLocaleRouter()
 
 // State
 const isOpen = ref(false)
@@ -217,8 +218,8 @@ const toggleDropdown = () => {
   isOpen.value = !isOpen.value
 }
 
-const switchLanguage = (code: string) => {
-  setLocale(code as 'en' | 'ar')
+const switchLanguage = async (code: string) => {
+  await localeRouter.switchLocale(code as 'en' | 'ar')
   isOpen.value = false
 }
 
