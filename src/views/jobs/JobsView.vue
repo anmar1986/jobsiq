@@ -1026,45 +1026,36 @@ onMounted(async () => {
   // Check if we need to restore pagination state
   const savedState = sessionStorage.getItem('jobsListState')
   if (savedState) {
-    console.log('Found saved state, attempting to restore pagination...')
     try {
       const state = JSON.parse(savedState)
-      console.log('Saved state:', state)
       
       // Restore filters and seed
       Object.assign(filters, state.filters)
       randomSeed.value = state.seed
       const targetPage = state.page
-      console.log('Target page:', targetPage)
       
       // Load first page
       filters.page = 1
       await searchJobs()
-      console.log('Loaded page 1, jobs count:', jobs.value.length)
       
       // Progressively load remaining pages
       for (let page = 2; page <= targetPage; page++) {
-        console.log('Loading page', page, 'hasMoreJobs:', hasMoreJobs.value)
         if (hasMoreJobs.value) {
           await loadMoreJobs()
-          console.log('After loading page', page, 'jobs count:', jobs.value.length)
         }
       }
       
       // Restore scroll position
       setTimeout(() => {
-        console.log('Restoring scroll to:', state.scrollPosition)
         window.scrollTo(0, state.scrollPosition)
       }, 300)
       
       // Clear saved state
       sessionStorage.removeItem('jobsListState')
     } catch (error) {
-      console.error('Failed to restore pagination state:', error)
       searchJobs()
     }
   } else {
-    console.log('No saved state found, loading normally')
     searchJobs()
   }
   

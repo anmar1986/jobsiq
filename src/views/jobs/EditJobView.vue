@@ -120,7 +120,7 @@ const handleSubmit = async (jobData: Record<string, unknown>) => {
     const response = await jobService.updateJob(job.value.id, jobData)
     if (response.success && response.data) {
       job.value = response.data
-      toast.success('Job updated successfully')
+      toast.success(t('jobs.jobUpdatedSuccessfully'))
       router.push({ name: 'my-companies' })
     }
   } catch (error) {
@@ -131,10 +131,10 @@ const handleSubmit = async (jobData: Record<string, unknown>) => {
     if (err.response?.data?.errors) {
       const errors = err.response.data.errors
       const firstError = Object.values(errors)[0]?.[0]
-      toast.error(firstError || 'Please check your input and try again')
+      toast.error(firstError || t('jobs.pleaseCheckYourInput'))
     } else {
       // Show generic error message
-      const message = err.response?.data?.message || 'Failed to update job'
+      const message = err.response?.data?.message || t('jobs.failedToUpdateJob')
       toast.error(message)
     }
   } finally {

@@ -240,7 +240,10 @@ const handleBlur = () => {
     } else if (trimmedQuery && filteredOptions.value.length > 1) {
       // Multiple matches - user needs to select one
       validationError.value = t('validation.selectValidOption')
-      // Don't revert, let them continue typing or select from dropdown
+      searchQuery.value = props.modelValue // Revert to last valid value
+      if (inputRef.value && props.required) {
+        inputRef.value.setCustomValidity(t('validation.selectValidOption'))
+      }
     } else if (!trimmedQuery && props.required) {
       // Empty and required
       if (inputRef.value) {

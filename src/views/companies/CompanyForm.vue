@@ -546,7 +546,7 @@ const isEdit = ref(!!props.company)
 const handleInvalid = (e: Event) => {
   const target = e.target as HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
   if (target.validity.valueMissing) {
-    target.setCustomValidity($t('validation.fieldRequired'))
+    target.setCustomValidity($t.value('validation.fieldRequired'))
   }
 }
 

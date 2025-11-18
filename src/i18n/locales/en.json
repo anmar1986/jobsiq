@@ -343,6 +343,7 @@
     "pleaseSelectCompany": "Please select a company",
     "jobTitleRequired": "Job title is required",
     "jobDescriptionRequired": "Job description is required",
+    "pleaseCheckYourInput": "Please check your input and try again",
     "cityRequired": "City is required",
     "employmentTypeRequired": "Employment type is required",
     "categoryRequired": "Category is required",

@@ -1,5 +1,5 @@
 <template>
-  <form ref="formRef" @submit.prevent="handleSubmit" class="space-y-6">
+  <form @submit.prevent="handleSubmit" class="space-y-6">
     <!-- No Company Warning -->
     <div v-if="!userCompanies || userCompanies.length === 0" class="bg-white p-6 rounded-lg border border-gray-200">
       <div class="text-center py-8">
@@ -346,8 +346,6 @@ const emit = defineEmits<{
   submit: [data: Record<string, unknown>]
   cancel: []
 }>()
-
-const formRef = ref<HTMLFormElement | null>(null)
 
 const isEdit = computed(() => !!props.job)
 const skillInput = ref('')
