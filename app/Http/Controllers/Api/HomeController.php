@@ -174,4 +174,32 @@ class HomeController extends Controller
             ], 500);
         }
     }
+
+    /**
+     * Get statistics for about page.
+     */
+    public function stats(): JsonResponse
+    {
+        try {
+            $data = $this->cacheResponse('platform_stats', function () {
+                return [
+                    'activeJobs' => Job::where('is_active', true)->count(),
+                    'companies' => \App\Models\Company::count(),
+                    'jobSeekers' => \App\Models\User::where('user_type', 'job_seeker')->count(),
+                    'applications' => \App\Models\JobApplication::count(),
+                ];
+            }, 300); // 5 minutes
+
+            return response()->json([
+                'success' => true,
+                'data' => $data,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to load statistics',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
 }

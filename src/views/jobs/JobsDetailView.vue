@@ -398,7 +398,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useJobStore } from '@/stores/job'
@@ -654,6 +654,41 @@ const checkIfApplied = async () => {
   }
 }
 
+// Update favicon dynamically
+const updateFavicon = (logoUrl?: string) => {
+  const favicon = document.querySelector('link[rel="icon"]') as HTMLLinkElement
+  if (favicon && logoUrl) {
+    favicon.href = logoUrl
+  } else if (favicon) {
+    favicon.href = '/favicon.ico'
+  }
+}
+
+// Update SEO and favicon
+const updatePageMeta = (jobData: Job) => {
+  // Update title
+  document.title = `${jobData.title} ${t('common.at')} ${jobData.company?.name} | ${t('common.appName')}`
+  
+  // Update meta description
+  const description = jobData.description?.substring(0, 160) || `Apply for ${jobData.title} position at ${jobData.company?.name}`
+  const metaDesc = document.querySelector('meta[name="description"]')
+  if (metaDesc) {
+    metaDesc.setAttribute('content', description)
+  }
+  
+  // Update favicon to company logo
+  if (jobData.company?.logo?.url) {
+    updateFavicon(jobData.company.logo.url)
+  }
+}
+
+// Watch for job changes to update SEO and favicon
+watch(() => job.value, (newJob) => {
+  if (newJob) {
+    updatePageMeta(newJob)
+  }
+})
+
 onMounted(async () => {
   try {
     const slug = route.params.slug as string
@@ -676,6 +711,8 @@ onMounted(async () => {
 
 onBeforeUnmount(() => {
   document.removeEventListener('click', handleClickOutside)
+  // Reset favicon to default
+  updateFavicon()
 })
 </script>
 

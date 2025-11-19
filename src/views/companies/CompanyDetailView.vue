@@ -581,8 +581,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onBeforeUnmount, computed, nextTick } from 'vue'
+import { ref, onMounted, onBeforeUnmount, computed, nextTick, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 import { useCompanyStore } from '@/stores/company'
 import { useJobStore } from '@/stores/job'
 import { formatSalaryRange } from '@/utils/currency'
@@ -593,6 +594,7 @@ import type { Company, Job } from '@/types'
 
 const router = useRouter()
 const route = useRoute()
+const { t } = useI18n()
 const companyStore = useCompanyStore()
 const jobStore = useJobStore()
 
@@ -607,6 +609,41 @@ const isMobile = ref(window.innerWidth < 640)
 // Gallery carousel ref
 const galleryContainer = ref<HTMLElement | null>(null)
 let scrollHandler: ((e: Event) => void) | null = null
+
+// Update favicon dynamically
+const updateFavicon = (logoUrl?: string) => {
+  const favicon = document.querySelector('link[rel="icon"]') as HTMLLinkElement
+  if (favicon && logoUrl) {
+    favicon.href = logoUrl
+  } else if (favicon) {
+    favicon.href = '/favicon.ico'
+  }
+}
+
+// Update SEO and favicon
+const updatePageMeta = (companyData: Company) => {
+  // Update title
+  document.title = `${companyData.name} | ${t('common.appName')}`
+  
+  // Update meta description
+  const description = companyData.tagline || companyData.description?.substring(0, 160) || `View ${companyData.name} profile and open positions`
+  const metaDesc = document.querySelector('meta[name="description"]')
+  if (metaDesc) {
+    metaDesc.setAttribute('content', description)
+  }
+  
+  // Update favicon to company logo
+  if (companyData.logo?.url) {
+    updateFavicon(companyData.logo.url)
+  }
+}
+
+// Watch for company changes to update SEO and favicon
+watch(() => company.value, (newCompany) => {
+  if (newCompany) {
+    updatePageMeta(newCompany)
+  }
+})
 
 // Mouse drag handling
 const isDragging = ref(false)
@@ -945,6 +982,9 @@ onBeforeUnmount(() => {
   
   // Clean up resize listener
   window.removeEventListener('resize', handleResize)
+  
+  // Reset favicon to default
+  updateFavicon()
 })
 </script>
 
