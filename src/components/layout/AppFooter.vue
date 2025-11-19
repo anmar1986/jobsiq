@@ -72,8 +72,8 @@
         <div>
           <h3 class="text-white font-semibold mb-3 sm:mb-4 text-sm sm:text-base">{{ $t('common.about') }}</h3>
           <ul class="space-y-1.5 sm:space-y-2">
-            <li><router-link to="/about" class="text-xs sm:text-sm hover:text-primary-500 transition-colors">{{ $t('footer.aboutUs') }}</router-link></li>
-            <li><a href="#" class="text-xs sm:text-sm hover:text-primary-500 transition-colors">{{ $t('footer.contactUs') }}</a></li>
+            <li><router-link to="/about#about" class="text-xs sm:text-sm hover:text-primary-500 transition-colors">{{ $t('footer.aboutUs') }}</router-link></li>
+            <li><router-link to="/about#contact" class="text-xs sm:text-sm hover:text-primary-500 transition-colors">{{ $t('footer.contactUs') }}</router-link></li>
             <li><a href="#" class="text-xs sm:text-sm hover:text-primary-500 transition-colors">{{ $t('footer.privacyPolicy') }}</a></li>
             <li><a href="#" class="text-xs sm:text-sm hover:text-primary-500 transition-colors">{{ $t('footer.termsOfService') }}</a></li>
           </ul>

@@ -14,7 +14,6 @@
             <div class="w-16 h-16 sm:w-20 sm:h-20 mx-auto bg-gradient-to-br from-primary-500 to-secondary-500 rounded-full flex items-center justify-center text-white text-xl sm:text-2xl font-bold shadow-lg">
               {{ index + 1 }}
             </div>
-            <div v-if="index < steps.length - 1" class="hidden md:block absolute top-8 sm:top-10 left-1/2 w-full h-0.5 bg-gray-300" style="transform: translateX(50%)"></div>
           </div>
           <h3 class="text-lg sm:text-xl font-semibold text-gray-900 mb-2 sm:mb-3">{{ $t(step.title) }}</h3>
           <p class="text-sm sm:text-base text-gray-600 px-4 sm:px-0">{{ $t(step.description) }}</p>

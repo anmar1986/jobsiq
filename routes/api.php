@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\Admin\SearchHistoryAdminController;
 use App\Http\Controllers\Api\Admin\UserController as AdminUserController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CompanyController;
+use App\Http\Controllers\Api\ContactController;
 use App\Http\Controllers\Api\HomeController;
 use App\Http\Controllers\Api\JobApplicationController;
 use App\Http\Controllers\Api\JobController;
@@ -29,10 +30,14 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::post('/forgot-password', [AuthController::class, 'forgotPassword']);
 Route::post('/reset-password', [AuthController::class, 'resetPassword']);
 
+// Contact form
+Route::post('/contact', [ContactController::class, 'submit']);
+
 // Home page routes - cached for 5 minutes
 Route::middleware([CacheResponse::class.':300'])->group(function () {
     Route::get('/home', [HomeController::class, 'index']);
     Route::get('/home/{section}', [HomeController::class, 'getSection']);
+    Route::get('/stats', [HomeController::class, 'stats']);
 });
 
 // Public routes with caching (3 minutes for lists, 10 minutes for details)

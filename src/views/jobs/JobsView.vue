@@ -1052,7 +1052,7 @@ onMounted(async () => {
       
       // Clear saved state
       sessionStorage.removeItem('jobsListState')
-    } catch (error) {
+    } catch {
       searchJobs()
     }
   } else {
