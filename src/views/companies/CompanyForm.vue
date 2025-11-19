@@ -325,6 +325,8 @@
             v-model="formData.category"
             class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
             required
+            @invalid="handleInvalid"
+            @change="handleInput"
           >
             <option value="">{{ $t('companies.selectCategory') }}</option>
             <option v-for="category in companyCategories" :key="category" :value="category">
@@ -539,6 +541,19 @@ const emit = defineEmits<{
 }>()
 
 const isEdit = ref(!!props.company)
+
+// Validation handler
+const handleInvalid = (e: Event) => {
+  const target = e.target as HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+  if (target.validity.valueMissing) {
+    target.setCustomValidity($t('validation.fieldRequired'))
+  }
+}
+
+const handleInput = (e: Event) => {
+  const target = e.target as HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+  target.setCustomValidity('')
+}
 
 const formData = reactive({
   name: '',

@@ -24,7 +24,7 @@ return new class extends Migration
             $table->string('city')->nullable();
             $table->string('country')->nullable();
             $table->enum('employment_type', ['full-time', 'part-time', 'contract', 'freelance', 'internship']);
-            $table->enum('experience_level', ['entry', 'junior', 'mid', 'senior', 'lead'])->nullable();
+            $table->enum('experience_level', ['entry', 'junior', 'mid', 'senior', 'lead', 'executive'])->nullable();
             $table->string('category')->nullable();
             $table->decimal('salary_min', 10, 2)->nullable();
             $table->decimal('salary_max', 10, 2)->nullable();

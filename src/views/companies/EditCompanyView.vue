@@ -75,7 +75,7 @@ const loadCompany = async () => {
   } catch (error) {
     console.error('Failed to load company:', error)
     const err = error as { response?: { data?: { message?: string } } }
-    toast.error(err.response?.data?.message || 'Failed to load company details')
+    toast.error(err.response?.data?.message || $t('companies.failedToLoadCompany'))
   } finally {
     loading.value = false
   }
@@ -92,7 +92,7 @@ const handleSubmit = async (formData: FormData) => {
     
     if (response.success && response.data) {
       console.log('Update successful, showing toast and redirecting')
-      toast.success('Company updated successfully!')
+      toast.success($t('companies.companyUpdatedSuccessfully'))
       // Update the local company data with the response
       company.value = response.data
       // Redirect back to the company profile using the updated slug
@@ -107,9 +107,9 @@ const handleSubmit = async (formData: FormData) => {
     // Check for validation errors
     if (err.response?.data?.errors) {
       const firstError = Object.values(err.response.data.errors)[0]?.[0]
-      toast.error(firstError || 'Failed to update company')
+      toast.error(firstError || $t('companies.failedToUpdateCompany'))
     } else {
-      toast.error(err.response?.data?.message || 'Failed to update company')
+      toast.error(err.response?.data?.message || $t('companies.failedToUpdateCompany'))
     }
   } finally {
     submitting.value = false

@@ -25,6 +25,9 @@ export const useLocaleStore = defineStore('locale', () => {
       (i18n.global.locale as any) = locale
     }
     
+    // Save to localStorage
+    localStorage.setItem('locale', locale)
+    
     // Update document attributes
     document.documentElement.lang = locale
     document.documentElement.dir = direction.value

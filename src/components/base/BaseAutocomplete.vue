@@ -32,6 +32,7 @@
         @keydown.up.prevent="navigateUp"
         @keydown.enter.prevent="selectHighlighted"
         @keydown.esc="closeDropdown"
+        @invalid="handleInvalid"
       />
       
       <!-- Clear Button -->
@@ -75,7 +76,7 @@
         <svg class="w-4 h-4 inline mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
         </svg>
-        Not found. Please type a valid option from the list.
+        {{ t('validation.notFoundSelectValidOption') }}
       </div>
     </div>
     
@@ -87,6 +88,9 @@
 
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 interface Props {
   modelValue: string
@@ -142,14 +146,29 @@ const handleInput = () => {
   showDropdown.value = true
   highlightedIndex.value = 0
   validationError.value = ''
+  // Clear custom validity when user starts typing
+  if (inputRef.value) {
+    inputRef.value.setCustomValidity('')
+  }
   // Don't emit the value while typing - only emit when a valid option is selected
   // This prevents invalid values from being saved
+}
+
+const handleInvalid = (e: Event) => {
+  const target = e.target as HTMLInputElement
+  if (target.validity.valueMissing) {
+    target.setCustomValidity(t('validation.fieldRequired'))
+  }
 }
 
 const selectOption = (option: string) => {
   searchQuery.value = option
   emit('update:modelValue', option)
   validationError.value = ''
+  // Clear custom validity when a valid option is selected
+  if (inputRef.value) {
+    inputRef.value.setCustomValidity('')
+  }
   closeDropdown()
   inputRef.value?.blur()
 }
@@ -188,34 +207,48 @@ const closeDropdown = () => {
 const handleBlur = () => {
   // Delay to allow click events on dropdown items
   setTimeout(() => {
-    // Validate if the current input matches any option
-    const isValidOption = props.options.some(
-      option => option.toLowerCase() === searchQuery.value.toLowerCase().trim()
+    // Validate if the current input matches any option (case-insensitive)
+    const trimmedQuery = searchQuery.value.trim()
+    const exactMatch = props.options.find(
+      option => option.toLowerCase() === trimmedQuery.toLowerCase()
     )
     
-    // If not valid and not empty, try to find a close match or clear it
-    if (!isValidOption && searchQuery.value) {
-      // Check if there's an exact match in filtered options
-      const exactMatch = filteredOptions.value.find(
-        option => option.toLowerCase() === searchQuery.value.toLowerCase().trim()
-      )
-      
-      if (exactMatch) {
-        searchQuery.value = exactMatch
-        emit('update:modelValue', exactMatch)
-        validationError.value = ''
-      } else if (filteredOptions.value.length === 1) {
-        // If only one filtered option, auto-select it
-        searchQuery.value = filteredOptions.value[0]
-        emit('update:modelValue', filteredOptions.value[0])
-        validationError.value = ''
-      } else {
-        // Clear invalid input and show error
-        validationError.value = 'Please select a valid option from the list'
-        searchQuery.value = props.modelValue // Revert to last valid value
-      }
-    } else {
+    if (exactMatch) {
+      // User typed a valid option exactly - select it
+      searchQuery.value = exactMatch
+      emit('update:modelValue', exactMatch)
       validationError.value = ''
+      if (inputRef.value) {
+        inputRef.value.setCustomValidity('')
+      }
+    } else if (trimmedQuery && filteredOptions.value.length === 1) {
+      // Only one match in filtered options - auto-select it
+      const autoSelect = filteredOptions.value[0]
+      searchQuery.value = autoSelect
+      emit('update:modelValue', autoSelect)
+      validationError.value = ''
+      if (inputRef.value) {
+        inputRef.value.setCustomValidity('')
+      }
+    } else if (trimmedQuery && filteredOptions.value.length === 0) {
+      // No matches - invalid input
+      validationError.value = t('validation.selectValidOption')
+      searchQuery.value = props.modelValue // Revert to last valid value
+      if (inputRef.value && props.required) {
+        inputRef.value.setCustomValidity(t('validation.selectValidOption'))
+      }
+    } else if (trimmedQuery && filteredOptions.value.length > 1) {
+      // Multiple matches - user needs to select one
+      validationError.value = t('validation.selectValidOption')
+      searchQuery.value = props.modelValue // Revert to last valid value
+      if (inputRef.value && props.required) {
+        inputRef.value.setCustomValidity(t('validation.selectValidOption'))
+      }
+    } else if (!trimmedQuery && props.required) {
+      // Empty and required
+      if (inputRef.value) {
+        inputRef.value.setCustomValidity(t('validation.fieldRequired'))
+      }
     }
     
     closeDropdown()
