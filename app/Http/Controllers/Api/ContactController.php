@@ -28,16 +28,16 @@ class ContactController extends Controller
             return response()->json([
                 'success' => false,
                 'message' => 'Validation failed',
-                'errors' => $validator->errors()
+                'errors' => $validator->errors(),
             ], 422);
         }
 
         try {
             $validated = $validator->validated();
-            
+
             // Send email to support
             $supportEmail = config('mail.from.address');
-            
+
             Mail::to($supportEmail)->send(
                 new ContactFormSubmitted(
                     $validated['name'],
@@ -49,14 +49,14 @@ class ContactController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Message sent successfully'
+                'message' => 'Message sent successfully',
             ]);
         } catch (\Exception $e) {
-            Log::error('Contact form submission failed: ' . $e->getMessage());
-            
+            Log::error('Contact form submission failed: '.$e->getMessage());
+
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to send message. Please try again later.'
+                'message' => 'Failed to send message. Please try again later.',
             ], 500);
         }
     }
