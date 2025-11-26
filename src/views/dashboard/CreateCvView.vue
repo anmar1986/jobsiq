@@ -299,10 +299,12 @@ const saveCv = async () => {
     // Show validation errors if available
     if (err.response?.data?.errors) {
       const errors = err.response.data.errors
-      const errorMessages = Object.entries(errors)
-        .map(([field, messages]) => `${field}: ${Array.isArray(messages) ? messages.join(', ') : messages}`)
+      // Extract just the error messages without technical field names
+      const errorMessages = Object.values(errors)
+        .flat()
+        .filter((msg): msg is string => typeof msg === 'string')
         .join('\n')
-      toast.error(`Validation failed:\n${errorMessages}`, 8000)
+      toast.error(errorMessages, 8000)
     } else if (err.response?.data?.message) {
       // Show server error message
       toast.error(err.response.data.message, 6000)

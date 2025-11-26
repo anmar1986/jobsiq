@@ -60,7 +60,7 @@
           <BaseInput
             v-model="award.date"
             type="date"
-            label="Date Received"
+            :label="$t('cv.dateReceived')"
             required
             @update:model-value="updateAward(index)"
           />

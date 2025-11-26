@@ -136,7 +136,7 @@
     </section>
 
     <!-- Contact Us -->
-        <!-- Contact Us Section -->
+    <!-- Contact Us Section -->
     <section id="contact" class="py-12 md:py-16 lg:py-24 bg-gray-50">
       <div class="container-custom">
         <div class="text-center mb-8 md:mb-12 px-4">

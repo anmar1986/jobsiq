@@ -24,6 +24,11 @@ return Application::configure(basePath: dirname(__DIR__))
             \App\Http\Middleware\ContentSecurityPolicy::class,
         ]);
 
+        // Apply locale middleware to API requests
+        $middleware->api(append: [
+            \App\Http\Middleware\SetLocale::class,
+        ]);
+
         // Configure API authentication to return JSON instead of redirecting
         $middleware->redirectGuestsTo(function (Request $request) {
             if ($request->expectsJson() || $request->is('api/*')) {

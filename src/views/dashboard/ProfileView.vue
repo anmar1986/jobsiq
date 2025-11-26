@@ -292,17 +292,20 @@ import BaseAvatar from '@/components/base/BaseAvatar.vue'
 import BaseAutocomplete from '@/components/base/BaseAutocomplete.vue'
 import { API_BASE_URL } from '@/config/constants'
 import { iraqCities } from '@/config/iraqCities'
-import { countries } from '@/config/countries'
+import { getCountries } from '@/config/countries'
 
 const authStore = useAuthStore()
 const toast = useToast()
-const { t } = useI18n()
+const { t, locale } = useI18n()
 
 const photoInput = ref<HTMLInputElement | null>(null)
 const profilePhotoPreview = ref<string | null>(null)
 const photoFile = ref<File | null>(null)
 const loading = ref(false)
 const isEditMode = ref(false)
+
+// Get countries based on current locale
+const countries = computed(() => getCountries(locale.value as 'en' | 'ar'))
 
 const formData = ref({
   name: '',
