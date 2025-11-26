@@ -69,8 +69,8 @@
           
           <BaseInput
             v-model="reference.relationship"
-            label="Relationship"
-            placeholder="Former Supervisor"
+            :label="$t('cv.relationship')"
+            :placeholder="$t('cv.relationshipPlaceholder')"
             required
             @update:model-value="updateReference(index)"
           />

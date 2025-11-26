@@ -77,19 +77,6 @@
               {{ $t('home.searchButton') }}
             </BaseButton>
           </form>
-
-          <!-- Popular Searches -->
-          <div class="mt-3 sm:mt-4 flex flex-wrap gap-2 text-xs sm:text-sm justify-center">
-            <span class="text-gray-600">{{ $t('home.popular') }}</span>
-            <button
-              v-for="(tag, key) in popularSearches"
-              :key="key"
-              @click="searchQuery = $t(`home.popularSearches.${key}`); handleSearch()"
-              class="text-primary-600 hover:text-primary-700 font-medium hover:underline"
-            >
-              {{ tag }}
-            </button>
-          </div>
         </div>
       </div>
     </div>
@@ -114,14 +101,6 @@ const locationQuery = ref('')
 const showCitySuggestions = ref(false)
 const selectedCityIndex = ref(-1)
 const cityRefs: Record<number, HTMLElement> = {}
-
-const popularSearches = computed(() => ({
-  designer: $t('home.popularSearches.designer'),
-  developer: $t('home.popularSearches.developer'),
-  marketing: $t('home.popularSearches.marketing'),
-  sales: $t('home.popularSearches.sales'),
-  manager: $t('home.popularSearches.manager')
-}))
 
 const filteredCities = computed(() => {
   if (!locationQuery.value) return []

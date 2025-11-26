@@ -20,6 +20,11 @@ apiClient.interceptors.request.use(
     if (token) {
       config.headers.Authorization = `Bearer ${token}`
     }
+    
+    // Add Accept-Language header based on current locale
+    const locale = localStorage.getItem('locale') || 'en'
+    config.headers['Accept-Language'] = locale
+    
     // If the request data is FormData, remove any Content-Type header so
     // the browser can set the correct multipart/form-data boundary.
     if (config.data instanceof FormData) {

@@ -23,51 +23,55 @@
     </div>
     
     <!-- Languages List -->
-    <div v-if="localLanguages.length > 0" class="space-y-3">
-      <BaseCard
-        v-for="(lang, index) in localLanguages"
-        :key="index"
-        class="p-4 border-l-4 border-blue-500"
-      >
-        <div class="flex justify-between items-start mb-3">
-          <h4 class="font-semibold text-gray-900">{{ $t('cv.languages') }} #{{ index + 1 }}</h4>
-          <button
-            type="button"
-            @click="removeLanguage(index)"
-            class="text-red-600 hover:text-red-700 p-1"
+    <div v-if="localLanguages.length > 0">
+      <BaseCard class="border-l-4 border-blue-500" no-padding>
+        <div class="p-5 space-y-4">
+          <div
+            v-for="(lang, index) in localLanguages"
+            :key="index"
+            class="pb-4 border-b border-gray-200 last:border-b-0 last:pb-0"
           >
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-            </svg>
-          </button>
-        </div>
-        
-        <div class="grid md:grid-cols-2 gap-3">
-          <BaseInput
-            v-model="lang.language"
-            :label="$t('cv.languageName')"
-            placeholder="English, Spanish, Mandarin"
-            required
-            @update:model-value="updateLanguage(index)"
-          />
-          
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-2">
-              {{ $t('cv.proficiencyLevel') }}
-              <span class="text-red-500 ml-1">*</span>
-            </label>
-            <select
-              v-model="lang.proficiency"
-              required
-              class="block w-full px-4 py-2.5 text-sm border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors bg-white"
-              @change="updateLanguage(index)"
-            >
-              <option value="">{{ $t('cv.proficiencyLevel') }}</option>
-              <option value="basic">{{ $t('cv.beginner') }}</option>
-              <option value="conversational">{{ $t('cv.intermediate') }}</option>
-              <option value="fluent">{{ $t('cv.advanced') }}</option>
-              <option value="native">{{ $t('cv.native') }}</option>
-            </select>
+            <div class="flex justify-between items-start mb-3">
+              <h4 class="font-semibold text-gray-900">{{ $t('cv.languages') }} #{{ index + 1 }}</h4>
+              <button
+                type="button"
+                @click="removeLanguage(index)"
+                class="text-red-600 hover:text-red-700 p-1"
+              >
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+              </button>
+            </div>
+            
+            <div class="grid md:grid-cols-2 gap-3">
+              <BaseInput
+                v-model="lang.language"
+                :label="$t('cv.languageName')"
+                placeholder="English, Spanish, Mandarin"
+                required
+                @update:model-value="updateLanguage(index)"
+              />
+              
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2">
+                  {{ $t('cv.proficiencyLevel') }}
+                  <span class="text-red-500 ml-1">*</span>
+                </label>
+                <select
+                  v-model="lang.proficiency"
+                  required
+                  class="block w-full px-4 py-2.5 text-sm border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors bg-white"
+                  @change="updateLanguage(index)"
+                >
+                  <option value="">{{ $t('cv.proficiencyLevel') }}</option>
+                  <option value="basic">{{ $t('cv.beginner') }}</option>
+                  <option value="conversational">{{ $t('cv.intermediate') }}</option>
+                  <option value="fluent">{{ $t('cv.advanced') }}</option>
+                  <option value="native">{{ $t('cv.native') }}</option>
+                </select>
+              </div>
+            </div>
           </div>
         </div>
       </BaseCard>

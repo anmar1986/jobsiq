@@ -114,29 +114,34 @@ class UpdateCvRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'profile_image.file' => 'The profile image must be a file',
-            'profile_image.mimes' => 'The profile image must be a file of type: jpeg, jpg, png, webp, gif',
-            'profile_image.max' => 'The profile image must not be larger than 2MB',
+            'profile_image.file' => __('validation.custom.profile_image.file'),
+            'profile_image.mimes' => __('validation.custom.profile_image.mimes'),
+            'profile_image.max' => __('validation.custom.profile_image.max'),
 
-            'work_experience.*.position.required' => 'Position is required for work experience',
-            'work_experience.*.company.required' => 'Company is required for work experience',
-            'work_experience.*.start_date.required' => 'Start date is required for work experience',
-            'work_experience.*.end_date.after_or_equal' => 'End date must be after or equal to start date',
+            'work_experience.*.position.required' => __('validation.custom.work_experience.*.position.required'),
+            'work_experience.*.company.required' => __('validation.custom.work_experience.*.company.required'),
+            'work_experience.*.start_date.required' => __('validation.custom.work_experience.*.start_date.required'),
+            'work_experience.*.end_date.after_or_equal' => __('validation.custom.work_experience.*.end_date.after_or_equal'),
 
-            'education.*.degree.required' => 'Degree is required for education',
-            'education.*.field.required' => 'Field of study is required for education',
-            'education.*.institution.required' => 'Institution is required for education',
-            'education.*.start_date.required' => 'Start date is required for education',
-            'education.*.end_date.after_or_equal' => 'End date must be after or equal to start date',
+            'education.*.degree.required' => __('validation.custom.education.*.degree.required'),
+            'education.*.field.required' => __('validation.custom.education.*.field.required'),
+            'education.*.institution.required' => __('validation.custom.education.*.institution.required'),
+            'education.*.start_date.required' => __('validation.custom.education.*.start_date.required'),
+            'education.*.end_date.after_or_equal' => __('validation.custom.education.*.end_date.after_or_equal'),
 
-            'certifications.*.name.required' => 'Certification name is required',
-            'certifications.*.issuer.required' => 'Issuer is required for certification',
-            'certifications.*.date.required' => 'Issue date is required for certification',
-            'certifications.*.expiry_date.after_or_equal' => 'Expiry date must be after or equal to issue date',
+            'certifications.*.name.required' => __('validation.custom.certifications.*.name.required'),
+            'certifications.*.issuer.required' => __('validation.custom.certifications.*.issuer.required'),
+            'certifications.*.date.required' => __('validation.custom.certifications.*.date.required'),
+            'certifications.*.expiry_date.after_or_equal' => __('validation.custom.certifications.*.expiry_date.after_or_equal'),
 
-            'languages.*.language.required' => 'Language name is required',
-            'languages.*.proficiency.required' => 'Proficiency level is required',
-            'languages.*.proficiency.in' => 'Proficiency must be one of: basic, conversational, fluent, native',
+            'volunteer_work.*.organization.required' => __('validation.custom.volunteer_work.*.organization.required'),
+            'volunteer_work.*.role.required' => __('validation.custom.volunteer_work.*.role.required'),
+            'volunteer_work.*.start_date.required' => __('validation.custom.volunteer_work.*.start_date.required'),
+            'volunteer_work.*.end_date.after_or_equal' => __('validation.custom.volunteer_work.*.end_date.after_or_equal'),
+
+            'languages.*.language.required' => __('validation.custom.languages.*.language.required'),
+            'languages.*.proficiency.required' => __('validation.custom.languages.*.proficiency.required'),
+            'languages.*.proficiency.in' => __('validation.custom.languages.*.proficiency.in'),
         ];
     }
 

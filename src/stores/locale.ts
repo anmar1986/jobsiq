@@ -19,10 +19,10 @@ export const useLocaleStore = defineStore('locale', () => {
     
     // Update i18n locale (this triggers reactivity for all components)
     // In non-legacy mode, locale is a WritableComputedRef
-    if (typeof i18n.global.locale === 'object' && 'value' in i18n.global.locale) {
-      (i18n.global.locale as any).value = locale
+    if (typeof (i18n.global as any).locale === 'object' && 'value' in (i18n.global as any).locale) {
+      ((i18n.global as any).locale as any).value = locale
     } else {
-      (i18n.global.locale as any) = locale
+      ((i18n.global as any).locale as any) = locale
     }
     
     // Save to localStorage

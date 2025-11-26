@@ -84,7 +84,7 @@
           <BaseInput
             :model-value="cert.url || ''"
             type="url"
-            label="URL"
+            :label="$t('cv.certificationUrl')"
             placeholder="https://..."
             @update:model-value="cert.url = $event as string; updateCertification(index)"
           />

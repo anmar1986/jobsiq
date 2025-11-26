@@ -72,5 +72,75 @@ return [
             'required' => 'يرجى اختيار شركة',
             'exists' => 'الشركة المحددة غير موجودة',
         ],
+
+        // CV Validation Messages
+        'profile_image' => [
+            'file' => 'صورة الملف الشخصي يجب أن تكون ملفاً صحيحاً. يرجى التحقق من اتصالك بالإنترنت والمحاولة مرة أخرى.',
+            'mimes' => 'صورة الملف الشخصي يجب أن تكون من نوع: jpeg, jpg, png, webp, gif',
+            'max' => 'صورة الملف الشخصي يجب ألا تتجاوز 2 ميجابايت. يرجى تصغير حجم الصورة أو ضغطها.',
+        ],
+
+        'work_experience.*.position' => [
+            'required' => 'الخبرة العملية: المسمى الوظيفي مطلوب',
+        ],
+        'work_experience.*.company' => [
+            'required' => 'الخبرة العملية: اسم الشركة مطلوب',
+        ],
+        'work_experience.*.start_date' => [
+            'required' => 'الخبرة العملية: تاريخ البدء مطلوب',
+        ],
+        'work_experience.*.end_date' => [
+            'after_or_equal' => 'الخبرة العملية: تاريخ الانتهاء يجب أن يكون بعد أو يساوي تاريخ البدء',
+        ],
+
+        'education.*.degree' => [
+            'required' => 'التعليم: الدرجة العلمية مطلوبة',
+        ],
+        'education.*.field' => [
+            'required' => 'التعليم: مجال الدراسة مطلوب',
+        ],
+        'education.*.institution' => [
+            'required' => 'التعليم: اسم المؤسسة مطلوب',
+        ],
+        'education.*.start_date' => [
+            'required' => 'التعليم: تاريخ البدء مطلوب',
+        ],
+        'education.*.end_date' => [
+            'after_or_equal' => 'التعليم: تاريخ الانتهاء يجب أن يكون بعد أو يساوي تاريخ البدء',
+        ],
+
+        'certifications.*.name' => [
+            'required' => 'الشهادات: اسم الشهادة مطلوب',
+        ],
+        'certifications.*.issuer' => [
+            'required' => 'الشهادات: الجهة المانحة مطلوبة',
+        ],
+        'certifications.*.date' => [
+            'required' => 'الشهادات: تاريخ الإصدار مطلوب',
+        ],
+        'certifications.*.expiry_date' => [
+            'after_or_equal' => 'الشهادات: تاريخ انتهاء الصلاحية يجب أن يكون بعد أو يساوي تاريخ الإصدار',
+        ],
+
+        'volunteer_work.*.organization' => [
+            'required' => 'العمل التطوعي: اسم المنظمة مطلوب',
+        ],
+        'volunteer_work.*.role' => [
+            'required' => 'العمل التطوعي: الدور مطلوب',
+        ],
+        'volunteer_work.*.start_date' => [
+            'required' => 'العمل التطوعي: تاريخ البدء مطلوب',
+        ],
+        'volunteer_work.*.end_date' => [
+            'after_or_equal' => 'العمل التطوعي: تاريخ الانتهاء يجب أن يكون بعد أو يساوي تاريخ البدء',
+        ],
+
+        'languages.*.language' => [
+            'required' => 'اللغات: اسم اللغة مطلوب',
+        ],
+        'languages.*.proficiency' => [
+            'required' => 'اللغات: مستوى الكفاءة مطلوب',
+            'in' => 'اللغات: مستوى الكفاءة يجب أن يكون أحد القيم التالية: أساسي، محادثة، طلاقة، لغة أم',
+        ],
     ],
 ];
