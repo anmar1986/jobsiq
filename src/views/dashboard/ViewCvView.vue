@@ -498,9 +498,8 @@ const hobbies = computed(() => {
 const formatDate = (dateString: string) => {
   if (!dateString) return ''
   const date = new Date(dateString)
-  const month = String(date.getMonth() + 1).padStart(2, '0')
-  const year = date.getFullYear()
-  return `${month}/${year}`
+  // Use locale-aware formatting for month and year
+  return date.toLocaleDateString(undefined, { year: 'numeric', month: '2-digit' })
 }
 
 const formatWorkDate = (exp: WorkExperience) => {

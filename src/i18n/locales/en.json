@@ -566,6 +566,8 @@
     "skillName": "Skill Name",
     "proficiencyLevel": "Proficiency Level",
     "beginner": "Beginner",
+    "basic": "Basic",
+    "conversational": "Conversational",
     "intermediate": "Intermediate",
     "advanced": "Advanced",
     "fluent": "Fluent",

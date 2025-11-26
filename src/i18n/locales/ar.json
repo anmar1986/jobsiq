@@ -565,6 +565,8 @@
     "skillName": "اسم المهارة",
     "proficiencyLevel": "مستوى الإتقان",
     "beginner": "مبتدئ",
+    "basic": "أساسي",
+    "conversational": "محادثة",
     "intermediate": "متوسط",
     "advanced": "متقدم",
     "fluent": "بطلاقة",
