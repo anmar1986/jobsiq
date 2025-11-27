@@ -149,7 +149,7 @@
                 </p>
               </div>
             </div>
-            <div v-if="edu.description" class="w-1/2 pr-4">
+            <div v-if="edu.description" class="w-full">
               <p class="text-gray-700 whitespace-pre-line mt-3">{{ edu.description }}</p>
             </div>
           </div>
@@ -234,6 +234,7 @@
                   v-if="cert.url"
                   :href="cert.url"
                   target="_blank"
+                  rel="noopener noreferrer"
                   class="text-sm text-gray-600 hover:text-primary-600 inline-flex items-center gap-1 mt-1"
                 >
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -276,7 +277,7 @@
                 <p class="text-primary-600 font-semibold">{{ volunteer.organization }}</p>
               </div>
             </div>
-            <div v-if="volunteer.description" class="w-1/2 pr-4">
+            <div v-if="volunteer.description" class="w-full">
               <p class="text-gray-700 whitespace-pre-line mt-3">{{ volunteer.description }}</p>
             </div>
           </div>
@@ -515,25 +516,17 @@ const formatVolunteerDate = (vol: VolunteerWork) => {
 
 onMounted(async () => {
   const id = route.params.id
-  console.log('ViewApplicationCvView mounted, CV ID:', id)
   if (id) {
     loading.value = true
     try {
-      console.log('Fetching CV from:', `/application-cv/${id}`)
       const response = await api.get(`/application-cv/${id}`)
-      console.log('API Response:', response.data)
       if (response.data.success) {
         cv.value = response.data.data
-        console.log('CV loaded successfully:', cv.value)
       } else {
-        console.error('API returned success=false:', response.data)
         toast.error(response.data.message || t('companyApplications.cvLoadFailed'))
         router.back()
       }
     } catch (error) {
-      console.error('Failed to load CV:', error)
-      const err = error as { response?: { data?: any } }
-      console.error('Error response:', err.response?.data)
       toast.error(t('companyApplications.cvLoadFailed'))
       router.back()
     } finally {

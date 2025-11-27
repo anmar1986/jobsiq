@@ -237,6 +237,14 @@ class JobApplicationController extends Controller
             /** @var \App\Models\User $user */
             $user = Auth::user();
 
+            // Explicitly check that the user is a company owner
+            if ($user->user_type !== 'company_owner') {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Only company owners can access this endpoint.',
+                ], 403);
+            }
+
             // Get all companies owned by this user
             $companyIds = $user->ownedCompanies()->pluck('companies.id');
 
@@ -251,7 +259,7 @@ class JobApplicationController extends Controller
                 ]);
             }
 
-            Log::info('Fetching applications for companies', ['company_ids' => $companyIds->toArray()]);
+            Log::debug('Fetching applications for companies', ['company_ids' => $companyIds->toArray()]);
 
             $query = JobApplication::with(['job.company.logo', 'user', 'cv'])
                 ->whereHas('job', function ($q) use ($companyIds) {
@@ -277,17 +285,22 @@ class JobApplicationController extends Controller
             }
 
             // Search by applicant name or job title
-            if ($request->has('search')) {
-                $search = $request->search;
-                $query->where(function ($q) use ($search) {
-                    $q->whereHas('user', function ($uq) use ($search) {
-                        $uq->where('name', 'like', "%{$search}%")
-                            ->orWhere('email', 'like', "%{$search}%");
-                    })
-                        ->orWhereHas('job', function ($jq) use ($search) {
-                            $jq->where('title', 'like', "%{$search}%");
-                        });
-                });
+            if ($request->has('search') && is_string($request->search)) {
+                $search = trim($request->search);
+                // Validate minimum and maximum length
+                if (mb_strlen($search) >= 2 && mb_strlen($search) <= 100) {
+                    // Escape LIKE wildcards
+                    $escapedSearch = str_replace(['%', '_'], ['\\%', '\\_'], $search);
+                    $query->where(function ($q) use ($escapedSearch) {
+                        $q->whereHas('user', function ($uq) use ($escapedSearch) {
+                            $uq->where('name', 'like', "%{$escapedSearch}%")
+                                ->orWhere('email', 'like', "%{$escapedSearch}%");
+                        })
+                            ->orWhereHas('job', function ($jq) use ($escapedSearch) {
+                                $jq->where('title', 'like', "%{$escapedSearch}%");
+                            });
+                    });
+                }
             }
 
             $applications = $query->paginate($request->get('per_page', 15));
