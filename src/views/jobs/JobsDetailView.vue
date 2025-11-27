@@ -404,6 +404,7 @@ import { useI18n } from 'vue-i18n'
 import { useJobStore } from '@/stores/job'
 import { useAuthStore } from '@/stores/auth'
 import { useSavedJobStore } from '@/stores/savedJob'
+import { useApplicationStore } from '@/stores/application'
 import { useToast } from '@/composables/useToast'
 import { copyToClipboard } from '@/utils/clipboard'
 import { formatSalaryRange } from '@/utils/currency'
@@ -415,6 +416,7 @@ const { t } = useI18n()
 const jobStore = useJobStore()
 const authStore = useAuthStore()
 const savedJobStore = useSavedJobStore()
+const applicationStore = useApplicationStore()
 const toast = useToast()
 
 const loading = ref(true)
@@ -644,11 +646,13 @@ const checkIfSaved = async () => {
 }
 
 const checkIfApplied = async () => {
-  if (!authStore.isAuthenticated || !job.value) return
+  if (!authStore.isAuthenticated || !job.value || !route.params.slug) return
   
   try {
-    // This would need to be implemented based on your application service
-    // hasApplied.value = await jobApplicationService.checkIfApplied(job.value.id)
+    const result = await applicationStore.checkApplication(route.params.slug as string)
+    if (result) {
+      hasApplied.value = result.has_applied
+    }
   } catch (error) {
     console.error('Error checking if applied:', error)
   }
