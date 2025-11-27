@@ -97,8 +97,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/my-cvs/{id}', [UserCvController::class, 'destroy']);
     Route::post('/my-cvs/{id}/primary', [UserCvController::class, 'setPrimary']);
 
+    // Company owner CV viewing (from applications)
+    Route::get('/application-cv/{id}', [UserCvController::class, 'viewApplicationCv']);
+
     // Job Application management
     Route::get('/my-applications', [JobApplicationController::class, 'index']);
+    Route::get('/company-applications', [JobApplicationController::class, 'companyApplications']);
     Route::post('/jobs/{job:slug}/apply', [JobApplicationController::class, 'store']);
     Route::get('/jobs/{job:slug}/check-application', [JobApplicationController::class, 'checkApplication']);
     Route::get('/applications/{application}', [JobApplicationController::class, 'show']);

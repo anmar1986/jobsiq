@@ -32,6 +32,21 @@ export const jobApplicationService = {
   },
 
   /**
+   * Get applications for company owner's jobs
+   */
+  async getCompanyApplications(params?: {
+    page?: number
+    per_page?: number
+    status?: string
+    company_id?: number
+    job_id?: number
+    search?: string
+  }): Promise<ApiResponse<PaginatedResponse<JobApplication>>> {
+    const response = await apiClient.get<ApiResponse<PaginatedResponse<JobApplication>>>('/company-applications', { params })
+    return response.data
+  },
+
+  /**
    * Get a single application
    */
   async getApplication(id: number): Promise<ApiResponse<JobApplication>> {

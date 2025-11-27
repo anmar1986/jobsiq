@@ -448,8 +448,61 @@ class UserCvController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'CV set as primary successfully',
+            'message' => 'CV visibility updated successfully',
             'data' => $cv,
+        ]);
+    }
+
+    /**
+     * View CV from job application (for company owners)
+     */
+    public function viewApplicationCv($id)
+    {
+        $user = Auth::user();
+
+        // Only company owners can access this endpoint
+        if ($user->user_type !== 'company_owner') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Only company owners can view application CVs.',
+            ], 403);
+        }
+
+        $cv = UserCv::with('user')->findOrFail($id);
+
+        // Get all companies owned by this user
+        $companyIds = \App\Models\Company::whereHas('owners', function ($query) use ($user) {
+            $query->where('users.id', $user->id);
+        })->pluck('id')->toArray();
+
+        // Verify the company owner has access to this CV through a job application
+        $hasAccess = \App\Models\JobApplication::whereHas('job', function ($query) use ($companyIds) {
+            $query->whereIn('company_id', $companyIds);
+        })
+            ->where('cv_id', $cv->id)
+            ->exists();
+
+        if (! $hasAccess) {
+            return response()->json([
+                'success' => false,
+                'message' => 'You do not have access to view this CV.',
+            ], 403);
+        }
+
+        // Map field names for frontend compatibility
+        $cvData = $cv->toArray();
+
+        if (isset($cvData['work_experience'])) {
+            $cvData['work_experiences'] = $cvData['work_experience'];
+        }
+
+        if (isset($cvData['education'])) {
+            $cvData['education_entries'] = $cvData['education'];
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => $cvData,
         ]);
     }
 }

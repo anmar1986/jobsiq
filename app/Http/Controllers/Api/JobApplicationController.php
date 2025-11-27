@@ -227,4 +227,86 @@ class JobApplicationController extends Controller
             ],
         ]);
     }
+
+    /**
+     * Get applications for company owner's jobs.
+     */
+    public function companyApplications(Request $request): JsonResponse
+    {
+        try {
+            /** @var \App\Models\User $user */
+            $user = Auth::user();
+
+            // Get all companies owned by this user
+            $companyIds = $user->ownedCompanies()->pluck('companies.id');
+
+            if ($companyIds->isEmpty()) {
+                return response()->json([
+                    'success' => true,
+                    'data' => [
+                        'data' => [],
+                        'total' => 0,
+                    ],
+                    'message' => 'No companies found.',
+                ]);
+            }
+
+            Log::info('Fetching applications for companies', ['company_ids' => $companyIds->toArray()]);
+
+            $query = JobApplication::with(['job.company.logo', 'user', 'cv'])
+                ->whereHas('job', function ($q) use ($companyIds) {
+                    $q->whereIn('company_id', $companyIds);
+                })
+                ->latest('applied_at');
+
+            // Filter by status
+            if ($request->has('status')) {
+                $query->where('status', $request->status);
+            }
+
+            // Filter by company
+            if ($request->has('company_id')) {
+                $query->whereHas('job', function ($q) use ($request) {
+                    $q->where('company_id', $request->company_id);
+                });
+            }
+
+            // Filter by job
+            if ($request->has('job_id')) {
+                $query->where('job_id', $request->job_id);
+            }
+
+            // Search by applicant name or job title
+            if ($request->has('search')) {
+                $search = $request->search;
+                $query->where(function ($q) use ($search) {
+                    $q->whereHas('user', function ($uq) use ($search) {
+                        $uq->where('name', 'like', "%{$search}%")
+                            ->orWhere('email', 'like', "%{$search}%");
+                    })
+                        ->orWhereHas('job', function ($jq) use ($search) {
+                            $jq->where('title', 'like', "%{$search}%");
+                        });
+                });
+            }
+
+            $applications = $query->paginate($request->get('per_page', 15));
+
+            return response()->json([
+                'success' => true,
+                'data' => $applications,
+            ]);
+        } catch (\Exception $e) {
+            Log::error('Error fetching company applications', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to fetch applications',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
 }

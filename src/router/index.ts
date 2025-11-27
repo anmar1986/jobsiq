@@ -149,6 +149,18 @@ const routeDefinitions: RouteRecordRaw[] = [
     meta: { title: 'My Jobs', requiresAuth: true, requiresCompany: true },
   },
   {
+    path: 'company-applications',
+    name: 'company-applications',
+    component: () => import('@/views/dashboard/CompanyApplicationsView.vue'),
+    meta: { title: 'Applications', requiresAuth: true, requiresCompany: true },
+  },
+  {
+    path: 'application-cv/:id',
+    name: 'view-application-cv',
+    component: () => import('@/views/dashboard/ViewApplicationCvView.vue'),
+    meta: { title: 'View CV', requiresAuth: true, requiresCompany: true },
+  },
+  {
     path: 'profile',
     name: 'profile',
     component: () => import('@/views/dashboard/ProfileView.vue'),
