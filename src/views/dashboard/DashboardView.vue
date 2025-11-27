@@ -57,6 +57,26 @@
         <p class="text-gray-600 text-xs sm:text-sm">{{ $t('dashboard.viewManageJobs') }}</p>
       </router-link>
 
+      <!-- Applications Card - Company Owners Only -->
+      <router-link
+        v-if="authStore.isCompanyOwner"
+        to="/company-applications"
+        class="block p-4 sm:p-6 bg-white border border-gray-200 rounded-lg hover:shadow-lg hover:border-primary-500 transition-all group"
+      >
+        <div class="flex items-start justify-between mb-3 sm:mb-4">
+          <div class="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center group-hover:bg-indigo-200 transition-colors">
+            <svg class="h-6 w-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+            </svg>
+          </div>
+          <svg class="h-5 w-5 text-gray-400 group-hover:text-primary-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+          </svg>
+        </div>
+        <h3 class="text-lg sm:text-xl font-semibold text-gray-900 mb-2 group-hover:text-primary-600 transition-colors">{{ $t('dashboard.applications') }}</h3>
+        <p class="text-gray-600 text-xs sm:text-sm">{{ $t('dashboard.reviewManageApplications') }}</p>
+      </router-link>
+
       <!-- My Profile Card - Job Seekers Only -->
       <router-link
         v-if="authStore.isJobSeeker"
