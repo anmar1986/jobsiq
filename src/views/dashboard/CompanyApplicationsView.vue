@@ -482,22 +482,12 @@ const getPhotoUrl = (path: string): string => {
 }
 
 const formatDate = (date: string): string => {
-  const now = new Date()
   const targetDate = new Date(date)
-  const diffTime = Math.abs(now.getTime() - targetDate.getTime())
-  const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24))
+  const day = String(targetDate.getDate()).padStart(2, '0')
+  const month = String(targetDate.getMonth() + 1).padStart(2, '0')
+  const year = targetDate.getFullYear()
   
-  if (diffDays === 0) return t('companyApplications.today')
-  if (diffDays === 1) return t('companyApplications.yesterday')
-  if (diffDays < 7) return t('companyApplications.daysAgo', { count: diffDays })
-  if (diffDays < 30) return t('companyApplications.weeksAgo', { count: Math.floor(diffDays / 7) })
-  if (diffDays < 365) return t('companyApplications.monthsAgo', { count: Math.floor(diffDays / 30) })
-  
-  return targetDate.toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric'
-  })
+  return `${day}.${month}.${year}`
 }
 
 onMounted(async () => {
