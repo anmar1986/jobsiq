@@ -74,8 +74,8 @@
         >
           <template #cell-name="{ item, index }">
             <div class="flex items-center">
-              <div v-if="item.logo_url" class="flex-shrink-0 h-10 w-10">
-                <img :src="item.logo_url" :alt="item.name" class="h-10 w-10 rounded-full object-cover" />
+              <div v-if="item.images && item.images.length > 0" class="flex-shrink-0 h-10 w-10">
+                <img :src="item.images[0].url" :alt="item.name" class="h-10 w-10 rounded-full object-cover" />
               </div>
               <div v-else class="flex-shrink-0 h-10 w-10">
                 <div class="h-10 w-10 rounded-full bg-blue-100 flex items-center justify-center">
@@ -97,7 +97,7 @@
             </span>
           </template>
 
-          <template #cell-size="{ value }">
+          <template #cell-company_size="{ value }">
             <span class="text-sm text-gray-900">{{ value || '-' }}</span>
           </template>
 
@@ -179,8 +179,8 @@
       <div v-if="selectedCompany" class="space-y-4">
         <div class="flex items-center space-x-4">
           <img
-            v-if="selectedCompany.logo_url"
-            :src="selectedCompany.logo_url"
+            v-if="selectedCompany.images && selectedCompany.images.length > 0"
+            :src="selectedCompany.images[0].url"
             :alt="selectedCompany.name"
             class="h-16 w-16 rounded-full object-cover"
           />
@@ -196,7 +196,7 @@
           </div>
           <div>
             <label class="block text-sm font-medium text-gray-500">Company Size</label>
-            <p class="mt-1 text-sm text-gray-900">{{ selectedCompany.size || '-' }}</p>
+            <p class="mt-1 text-sm text-gray-900">{{ selectedCompany.company_size || '-' }}</p>
           </div>
           <div>
             <label class="block text-sm font-medium text-gray-500">Country</label>
@@ -251,7 +251,7 @@ const filters = reactive({
 const columns = [
   { key: 'name', label: 'Company', sortable: true },
   { key: 'industry', label: 'Industry', sortable: true },
-  { key: 'size', label: 'Size', sortable: true },
+  { key: 'company_size', label: 'Size', sortable: true },
   { key: 'country', label: 'Country', sortable: true },
   { key: 'jobs_count', label: 'Jobs', sortable: true }
 ]

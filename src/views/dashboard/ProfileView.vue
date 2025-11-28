@@ -203,7 +203,6 @@
                   <option value="">{{ $t('profile.selectGender') }}</option>
                   <option value="male">{{ $t('profile.male') }}</option>
                   <option value="female">{{ $t('profile.female') }}</option>
-                  <option value="other">{{ $t('profile.other') }}</option>
                 </select>
               </div>
               <BaseInput

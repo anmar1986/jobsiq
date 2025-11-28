@@ -286,9 +286,19 @@ const fetchApplications = async () => {
       applications.value = response.data.data
       pagination.value = response.data
     }
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error fetching applications:', error)
-    toast.error(t('myApplications.loadFailed'))
+    
+    // More detailed error message
+    if (error.response?.status === 401) {
+      toast.error(t('myApplications.loginRequired'))
+    } else if (error.response?.status === 403) {
+      toast.error(t('myApplications.unauthorized'))
+    } else if (error.response?.data?.message) {
+      toast.error(error.response.data.message)
+    } else {
+      toast.error(t('myApplications.loadFailed'))
+    }
   } finally {
     loading.value = false
   }
@@ -396,22 +406,12 @@ const formatStatus = (status: string): string => {
 }
 
 const formatDate = (date: string): string => {
-  const now = new Date()
   const appliedDate = new Date(date)
-  const diffTime = Math.abs(now.getTime() - appliedDate.getTime())
-  const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24))
+  const day = String(appliedDate.getDate()).padStart(2, '0')
+  const month = String(appliedDate.getMonth() + 1).padStart(2, '0')
+  const year = appliedDate.getFullYear()
   
-  if (diffDays === 0) return t('myApplications.today')
-  if (diffDays === 1) return t('myApplications.yesterday')
-  if (diffDays < 7) return t('myApplications.daysAgo', { count: diffDays })
-  if (diffDays < 30) return t('myApplications.weeksAgo', { count: Math.floor(diffDays / 7) })
-  if (diffDays < 365) return t('myApplications.monthsAgo', { count: Math.floor(diffDays / 30) })
-  
-  return appliedDate.toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric'
-  })
+  return `${day}.${month}.${year}`
 }
 
 onMounted(() => {
