@@ -1007,6 +1007,8 @@
     "withdrawSuccess": "تم سحب الطلب بنجاح",
     "withdrawFailed": "فشل سحب الطلب",
     "loadFailed": "فشل تحميل الطلبات",
+    "loginRequired": "يرجى تسجيل الدخول لعرض طلباتك",
+    "unauthorized": "غير مصرح لك بعرض هذه الطلبات",
     "today": "اليوم",
     "yesterday": "أمس",
     "daysAgo": "منذ {count} أيام",

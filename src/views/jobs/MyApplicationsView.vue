@@ -291,9 +291,9 @@ const fetchApplications = async () => {
     
     // More detailed error message
     if (error.response?.status === 401) {
-      toast.error('Please log in to view your applications')
+      toast.error(t('myApplications.loginRequired'))
     } else if (error.response?.status === 403) {
-      toast.error('You are not authorized to view these applications')
+      toast.error(t('myApplications.unauthorized'))
     } else if (error.response?.data?.message) {
       toast.error(error.response.data.message)
     } else {

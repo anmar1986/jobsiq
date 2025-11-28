@@ -28,8 +28,8 @@ class JobAdminController extends Controller
         }
 
         // Job type filter
-        if ($request->has('job_type')) {
-            $query->where('job_type', $request->job_type);
+        if ($request->has('employment_type')) {
+            $query->where('employment_type', $request->employment_type);
         }
 
         // Experience level filter
@@ -76,7 +76,7 @@ class JobAdminController extends Controller
             'description' => 'required|string',
             'requirements' => 'required|string',
             'responsibilities' => 'nullable|string',
-            'job_type' => ['required', Rule::in(['full-time', 'part-time', 'contract', 'temporary', 'internship'])],
+            'employment_type' => ['required', Rule::in(['full-time', 'part-time', 'contract', 'freelance', 'internship'])],
             'experience_level' => ['required', Rule::in(['entry', 'mid', 'senior', 'lead', 'executive'])],
             'salary_min' => 'nullable|numeric|min:0',
             'salary_max' => 'nullable|numeric|min:0|gte:salary_min',
@@ -132,7 +132,7 @@ class JobAdminController extends Controller
             'description' => 'sometimes|string',
             'requirements' => 'sometimes|string',
             'responsibilities' => 'nullable|string',
-            'job_type' => ['sometimes', Rule::in(['full-time', 'part-time', 'contract', 'temporary', 'internship'])],
+            'employment_type' => ['sometimes', Rule::in(['full-time', 'part-time', 'contract', 'freelance', 'internship'])],
             'experience_level' => ['sometimes', Rule::in(['entry', 'mid', 'senior', 'lead', 'executive'])],
             'salary_min' => 'nullable|numeric|min:0',
             'salary_max' => 'nullable|numeric|min:0|gte:salary_min',
@@ -178,9 +178,9 @@ class JobAdminController extends Controller
             'draft_jobs' => Job::where('status', 'draft')->count(),
             'featured_jobs' => Job::where('is_featured', true)->count(),
             'recent_jobs' => Job::where('created_at', '>=', now()->subDays(30))->count(),
-            'jobs_by_type' => Job::select('job_type')
+            'jobs_by_type' => Job::select('employment_type')
                 ->selectRaw('count(*) as count')
-                ->groupBy('job_type')
+                ->groupBy('employment_type')
                 ->get(),
             'jobs_by_experience_level' => Job::select('experience_level')
                 ->selectRaw('count(*) as count')

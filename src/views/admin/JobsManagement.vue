@@ -36,7 +36,7 @@
               <label for="jobs-type" class="block text-xs sm:text-sm font-medium text-gray-700 mb-1">Job Type</label>
               <select
                 id="jobs-type"
-                v-model="filters.job_type"
+                v-model="filters.employment_type"
                 name="jobs-type"
                 class="w-full px-3 py-2 text-sm rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 touch-manipulation"
                 @change="handleFilterChange"
@@ -113,7 +113,7 @@
             </span>
           </template>
 
-          <template #cell-job_type="{ value }">
+          <template #cell-employment_type="{ value }">
             <span class="text-sm text-gray-900">
               {{ value ? value.split('-').map((w: string) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') : 'N/A' }}
             </span>
@@ -280,7 +280,7 @@ const newStatus = ref('active')
 const filters = reactive({
   search: '',
   status: '',
-  job_type: '',
+  employment_type: '',
   is_featured: '',
   company_id: (route.query.company_id as string) || '',
   sort_by: 'created_at',
@@ -292,7 +292,7 @@ const filters = reactive({
 const columns = [
   { key: 'title', label: 'Job Title', sortable: true },
   { key: 'status', label: 'Status', sortable: true },
-  { key: 'job_type', label: 'Type', sortable: true },
+  { key: 'employment_type', label: 'Type', sortable: true },
   { key: 'is_featured', label: 'Featured', sortable: true },
   { key: 'applications_count', label: 'Applications', sortable: true }
 ]
@@ -309,7 +309,7 @@ const fetchJobs = async () => {
 
     if (filters.search) params.search = filters.search
     if (filters.status) params.status = filters.status
-    if (filters.job_type) params.job_type = filters.job_type
+    if (filters.employment_type) params.employment_type = filters.employment_type
     if (filters.is_featured !== '') params.is_featured = filters.is_featured
     if (filters.company_id) params.company_id = filters.company_id
 

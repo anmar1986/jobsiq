@@ -16,7 +16,7 @@ class CompanyAdminController extends Controller
      */
     public function index(Request $request): JsonResponse
     {
-        $query = Company::with(['owners', 'jobs', 'images']);
+        $query = Company::with(['owners', 'images'])->withCount('jobs');
 
         // Search filter
         if ($request->has('search')) {

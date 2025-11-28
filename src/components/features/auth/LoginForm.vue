@@ -184,9 +184,6 @@ const handleSubmit = async () => {
     
     // Navigate to destination
     await router.push(destination)
-    
-    // Force reload to ensure everything initializes properly
-    window.location.href = destination
   } catch (err: unknown) {
     const errorMessage = err && typeof err === 'object' && 'response' in err
       ? (err as { response?: { data?: { message?: string } } }).response?.data?.message

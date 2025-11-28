@@ -1008,6 +1008,8 @@
     "withdrawSuccess": "Application withdrawn successfully",
     "withdrawFailed": "Failed to withdraw application",
     "loadFailed": "Failed to load applications",
+    "loginRequired": "Please log in to view your applications",
+    "unauthorized": "You are not authorized to view these applications",
     "today": "today",
     "yesterday": "yesterday",
     "daysAgo": "{count} days ago",
