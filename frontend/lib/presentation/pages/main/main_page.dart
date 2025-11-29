@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import '../jobs/jobs_page.dart';
 import '../saved_jobs/saved_jobs_page.dart';
 import '../cvs/cvs_page.dart';
 import '../profile/profile_page.dart';
+import '../company_management/my_companies_page.dart';
+import '../company_management/my_jobs_page.dart';
+import '../../bloc/auth/auth_bloc.dart';
+import '../../bloc/auth/auth_state.dart';
 
 class MainPage extends StatefulWidget {
   final int initialTab;
@@ -22,21 +27,11 @@ class _MainPageState extends State<MainPage> {
   late int _currentIndex;
   late PageController _pageController;
 
-  late final List<Widget> _pages;
-
   @override
   void initState() {
     super.initState();
     _currentIndex = widget.initialTab;
     _pageController = PageController(initialPage: _currentIndex);
-
-    // Initialize pages with company filter if provided
-    _pages = [
-      JobsPage(companyFilter: widget.companyFilter),
-      const SavedJobsPage(),
-      const CvsPage(),
-      const ProfilePage(),
-    ];
   }
 
   @override
@@ -58,42 +53,90 @@ class _MainPageState extends State<MainPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: PageView(
-        controller: _pageController,
-        onPageChanged: (index) {
-          setState(() {
-            _currentIndex = index;
-          });
-        },
-        children: _pages,
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
-        onTap: _onTabTapped,
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.work_outline_rounded),
-            activeIcon: Icon(Icons.work_rounded),
-            label: 'Jobs',
+    return BlocBuilder<AuthBloc, AuthState>(
+      builder: (context, authState) {
+        final isCompanyOwner =
+            authState is Authenticated && authState.user.isCompanyOwner;
+
+        // Different pages for company owner vs job seeker
+        final List<Widget> pages = isCompanyOwner
+            ? [
+                JobsPage(companyFilter: widget.companyFilter),
+                const MyJobsPage(), // Company owner's posted jobs
+                const MyCompaniesPage(), // Company management
+                const ProfilePage(),
+              ]
+            : [
+                JobsPage(companyFilter: widget.companyFilter),
+                const SavedJobsPage(),
+                const CvsPage(),
+                const ProfilePage(),
+              ];
+
+        // Different navigation items for company owner vs job seeker
+        final List<BottomNavigationBarItem> navItems = isCompanyOwner
+            ? const [
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.work_outline_rounded),
+                  activeIcon: Icon(Icons.work_rounded),
+                  label: 'Browse',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.business_center_outlined),
+                  activeIcon: Icon(Icons.business_center_rounded),
+                  label: 'My Jobs',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.business_outlined),
+                  activeIcon: Icon(Icons.business_rounded),
+                  label: 'Company',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.person_outline_rounded),
+                  activeIcon: Icon(Icons.person_rounded),
+                  label: 'Profile',
+                ),
+              ]
+            : const [
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.work_outline_rounded),
+                  activeIcon: Icon(Icons.work_rounded),
+                  label: 'Jobs',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.bookmark_border_rounded),
+                  activeIcon: Icon(Icons.bookmark_rounded),
+                  label: 'Saved',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.description_outlined),
+                  activeIcon: Icon(Icons.description_rounded),
+                  label: 'CV',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.person_outline_rounded),
+                  activeIcon: Icon(Icons.person_rounded),
+                  label: 'Profile',
+                ),
+              ];
+
+        return Scaffold(
+          body: PageView(
+            controller: _pageController,
+            onPageChanged: (index) {
+              setState(() {
+                _currentIndex = index;
+              });
+            },
+            children: pages,
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.bookmark_border_rounded),
-            activeIcon: Icon(Icons.bookmark_rounded),
-            label: 'Saved',
+          bottomNavigationBar: BottomNavigationBar(
+            currentIndex: _currentIndex,
+            onTap: _onTabTapped,
+            items: navItems,
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.description_outlined),
-            activeIcon: Icon(Icons.description_rounded),
-            label: 'CV',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person_outline_rounded),
-            activeIcon: Icon(Icons.person_rounded),
-            label: 'Profile',
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 }

@@ -39,7 +39,7 @@ class JobController extends Controller
         try {
             $perPage = min((int) $request->get('per_page', 15), 100); // Max 100 items per page
 
-            $query = Job::with(['company:id,name,slug', 'company.logo'])
+            $query = Job::with(['company:id,name,slug', 'company.logo', 'company.cover'])
                 ->select([
                     'id', 'company_id', 'title', 'slug', 'description', 'requirements',
                     'benefits',
@@ -173,7 +173,7 @@ class JobController extends Controller
         }
 
         $job = Job::create($validated);
-        $job->load(['company', 'company.logo']);
+        $job->load(['company', 'company.logo', 'company.cover']);
 
         // Clear relevant caches
         $this->clearJobCaches();
@@ -190,7 +190,7 @@ class JobController extends Controller
      */
     public function show(Job $job): JsonResponse
     {
-        $job->load(['company', 'company.logo', 'company.images', 'user']);
+        $job->load(['company', 'company.logo', 'company.cover', 'company.images', 'user']);
 
         return response()->json([
             'success' => true,
@@ -205,7 +205,7 @@ class JobController extends Controller
     {
         $oldSlug = $job->slug;
         $job->update($request->validated());
-        $job->load(['company', 'company.logo']);
+        $job->load(['company', 'company.logo', 'company.cover']);
 
         // Clear relevant caches
         $this->clearJobCaches($oldSlug);
@@ -286,7 +286,7 @@ class JobController extends Controller
 
         // Cache featured jobs for 1 hour
         $jobs = Cache::remember("featured_jobs_{$limit}", 3600, function () use ($limit) {
-            return Job::with(['company:id,name,slug', 'company.logo'])
+            return Job::with(['company:id,name,slug', 'company.logo', 'company.cover'])
                 ->select([
                     'id', 'company_id', 'title', 'slug', 'description', 'requirements',
                     'benefits', 'location', 'city', 'country',
@@ -336,7 +336,7 @@ class JobController extends Controller
             }
 
             // Get all jobs from those companies
-            $jobs = Job::with(['company:id,name,slug', 'company.logo'])
+            $jobs = Job::with(['company:id,name,slug', 'company.logo', 'company.cover'])
                 ->whereIn('company_id', $companyIds)
                 ->withCount('applications')
                 ->latest('published_at')

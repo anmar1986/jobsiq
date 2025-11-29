@@ -219,3 +219,127 @@ class MockJobApplicationRemoteDataSource extends _i1.Mock
             _i5.Future<Map<String, dynamic>>.value(<String, dynamic>{}),
       ) as _i5.Future<Map<String, dynamic>>);
 }
+
+/// A class which mocks [JobRepository].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockJobRepository extends _i1.Mock implements _i2.JobRepository {
+  MockJobRepository() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  _i5.Future<_i3.Either<_i6.Failure, _i2.JobsResult>> getJobs({
+    int? page = 1,
+    int? perPage = 15,
+    String? search,
+    String? location,
+    List<String>? employmentTypes,
+    List<String>? experienceLevels,
+    bool? isRemote,
+    String? category,
+    double? salaryMin,
+    String? company,
+    String? sort,
+    int? seed,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getJobs,
+          [],
+          {
+            #page: page,
+            #perPage: perPage,
+            #search: search,
+            #location: location,
+            #employmentTypes: employmentTypes,
+            #experienceLevels: experienceLevels,
+            #isRemote: isRemote,
+            #category: category,
+            #salaryMin: salaryMin,
+            #company: company,
+            #sort: sort,
+            #seed: seed,
+          },
+        ),
+        returnValue: _i5.Future<_i3.Either<_i6.Failure, _i2.JobsResult>>.value(
+            _FakeEither_1<_i6.Failure, _i2.JobsResult>(
+          this,
+          Invocation.method(
+            #getJobs,
+            [],
+            {
+              #page: page,
+              #perPage: perPage,
+              #search: search,
+              #location: location,
+              #employmentTypes: employmentTypes,
+              #experienceLevels: experienceLevels,
+              #isRemote: isRemote,
+              #category: category,
+              #salaryMin: salaryMin,
+              #company: company,
+              #sort: sort,
+              #seed: seed,
+            },
+          ),
+        )),
+      ) as _i5.Future<_i3.Either<_i6.Failure, _i2.JobsResult>>);
+
+  @override
+  _i5.Future<_i3.Either<_i6.Failure, List<_i8.JobEntity>>> getFeaturedJobs(
+          {int? limit = 6}) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getFeaturedJobs,
+          [],
+          {#limit: limit},
+        ),
+        returnValue:
+            _i5.Future<_i3.Either<_i6.Failure, List<_i8.JobEntity>>>.value(
+                _FakeEither_1<_i6.Failure, List<_i8.JobEntity>>(
+          this,
+          Invocation.method(
+            #getFeaturedJobs,
+            [],
+            {#limit: limit},
+          ),
+        )),
+      ) as _i5.Future<_i3.Either<_i6.Failure, List<_i8.JobEntity>>>);
+
+  @override
+  _i5.Future<_i3.Either<_i6.Failure, _i8.JobEntity>> getJobBySlug(
+          String? slug) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getJobBySlug,
+          [slug],
+        ),
+        returnValue: _i5.Future<_i3.Either<_i6.Failure, _i8.JobEntity>>.value(
+            _FakeEither_1<_i6.Failure, _i8.JobEntity>(
+          this,
+          Invocation.method(
+            #getJobBySlug,
+            [slug],
+          ),
+        )),
+      ) as _i5.Future<_i3.Either<_i6.Failure, _i8.JobEntity>>);
+
+  @override
+  _i5.Future<_i3.Either<_i6.Failure, List<_i8.JobEntity>>> getMyJobs() =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getMyJobs,
+          [],
+        ),
+        returnValue:
+            _i5.Future<_i3.Either<_i6.Failure, List<_i8.JobEntity>>>.value(
+                _FakeEither_1<_i6.Failure, List<_i8.JobEntity>>(
+          this,
+          Invocation.method(
+            #getMyJobs,
+            [],
+          ),
+        )),
+      ) as _i5.Future<_i3.Either<_i6.Failure, List<_i8.JobEntity>>>);
+}

@@ -3,8 +3,14 @@ import '../../domain/entities/company_entity.dart';
 
 part 'company_model.g.dart';
 
-@JsonSerializable(fieldRename: FieldRename.snake)
+@JsonSerializable(fieldRename: FieldRename.snake, explicitToJson: true)
 class CompanyModel extends CompanyEntity {
+  @JsonKey(name: 'logo_path')
+  final String? logoPath;
+
+  @JsonKey(name: 'cover_path')
+  final String? coverPath;
+
   @JsonKey(name: 'jobs_count')
   @override
   // ignore: overridden_fields
@@ -14,8 +20,8 @@ class CompanyModel extends CompanyEntity {
     required super.id,
     required super.name,
     required super.slug,
-    super.logo,
-    super.cover,
+    this.logoPath,
+    this.coverPath,
     super.description,
     super.website,
     super.industry,
@@ -29,7 +35,11 @@ class CompanyModel extends CompanyEntity {
     required this.jobsCount,
     required super.createdAt,
     required super.updatedAt,
-  }) : super(jobsCount: jobsCount);
+  }) : super(
+          jobsCount: jobsCount,
+          logo: logoPath,
+          cover: coverPath,
+        );
 
   factory CompanyModel.fromJson(Map<String, dynamic> json) =>
       _$CompanyModelFromJson(json);

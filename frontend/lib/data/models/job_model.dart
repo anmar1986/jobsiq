@@ -55,6 +55,10 @@ class JobModel extends JobEntity {
     this.isActive = true, // Default to true since backend filters by active
     super.isSaved,
     this.isApplied,
+    super.status,
+    super.jobType,
+    super.salary,
+    super.applicantsCount,
     super.expiresAt,
     super.publishedAt,
     required super.createdAt,
