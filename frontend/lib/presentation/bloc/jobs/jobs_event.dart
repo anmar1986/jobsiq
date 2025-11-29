@@ -92,3 +92,12 @@ class ApplyForJobEvent extends JobsEvent {
   @override
   List<Object?> get props => [jobSlug, cvId, coverLetter];
 }
+
+class LoadJobBySlugEvent extends JobsEvent {
+  final String slug;
+
+  const LoadJobBySlugEvent(this.slug);
+
+  @override
+  List<Object?> get props => [slug];
+}

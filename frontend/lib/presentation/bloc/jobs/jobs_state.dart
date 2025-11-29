@@ -127,3 +127,12 @@ class JobApplicationError extends JobsState {
   @override
   List<Object?> get props => [message];
 }
+
+class JobLoaded extends JobsState {
+  final JobEntity job;
+
+  const JobLoaded(this.job);
+
+  @override
+  List<Object?> get props => [job];
+}

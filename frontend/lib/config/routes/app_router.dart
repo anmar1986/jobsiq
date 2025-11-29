@@ -8,7 +8,7 @@ import '../../presentation/pages/auth/login_page.dart';
 import '../../presentation/pages/auth/register_page.dart';
 import '../../presentation/pages/auth/forgot_password_page.dart';
 import '../../presentation/pages/splash/splash_page.dart';
-import '../../presentation/pages/jobs/job_details_page.dart';
+import '../../presentation/pages/jobs/job_details_wrapper.dart';
 import '../../presentation/pages/cvs/cv_details_page.dart';
 import '../../presentation/pages/cvs/create_cv_page.dart';
 import '../../presentation/pages/cvs/edit_cv_page.dart';
@@ -20,6 +20,8 @@ import '../../presentation/pages/profile/personal_information_page.dart';
 import '../../presentation/pages/profile/my_applications_page.dart';
 import '../../presentation/pages/settings/settings_page.dart';
 import '../../presentation/pages/jobs/job_alerts_page.dart';
+import '../../presentation/pages/company_management/view_company_page.dart';
+import '../../presentation/pages/company_management/edit_company_page.dart';
 
 class AppRouter {
   static const String splash = '/';
@@ -43,6 +45,11 @@ class AppRouter {
   static const String myApplications = '/profile/my-applications';
   static const String jobAlerts = '/job-alerts';
   static const String settings = '/settings';
+  static const String viewCompany = '/company-management/view-company/:slug';
+  static const String createCompany = '/company-management/create-company';
+  static const String editCompany = '/company-management/edit-company/:id';
+  static const String createJob = '/company-management/create-job';
+  static const String editJob = '/company-management/edit-job/:id';
 
   static final GoRouter router = GoRouter(
     initialLocation: splash,
@@ -84,15 +91,13 @@ class AppRouter {
       GoRoute(
         path: jobDetails,
         name: 'jobDetails',
-        redirect: (context, state) {
-          if (state.extra == null) {
-            return jobs;
-          }
-          return null;
-        },
         builder: (context, state) {
-          final job = state.extra as JobEntity;
-          return JobDetailsPage(job: job);
+          final slug = state.pathParameters['slug']!;
+          final job = state.extra as JobEntity?;
+          return JobDetailsWrapper(
+            slug: slug,
+            job: job,
+          );
         },
       ),
       GoRoute(
@@ -176,6 +181,114 @@ class AppRouter {
         path: settings,
         name: 'settings',
         builder: (context, state) => const SettingsPage(),
+      ),
+      GoRoute(
+        path: viewCompany,
+        name: 'viewCompany',
+        builder: (context, state) {
+          final slug = state.pathParameters['slug']!;
+          return ViewCompanyPage(companySlug: slug);
+        },
+      ),
+      GoRoute(
+        path: createCompany,
+        name: 'createCompany',
+        builder: (context, state) => Scaffold(
+          appBar: AppBar(title: const Text('Create Company')),
+          body: const Center(
+            child: Padding(
+              padding: EdgeInsets.all(24.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.construction, size: 80, color: Colors.orange),
+                  SizedBox(height: 24),
+                  Text(
+                    'Create Company Form',
+                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                  ),
+                  SizedBox(height: 16),
+                  Text(
+                    'This page is under construction.\nThe form will be added soon.',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 16),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+      GoRoute(
+        path: editCompany,
+        name: 'editCompany',
+        builder: (context, state) {
+          final id = int.parse(state.pathParameters['id']!);
+          return EditCompanyPage(companyId: id);
+        },
+      ),
+      GoRoute(
+        path: createJob,
+        name: 'createJob',
+        builder: (context, state) => Scaffold(
+          appBar: AppBar(title: const Text('Post a Job')),
+          body: const Center(
+            child: Padding(
+              padding: EdgeInsets.all(24.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.construction, size: 80, color: Colors.orange),
+                  SizedBox(height: 24),
+                  Text(
+                    'Post Job Form',
+                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                  ),
+                  SizedBox(height: 16),
+                  Text(
+                    'This page is under construction.\nThe job posting form will be added soon.',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 16),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+      GoRoute(
+        path: editJob,
+        name: 'editJob',
+        builder: (context, state) {
+          final id = state.pathParameters['id']!;
+          return Scaffold(
+            appBar: AppBar(title: const Text('Edit Job')),
+            body: Center(
+              child: Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(Icons.construction,
+                        size: 80, color: Colors.orange),
+                    const SizedBox(height: 24),
+                    const Text(
+                      'Edit Job Form',
+                      style:
+                          TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      'Editing Job ID: $id\n\nThis page is under construction.\nThe form will be added soon.',
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        },
       ),
     ],
     errorBuilder: (context, state) => Scaffold(

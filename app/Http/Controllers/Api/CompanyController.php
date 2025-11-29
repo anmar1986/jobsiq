@@ -64,6 +64,15 @@ class CompanyController extends Controller
     public function store(StoreCompanyRequest $request): JsonResponse
     {
         try {
+            // Check if user already owns a company
+            $existingCompany = $request->user()->ownedCompanies()->first();
+            if ($existingCompany) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'You already have a company. Each user can only own one company.',
+                ], 422);
+            }
+
             Log::info('Company creation started', [
                 'user_id' => $request->user()->id,
                 'has_logo' => $request->hasFile('logo'),
@@ -211,6 +220,9 @@ class CompanyController extends Controller
                 'message' => 'Company not found or you do not have permission to view it.',
             ], 404);
         }
+
+        // Manually add the additional attributes
+        $company->append(['size', 'founded_year', 'address']);
 
         return response()->json([
             'success' => true,
@@ -386,7 +398,13 @@ class CompanyController extends Controller
             ->ownedCompanies()
             ->with(['logo', 'cover', 'images', 'jobs'])
             ->withCount('jobs')
-            ->get();
+            ->get()
+            ->map(function ($company) {
+                // Manually add the additional attributes
+                $company->append(['size', 'founded_year', 'address']);
+
+                return $company;
+            });
 
         return response()->json([
             'success' => true,

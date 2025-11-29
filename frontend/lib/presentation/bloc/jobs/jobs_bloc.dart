@@ -5,6 +5,7 @@ import '../../../data/datasources/saved_job_remote_data_source.dart';
 import '../../../data/datasources/job_application_remote_data_source.dart';
 import '../../../domain/usecases/jobs/get_jobs_usecase.dart';
 import '../../../domain/usecases/jobs/get_featured_jobs_usecase.dart';
+import '../../../domain/repositories/job_repository.dart';
 import 'jobs_event.dart';
 import 'jobs_state.dart';
 
@@ -13,6 +14,7 @@ class JobsBloc extends Bloc<JobsEvent, JobsState> {
   final GetFeaturedJobsUseCase getFeaturedJobsUseCase;
   final SavedJobRemoteDataSource savedJobDataSource;
   final JobApplicationRemoteDataSource jobApplicationDataSource;
+  final JobRepository jobRepository;
 
   // Store current filter parameters
   GetJobsParams? _currentParams;
@@ -23,6 +25,7 @@ class JobsBloc extends Bloc<JobsEvent, JobsState> {
     required this.getFeaturedJobsUseCase,
     required this.savedJobDataSource,
     required this.jobApplicationDataSource,
+    required this.jobRepository,
   }) : super(JobsInitial()) {
     on<LoadJobsEvent>(_onLoadJobs);
     on<LoadMoreJobsEvent>(_onLoadMoreJobs);
@@ -30,6 +33,7 @@ class JobsBloc extends Bloc<JobsEvent, JobsState> {
     on<SearchJobsEvent>(_onSearchJobs);
     on<ToggleSaveJobEvent>(_onToggleSaveJob);
     on<ApplyForJobEvent>(_onApplyForJob);
+    on<LoadJobBySlugEvent>(_onLoadJobBySlug);
   }
 
   Future<void> _onLoadJobs(
@@ -249,5 +253,19 @@ class JobsBloc extends Bloc<JobsEvent, JobsState> {
       default:
         return 'An unexpected error occurred. Please try again.';
     }
+  }
+
+  Future<void> _onLoadJobBySlug(
+    LoadJobBySlugEvent event,
+    Emitter<JobsState> emit,
+  ) async {
+    emit(JobsLoading());
+
+    final result = await jobRepository.getJobBySlug(event.slug);
+
+    result.fold(
+      (failure) => emit(JobsError(_mapFailureToMessage(failure))),
+      (job) => emit(JobLoaded(job)),
+    );
   }
 }

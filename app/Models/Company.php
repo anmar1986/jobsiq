@@ -82,6 +82,11 @@ class Company extends Model
         'active_jobs_count' => 'integer',
     ];
 
+    protected $appends = [
+        'logo_path',
+        'cover_path',
+    ];
+
     protected static function boot()
     {
         parent::boot();
@@ -276,5 +281,49 @@ class Company extends Model
         ]);
 
         return implode(', ', $parts);
+    }
+
+    /**
+     * Get logo path attribute.
+     */
+    public function getLogoPathAttribute(): ?string
+    {
+        return $this->logo?->path;
+    }
+
+    /**
+     * Get cover path attribute.
+     */
+    public function getCoverPathAttribute(): ?string
+    {
+        return $this->cover?->path;
+    }
+
+    /**
+     * Get size attribute (mapped from company_size).
+     */
+    public function getSizeAttribute(): ?string
+    {
+        return $this->attributes['company_size'] ?? null;
+    }
+
+    /**
+     * Get founded year attribute (from founded_date).
+     */
+    public function getFoundedYearAttribute(): ?string
+    {
+        if (! isset($this->attributes['founded_date']) || ! $this->founded_date) {
+            return null;
+        }
+
+        return $this->founded_date->format('Y');
+    }
+
+    /**
+     * Get address attribute (mapped from city/country).
+     */
+    public function getAddressAttribute(): ?string
+    {
+        return $this->attributes['street'] ?? null;
     }
 }

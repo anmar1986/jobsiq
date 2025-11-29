@@ -27,7 +27,7 @@ class JobApplicationController extends Controller
             // Debug log
             Log::info('Fetching applications for user', ['user_id' => $userId]);
 
-            $query = JobApplication::with(['job.company.logo', 'cv'])
+            $query = JobApplication::with(['job.company.logo', 'job.company.cover', 'cv'])
                 ->where('user_id', $userId)
                 ->latest('applied_at');
 
@@ -100,7 +100,7 @@ class JobApplicationController extends Controller
             'applied_at' => now(),
         ]);
 
-        $application->load(['job.company.logo', 'cv', 'user']);
+        $application->load(['job.company.logo', 'job.company.cover', 'cv', 'user']);
 
         // Send email notification to the company
         try {
@@ -134,7 +134,7 @@ class JobApplicationController extends Controller
             ], 403);
         }
 
-        $application->load(['job.company.logo', 'cv', 'user']);
+        $application->load(['job.company.logo', 'job.company.cover', 'cv', 'user']);
 
         return response()->json([
             'success' => true,
@@ -253,7 +253,7 @@ class JobApplicationController extends Controller
 
             Log::info('Fetching applications for companies', ['company_ids' => $companyIds->toArray()]);
 
-            $query = JobApplication::with(['job.company.logo', 'user', 'cv'])
+            $query = JobApplication::with(['job.company.logo', 'job.company.cover', 'user', 'cv'])
                 ->whereHas('job', function ($q) use ($companyIds) {
                     $q->whereIn('company_id', $companyIds);
                 })

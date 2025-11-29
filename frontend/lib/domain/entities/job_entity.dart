@@ -25,6 +25,10 @@ class JobEntity extends Equatable {
   final bool isActive;
   final bool? isSaved;
   final bool? isApplied;
+  final String? status;
+  final String? jobType;
+  final String? salary;
+  final int? applicantsCount;
   final DateTime? expiresAt;
   final DateTime? publishedAt;
   final DateTime createdAt;
@@ -56,6 +60,10 @@ class JobEntity extends Equatable {
     required this.isActive,
     this.isSaved,
     this.isApplied,
+    this.status,
+    this.jobType,
+    this.salary,
+    this.applicantsCount,
     this.expiresAt,
     this.publishedAt,
     required this.createdAt,
@@ -104,6 +112,10 @@ class JobEntity extends Equatable {
       isActive: isActive,
       isSaved: isSaved ?? this.isSaved,
       isApplied: isApplied ?? this.isApplied,
+      status: status,
+      jobType: jobType,
+      salary: salary,
+      applicantsCount: applicantsCount,
       expiresAt: expiresAt,
       publishedAt: publishedAt,
       createdAt: createdAt,
@@ -138,6 +150,10 @@ class JobEntity extends Equatable {
         isActive,
         isSaved,
         isApplied,
+        status,
+        jobType,
+        salary,
+        applicantsCount,
         expiresAt,
         publishedAt,
         createdAt,
@@ -162,6 +178,12 @@ class CompanyBriefEntity extends Equatable {
     this.industry,
     this.companySize,
   });
+
+  String get logoUrl {
+    if (logo == null || logo!.isEmpty) return '';
+    if (logo!.startsWith('http')) return logo!;
+    return 'https://your-api-url.com/storage/$logo';
+  }
 
   @override
   List<Object?> get props => [id, name, slug, logo, industry, companySize];

@@ -21,6 +21,7 @@ import 'jobs_bloc_test.mocks.dart';
   GetFeaturedJobsUseCase,
   SavedJobRemoteDataSource,
   JobApplicationRemoteDataSource,
+  JobRepository,
 ])
 void main() {
   late JobsBloc bloc;
@@ -28,18 +29,21 @@ void main() {
   late MockGetFeaturedJobsUseCase mockGetFeaturedJobsUseCase;
   late MockSavedJobRemoteDataSource mockSavedJobDataSource;
   late MockJobApplicationRemoteDataSource mockJobApplicationDataSource;
+  late MockJobRepository mockJobRepository;
 
   setUp(() {
     mockGetJobsUseCase = MockGetJobsUseCase();
     mockGetFeaturedJobsUseCase = MockGetFeaturedJobsUseCase();
     mockSavedJobDataSource = MockSavedJobRemoteDataSource();
     mockJobApplicationDataSource = MockJobApplicationRemoteDataSource();
+    mockJobRepository = MockJobRepository();
 
     bloc = JobsBloc(
       getJobsUseCase: mockGetJobsUseCase,
       getFeaturedJobsUseCase: mockGetFeaturedJobsUseCase,
       savedJobDataSource: mockSavedJobDataSource,
       jobApplicationDataSource: mockJobApplicationDataSource,
+      jobRepository: mockJobRepository,
     );
   });
 
